@@ -1,0 +1,23 @@
+{
+    "name": "reda/reda-alojamiento",
+    "description": "Módulo de Alojamiento y Funciones JavaScript (Administrativo, Billetera, Disputa, Experiencia).",
+    "type": "laravel-package",
+    "autoload": {
+        "psr-4": {
+            "Reda\\RedaAlojamiento\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.2", 
+        "illuminate/support": "^11.0" 
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Reda\\RedaAlojamiento\\RedaAlojamientoServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
