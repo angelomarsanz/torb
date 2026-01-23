@@ -10,13 +10,16 @@
 #       "Ninguno"
 #   )
 ARCHIVOS_PHP_PUNTUALES=(
-        "Ninguno"
+        #"Ninguno"
 
         #Archivos modificados en el proyecto original
 
         #"composer.json"
         #"config/app.php"
+        #"package.json"
         #"webpack.mix.js"
+        #"subir.sh"
+        #"compilar.sh"
 
         #"resources/views/common/head.blade.php"
         #"resources/views/common/foot.blade.php"
@@ -66,11 +69,13 @@ ARCHIVOS_PHP_PUNTUALES=(
         
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/actividades_experiencias/index.blade.php"
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/anfitriones_experiencias/index.blade.php"
-        #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
+        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/horarios_experiencias/index.blade.php"
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/informaciones_experiencias/index.blade.php"
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/reservaciones_experiencias/index.blade.php"
+
+        #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/ui/addPublicaExperienciaBtn.js"
 
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Administrativo/AdministrativoController.php"
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/BilleteraHuesped/BilleteraHuespedController.php"
