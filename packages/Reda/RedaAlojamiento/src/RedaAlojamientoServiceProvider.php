@@ -36,6 +36,9 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         // Esto permite referencias como: 'reda-alojamiento-js::experiencia.index'
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'reda-alojamiento');
 
+        // Colocamos el alias 'pasos' apuntando a la carpeta específica de los formularios
+        $this->loadViewsFrom(__DIR__.'/../resources/views/experiencia/experiencias/formularios_de_pasos', 'pasos');
+
         // Carga las migraciones
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 

@@ -5,6 +5,7 @@ import './vistas/administrativo/administrativos/indexAdministrativos.js';
 // import './vistas/disputa/disputas/indexDisputa.js';
 import './vistas/experiencia/experiencias/indexExperiencias.js';
 import './vistas/experiencia/experiencias/createExperiencias.js';
+import './vistas/experiencia/formularios_de_pasos/formularioDePasos.js';
 import './vistas/experiencia/actividades_experiencias/indexActividadesExperiencias.js';
 import './vistas/experiencia/horarios_experiencias/indexHorariosExperiencias.js';
 import './vistas/experiencia/informaciones_experiencias/indexInformacionesExperiencias.js';

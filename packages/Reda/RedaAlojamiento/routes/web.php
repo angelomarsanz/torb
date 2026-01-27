@@ -56,10 +56,11 @@ Route::prefix('reda')->group(function () {
     // 2. Rutas que requieren login de usuario (Grupo original con middleware)
     // ----------------------------------------------------------------------
     Route::group(['middleware' => ['web', 'reda.auth', 'locale']], function () {
-        Route::get('crear-experiencia', [ExperienciaController::class, 'create'])->name('reda.experiencias.create');
+        Route::match(['GET', 'POST'], 'crear-experiencia', [ExperienciaController::class, 'create'])
+        ->name('reda.experiencias.create');
 
         Route::match(['GET', 'POST'], 'formulario-de-pasos/{id}/{paso}', [ExperienciaController::class, 'formularioDePasos'])
         ->name('reda.experiencias.pasos')
-        ->where(['id' => '[0-6]+', 'paso' => 'experiencia|fotos|ubicacion|actividad|horario|informacion|anfitrion']);
+        ->where(['id' => '[0-7]+', 'paso' => 'descripcion|fotos|actividades|ubicacion|horario|precio|informacion|anfitrion']);
     }); 
 });

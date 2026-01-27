@@ -17,6 +17,7 @@ class AnfitrionExperiencia extends Model
     // Campos asignables en masa
     protected $fillable = [
         'user_id',
+        'experiencia_id',
         'fecha_nacimiento',
         'identidad_verificada',
         'descripcion_anfitrion',
@@ -31,5 +32,9 @@ class AnfitrionExperiencia extends Model
     public function usuario()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    public function experiencia()
+    {
+        return $this->belongsTo(Experiencia::class, 'experiencia_id');
     }
 }

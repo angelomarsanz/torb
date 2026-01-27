@@ -49,24 +49,6 @@ $(function() {
             </div>
         `;
 
-        // Configuración del Selector de Ubicación (Google Maps)
-        $('#us3').locationpicker({
-            location: {
-                latitude: 0,
-                longitude: 0
-            },
-            radius: 0,
-            inputBinding: {
-                latitudeInput: $('#latitude'),
-                longitudeInput: $('#longitude'),
-                locationNameInput: $('#map_address')
-            },
-            enableAutocomplete: true,
-            onchanged: function (currentLocation, radius, isMarkerDropped) {
-                // Lógica adicional si es necesaria
-            }
-        });
-
         // Validación del Formulario
         $('#list_experience').validate({
             rules: {
@@ -74,13 +56,6 @@ $(function() {
                     required: true,
                     maxlength: 255
                 },
-                precio_persona: {
-                    required: true,
-                    number: true
-                },
-                direccion_mapa: {
-                    required: true
-                }
             },
             submitHandler: function(form)
             {
@@ -93,17 +68,10 @@ $(function() {
                 titulo: {
                     required: fieldRequiredText,
                 },
-                precio_persona: {
-                    required: fieldRequiredText,
-                },
-                direccion_mapa: {
-                    required: fieldRequiredText,
-                }
             },
             errorElement: 'p',
             errorClass: 'error-tag',
         });
-
 
         // 4. Añadir el contenido al contenedor y el modal al body.
         // $(containerId).html(initialContentHtml);

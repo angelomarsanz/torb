@@ -5,6 +5,7 @@ namespace Reda\RedaAlojamiento\Models\Experiencia;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User; // Importamos el modelo User original
 
 // CAMBIO CRUCIAL 2: Los modelos relacionados deben usar el nuevo namespace del paquete y la subcarpeta
 use Reda\RedaAlojamiento\Models\Experiencia\ActividadExperiencia;
@@ -31,6 +32,7 @@ class Experiencia extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id', // ¡No olvides añadirlo al fillable!
         'titulo',
         'descripcion',
         'ruta_imagenes',
@@ -75,5 +77,18 @@ class Experiencia extends Model
     public function reservaciones()
     {
         return $this->hasMany(ReservacionExperiencia::class, 'experiencia_id');
+    }
+    public function anfitrion()
+    {
+        // Si una experiencia solo tiene un registro de anfitrión:
+        return $this->hasOne(AnfitrionExperiencia::class, 'experiencia_id');
+    }
+    /**
+     * Relación: Una experiencia pertenece a un Usuario (Host).
+     */
+    public function owner()
+    {
+        // Definimos la relación inversa del uno a muchos
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
