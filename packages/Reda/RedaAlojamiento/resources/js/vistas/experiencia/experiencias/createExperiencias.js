@@ -1,7 +1,9 @@
 // resources/js/reda/vistas/experiencia/experiencias/createExperiencias.js
 
+"use strict";
+
 $(function() {
-    // 1. Verificar si el div específico de esta vista existe en la página.
+    // Verificar si el div específico de esta vista existe en la página.
     const containerId = '#create_experiencia';
     if ($(containerId).length) {
 
@@ -9,7 +11,7 @@ $(function() {
 
         console.log('Script para "Create Experiencia" cargado.');
 
-        // 2. Crear el botón y el modal
+        // Crear el botón y el modal
         const modalId = 'modalCreateExperiencia';
 
         // HTML del Modal
@@ -31,7 +33,7 @@ $(function() {
             </div>
         `;
 
-        // 3. Crear contenido inicial dinámico con el botón modificado
+        // Crear contenido inicial dinámico con el botón modificado
         const initialContentHtml = `
             <div class="card">
               <div class="card-header">
@@ -47,8 +49,64 @@ $(function() {
             </div>
         `;
 
+        // Configuración del Selector de Ubicación (Google Maps)
+        $('#us3').locationpicker({
+            location: {
+                latitude: 0,
+                longitude: 0
+            },
+            radius: 0,
+            inputBinding: {
+                latitudeInput: $('#latitude'),
+                longitudeInput: $('#longitude'),
+                locationNameInput: $('#map_address')
+            },
+            enableAutocomplete: true,
+            onchanged: function (currentLocation, radius, isMarkerDropped) {
+                // Lógica adicional si es necesaria
+            }
+        });
+
+        // Validación del Formulario
+        $('#list_experience').validate({
+            rules: {
+                titulo: {
+                    required: true,
+                    maxlength: 255
+                },
+                precio_persona: {
+                    required: true,
+                    number: true
+                },
+                direccion_mapa: {
+                    required: true
+                }
+            },
+            submitHandler: function(form)
+            {
+                $("#btn_next").attr("disabled", true);
+                $(".spinner").removeClass('d-none');
+                $("#btn_next-text").text(continueText);
+                return true;
+            },
+            messages: {
+                titulo: {
+                    required: fieldRequiredText,
+                },
+                precio_persona: {
+                    required: fieldRequiredText,
+                },
+                direccion_mapa: {
+                    required: fieldRequiredText,
+                }
+            },
+            errorElement: 'p',
+            errorClass: 'error-tag',
+        });
+
+
         // 4. Añadir el contenido al contenedor y el modal al body.
-        $(containerId).html(initialContentHtml);
-        $('body').append(modalHtml);
+        // $(containerId).html(initialContentHtml);
+        // $('body').append(modalHtml);
     }
 });

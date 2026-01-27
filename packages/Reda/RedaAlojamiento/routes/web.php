@@ -57,6 +57,9 @@ Route::prefix('reda')->group(function () {
     // ----------------------------------------------------------------------
     Route::group(['middleware' => ['web', 'reda.auth', 'locale']], function () {
         Route::get('crear-experiencia', [ExperienciaController::class, 'create'])->name('reda.experiencias.create');
-    });
-    
+
+        Route::match(['GET', 'POST'], 'formulario-de-pasos/{id}/{paso}', [ExperienciaController::class, 'formularioDePasos'])
+        ->name('reda.experiencias.pasos')
+        ->where(['id' => '[0-6]+', 'paso' => 'experiencia|fotos|ubicacion|actividad|horario|informacion|anfitrion']);
+    }); 
 });

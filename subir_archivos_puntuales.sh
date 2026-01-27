@@ -75,6 +75,7 @@ ARCHIVOS_PHP_PUNTUALES=(
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/informaciones_experiencias/index.blade.php"
         #"packages/Reda/RedaAlojamiento/resources/views/experiencia/reservaciones_experiencias/index.blade.php"
 
+        "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/experiencias/createExperiencias.js"
         #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/ui/addPublicaExperienciaBtn.js"
 
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Administrativo/AdministrativoController.php"
@@ -83,10 +84,10 @@ ARCHIVOS_PHP_PUNTUALES=(
 
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ActividadExperienciaController.php"
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/AnfitrionExperienciaController.php"
-        #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
+        "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/HorarioExperienciaController.php"
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/InformacionExperienciaController.php"
         #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ReservacionExperienciaController.php"
 
-        #"packages/Reda/RedaAlojamiento/routes/web.php"
+        "packages/Reda/RedaAlojamiento/routes/web.php"
 )
