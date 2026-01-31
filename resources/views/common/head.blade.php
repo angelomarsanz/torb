@@ -28,7 +28,7 @@
 		<link rel="stylesheet" href="{{ asset('public/css/vendors/bootstrap/bootstrap.min.css') }}">
 		<link rel="stylesheet" href="{{ asset('public/css/vendors/fontawesome/css/all.min.css') }}">
 		<link rel="stylesheet" href="{{ asset('public/css/style.css') }}">
-		<link rel="stylesheet" href="{{ asset('public/css/reda-alojamiento.css?v=' . time()) }}">
+		<link rel="stylesheet" href="{{ asset('public/css/reda/reda-general.min.css?v=' . time()) }}">
 		<!--CSS new version end-->
 	</head>
 <body>

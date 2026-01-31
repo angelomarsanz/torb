@@ -17,7 +17,7 @@
 		<script src="{{ asset('public/js/front-foot.min.js') }}"></script>
 
 		<!-- Needed Js from Old Version End -->
-		<script src="{{ asset('public/js/reda-alojamiento.js?v=' . time()) }}"></script>
+		<script src="{{ asset('public/js/reda/general/reda-general.min.js?v=' . time()) }}"></script>
 		@stack('scripts')
 	</body>
 </html>

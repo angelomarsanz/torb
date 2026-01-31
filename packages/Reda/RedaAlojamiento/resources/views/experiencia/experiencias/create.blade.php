@@ -39,11 +39,12 @@
 @endsection
 
 @section('validation_script')
-    <script type="text/javascript" src="{{ asset('js/jquery.validate.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
 
     <script type="text/javascript">
         'use strict'
         let continueText = "{{ __('Continuando') }}..";
         let fieldRequiredText = "{{ __('Este campo es obligatorio.') }}";
     </script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/createExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

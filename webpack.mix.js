@@ -21,8 +21,18 @@ if (buildApp) {
 // Módulo RedaAlojamiento
 if (buildAlojamiento) {
     console.log('🏗️ Compilando: REDA Alojamiento');
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/main.js', 'public/js/reda-alojamiento.js')
-       .sass('packages/Reda/RedaAlojamiento/resources/sass/main.scss', 'public/css/reda-alojamiento.css');
+    // Css general
+    mix.sass('packages/Reda/RedaAlojamiento/resources/sass/main.scss', 'public/css/reda/reda-general.min.css');
+
+    // Js para uso general
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general.min.js');
+
+    // Js por vistas
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js', 
+        'public/js/reda/vistas/experiencia/createExperiencias.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js', 
+        'public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js');
 }
 
 mix.options({ 

@@ -1,5 +1,3 @@
-// resources/js/reda/vistas/experiencia/experiencias/createExperiencias.js
-
 "use strict";
 
 $(function() {
