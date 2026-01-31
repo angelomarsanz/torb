@@ -9,7 +9,7 @@ class FotoExperiencia extends Model
 {
     use HasFactory;
 
-    protected $table   = 'foto_experiencias';
+    protected $table   = 'fotos_experiencias';
     public $timestamps = false; // Igual que en el original PropertyPhotos
 
     protected $fillable = [

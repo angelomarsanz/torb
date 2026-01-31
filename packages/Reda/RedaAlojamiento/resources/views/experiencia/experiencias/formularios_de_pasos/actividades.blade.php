@@ -15,20 +15,9 @@
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0 ">
-                                <div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-sm-0 ">
-                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('Título y Descripción') }}</h4>
-                                </div>
-
-                                <div class="row mt-4 p-4">
-                                    <div class="col-md-12">
-                                        <label>{{ __('Título de la Experiencia') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="titulo" class="form-control text-16" value="{{ $result->titulo }}">
-                                    </div>
-                                    <div class="col-md-12 mt-4">
-                                        <label>{{ __('Descripción') }} <span class="text-danger">*</span></label>
-                                        <textarea name="descripcion" class="form-control text-16" rows="6">{{ $result->descripcion }}</textarea>
-                                    </div>
-                                </div>
+                                @php
+                                    echo "Actividades";
+                                @endphp
                             </div>
 
                             <div class="col-md-12 p-0 mt-4 mb-5">

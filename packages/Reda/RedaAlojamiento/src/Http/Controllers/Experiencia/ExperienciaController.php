@@ -9,10 +9,10 @@ use Reda\RedaAlojamiento\Models\Experiencia\{
     ActividadExperiencia,
     HorarioExperiencia,
     InformacionExperiencia,
-    AnfitrionExperiencia
+    AnfitrionExperiencia,
+    FotoExperiencia
 };
 use Auth;
-use Reda\RedaAlojamiento\Models\Experiencia\FotoExperiencia;
 use Illuminate\Support\Facades\File;
 
 class ExperienciaController extends Controller
@@ -44,7 +44,17 @@ class ExperienciaController extends Controller
     {
         $id = $request->id;
         $paso = $request->paso;
-        $result = Experiencia::findOrFail($id);
+        // Cargamos la experiencia con TODAS sus relaciones de una sola vez
+        $result = Experiencia::with([
+            'fotos', 
+            'actividades', 
+            'horarios', 
+            'informaciones', 
+            'anfitrion'
+        ])->findOrFail($id);
+
+        $result = Experiencia::with(['fotos', 'actividades', 'horarios', 'informaciones', 'anfitrion'])->findOrFail($id);
+
 
         if ($request->isMethod('get')) {
             return view("reda-alojamiento::experiencia.experiencias.formularios_de_pasos.$paso", compact('result', 'paso'));

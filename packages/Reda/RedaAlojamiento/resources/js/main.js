@@ -1,3 +1,13 @@
+const $ = window.jQuery;
+
+// 2. Importamos el plugin de validación. 
+// Webpack lo encontrará en node_modules, pero lo aplicará al jQuery de arriba.
+import 'jquery-validation';
+import 'jquery-validation/dist/additional-methods.js';
+
+// 3. Aseguramos que el signo $ y jQuery globales tengan el plugin asignado
+window.jQuery = window.$ = $;
+
 // Importamos los scripts de cada una de las vistas.
 // Webpack los incluirá todos en el archivo compilado reda.js.
 import './vistas/administrativo/administrativos/indexAdministrativos.js';

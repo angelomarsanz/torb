@@ -46,6 +46,23 @@ class Experiencia extends Model
     ];
 
     /**
+     * Relación: Una experiencia pertenece a un Usuario (Host).
+     */
+    public function owner()
+    {
+        // Definimos la relación inversa del uno a muchos
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Relación: fotos (Coincide con tu búsqueda)
+     */
+    public function fotos()
+    {
+        return $this->hasMany(FotoExperiencia::class, 'experiencia_id');
+    }
+
+    /**
      * Get the activities for the experience.
      */
     public function actividades()
@@ -74,21 +91,13 @@ class Experiencia extends Model
     /**
      * Relación: una experiencia puede tener muchas reservaciones.
      */
-    public function reservaciones()
-    {
-        return $this->hasMany(ReservacionExperiencia::class, 'experiencia_id');
-    }
     public function anfitrion()
     {
         // Si una experiencia solo tiene un registro de anfitrión:
         return $this->hasOne(AnfitrionExperiencia::class, 'experiencia_id');
     }
-    /**
-     * Relación: Una experiencia pertenece a un Usuario (Host).
-     */
-    public function owner()
+     public function reservaciones()
     {
-        // Definimos la relación inversa del uno a muchos
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasMany(ReservacionExperiencia::class, 'experiencia_id');
     }
 }

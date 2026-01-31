@@ -28,16 +28,22 @@
                                 </div>
 
                                 <div class="row p-4" id="photo-list">
-                                    @foreach($result->fotos as $foto)
+                                    @forelse($result->fotos as $foto)
                                         <div class="col-md-4 mt-4 photo-item" id="photo-{{ $foto->id }}">
                                             <div class="card">
-                                                <img src="{{ asset('images/experiencias/' . $result->id . '/' . $foto->photo) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                                <img src="{{ asset('public/images/experiencias/' . $result->id . '/' . $foto->photo) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
                                                 <div class="card-body p-2 text-center">
-                                                    <button type="button" class="btn btn-sm btn-danger delete-photo" data-id="{{ $foto->id }}"><i class="fa fa-trash"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-danger delete-photo" data-id="{{ $foto->id }}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <div class="col-md-12" id="no-photos-message">
+                                            <p class="text-center text-muted">{{ __('No hay fotos subidas todavía.') }}</p>
+                                        </div>
+                                    @endforelse
                                 </div>
                             </div>
 
@@ -56,8 +62,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('validation_script')
-    <script type="text/javascript" src="{{ asset('js/jquery.validate.min.js') }}"></script>
 @endsection
