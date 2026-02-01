@@ -99,7 +99,7 @@ class ExperienciaController extends Controller
         }
     }
 
-    public function uploadPhotos(Request $request, $id) {
+    public function uploadPhotoExperiencia(Request $request, $id) {
         if ($request->hasFile('file')) {
             $path = public_path('images/experiencias/' . $id);
             if (!File::isDirectory($path)) {
@@ -127,7 +127,7 @@ class ExperienciaController extends Controller
         }
     }
 
-    public function deletePhoto(Request $request) {
+    public function deletePhotoExperiencia(Request $request) {
         $foto = FotoExperiencia::find($request->photo_id);
         if ($foto) {
             $path = public_path('images/experiencias/' . $foto->experiencia_id . '/' . $foto->photo);
@@ -139,7 +139,7 @@ class ExperienciaController extends Controller
         }
     }
 
-    public function makeDefaultPhoto(Request $request) {
+    public function makeDefaultExperiencia(Request $request) {
         // Poner todas en 0
         FotoExperiencia::where('experiencia_id', $request->experiencia_id)->update(['cover_photo' => 0]);
         // Poner la seleccionada en 1
@@ -150,21 +150,21 @@ class ExperienciaController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function cropPhoto(Request $request)
+    public function cropPhotoExperiencia(Request $request)
     {
-        // 1. Validación básica
+        // Validación básica
         $request->validate([
-            'photo_id' => 'required|exists:foto_experiencias,id',
-            'cropped_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'photo_id' => 'required|exists:fotos_experiencias,id',
+            'cropped_image' => 'required|max:5120',
         ]);
     
         $foto = FotoExperiencia::find($request->photo_id);
     
         if ($foto && $request->hasFile('cropped_image')) {
-            // 2. Definir la ruta física (donde se guarda)
+            // Definir la ruta física (donde se guarda)
             $path = public_path('images/experiencias/' . $foto->experiencia_id);
             
-            // 3. Mantener el nombre de archivo original para sobreescribirlo
+            // Mantener el nombre de archivo original para sobreescribirlo
             $fileName = $foto->photo;
             $file = $request->file('cropped_image');
             
@@ -172,13 +172,18 @@ class ExperienciaController extends Controller
             if (!File::isDirectory($path)) {
                 File::makeDirectory($path, 0777, true, true);
             }
+
+            // Eliminar físicamente la imagen anterior para evitar problemas de caché
+            if (File::exists($path . '/' . $fileName)) {
+                File::delete($path . '/' . $fileName);
+            }
     
-            // 4. Mover el archivo (esto reemplaza la foto vieja físicamente)
+            // Mover el archivo (esto reemplaza la foto vieja físicamente)
             $file->move($path, $fileName);
     
-            // 5. Generar la URL pública correcta para devolver al JS
+            // Generar la URL pública correcta para devolver al JS
             // Usamos asset() que apunta a la carpeta public
-            $newUrl = asset('images/experiencias/' . $foto->experiencia_id . '/' . $fileName);
+            $newUrl = asset('images/experiencias/' . $foto->experiencia_id . '/' . $fileName) . '?v=' . time();
     
             return response()->json([
                 'success' => true, 

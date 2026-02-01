@@ -14,6 +14,7 @@
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
                         <form id="img_form" enctype='multipart/form-data' method="post" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
+                            <input type="hidden" id="experiencia_id" value="{{ $result->id }}">
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0">
                                 <div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-sm-0">
                                     <h4 class="text-18 font-weight-700 pl-3">{{ __('Fotos') }}</h4>
@@ -45,7 +46,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <img src="{{ asset('public/images/experiencias/'.$result->id.'/'.$foto->photo) }}" class="card-img-top img-cover-200">
+                                                <img src="{{ asset('public/images/experiencias/'.$result->id.'/'.$foto->photo) }}?v={{ time() }}" class="card-img-top img-cover-200">
                                             </div>
                                         </div>
                                     @empty
@@ -86,6 +87,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <input type="hidden" id="crop_photo_id" value="">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancelar') }}</button>
                 <button type="button" class="btn btn-success" id="crop-and-upload">{{ __('Guardar Cambios') }}</button>
             </div>

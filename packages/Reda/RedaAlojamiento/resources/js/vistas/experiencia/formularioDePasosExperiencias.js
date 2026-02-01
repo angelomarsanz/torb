@@ -57,7 +57,11 @@ $(function() {
                         correctedSrc = photoSrc.replace('/images/', '/public/images/');
                     }
 
-                    $('#image-to-crop').attr('src', correctedSrc);
+                    let correctedSrcWithCacheBuster = correctedSrc + (correctedSrc.includes('?') ? '&' : '?') + 'v=' + new Date().getTime();
+
+                    // Cargamos la imagen con el cache buster en el visor del modal
+                    $('#image-to-crop').attr('src', correctedSrcWithCacheBuster);
+
                     $('#crop_photo_id').val(photoId);
                     
                     // Destruir instancia previa de Cropper si existe
@@ -91,16 +95,60 @@ $(function() {
 
                 // INICIALIZACIÓN DE CROPPER AL ABRIR EL MODAL
                 let cropper;
+                let isShiftPressed = false;
+                
+                // 1. Interruptor de teclado (Limpio, sin funciones de cropper)
+                $(document).on('keydown', function(e) { if (e.key === "Shift") isShiftPressed = true; });
+                $(document).on('keyup', function(e) { if (e.key === "Shift") isShiftPressed = false; });
+                
+                // 2. Configuración del Cropper
                 $('#cropModal').on('shown.bs.modal', function () {
                     let image = document.getElementById('image-to-crop');
+                    
                     cropper = new Cropper(image, {
-                        aspectRatio: 4 / 3,
+                        aspectRatio: NaN, 
                         viewMode: 1,
+                        autoCropArea: 1,
+                        // CLAVE 1: Antes de que el cuadro se mueva
+                        cropstart: function (event) {
+                            if (isShiftPressed) {
+                                let data = cropper.getData();
+                                let currentRatio = data.width / data.height;
+                                
+                                // Aplicamos el ratio pero SIN disparar el re-renderizado automático
+                                cropper.options.aspectRatio = currentRatio;
+                                cropper.setAspectRatio(currentRatio);
+                            }
+                        },
+                        // CLAVE 2: Al soltar el ratón (Aquí es donde fallaba antes)
+                        cropend: function () {
+                            // Guardamos la posición EXACTA donde el usuario dejó el ratón
+                            let lastData = cropper.getData();
+                            
+                            // Volvemos a modo libre para que el usuario pueda mover lados individualmente
+                            cropper.options.aspectRatio = NaN; 
+                            cropper.setAspectRatio(NaN); 
+                            
+                            // FORZAMOS a que el marco se quede donde lo soltamos
+                            // Esto evita que Cropper lo expanda al tamaño original
+                            cropper.setData(lastData);
+                        }
                     });
+                });
+
+                $('#cropModal').on('hidden.bs.modal', function () {
+                    if (cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                    }
+                    isShiftPressed = false; // Resetear bandera
                 });
 
                 // BOTÓN GUARDAR DEL MODAL
                 $('#crop-and-upload').on('click', function() {
+                    let $btn = $(this);
+                    $btn.prop('disabled', true).text('Procesando...'); // Feedback visual
+                    
                     let canvas = cropper.getCroppedCanvas();
                     canvas.toBlob(function(blob) {
                         let formData = new FormData();
@@ -111,8 +159,10 @@ $(function() {
                         formData.append('photo_id', photoId);
 
                         // Si hay photoId, editamos; si no, subimos nueva.
-                        let urlAction = photoId ? APP_URL + '/reda/crop-photo' : APP_URL + '/reda/upload-photos/' + $('#experiencia_id').val();
+                        let urlAction = photoId ? APP_URL + '/reda/crop-photo-experiencia' : APP_URL + '/reda/upload-photo-experiencia/' + $('#experiencia_id').val();
+                        console.log('photoId:', photoId);
                         console.log('urlAction:', urlAction);
+                        console.log('#experiencia_id:', $('#experiencia_id').val());
 
                         $.ajax({
                             url: urlAction,
@@ -122,11 +172,21 @@ $(function() {
                             contentType: false,
                             success: function(response) {
                                 if(response.success) {
+                                    let photoId = $('#crop_photo_id').val();
+                                    if(photoId) {
+                                        $(`#photo-${photoId} img`).attr('src', response.new_path);
+                                    }
+                                    alert(response.message); // Mensaje de éxito
                                     location.reload(); // Recargamos para ver los cambios reflejados
                                 }
+                            },
+                            error: function(xhr) {
+                                $btn.prop('disabled', false).text('Guardar Cambios');
+                                let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Error al guardar la imagen';
+                                alert('Error: ' + msg); // Mensaje de error
                             }
                         });
-                    });
+                    }, 'image/jpeg');
                 });
 
                 break;    
