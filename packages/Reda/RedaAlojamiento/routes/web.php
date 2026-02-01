@@ -62,5 +62,18 @@ Route::prefix('reda')->group(function () {
         Route::match(['GET', 'POST'], 'formulario-de-pasos/{id}/{paso}', [ExperienciaController::class, 'formularioDePasos'])
         ->name('reda.experiencias.pasos')
         ->where(['id' => '[0-7]+', 'paso' => 'descripcion|fotos|actividades|ubicacion|horario|precio|informacion|anfitrion']);
+
+        Route::post('upload-photos/{id}', [ExperienciaController::class, 'uploadPhotos'])
+        ->name('reda.experiencias.upload_photo');
+
+        Route::post('delete-photo', [ExperienciaController::class, 'deletePhoto'])
+        ->name('reda.experiencias.delete_photo');
+
+        Route::post('make-default-photo', [ExperienciaController::class, 'makeDefaultPhoto'])
+        ->name('reda.experiencias.make_default_photo');
+
+        Route::post('crop-photo-experiencia', [ExperienciaController::class, 'cropPhoto'])
+        ->name('reda.experiencias.crop_photo');
+
     }); 
 });

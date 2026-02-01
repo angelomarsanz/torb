@@ -1,5 +1,20 @@
-// resources/sass/reda/main.scss
-
-// Aquí puedes importar otros archivos SASS específicos de tus módulos en el futuro.
-// Por ahora, agregamos un estilo de ejemplo.
-.btn-reda-modal { margin-top: 20px; }
+.reda-photo-controls {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    z-index: 10;
+}
+.reda-btn-photo-action {
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}

@@ -29,14 +29,23 @@
 
                                 <div class="row p-4" id="photo-list">
                                     @forelse($result->fotos as $foto)
-                                        <div class="col-md-4 mt-4 photo-item" id="photo-{{ $foto->id }}">
-                                            <div class="card">
-                                                <img src="{{ asset('public/images/experiencias/' . $result->id . '/' . $foto->photo) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                                <div class="card-body p-2 text-center">
-                                                    <button type="button" class="btn btn-sm btn-danger delete-photo" data-id="{{ $foto->id }}">
-                                                        <i class="fa fa-trash"></i>
+                                        <div class="col-md-4 mb-4 photo-item" id="photo-{{ $foto->id }}">
+                                            <div class="card position-relative h-100">
+                                                <div class="reda-photo-controls">
+                                                    <button type="button" class="reda-btn-photo-action make-default" data-id="{{ $foto->id }}">
+                                                        <i class="fa-star {{ $foto->cover_photo ? 'fas text-warning' : 'far' }}"></i>
                                                     </button>
+                                                    
+                                                    <div class="d-flex">
+                                                        <button type="button" class="reda-btn-photo-action btn-crop mr-1" data-id="{{ $foto->id }}" data-src="{{ asset('images/experiencias/'.$result->id.'/'.$foto->photo) }}">
+                                                            <i class="fa fa-edit text-info"></i>
+                                                        </button>
+                                                        <button type="button" class="reda-btn-photo-action delete-photo" data-id="{{ $foto->id }}">
+                                                            <i class="fa fa-trash text-danger"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
+                                                <img src="{{ asset('public/images/experiencias/'.$result->id.'/'.$foto->photo) }}" class="card-img-top img-cover-200">
                                             </div>
                                         </div>
                                     @empty
@@ -62,9 +71,36 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ __('Recortar Imagen') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="img-container">
+                    <img id="image-to-crop" src="" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancelar') }}</button>
+                <button type="button" class="btn btn-success" id="crop-and-upload">{{ __('Guardar Cambios') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
+@push('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+@endpush
+
 @section('validation_script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

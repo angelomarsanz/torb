@@ -98,4 +98,95 @@ class ExperienciaController extends Controller
             }
         }
     }
+
+    public function uploadPhotos(Request $request, $id) {
+        if ($request->hasFile('file')) {
+            $path = public_path('images/experiencias/' . $id);
+            if (!File::isDirectory($path)) {
+                File::makeDirectory($path, 0777, true, true);
+            }
+
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($path, $fileName);
+
+            $foto = new FotoExperiencia;
+            $foto->experiencia_id = $id;
+            $foto->photo = $fileName;
+            $foto->serial = FotoExperiencia::where('experiencia_id', $id)->count() + 1;
+            
+            // Si es la primera foto, marcar como portada
+            $foto->cover_photo = ($foto->serial == 1) ? 1 : 0;
+            $foto->save();
+
+            return response()->json([
+                'success' => true,
+                'photo_id' => $foto->id,
+                'path' => asset('images/experiencias/'.$id.'/'.$fileName)
+            ]);
+        }
+    }
+
+    public function deletePhoto(Request $request) {
+        $foto = FotoExperiencia::find($request->photo_id);
+        if ($foto) {
+            $path = public_path('images/experiencias/' . $foto->experiencia_id . '/' . $foto->photo);
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+            $foto->delete();
+            return response()->json(['success' => true]);
+        }
+    }
+
+    public function makeDefaultPhoto(Request $request) {
+        // Poner todas en 0
+        FotoExperiencia::where('experiencia_id', $request->experiencia_id)->update(['cover_photo' => 0]);
+        // Poner la seleccionada en 1
+        $foto = FotoExperiencia::find($request->photo_id);
+        $foto->cover_photo = 1;
+        $foto->save();
+        
+        return response()->json(['success' => true]);
+    }
+
+    public function cropPhoto(Request $request)
+    {
+        // 1. Validación básica
+        $request->validate([
+            'photo_id' => 'required|exists:foto_experiencias,id',
+            'cropped_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+        ]);
+    
+        $foto = FotoExperiencia::find($request->photo_id);
+    
+        if ($foto && $request->hasFile('cropped_image')) {
+            // 2. Definir la ruta física (donde se guarda)
+            $path = public_path('images/experiencias/' . $foto->experiencia_id);
+            
+            // 3. Mantener el nombre de archivo original para sobreescribirlo
+            $fileName = $foto->photo;
+            $file = $request->file('cropped_image');
+            
+            // Asegurar que el directorio existe
+            if (!File::isDirectory($path)) {
+                File::makeDirectory($path, 0777, true, true);
+            }
+    
+            // 4. Mover el archivo (esto reemplaza la foto vieja físicamente)
+            $file->move($path, $fileName);
+    
+            // 5. Generar la URL pública correcta para devolver al JS
+            // Usamos asset() que apunta a la carpeta public
+            $newUrl = asset('images/experiencias/' . $foto->experiencia_id . '/' . $fileName);
+    
+            return response()->json([
+                'success' => true, 
+                'message' => 'Foto actualizada correctamente',
+                'new_path' => $newUrl // Esto sirve para actualizar el src en el JS si decides no recargar
+            ]);
+        }
+    
+        return response()->json(['success' => false, 'message' => 'No se pudo procesar la imagen'], 400);
+    }
 }

@@ -17,6 +17,10 @@ ARCHIVOS_PHP_PUNTUALES=(
         "resources/views/common/head.blade.php"
         "resources/views/common/foot.blade.php"
 
+        "packages/Reda/RedaAlojamiento/routes/web.php"
+
+        "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+
         "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
         "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
         "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/fotos.blade.php"
@@ -26,5 +30,7 @@ ARCHIVOS_PHP_PUNTUALES=(
         "packages/Reda/RedaAlojamiento/resources/js/general/addPublicaExperienciaBtn.js"
         "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js"
         "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
+
+        packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php
 
 )
