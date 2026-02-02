@@ -46,6 +46,55 @@ $(function() {
                     }
                 });
 
+                $(document).on('change', '#upload_photos', function() {
+                    let file = this.files[0];
+                    if (file) {
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            // 1. Ponemos la imagen en el modal
+                            $('#image-to-crop').attr('src', e.target.result);
+                            // 2. Limpiamos el photo_id porque es una foto NUEVA
+                            $('#crop_photo_id').val(''); 
+                            // 3. Abrimos el modal
+                            $('#cropModal').modal('show');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // --- BOTÓN ELIMINAR ---
+                $(document).on('click', '.delete-photo', function(e) {
+                    e.preventDefault();
+                    let photoId = $(this).data('id');
+                    if (confirm('¿Estás seguro de eliminar esta foto?')) {
+                        $.post(APP_URL + '/reda/delete-photo-experiencia', {
+                            _token: $('input[name="_token"]').val(),
+                            photo_id: photoId
+                        }, function(response) {
+                            if (response.success) {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+
+                // --- BOTÓN IMAGEN DESTACADA ---
+                $(document).on('click', '.make-default', function(e) {
+                    e.preventDefault();
+                    let photoId = $(this).data('id');
+                    $.post(APP_URL + '/reda/make-default-photo-experiencia', {
+                        _token: $('input[name="_token"]').val(),
+                        photo_id: photoId,
+                        experiencia_id: $('#experiencia_id').val()
+                    }, function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    });
+                });
+
+                let cropper;
+
                 // EVENTO: CLIC EN "EDITAR" (Para fotos que ya existen en la lista)
                 $(document).on('click', '.btn-crop', function() {
                     let photoId = $(this).data('id');
@@ -72,29 +121,7 @@ $(function() {
                     $('#cropModal').modal('show');
                 });
 
-                // EVENTO: SELECCIONAR ARCHIVOS NUEVOS (Input change)
-                $(document).on('change', '#upload_photos', function(e) {
-                    let files = e.target.files;
-                    if (files && files.length > 0) {
-                        let file = files[0];
-                        let reader = new FileReader();
-                        reader.onload = function(e) {
-                            // Para fotos nuevas, no necesitamos el prefijo /public/ 
-                            // porque vienen directamente del navegador (base64)
-                            $('#image-to-crop').attr('src', e.target.result);
-                            $('#crop_photo_id').val(''); // ID vacío significa "foto nueva"
-                            
-                            if (cropper) {
-                                cropper.destroy();
-                            }
-                            $('#cropModal').modal('show');
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
                 // INICIALIZACIÓN DE CROPPER AL ABRIR EL MODAL
-                let cropper;
                 let isShiftPressed = false;
                 
                 // 1. Interruptor de teclado (Limpio, sin funciones de cropper)
@@ -144,26 +171,24 @@ $(function() {
                     isShiftPressed = false; // Resetear bandera
                 });
 
-                // BOTÓN GUARDAR DEL MODAL
                 $('#crop-and-upload').on('click', function() {
-                    let $btn = $(this);
-                    $btn.prop('disabled', true).text('Procesando...'); // Feedback visual
-                    
-                    let canvas = cropper.getCroppedCanvas();
-                    canvas.toBlob(function(blob) {
+                        let $btn = $(this);
+                        $btn.prop('disabled', true).text('Procesando...'); // Feedback visual
+                        cropper.getCroppedCanvas().toBlob((blob) => {
                         let formData = new FormData();
                         let photoId = $('#crop_photo_id').val();
-                        
+                        let expId = $('#experiencia_id').val();
+                
                         formData.append('cropped_image', blob, 'photo.jpg');
                         formData.append('_token', $('input[name="_token"]').val());
-                        formData.append('photo_id', photoId);
-
-                        // Si hay photoId, editamos; si no, subimos nueva.
-                        let urlAction = photoId ? APP_URL + '/reda/crop-photo-experiencia' : APP_URL + '/reda/upload-photo-experiencia/' + $('#experiencia_id').val();
-                        console.log('photoId:', photoId);
-                        console.log('urlAction:', urlAction);
-                        console.log('#experiencia_id:', $('#experiencia_id').val());
-
+                        
+                        // Si hay photoId es una edición, si no, es una subida nueva
+                        let urlAction = photoId 
+                            ? APP_URL + '/reda/crop-photo-experiencia' 
+                            : APP_URL + '/reda/upload-photo-experiencia/' + expId;
+                
+                        if(photoId) formData.append('photo_id', photoId);
+                
                         $.ajax({
                             url: urlAction,
                             method: 'POST',
@@ -171,14 +196,7 @@ $(function() {
                             processData: false,
                             contentType: false,
                             success: function(response) {
-                                if(response.success) {
-                                    let photoId = $('#crop_photo_id').val();
-                                    if(photoId) {
-                                        $(`#photo-${photoId} img`).attr('src', response.new_path);
-                                    }
-                                    alert(response.message); // Mensaje de éxito
-                                    location.reload(); // Recargamos para ver los cambios reflejados
-                                }
+                                if(response.success) location.reload();
                             },
                             error: function(xhr) {
                                 $btn.prop('disabled', false).text('Guardar Cambios');
@@ -186,9 +204,9 @@ $(function() {
                                 alert('Error: ' + msg); // Mensaje de error
                             }
                         });
-                    }, 'image/jpeg');
+                    });
                 });
-
+    
                 break;    
                         
             // ... resto de los pasos
