@@ -60,37 +60,7 @@ $(function() {
                         };
                         reader.readAsDataURL(file);
                     }
-                });
-
-                // --- BOTÓN ELIMINAR ---
-                $(document).on('click', '.delete-photo', function(e) {
-                    e.preventDefault();
-                    let photoId = $(this).data('id');
-                    if (confirm('¿Estás seguro de eliminar esta foto?')) {
-                        $.post(APP_URL + '/reda/delete-photo-experiencia', {
-                            _token: $('input[name="_token"]').val(),
-                            photo_id: photoId
-                        }, function(response) {
-                            if (response.success) {
-                                location.reload();
-                            }
-                        });
-                    }
-                });
-
-                // --- BOTÓN IMAGEN DESTACADA ---
-                $(document).on('click', '.make-default', function(e) {
-                    e.preventDefault();
-                    let photoId = $(this).data('id');
-                    $.post(APP_URL + '/reda/make-default-photo-experiencia', {
-                        _token: $('input[name="_token"]').val(),
-                        photo_id: photoId,
-                        experiencia_id: $('#experiencia_id').val()
-                    }, function(response) {
-                        if (response.success) {
-                            location.reload();
-                        }
-                    });
+                    $(this).val('');
                 });
 
                 let cropper;
@@ -188,7 +158,8 @@ $(function() {
                             : APP_URL + '/reda/upload-photo-experiencia/' + expId;
                 
                         if(photoId) formData.append('photo_id', photoId);
-                
+
+                        console.log('urlAction', urlAction);
                         $.ajax({
                             url: urlAction,
                             method: 'POST',
@@ -196,17 +167,57 @@ $(function() {
                             processData: false,
                             contentType: false,
                             success: function(response) {
-                                if(response.success) location.reload();
+                                console.log("Respuesta del servidor:", response);
+                                if(response.success) {
+                                    $('#cropModal').modal('hide');
+                                    location.reload();
+                                }
+                                else
+                                {
+                                    alert('Error: ' + response.message);
+                                    $btn.prop('disabled', false).text('Guardar Cambios');
+                                }
                             },
                             error: function(xhr) {
                                 $btn.prop('disabled', false).text('Guardar Cambios');
                                 let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Error al guardar la imagen';
-                                alert('Error: ' + msg); // Mensaje de error
+                                alert('Error del servidor: ' + msg); // Mensaje de error
                             }
                         });
                     });
                 });
-    
+
+                // --- BOTÓN ELIMINAR ---
+                $(document).on('click', '.delete-photo', function(e) {
+                    e.preventDefault();
+                    let photoId = $(this).data('id');
+                    if (confirm('¿Estás seguro de eliminar esta foto?')) {
+                        $.post(APP_URL + '/reda/delete-photo-experiencia', {
+                            _token: $('input[name="_token"]').val(),
+                            photo_id: photoId
+                        }, function(response) {
+                            if (response.success) {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+
+                // --- BOTÓN IMAGEN DESTACADA ---
+                $(document).on('click', '.make-default', function(e) {
+                    e.preventDefault();
+                    let photoId = $(this).data('id');
+                    $.post(APP_URL + '/reda/make-default-photo-experiencia', {
+                        _token: $('input[name="_token"]').val(),
+                        photo_id: photoId,
+                        experiencia_id: $('#experiencia_id').val()
+                    }, function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    });
+                });
+
                 break;    
                         
             // ... resto de los pasos

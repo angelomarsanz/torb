@@ -23,7 +23,7 @@
                                 <div class="row mt-4 p-4">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger d-none" id="error-message"></div>
-                                        <input type="file" name="photos[]" class="form-control text-16" id="photo_file" multiple accept="image/*">
+                                        <input type="file" name="photos[]" class="form-control text-16" id="upload_photos" multiple accept="image/*">
                                         <p class="text-14 mt-2 text-muted">{{ __('Elige imágenes de alta calidad (jpg, png, gif)') }}</p>
                                     </div>
                                 </div>
@@ -104,5 +104,6 @@
 @section('validation_script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('public/js/additional-method.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection
