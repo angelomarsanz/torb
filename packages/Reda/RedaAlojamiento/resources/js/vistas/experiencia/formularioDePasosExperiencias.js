@@ -105,7 +105,15 @@ $(function() {
                     cropper = new Cropper(image, {
                         aspectRatio: NaN, 
                         viewMode: 1,
-                        autoCropArea: 1,
+                        autoCropArea: 0.8,
+                        dragMode: 'move',
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
                         // CLAVE 1: Antes de que el cuadro se mueva
                         cropstart: function (event) {
                             if (isShiftPressed) {

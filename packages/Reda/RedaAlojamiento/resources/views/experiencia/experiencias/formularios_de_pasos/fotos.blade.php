@@ -39,7 +39,7 @@
                                                     
                                                     <div class="d-flex">
                                                         <button type="button" class="reda-btn-photo-action btn-crop mr-1" data-id="{{ $foto->id }}" data-src="{{ asset('images/experiencias/'.$result->id.'/'.$foto->photo) }}">
-                                                            <i class="fa fa-edit text-info"></i>
+                                                            <i class="fa fa-crop text-info"></i>
                                                         </button>
                                                         <button type="button" class="reda-btn-photo-action delete-photo" data-id="{{ $foto->id }}">
                                                             <i class="fa fa-trash text-danger"></i>
