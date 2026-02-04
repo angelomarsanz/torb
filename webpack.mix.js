@@ -22,10 +22,12 @@ if (buildApp) {
 if (buildAlojamiento) {
     console.log('🏗️ Compilando: REDA Alojamiento');
     // Css general
-    mix.sass('packages/Reda/RedaAlojamiento/resources/sass/main.scss', 'public/css/reda/reda-general.min.css');
+    mix.sass('packages/Reda/RedaAlojamiento/resources/sass/main.scss', 'public/css/reda/reda-general-main.min.css');
 
     // Js para uso general
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general.min.js');
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general-main.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/general/media.js', 'public/js/reda/general/reda-general-media.min.js');
 
     // Js por vistas
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js', 

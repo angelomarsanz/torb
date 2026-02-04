@@ -1,6 +1,6 @@
 ﻿@extends('template')
 @section('main')
-<div class="formulario-de-pasos" data-step="{{ $paso }}"></div>
+<div class="formulario-de-pasos-experiencias" data-step="{{ $paso }}"></div>
 <div class="margin-top-85">
     <div class="row m-0">
         @include('users.sidebar')
@@ -105,5 +105,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('public/js/additional-method.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
 	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

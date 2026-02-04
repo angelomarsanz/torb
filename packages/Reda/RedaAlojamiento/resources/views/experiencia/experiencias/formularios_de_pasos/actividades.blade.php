@@ -1,6 +1,6 @@
 ﻿@extends('template')
 @section('main')
-<div class="formulario-de-pasos" data-step="{{ $paso }}"></div>
+<div class="formulario-de-pasos-experiencias" data-step="{{ $paso }}"></div>
 <div class="margin-top-85">
     <div class="row m-0">
         @include('users.sidebar')

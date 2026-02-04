@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // IMPORTACIÓN DE CONTROLADORES
 // Se importan todos los controladores del paquete con su FQCN
 // ----------------------------------------------------------------------
+use Reda\RedaAlojamiento\Http\Controllers\General\MediaController;
 use Reda\RedaAlojamiento\Http\Controllers\Administrativo\AdministrativoController;
 use Reda\RedaAlojamiento\Http\Controllers\BilleteraHuesped\BilleteraHuespedController;
 use Reda\RedaAlojamiento\Http\Controllers\Disputa\DisputaController;
@@ -59,21 +60,21 @@ Route::prefix('reda')->group(function () {
         Route::match(['GET', 'POST'], 'crear-experiencia', [ExperienciaController::class, 'create'])
         ->name('reda.experiencias.create');
 
-        Route::match(['GET', 'POST'], 'formulario-de-pasos/{id}/{paso}', [ExperienciaController::class, 'formularioDePasos'])
+        Route::match(['GET', 'POST'], 'formulario-de-pasos-experiencias/{id}/{paso}', [ExperienciaController::class, 'formularioDePasosExperiencias'])
         ->name('reda.experiencias.pasos')
         ->where(['id' => '[0-7]+', 'paso' => 'descripcion|fotos|actividades|ubicacion|horario|precio|informacion|anfitrion']);
 
-        Route::post('upload-photo-experiencia/{id}', [ExperienciaController::class, 'uploadPhotoExperiencia'])
-        ->name('reda.experiencias.upload_photo');
+        Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])
+        ->name('reda.upload_photo');
 
-        Route::post('delete-photo-experiencia', [ExperienciaController::class, 'deletePhotoExperiencia'])
-        ->name('reda.experiencias.delete_photo');
+        Route::post('delete-photo', [MediaController::class, 'deletePhoto'])
+        ->name('reda.delete_photo');
 
-        Route::post('make-default-photo-experiencia', [ExperienciaController::class, 'makeDefaultPhotoExperiencia'])
-        ->name('reda.experiencias.make_default_photo');
+        Route::post('make-default-photo', [MediaController::class, 'makeDefaultPhoto'])
+        ->name('reda.make_default_photo');
 
-        Route::post('crop-photo-experiencia', [ExperienciaController::class, 'cropPhotoExperiencia'])
-        ->name('reda.experiencias.crop_photo');
+        Route::post('crop-photo', [MediaController::class, 'cropPhoto'])
+        ->name('reda.crop_photo');
 
     }); 
 });
