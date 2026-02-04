@@ -109,9 +109,10 @@ class ExperienciaController extends Controller
             $foto->delete();
             return response()->json(['success' => true]);
         }
+        return response()->json(['success' => false, 'message' => 'Foto no encontrada'], 404);
     }
 
-    public function makeDefaultExperiencia(Request $request) {
+    public function makeDefaultPhotoExperiencia(Request $request) {
         // Poner todas en 0
         FotoExperiencia::where('experiencia_id', $request->experiencia_id)->update(['cover_photo' => 0]);
         // Poner la seleccionada en 1
