@@ -50,11 +50,28 @@ $(function() {
                 const style = document.createElement('style');
                 style.innerHTML = `
                     .loader-overlay {
-                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                        background: rgba(255, 255, 255, 0.85);
-                        display: flex; flex-direction: column; align-items: center; justify-content: center;
-                        z-index: 9999; display: none; backdrop-filter: blur(4px);
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        background: rgba(255, 255, 255, 0.9);
+                        display: none; /* Se activa con .fadeIn() de jQuery */
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10000;
+                        backdrop-filter: blur(5px);
                     }
+                    
+                    #loader-content {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        min-height: 200px;
+                    }
+
                     .loader-icon { font-size: 80px; color: #28a745; margin-bottom: 20px; }
                     
                     /* Animación Recorte */
@@ -65,20 +82,26 @@ $(function() {
                         100% { transform: scale(1) rotate(0deg); }
                     }
 
-                    /* Animación Papelera */
+                    /* Animación Papelera Mejorada */
+                    .anim-trash-container { text-align: center; position: relative; width: 100px; }
                     .anim-trash { animation: shake-trash 0.8s infinite; color: #dc3545; }
                     .trash-lid { 
-                        position: relative; top: 0; transition: all 0.5s; 
-                        animation: close-lid 1.5s infinite; 
+                        font-size: 40px;
+                        position: absolute;
+                        left: 25px;
+                        top: -30px;
+                        animation: close-lid 1.2s infinite; 
                     }
+                    
                     @keyframes close-lid {
-                        0% { transform: translateY(-20px) rotate(-20deg); opacity: 0.5; }
-                        100% { transform: translateY(0) rotate(0); opacity: 1; }
+                        0% { transform: translateY(-20px) rotate(-30deg); opacity: 0; }
+                        50% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                        100% { transform: translateY(0) rotate(0deg); opacity: 1; }
                     }
                     @keyframes shake-trash {
-                        0%, 100% { transform: translateX(0); }
-                        25% { transform: translateX(-5px); }
-                        75% { transform: translateX(5px); }
+                        0%, 100% { transform: rotate(0deg); }
+                        25% { transform: rotate(-5deg); }
+                        75% { transform: rotate(5deg); }
                     }
                 `;
                 document.head.appendChild(style);
@@ -96,13 +119,20 @@ $(function() {
                     if (type === 'crop') {
                         content = '<i class="fa fa-crop loader-icon anim-crop"></i>';
                     } else if (type === 'delete') {
-                        content = '<div class="anim-trash"><i class="fa fa-minus trash-lid"></i><br><i class="fa fa-trash loader-icon"></i></div>';
+                        content = `
+                            <div class="anim-trash-container">
+                                <i class="fa fa-minus trash-lid"></i>
+                                <i class="fa fa-trash loader-icon anim-trash"></i>
+                            </div>`;
                     }
+                    
                     $('#loader-content').html(content);
                     $('#loader-text').text(text);
-                    $('#custom-loader').fadeIn();
+                    
+                    // Forzamos el flex antes del fadeIn para que el centrado funcione
+                    $('#custom-loader').css('display', 'flex').hide().fadeIn();
                 }
-                
+                                
                 $(document).on('change', '#upload_photos', function() {
                     let file = this.files[0];
                     if (file) {
