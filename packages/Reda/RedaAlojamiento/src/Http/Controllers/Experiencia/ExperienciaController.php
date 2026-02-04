@@ -74,24 +74,6 @@ class ExperienciaController extends Controller
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'fotos']);
                 
                 case 'fotos':
-                    if ($request->hasFile('photos')) {
-                        $path = public_path('images/experiencias/' . $id);
-                        if (!File::isDirectory($path)) {
-                            File::makeDirectory($path, 0777, true, true);
-                        }
-                
-                        foreach ($request->file('photos') as $file) {
-                            $fileName = time() . '_' . $file->getClientOriginalName();
-                            $file->move($path, $fileName);
-                
-                            $foto = new FotoExperiencia;
-                            $foto->experiencia_id = $id;
-                            $foto->photo = $fileName;
-                            $foto->serial = 0;
-                            $foto->cover_photo = 0;
-                            $foto->save();
-                        }
-                    }
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);
                 
                 // Agregar el resto de los casos: actividades, ubicacion, etc.
