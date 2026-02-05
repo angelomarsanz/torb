@@ -23,7 +23,7 @@
                                 <div class="row mt-4 p-4">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger d-none" id="error-message"></div>
-                                        <input type="file" name="photos[]" class="form-control text-16" id="upload_photos" multiple accept="image/*">
+                                        <input type="file" name="photo" id="upload_photos" accept="image/*" class="form-control">
                                         <p class="text-14 mt-2 text-muted">{{ __('Elige imágenes de alta calidad (jpg, png, gif)') }}</p>
                                     </div>
                                 </div>
@@ -33,15 +33,15 @@
                                         <div class="col-md-4 mb-4 photo-item" id="photo-{{ $foto->id }}">
                                             <div class="card position-relative h-100">
                                                 <div class="reda-photo-controls">
-                                                    <button type="button" class="reda-btn-photo-action make-default" data-id="{{ $foto->id }}">
+                                                    <button type="button" class="reda-btn-photo-action make-default" data-id="{{ $foto->id }}" data-origen="fotos-experiencias">
                                                         <i class="fa-star {{ $foto->cover_photo ? 'fas text-warning' : 'far' }}"></i>
                                                     </button>
                                                     
                                                     <div class="d-flex">
-                                                        <button type="button" class="reda-btn-photo-action btn-crop mr-1" data-id="{{ $foto->id }}" data-src="{{ asset('images/experiencias/'.$result->id.'/'.$foto->photo) }}">
+                                                        <button type="button" class="reda-btn-photo-action btn-crop mr-1" data-id="{{ $foto->id }}" data-src="{{ asset('images/experiencias/'.$result->id.'/'.$foto->photo) }}" data-origen="fotos-experiencias">
                                                             <i class="fa fa-crop text-info"></i>
                                                         </button>
-                                                        <button type="button" class="reda-btn-photo-action delete-photo" data-id="{{ $foto->id }}">
+                                                        <button type="button" class="reda-btn-photo-action delete-photo" data-id="{{ $foto->id }}" data-origen="fotos-experiencias">
                                                             <i class="fa fa-trash text-danger"></i>
                                                         </button>
                                                     </div>
@@ -89,7 +89,7 @@
             <div class="modal-footer">
                 <input type="hidden" id="crop_photo_id" value="">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" class="btn btn-success" id="crop-and-upload">{{ __('Guardar Cambios') }}</button>
+                <button type="button" class="btn btn-success" id="crop-and-upload" data-origen="fotos-experiencias">{{ __('Guardar Cambios') }}</button>
             </div>
         </div>
     </div>

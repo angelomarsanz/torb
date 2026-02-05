@@ -25,7 +25,7 @@ $(function() {
                 // CONFIGURACIÓN DE VALIDACIÓN
                 $('#img_form').validate({
                     rules: {
-                        'photos[]': {
+                        'photo': { // Cambiado de 'photos[]' a 'photo'
                             required: function() {
                                 return $('.photo-item').length === 0;
                             },
