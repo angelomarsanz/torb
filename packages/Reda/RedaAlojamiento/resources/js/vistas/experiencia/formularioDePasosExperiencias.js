@@ -50,54 +50,87 @@ $(function() {
                 break;    
 
             case 'actividades':
-                // Configuramos el validador de JQuery para los campos de texto
-                $('#list_des').validate({
-                    rules: {
-                        // Aquí puedes agregar reglas para los campos de texto si lo deseas
+                // 1. Inicializar el validador
+                const validadorActividades = $('#list_des').validate({
+                    errorPlacement: function(error, element) {
+                        error.addClass('text-danger small font-weight-bold');
+                        error.insertAfter(element);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        let errorEncontrado = false;
+                        let tieneErroresDeFoto = false;
                         
-                        // 1. Limpiar mensajes de error previos
+                        // Limpiar errores previos de fotos
                         $('.error-foto-js').remove();
-                        $('.actividad-foto-container').css('border-color', '#ced4da');
+                        $('.actividad-foto-container').css('border-color', '');
             
-                        // 2. Recorrer cada fila de la tabla de actividades
-                        $('table tbody tr:not(.no-validar)').each(function() {
+                        // 2. VALIDACIÓN MANUAL DE FOTOS (Fila por fila)
+                        // Recorremos solo las filas que tienen inputs de actividades
+                        $('table tbody tr').each(function() {
                             const fila = $(this);
-                            // Buscamos si existe la imagen dentro del contenedor
-                            const tieneFoto = fila.find('.actividad-foto-container img').length > 0;
-                            // Obtenemos el ID de la actividad para identificar la fila en el mensaje (opcional)
-                            const orden = fila.find('input[type="number"]').val();
+                            
+                            // Ignorar la fila del botón "Agregar nueva actividad"
+                            if (fila.hasClass('no-validar')) return;
             
-                            if (!tieneFoto) {
-                                errorEncontrado = true;
-                                const contenedorFoto = fila.find('.actividad-foto-container');
-                                
-                                // Resaltar el contenedor con error
-                                contenedorFoto.css('border-color', '#dc3545');
-                                
-                                // Agregar mensaje de error visual debajo del contenedor
-                                contenedorFoto.after('<div class="text-danger error-foto-js mt-1" style="font-size: 12px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i> La actividad ' + orden + ' requiere una foto.</div>');
+                            // Verificar si existe una imagen dentro del contenedor
+                            const contenedor = fila.find('.actividad-foto-container');
+                            const tieneImagen = contenedor.find('img').length > 0;
+            
+                            if (!tieneImagen) {
+                                tieneErroresDeFoto = true;
+                                contenedor.css('border-color', '#dc3545');
+                                // Insertar el mensaje de error justo después del contenedor de la foto
+                                contenedor.after('<div class="text-danger error-foto-js mt-1" style="font-size: 11px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i> La foto es obligatoria</div>');
                             }
                         });
             
-                        // 3. Si hay errores, detener el envío
-                        if (errorEncontrado) {
-                            // Hacemos scroll hacia el primer error encontrado
-                            $('html, body').animate({
-                                scrollTop: ($('.error-foto-js').first().offset().top - 150)
+                        // 3. Si falta alguna foto, detener el envío y hacer scroll al primer error
+                        if (tieneErroresDeFoto) {
+                            $('html, body').animate({ 
+                                scrollTop: ($('.error-foto-js').first().offset().top - 150) 
                             }, 500);
-                            return false; 
+                            return false; // Bloquea el envío del formulario
                         }
             
-                        // 4. Si todo está bien, mostrar spinner y enviar
+                        // 4. Si todo está bien, proceder con el envío
                         $("#btn_next").attr("disabled", true);
                         $(".spinner").removeClass('d-none');
                         $("#btn_next-text").text("Guardando...");
-                        return true; // Permite el envío del formulario
+                        form.submit(); // Usar form.submit() explícito
                     }
                 });
+            
+                // 5. Aplicar reglas a los campos de texto y número dinámicamente
+                function aplicarReglasDinamicas() {
+                    $('input[name*="[orden_actividad]"]').each(function() {
+                        $(this).rules('add', {
+                            required: true,
+                            min: 1,
+                            messages: {
+                                required: "Nro. requerido",
+                                min: "Mínimo 1"
+                            }
+                        });
+                    });
+            
+                    $('textarea[name*="[descripcion_actividad]"]').each(function() {
+                        $(this).rules('add', {
+                            required: true,
+                            minlength: 5,
+                            messages: {
+                                required: "Falta descripción",
+                                minlength: "La descripción es muy corta"
+                            }
+                        });
+                    });
+                }
+            
+                aplicarReglasDinamicas();
                 break;
 
             // ... resto de los pasos

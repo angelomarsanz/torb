@@ -21,8 +21,8 @@
                                     <thead class="bg-light">
                                         <tr>
                                             <th style="width: 80px;">Nro.</th>
-                                            <th style="width: 250px;">Foto</th> 
                                             <th>Descripción</th>
+                                            <th style="width: 250px;">Foto</th> 
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -30,10 +30,24 @@
                                         <tr>
                                             <td class="vertical-align-top pt-3">
                                                 <input type="number" 
-                                                       name="actividades[{{ $actividad->id }}][orden_actividad]" 
-                                                       value="{{ $actividad->orden_actividad }}" 
-                                                       class="form-control text-center" 
-                                                       min="1">
+                                                    name="actividades[{{ $actividad->id }}][orden_actividad]" 
+                                                    value="{{ old('actividades.'.$actividad->id.'.orden_actividad', $actividad->orden_actividad) }}" 
+                                                    class="form-control text-center @error('actividades.'.$actividad->id.'.orden_actividad') is-invalid @enderror" 
+                                                    min="1"
+                                                    required>
+                                                @error('actividades.'.$actividad->id.'.orden_actividad')
+                                                    <span class="text-danger small font-weight-700">Debe ser un número válido mayor a cero.</span>
+                                                @enderror
+                                            </td>
+                                            <td class="vertical-align-top pt-3">
+                                                <textarea name="actividades[{{ $actividad->id }}][descripcion_actividad]" 
+                                                        class="form-control @error('actividades.'.$actividad->id.'.descripcion_actividad') is-invalid @enderror" 
+                                                        placeholder="Describe la actividad..."
+                                                        rows="2"
+                                                        required>{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}</textarea>
+                                                @error('actividades.'.$actividad->id.'.descripcion_actividad')
+                                                    <span class="text-danger small font-weight-700">Este campo es obligatorio.</span>
+                                                @enderror
                                             </td>
                                             <td>
                                                 <div class="actividad-foto-container {{ !$actividad->foto_actividad ? 'placeholder-height' : '' }}">
@@ -57,12 +71,6 @@
                                                         <i class="fa fa-exclamation-triangle"></i> {{ $message }}
                                                     </div>
                                                 @enderror
-                                            </td>
-                                            <td class="vertical-align-top pt-3">
-                                                <textarea name="actividades[{{ $actividad->id }}][descripcion_actividad]" 
-                                                          class="form-control" 
-                                                          placeholder="Describe la actividad..."
-                                                          rows="2">{{ $actividad->descripcion_actividad }}</textarea>
                                             </td>
                                         </tr>
                                         @endforeach

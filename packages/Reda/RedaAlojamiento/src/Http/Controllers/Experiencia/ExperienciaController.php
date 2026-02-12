@@ -85,9 +85,12 @@ class ExperienciaController extends Controller
                 case 'actividades':
                     $request->validate([
                         'actividades.*.orden_actividad' => 'required|integer|min:1',
-                        'actividades.*.descripcion_actividad' => 'required|string',
+                        'actividades.*.descripcion_actividad' => 'required|string|min:5',
                     ], [
-                        'actividades.*.orden_actividad.min' => 'El orden de la actividad debe ser al menos 1.',
+                        // Mensajes personalizados
+                        'actividades.*.orden_actividad.required' => 'El número es obligatorio.',
+                        'actividades.*.orden_actividad.min' => 'Debe ser mayor a cero.',
+                        'actividades.*.descripcion_actividad.required' => 'La descripción es obligatoria.',
                     ]);
                 
                     if ($request->has('actividades') && is_array($request->actividades)) {
