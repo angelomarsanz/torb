@@ -48,9 +48,48 @@ class MediaController extends Controller
                     ]);
                     break;
 
-                case 'fotos-actividades':
-                    // Lógica para actividades (Próximamente)
+                case 'actividades-experiencias':
+                    $actividadId = $id;
+                    $actividad = ActividadExperiencia::find($actividadId);
+    
+                    if (!$actividad) {
+                        return response()->json(['success' => false, 'message' => 'Actividad no encontrada'], 404);
+                    }
+    
+                    // Definir ruta y nombre de archivo
+                    $path = public_path('images/actividades_experiencias/' . $actividadId);
+                    
+                    // Si ya existe una foto, eliminarla físicamente
+                    if (!empty($actividad->foto_actividad)) {
+                        $oldPath = $path . '/' . $actividad->foto_actividad;
+                        if (File::exists($oldPath)) {
+                            File::delete($oldPath);
+                        }
+                    }
+    
+                    // Crear directorio si no existe
+                    if (!File::isDirectory($path)) {
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+    
+                    // Guardar nueva foto
+                    $file = $request->file('cropped_image');
+                    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = time() . '_' . $originalName . '.' . $extension;
+                    $file->move($path, $fileName);
+    
+                    // 5. Actualizar la base de datos
+                    $actividad->foto_actividad = $actividadId.'/'.$fileName;
+                    $actividad->save();
+    
+                    return response()->json([
+                        'success' => true, 
+                        'message' => 'Foto de actividad actualizada',
+                        'file' => $actividadId.'/'.$fileName
+                    ]);
                     break;
+            
             }
         }
         return response()->json(['success' => false, 'message' => 'No se pudo subir la foto'], 400);

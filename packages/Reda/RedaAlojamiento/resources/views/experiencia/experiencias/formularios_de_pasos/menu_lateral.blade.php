@@ -8,7 +8,7 @@
             'ubicacion'   => __('Ubicación'),
             'horario'     => __('Horario'),
             'precio'      => __('Precio'),
-            'informacion' => __('Información adicional'),
+            'informacion_adicional' => __('Información adicional'),
             'anfitrion'   => __('Anfitrión'),
         ];
     @endphp

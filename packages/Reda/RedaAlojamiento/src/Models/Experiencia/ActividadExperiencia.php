@@ -26,6 +26,7 @@ class ActividadExperiencia extends Model
         'experiencia_id',
         'descripcion_actividad',
         'foto_actividad',
+        'orden_actividad'
     ];
 
     /**

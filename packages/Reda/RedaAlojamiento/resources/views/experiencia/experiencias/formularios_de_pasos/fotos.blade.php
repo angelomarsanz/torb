@@ -23,7 +23,7 @@
                                 <div class="row mt-4 p-4">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger d-none" id="error-message"></div>
-                                        <input type="file" name="photo" id="upload_photos" accept="image/*" class="form-control">
+                                        <input type="file" name="photo" class="upload_photos" accept="image/*" class="form-control">
                                         <p class="text-14 mt-2 text-muted">{{ __('Elige imágenes de alta calidad (jpg, png, gif)') }}</p>
                                     </div>
                                 </div>

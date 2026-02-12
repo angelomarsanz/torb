@@ -32,15 +32,32 @@ window.showLoader = function(type, text) {
     $('#custom-loader').css('display', 'flex').hide().fadeIn();
 }
                 
-$(document).on('change', '#upload_photos', function() {
+$(document).on('change', '.upload_photos', function() {
     let file = this.files[0];
+    let inputSelect = $(this);
     if (file) {
+        const origen = $('#crop-and-upload').data('origen');
+
         let reader = new FileReader();
         reader.onload = function(e) {
             // Ponemos la imagen en el modal
             $('#image-to-crop').attr('src', e.target.result);
-            // Limpiamos el photo_id porque es una foto NUEVA
-            $('#crop_photo_id').val(''); 
+            if (origen === 'actividades-experiencias') {
+                let actividadId = inputSelect.data('id');
+                if (actividadId == null)
+                {
+                    actividadId = $(this).attr('data-id');
+                }
+                if (actividadId) {
+                    $('#crop_photo_id').val(actividadId);
+                }
+                console.log('ID de actividad detectado y asignado:', actividadId);
+            }
+            else
+            {
+                // Limpiamos el photo_id porque es una foto NUEVA
+                $('#crop_photo_id').val('');
+            } 
             if (cropper) {
                 cropper.destroy();
             }
@@ -144,9 +161,19 @@ $('#crop-and-upload').on('click', function() {
         $('#cropModal').modal('hide'); // Cerramos el modal para que se vea la animación central
         window.showLoader('crop', 'Recortando y subiendo imagen...');
         let formData = new FormData();
-        let photoId = $('#crop_photo_id').val();
-        let expId = $('#experiencia_id').val();
         const origen = $(this).data('origen');
+
+        let idPrincipal = null;
+        let photoId = null;
+
+        if (origen == "fotos-experiencias") {
+            idPrincipal = $('#experiencia_id').val();
+            photoId = $('#crop_photo_id').val();
+            if(photoId) formData.append('photo_id', photoId);
+        } else
+        {
+            idPrincipal = $('#crop_photo_id').val();
+        }
 
         formData.append('cropped_image', blob, 'photo.jpg');
         formData.append('_token', $('input[name="_token"]').val());
@@ -154,9 +181,8 @@ $('#crop-and-upload').on('click', function() {
         // Si hay photoId es una edición, si no, es una subida nueva
         let urlAction = photoId 
             ? APP_URL + '/reda/crop-photo' 
-            : APP_URL + '/reda/upload-photo/' + expId;
+            : APP_URL + '/reda/upload-photo/' + idPrincipal;
 
-        if(photoId) formData.append('photo_id', photoId);
         formData.append('origen', origen);
 
         console.log('urlAction', urlAction);
