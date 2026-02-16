@@ -74,15 +74,6 @@
                                             </td>
                                         </tr>
                                         @endforeach
-                                        <tr class="bg-light no-validar"">
-                                            <td colspan="3" class="text-center p-0">
-                                                <a href="{{ route('reda.experiencias.actividades.add', $result->id) }}" 
-                                                class="btn btn-link w-100 py-3 text-success decoration-none font-weight-700"
-                                                id="btn-add-actividad">
-                                                    <i class="fa fa-plus-circle"></i> Agregar una nueva actividad
-                                                </a>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -99,6 +90,12 @@
                                     </button>
                                 </div>
                             </div>
+                            <a href="{{ route('reda.experiencias.actividades.add', $result->id) }}" 
+                            class="btn-floating-add-simple" 
+                            id="btn-add-actividad" 
+                            title="Agregar una nueva actividad">
+                                <i class="fa fa-plus"></i>
+                            </a>
                         </form>
                     </div>
                 </div>

@@ -247,3 +247,53 @@
     
     i { display: block; font-size: 20px; margin-bottom: 5px; }
 }
+
+/* Estilos para el botón flotante "Más" actividades */
+.btn-floating-add-simple {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 9999;
+    text-decoration: none !important;
+    background: none;
+    border: none;
+    outline: none;
+    /* Aplicamos la animación de latido */
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+.btn-floating-add-simple i {
+    font-size: 65px; /* Un poco más grande para que destaque */
+    color: #28a745;  /* Verde */
+    font-weight: 900;
+    text-shadow: 2px 2px 8px rgba(40, 167, 69, 0.3); /* Sombra verde difuminada */
+}
+
+/* Definición del latido */
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+    14% {
+        transform: scale(1.15);
+    }
+    28% {
+        transform: scale(1);
+    }
+    42% {
+        transform: scale(1.15);
+    }
+    70% {
+        transform: scale(1);
+    }
+}
+
+/* Al pasar el mouse, el latido se detiene y se queda grande */
+.btn-floating-add-simple:hover {
+    animation: none;
+    transform: scale(1.25);
+}
+
+.btn-floating-add-simple:hover i {
+    color: #218838;
+}
