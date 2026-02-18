@@ -196,7 +196,18 @@ $('#crop-and-upload').on('click', function() {
                 console.log("Respuesta del servidor:", response);
                 if(response.success) {
                     $('#loader-text').text('¡Imagen actualizada!');
-                    setTimeout(() => location.reload(), 800);
+                    setTimeout(() => {
+                        $('#custom-loader').fadeOut();
+                        // DISPARAR EVENTO PERSONALIZADO
+                        const event = new CustomEvent('mediaUpdated', { 
+                            detail: { 
+                                origen: origen,
+                                accion: "crop-and-upload", 
+                                response: response,
+                            } 
+                        });
+                        document.dispatchEvent(event);                        
+                    }, 800);
                 }
                 else
                 {
@@ -211,33 +222,6 @@ $('#crop-and-upload').on('click', function() {
             }
         });
     });
-});
-
-// --- BOTÓN ELIMINAR ---
-$(document).on('click', '.delete-photo', function(e) {
-    e.preventDefault();
-    let photoId = $(this).data('id');
-    let deleteUrl = APP_URL + '/reda/delete-photo';
-    const origen = $(this).data('origen');
-    if (confirm('¿Estás seguro de eliminar esta foto?')) {
-        showLoader('delete', 'Eliminando permanentemente...');
-        $.post(deleteUrl, {
-            _token: $('input[name="_token"]').val(),
-            photo_id: photoId,
-            origen: origen
-        },function(response) {
-            if (response.success) {
-                $('#loader-text').text('Eliminado con éxito');
-                location.reload();
-            } else {
-                $('#custom-loader').fadeOut();
-                alert('Error al eliminar');
-            }
-        }).fail(function() {
-            $('#custom-loader').fadeOut();
-            alert('Error en el servidor, no se pudo eliminar la foto');
-        });
-    }
 });
 
 // --- BOTÓN IMAGEN DESTACADA ---
@@ -269,4 +253,31 @@ $(document).on('click', '.make-default', function(e) {
         $('#custom-loader').fadeOut();
         alert('Error en el servidor');
     });
+});
+
+// --- BOTÓN ELIMINAR ---
+$(document).on('click', '.delete-photo', function(e) {
+    e.preventDefault();
+    let photoId = $(this).data('id');
+    let deleteUrl = APP_URL + '/reda/delete-photo';
+    const origen = $(this).data('origen');
+    if (confirm('¿Estás seguro de eliminar esta foto?')) {
+        showLoader('delete', 'Eliminando permanentemente...');
+        $.post(deleteUrl, {
+            _token: $('input[name="_token"]').val(),
+            photo_id: photoId,
+            origen: origen
+        },function(response) {
+            if (response.success) {
+                $('#loader-text').text('Eliminado con éxito');
+                location.reload();
+            } else {
+                $('#custom-loader').fadeOut();
+                alert('Error al eliminar');
+            }
+        }).fail(function() {
+            $('#custom-loader').fadeOut();
+            alert('Error en el servidor, no se pudo eliminar la foto');
+        });
+    }
 });

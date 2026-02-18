@@ -11,6 +11,7 @@
 #   )
 ARCHIVOS_PHP_PUNTUALES=(
         #"Ninguno"
-        "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
+        "packages/Reda/RedaAlojamiento/resources/js/general/media.js"
+        "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
+        "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php"
 )

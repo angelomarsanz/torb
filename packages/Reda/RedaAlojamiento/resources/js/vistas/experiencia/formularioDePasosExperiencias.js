@@ -47,6 +47,13 @@ $(function() {
                     }
                 });
 
+                document.addEventListener('mediaUpdated', function(e) {
+                    console.log('Evento personalizado recibido:', e.detail);
+                    if (e.detail.origen === 'fotos-experiencias') {
+                        location.reload();
+                    }
+                });
+
                 break;    
 
             case 'actividades':
@@ -129,7 +136,47 @@ $(function() {
                         });
                     });
                 }
-            
+
+                document.addEventListener('mediaUpdated', function(e) {
+                    if (e.detail.origen === 'actividades-experiencias') {
+                        const data = e.detail.response;
+                        
+                        // Usamos el ID que viene del controlador para mayor precisión
+                        const actividadId = data.id; 
+                        const nuevaUrl = data.path; // Usamos 'path' que es lo que envía tu controlador
+                        
+                        // Buscamos el contenedor específico de esa actividad
+                        // Buscamos el input que tiene el data-id igual al que devolvió el servidor
+                        const container = $(`.upload_photos[data-id="${actividadId}"]`).closest('.actividad-foto-container');
+                        
+                        if (nuevaUrl && container.length) {
+                            // Actualizamos solo el contenido interno del contenedor
+                            container.html(`
+                                <img src="${nuevaUrl}?v=${new Date().getTime()}" alt="Foto">
+                
+                                <label class="edit-photo-overlay" for="file-${actividadId}">
+                                    <i class="fa fa-edit"></i> Editar
+                                </label>
+                                
+                                <input id="file-${actividadId}" 
+                                       type="file" 
+                                       name="actividades[${actividadId}][foto_actividad]" 
+                                       data-id="${actividadId}" 
+                                       class="upload_photos" 
+                                       accept="image/*" 
+                                       style="display:none;">
+                            `);
+                            
+                            // Quitamos la clase de placeholder si existía (en caso de ser la primera foto)
+                            container.removeClass('placeholder-height');
+                            
+                            // Limpiamos los mensajes de error de validación previos si los había
+                            container.css('border-color', '');
+                            container.siblings('.error-foto-js').remove();
+                        }
+                    }
+                });
+                
                 aplicarReglasDinamicas();
                 break;
 

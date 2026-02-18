@@ -86,6 +86,8 @@ class MediaController extends Controller
                     return response()->json([
                         'success' => true, 
                         'message' => 'Foto de actividad actualizada',
+                        'id' => $actividadId,
+                        'path' => asset('public/images/actividades_experiencias/' . $actividadId.'/'.$fileName),
                         'file' => $actividadId.'/'.$fileName
                     ]);
                     break;
