@@ -48,10 +48,7 @@ $(function() {
                 });
 
                 document.addEventListener('mediaUpdated', function(e) {
-                    console.log('Evento personalizado recibido:', e.detail);
-                    if (e.detail.origen === 'fotos-experiencias') {
-                        location.reload();
-                    }
+                    location.reload();
                 });
 
                 break;    

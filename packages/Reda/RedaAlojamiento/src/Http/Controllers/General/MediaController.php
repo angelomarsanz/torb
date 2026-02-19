@@ -152,6 +152,25 @@ class MediaController extends Controller
         return response()->json(['success' => false, 'message' => 'No se pudo procesar la imagen'], 400);
     }
 
+    public function makeDefaultPhoto(Request $request) {
+        $origen = $request->origen;
+        switch ($origen) {
+            case 'fotos-experiencias':
+                // Poner todas en 0
+                FotoExperiencia::where('experiencia_id', $request->experiencia_id)->update(['cover_photo' => 0]);
+                // Poner la seleccionada en 1
+                $foto = FotoExperiencia::find($request->photo_id);
+                $foto->cover_photo = 1;
+                $foto->save();
+                
+                return response()->json(['success' => true]);
+                break;
+            case 'actividades-experiencias':
+                // Lógica para actividades (Próximamente)
+                break;
+        }
+    }
+
     public function deletePhoto(Request $request) {
         $origen = $request->origen;
         $foto = FotoExperiencia::find($request->photo_id);
@@ -173,24 +192,5 @@ class MediaController extends Controller
             }
         }
         return response()->json(['success' => false, 'message' => 'Foto no encontrada'], 404);
-    }
-
-    public function makeDefaultPhoto(Request $request) {
-        $origen = $request->origen;
-        switch ($origen) {
-            case 'fotos-experiencias':
-                // Poner todas en 0
-                FotoExperiencia::where('experiencia_id', $request->experiencia_id)->update(['cover_photo' => 0]);
-                // Poner la seleccionada en 1
-                $foto = FotoExperiencia::find($request->photo_id);
-                $foto->cover_photo = 1;
-                $foto->save();
-                
-                return response()->json(['success' => true]);
-                break;
-            case 'fotos-actividades':
-                // Lógica para actividades (Próximamente)
-                break;
-        }
     }
 }

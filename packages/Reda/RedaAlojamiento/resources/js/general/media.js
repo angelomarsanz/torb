@@ -241,9 +241,17 @@ $(document).on('click', '.make-default', function(e) {
     }, function(response) {
         if (response.success) {
             $('#loader-text').text('¡Portada actualizada!');
-            // Pequeña pausa para que se vea la estrella antes de recargar
-            setTimeout(function(){
-                location.reload();
+            setTimeout(() => {
+                $('#custom-loader').fadeOut();
+                // DISPARAR EVENTO PERSONALIZADO
+                const event = new CustomEvent('mediaUpdated', { 
+                    detail: { 
+                        origen: origen,
+                        accion: "make-default", 
+                        response: response,
+                    } 
+                });
+                document.dispatchEvent(event);                        
             }, 800);
         } else {
             $('#custom-loader').fadeOut();
@@ -270,7 +278,18 @@ $(document).on('click', '.delete-photo', function(e) {
         },function(response) {
             if (response.success) {
                 $('#loader-text').text('Eliminado con éxito');
-                location.reload();
+                setTimeout(() => {
+                    $('#custom-loader').fadeOut();
+                    // DISPARAR EVENTO PERSONALIZADO
+                    const event = new CustomEvent('mediaUpdated', { 
+                        detail: { 
+                            origen: origen,
+                            accion: "delete-photo", 
+                            response: response,
+                        } 
+                    });
+                    document.dispatchEvent(event);                        
+                }, 800);
             } else {
                 $('#custom-loader').fadeOut();
                 alert('Error al eliminar');
