@@ -140,22 +140,30 @@ class ExperienciaController extends Controller
             }
         }
     }
-    // Agrega este método al controlador
-    public function agregarActividad($id)
+    public function agregarActividad(Request $request, $id)
     {
-        // 1. Obtener el último número de orden para esta experiencia
         $ultimoOrden = ActividadExperiencia::where('experiencia_id', $id)
             ->max('orden_actividad') ?? 0;
-
-        // 2. Crear la nueva actividad en blanco
-        ActividadExperiencia::create([
+    
+        $actividad = ActividadExperiencia::create([
             'experiencia_id' => $id,
             'orden_actividad' => $ultimoOrden + 1,
             'descripcion_actividad' => '',
             'foto_actividad' => null
         ]);
-
-        // 3. Redireccionar de vuelta con un mensaje (esto recargará la lista)
-        return back()->with('success', 'Nueva actividad añadida.');
+    
+        if ($request->ajax()) {
+            // Retornamos el HTML de la fila para insertarlo directamente
+            // Pasamos 'actividad' a una vista parcial o la renderizamos aquí
+            $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', [
+                'actividad' => $actividad
+            ])->render();
+    
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'id' => $actividad->id
+            ]);
+        }    
     }
 }

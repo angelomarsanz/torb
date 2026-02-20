@@ -134,6 +134,8 @@ $(function() {
                     });
                 }
 
+                aplicarReglasDinamicas();
+
                 document.addEventListener('mediaUpdated', function(e) {
                     if (e.detail.origen === 'actividades-experiencias') {
                         const data = e.detail.response;
@@ -174,7 +176,47 @@ $(function() {
                     }
                 });
                 
-                aplicarReglasDinamicas();
+                $('#btn-add-actividad').on('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Obtenemos la URL del atributo data-url que pusimos en el botón
+                    const url = $(this).data('url');
+                    const btn = $(this);
+                
+                    btn.prop('disabled', true).css('opacity', '0.5');
+                
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            // Enviamos el token CSRF que Laravel necesita para el POST
+                            _token: $('input[name="_token"]').val() 
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // Insertamos la fila
+                                $('table tbody').append(response.html);
+                
+                                // Re-aplicamos validaciones a los nuevos campos
+                                aplicarReglasDinamicas();
+                
+                                // Scroll suave
+                                $('html, body').animate({
+                                    scrollTop: $("table tbody tr:last").offset().top - 100
+                                }, 500);
+                            }
+                        },
+                        error: function(jqXHR) {
+                            console.error(jqXHR.responseText);
+                            alert('Error al agregar la actividad.');
+                        },
+                        complete: function() {
+                            btn.prop('disabled', false).css('opacity', '1');
+                        }
+                    });
+                });
+
                 break;
 
             // ... resto de los pasos
