@@ -153,8 +153,8 @@ $(function() {
                             container.html(`
                                 <img src="${nuevaUrl}?v=${new Date().getTime()}" alt="Foto">
                 
-                                <label class="edit-photo-overlay" for="file-${actividadId}">
-                                    <i class="fa fa-edit"></i> Editar
+                                <label class="edit-photo-overlay-outline" for="file-{{ $actividad->id }}" title="Cambiar imagen">
+                                    <i class="fa fa-pencil-alt"></i>
                                 </label>
                                 
                                 <input id="file-${actividadId}" 

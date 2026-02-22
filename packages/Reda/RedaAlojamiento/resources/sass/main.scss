@@ -193,9 +193,9 @@
 
 /* Estilos para la tabla de actividades simétrica */
 .actividad-foto-container {
+    position: relative;
     width: 100%;
     max-width: 250px;
-    position: relative;
     border-radius: 8px;
     overflow: hidden;
     background: #f8f9fa;
@@ -296,4 +296,50 @@
 
 .btn-floating-add-simple:hover i {
     color: #218838;
+}
+
+/* --- BOTÓN DE EDICIÓN CIRCULAR (ESTILO OUTLINE TOTALMENTE TRANSPARENTE) --- */
+.edit-photo-overlay-outline {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    
+    /* Relleno totalmente transparente */
+    background: transparent; 
+    
+    /* Borde e ícono en el naranja del cropper */
+    border: 2px solid #fd7e14;
+    color: #fd7e14;
+    
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 15;
+
+    i {
+        font-size: 18px;
+        /* Sombra de texto sutil para que el ícono no se pierda en fondos claros */
+        text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:hover {
+        transform: scale(1.1);
+        /* Al pasar el mouse, ahora sí se llena para dar feedback */
+        background: #fd7e14;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(253, 126, 20, 0.3);
+        
+        i {
+            text-shadow: none;
+        }
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
 }

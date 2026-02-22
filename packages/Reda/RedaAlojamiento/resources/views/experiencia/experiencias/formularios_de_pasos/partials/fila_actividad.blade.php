@@ -25,10 +25,10 @@
             @if($actividad->foto_actividad)
                 <img src="{{ asset('public/images/actividades_experiencias/' . $actividad->foto_actividad) }}" alt="Foto">
 
-                <label class="edit-photo-overlay" for="file-{{ $actividad->id }}">
-                    <i class="fa fa-edit"></i> Editar
+                <label class="edit-photo-overlay-outline" for="file-{{ $actividad->id }}" title="Cambiar imagen">
+                    <i class="fa fa-pencil-alt"></i>
                 </label>
-                
+
                 <input id="file-{{ $actividad->id }}" type="file" name="actividades[{{ $actividad->id }}][foto_actividad]" data-id="{{ $actividad->id }}" class="upload_photos" accept="image/*" style="display:none;">
             @else
                 <label class="custom-file-upload m-0" for="file-{{ $actividad->id }}">
