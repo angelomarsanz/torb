@@ -217,6 +217,35 @@ $(function() {
                     });
                 });
 
+                $(document).on('click', '.btn-delete-actividad-simple', function() {
+                    let id = $(this).data('id');
+                    let url = $(this).data('url');
+                    let fila = $(`#fila-actividad-${id}`);
+                
+                    if (confirm('¿Estás seguro de que deseas eliminar esta actividad? Esta acción no se puede deshacer.')) {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('input[name="_token"]').val()
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    // Animación de desvanecimiento y remoción de la fila
+                                    fila.fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                    // Mensaje de éxito (puedes usar un toast o alert)
+                                    alert(response.message);
+                                }
+                            },
+                            error: function() {
+                                alert('Ocurrió un error al intentar eliminar la actividad.');
+                            }
+                        });
+                    }
+                });
+
                 break;
 
             // ... resto de los pasos

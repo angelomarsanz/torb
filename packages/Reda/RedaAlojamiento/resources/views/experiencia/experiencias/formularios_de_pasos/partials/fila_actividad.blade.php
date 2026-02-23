@@ -1,4 +1,4 @@
-<tr>
+<tr id="fila-actividad-{{ $actividad->id }}">
     <td class="vertical-align-top pt-3">
         <input type="number" 
             name="actividades[{{ $actividad->id }}][orden_actividad]" 
@@ -42,5 +42,14 @@
                 <i class="fa fa-exclamation-triangle"></i> {{ $message }}
             </div>
         @enderror
+    </td>
+    <td class="text-center">
+        <button type="button" 
+            class="btn-delete-actividad-simple" 
+            data-id="{{ $actividad->id }}" 
+            data-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
+            title="Eliminar actividad">
+            <i class="fa fa-trash-alt"></i>
+        </button>
     </td>
 </tr>

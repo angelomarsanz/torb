@@ -343,3 +343,26 @@
         transform: scale(0.9);
     }
 }
+
+/* --- BOTÓN DE ELIMINAR (SOLO ÍCONO) --- */
+.btn-delete-actividad-simple {
+    background: transparent;
+    border: none;
+    color: #dc3545; // Rojo peligro
+    padding: 8px;
+    font-size: 20px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        color: #a71d2a; // Un rojo más oscuro al pasar el mouse
+        transform: scale(1.2);
+    }
+
+    &:focus {
+        outline: none;
+    }
+}

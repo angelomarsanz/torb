@@ -77,5 +77,7 @@ Route::prefix('reda')->group(function () {
         ->name('reda.crop_photo');
 
         Route::post('experiencias/{id}/agregar-actividad', [ExperienciaController::class, 'agregarActividad'])->name('reda.experiencias.actividades.add');
+
+        Route::delete('experiencias/actividades/delete/{id}', [ExperienciaController::class, 'deleteActividad'])->name('reda.experiencias.actividades.delete');
     }); 
 });

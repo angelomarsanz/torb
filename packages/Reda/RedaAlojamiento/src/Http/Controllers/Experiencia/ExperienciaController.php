@@ -166,4 +166,35 @@ class ExperienciaController extends Controller
             ]);
         }    
     }
+    public function deleteActividad($id)
+    {
+        $actividad = ActividadExperiencia::find($id);
+    
+        if (!$actividad) {
+            return response()->json(['success' => false, 'message' => 'Actividad no encontrada'], 404);
+        }
+    
+        $directoryPath = public_path('images/actividades_experiencias/' . $id);
+    
+        try {
+            // Eliminamos el directorio completo y su contenido
+            if (File::isDirectory($directoryPath)) {
+                File::deleteDirectory($directoryPath);
+            }
+    
+            // Eliminamos el registro de la base de datos
+            $actividad->delete();
+    
+            return response()->json([
+                'success' => true,
+                'message' => '¡Actividad y sus archivos eliminados correctamente!'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Error al eliminar: ' . $e->getMessage()
+            ], 500);
+        }        
+    }
 }

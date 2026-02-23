@@ -61,7 +61,7 @@ class MediaController extends Controller
                     
                     // Si ya existe una foto, eliminarla físicamente
                     if (!empty($actividad->foto_actividad)) {
-                        $oldPath = $path . '/' . $actividad->foto_actividad;
+                        $oldPath = public_path('images/actividades_experiencias/' . $actividad->foto_actividad);
                         if (File::exists($oldPath)) {
                             File::delete($oldPath);
                         }
