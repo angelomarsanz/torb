@@ -35,6 +35,10 @@ window.showLoader = function(type, text) {
 $(document).on('change', '.upload_photos', function() {
     let file = this.files[0];
     let inputSelect = $(this);
+
+    let actividadId = inputSelect.attr('data-id') || inputSelect.data('id');
+    console.log('ID capturado al cambiar archivo:', actividadId);
+
     if (file) {
         const origen = $('#crop-and-upload').data('origen');
 
@@ -43,7 +47,6 @@ $(document).on('change', '.upload_photos', function() {
             // Ponemos la imagen en el modal
             $('#image-to-crop').attr('src', e.target.result);
             if (origen === 'actividades-experiencias') {
-                let actividadId = inputSelect.data('id');
                 if (actividadId == null)
                 {
                     actividadId = $(this).attr('data-id');
