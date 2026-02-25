@@ -5,6 +5,7 @@ namespace Reda\RedaAlojamiento\Models\Experiencia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Reda\RedaAlojamiento\Models\Experiencia\Experiencia;
+use App\Models\Currency; 
 
 class ActividadExperiencia extends Model
 {
@@ -24,9 +25,13 @@ class ActividadExperiencia extends Model
      */
     protected $fillable = [
         'experiencia_id',
+        'nombre_experiencia', 
         'descripcion_actividad',
         'foto_actividad',
-        'orden_actividad'
+        'orden_actividad',
+        'precio',             
+        'currency_id',        
+        'disponibilidad'      
     ];
 
     /**
@@ -35,5 +40,9 @@ class ActividadExperiencia extends Model
     public function experiencia()
     {
         return $this->belongsTo(Experiencia::class, 'experiencia_id');
+    }
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class, 'currency_id', 'id');
     }
 }

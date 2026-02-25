@@ -366,3 +366,68 @@
         outline: none;
     }
 }
+
+.bg-orange { background-color: #fd7e14; }
+
+.actividad-foto-card-container {
+    position: relative;
+    width: 100%;
+    max-width: 250px;
+    height: 180px;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &.no-image {
+        &:hover { border-color: #fd7e14; background: #fff5ed; }
+    }
+}
+
+.upload-placeholder {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.edit-photo-overlay-modern {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(253, 126, 20, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    &:hover { background: #e86b00; transform: scale(1.05); }
+}
+
+/* Responsividad para la línea divisoria en PC */
+@media (min-width: 992px) {
+    .border-start-lg {
+        border-left: 1px solid #eee !important;
+    }
+}
+
+/* Ajustes para móviles */
+@media (max-width: 767px) {
+    .card-body { padding: 1.5rem !important; }
+    .actividad-foto-card-container {
+        max-width: 100%;
+        margin-top: 15px;
+    }
+}

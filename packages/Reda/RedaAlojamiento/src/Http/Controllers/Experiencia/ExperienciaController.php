@@ -4,6 +4,7 @@ namespace Reda\RedaAlojamiento\Http\Controllers\Experiencia;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Currency;
 use Reda\RedaAlojamiento\Models\Experiencia\{
     Experiencia,
     ActividadExperiencia,
@@ -148,16 +149,20 @@ class ExperienciaController extends Controller
         $actividad = ActividadExperiencia::create([
             'experiencia_id' => $id,
             'orden_actividad' => $ultimoOrden + 1,
+            'nombre_experiencia' => '', 
             'descripcion_actividad' => '',
+            'precio' => null,           
+            'currency_id' => null,      
+            'disponibilidad' => 1,   // (1 para 'Sí' por defecto)
             'foto_actividad' => null
         ]);
     
         if ($request->ajax()) {
+            $currencies = Currency::where('status', 'Active')->get();
+
             // Retornamos el HTML de la fila para insertarlo directamente
             // Pasamos 'actividad' a una vista parcial o la renderizamos aquí
-            $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', [
-                'actividad' => $actividad
-            ])->render();
+            $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies'))->render();
     
             return response()->json([
                 'success' => true,

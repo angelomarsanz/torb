@@ -195,15 +195,16 @@ $(function() {
                         },
                         success: function(response) {
                             if (response.success) {
-                                // Insertamos la fila
-                                $('table tbody').append(response.html);
-                
-                                // Re-aplicamos validaciones a los nuevos campos
+                                $('#actividades-wrapper').append(response.html);
                                 aplicarReglasDinamicas();
-                
-                                // Scroll suave
+                                
+                                // Efecto visual de entrada
+                                const nuevaCard = $('.fila-actividad-container').last();
+                                nuevaCard.hide().fadeIn(800);
+                                
+                                // Scroll suave hacia la nueva card
                                 $('html, body').animate({
-                                    scrollTop: $("table tbody tr:last").offset().top - 100
+                                    scrollTop: nuevaCard.offset().top - 100
                                 }, 500);
                             }
                         },

@@ -16,12 +16,21 @@
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             
-                            <div class="container-actividades mt-4">
-                                <div id="actividades-wrapper" class="row">
-                                    @foreach($actividades as $actividad)
-                                        @include('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', ['actividad' => $actividad])
-                                    @endforeach
-                                </div>
+                            <div class="table-responsive border rounded-3 mt-4">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th style="width: 80px;">Nro.</th>
+                                            <th>Descripción</th>
+                                            <th style="width: 250px;">Foto</th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($actividades as $actividad)
+                                            @include('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad')
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
 
                             <div class="mt-3 d-flex justify-content-center">
