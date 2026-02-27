@@ -67,68 +67,74 @@ $(function() {
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
+                        console.log('Se ejecutó submitHandler');
                         let tieneErroresDeFoto = false;
                         
                         // Limpiar errores previos de fotos
                         $('.error-foto-js').remove();
-                        $('.actividad-foto-container').css('border-color', '');
-            
-                        // 2. VALIDACIÓN MANUAL DE FOTOS (Fila por fila)
-                        // Recorremos solo las filas que tienen inputs de actividades
-                        $('table tbody tr').each(function() {
+                        $('.actividad-foto-card-container').css('border-color', '');
+                                    
+                        // VALIDACIÓN MANUAL DE FOTOS (Usando la clase de tus cards)
+                        $('.fila-actividad-container').each(function() {
                             const fila = $(this);
                             
-                            // Ignorar la fila del botón "Agregar nueva actividad"
-                            if (fila.hasClass('no-validar')) return;
-            
-                            // Verificar si existe una imagen dentro del contenedor
-                            const contenedor = fila.find('.actividad-foto-container');
+                            // Buscamos el contenedor de la foto según tu Blade
+                            const contenedor = fila.find('.actividad-foto-card-container');
                             const tieneImagen = contenedor.find('img').length > 0;
-            
+
                             if (!tieneImagen) {
                                 tieneErroresDeFoto = true;
-                                contenedor.css('border-color', '#dc3545');
-                                // Insertar el mensaje de error justo después del contenedor de la foto
-                                contenedor.after('<div class="text-danger error-foto-js mt-1" style="font-size: 11px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i> La foto es obligatoria</div>');
+                                contenedor.css('border', '2px solid #dc3545');
+                                // Insertar el mensaje de error
+                                contenedor.after('<div class="text-danger error-foto-js mt-1" style="font-size: 13px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i> La foto es obligatoria</div>');
                             }
                         });
             
-                        // 3. Si falta alguna foto, detener el envío y hacer scroll al primer error
                         if (tieneErroresDeFoto) {
                             $('html, body').animate({ 
                                 scrollTop: ($('.error-foto-js').first().offset().top - 150) 
                             }, 500);
-                            return false; // Bloquea el envío del formulario
+                            return false; 
                         }
-            
-                        // 4. Si todo está bien, proceder con el envío
                         $("#btn_next").attr("disabled", true);
                         $(".spinner").removeClass('d-none');
                         $("#btn_next-text").text("Guardando...");
-                        form.submit(); // Usar form.submit() explícito
+                        form.submit();
                     }
                 });
             
-                // 5. Aplicar reglas a los campos de texto y número dinámicamente
-                function aplicarReglasDinamicas() {
+                function aplicarReglasDinamicas() {            
+                    // Validación para ORDEN
                     $('input[name*="[orden_actividad]"]').each(function() {
                         $(this).rules('add', {
                             required: true,
+                            number: true,
                             min: 1,
                             messages: {
-                                required: "Nro. requerido",
+                                required: "Obligatorio",
+                                number: "Solo números",
                                 min: "Mínimo 1"
                             }
                         });
                     });
-            
+
+                    // REGLA ADICIONAL: Nombre de la actividad (que también es required en tu Blade)
+                    $('input[name*="[nombre_experiencia]"]').each(function() {
+                        $(this).rules('add', {
+                            required: true,
+                            messages: {
+                                required: "El nombre es obligatorio"
+                            }
+                        });
+                    });
+
                     $('textarea[name*="[descripcion_actividad]"]').each(function() {
                         $(this).rules('add', {
                             required: true,
                             minlength: 5,
                             messages: {
-                                required: "Falta descripción",
-                                minlength: "La descripción es muy corta"
+                                required: "La descripción es obligatoria xxx",
+                                minlength: "Escribe al menos 5 caracteres"
                             }
                         });
                     });
@@ -146,7 +152,7 @@ $(function() {
                         
                         // Buscamos el contenedor específico de esa actividad
                         // Buscamos el input que tiene el data-id igual al que devolvió el servidor
-                        const container = $(`.upload_photos[data-id="${actividadId}"]`).closest('.actividad-foto-container');
+                        const container = $(`.upload_photos[data-id="${actividadId}"]`).closest('.actividad-foto-card-container');
                         
                         if (nuevaUrl && container.length) {
                             // Actualizamos solo el contenido interno del contenedor
@@ -167,7 +173,7 @@ $(function() {
                             `);
                             
                             // Quitamos la clase de placeholder si existía (en caso de ser la primera foto)
-                            container.removeClass('placeholder-height');
+                            container.removeClass('no-image');
                             
                             // Limpiamos los mensajes de error de validación previos si los había
                             container.css('border-color', '');

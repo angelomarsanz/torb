@@ -47,8 +47,7 @@
                                 class="form-control @error('actividades.'.$actividad->id.'.descripcion_actividad') is-invalid @enderror" 
                                 rows="2" 
                                 placeholder="Haz una descripción del producto o servicio"
-                                required>{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}
-                            </textarea>
+                                required>{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}</textarea>
                             @error('actividades.'.$actividad->id.'.descripcion_actividad')
                                 <span class="text-danger small font-weight-700">Este campo es obligatorio.</span>
                             @enderror
@@ -89,8 +88,8 @@
                         @if($actividad->foto_actividad)
                             <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}" 
                                  class="img-fluid rounded-3 shadow-sm" alt="Foto">
-                            <label class="edit-photo-overlay-modern" for="file-{{ $actividad->id }}" title="Cambiar imagen">
-                                <i class="fa fa-camera"></i>
+                            <label class="edit-photo-overlay-outline" for="file-{{ $actividad->id }}" title="Cambiar imagen">
+                                <i class="fa fa-pencil-alt"></i>
                             </label>
                         @else
                             <label class="upload-placeholder" for="file-{{ $actividad->id }}">
