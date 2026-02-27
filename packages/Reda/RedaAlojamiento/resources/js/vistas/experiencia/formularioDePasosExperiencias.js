@@ -67,7 +67,6 @@ $(function() {
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        console.log('Se ejecutó submitHandler');
                         let tieneErroresDeFoto = false;
                         
                         // Limpiar errores previos de fotos
