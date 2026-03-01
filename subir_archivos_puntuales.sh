@@ -12,6 +12,5 @@
 ARCHIVOS_PHP_PUNTUALES=(
         #"Ninguno"
         "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/partials/fila_actividad.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
         "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
 )

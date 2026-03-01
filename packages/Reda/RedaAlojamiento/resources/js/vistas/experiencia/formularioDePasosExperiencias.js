@@ -137,6 +137,19 @@ $(function() {
                             }
                         });
                     });
+
+                    $('.validar-precio').each(function() {
+                        $(this).rules('add', {
+                            required: true,
+                            number: true,
+                            min: 0.01,
+                            messages: {
+                                required: "Ingrese un precio",
+                                number: "Formato inválido",
+                                min: "Debe ser mayor a 0"
+                            }
+                        });
+                    });
                 }
 
                 aplicarReglasDinamicas();

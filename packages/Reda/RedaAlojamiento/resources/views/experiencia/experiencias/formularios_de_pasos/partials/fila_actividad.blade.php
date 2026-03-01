@@ -52,13 +52,14 @@
                                 <span class="text-danger small font-weight-700">Este campo es obligatorio.</span>
                             @enderror
                         </div>
+
                         <div class="col-md-4">
                             <label class="form-label small font-weight-700">Precio</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0"><i class="fa fa-tag text-muted"></i></span>
                                 <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio]" 
                                     value="{{ old('actividades.'.$actividad->id.'.precio', $actividad->precio) }}" 
-                                    class="form-control border-start-0" placeholder="0.00">
+                                    class="form-control border-start-0 validar-precio" placeholder="0.00"> 
                             </div>
                         </div>
                         
