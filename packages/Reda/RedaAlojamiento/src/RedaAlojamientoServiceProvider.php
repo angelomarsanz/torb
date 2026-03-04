@@ -48,6 +48,13 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         // Nueva etiqueta
         ], 'reda-alojamiento-config');
 
+        // Traducciones
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'reda-alojamiento');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/reda-alojamiento'),
+        ]);
+
         /* PUBLICACIÓN DE ASSETS ESTÁTICOS
         // Ejemplo
         $this->publishes([

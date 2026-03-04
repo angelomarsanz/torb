@@ -6,7 +6,7 @@
                     <span class="badge bg-orange text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                         {{ $actividad->orden_actividad ?? '!' }}
                     </span>
-                    <h5 class="card-title mb-0 font-weight-700 text-dark">Detalles de la Actividad</h5>
+                    <h5 class="card-title mb-0 font-weight-700 text-dark">{{ __('reda-alojamiento::messages.general.detalle_producto_servicio') }}</h5>
                 </div>
                 <button 
                     type="button" class="btn btn-outline-danger btn-sm border-0 btn-delete-actividad-simple" 
@@ -35,7 +35,7 @@
                             @enderror
                         </div>
                         <div class="col-md-9">
-                            <label class="form-label small font-weight-700">Nombre de la Actividad</label>
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_producto_servicio') }}</label>
                             <input type="text" name="actividades[{{ $actividad->id }}][nombre_experiencia]" 
                                 value="{{ old('actividades.'.$actividad->id.'.nombre_experiencia', $actividad->nombre_experiencia) }}" 
                                 class="form-control" placeholder="Ej: Tour Gastronómico" required>
