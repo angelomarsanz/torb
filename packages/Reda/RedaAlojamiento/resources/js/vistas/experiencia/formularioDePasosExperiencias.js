@@ -13,6 +13,10 @@ $(function() {
                         titulo: { required: true, maxlength: 255 },
                         descripcion: { required: true, minlength: 20 }
                     },
+                    messages: {
+                        titulo: { required: window.RedaTrans.validations.titulo_required },
+                        descripcion: { minlength: window.RedaTrans.validations.descripcion_min }
+                    },
                     submitHandler: function(form) {
                         $("#btn_next").attr("disabled", true);
                         $(".spinner").removeClass('d-none');
@@ -130,10 +134,10 @@ $(function() {
                     $('textarea[name*="[descripcion_actividad]"]').each(function() {
                         $(this).rules('add', {
                             required: true,
-                            minlength: 5,
+                            minlength: 20,
                             messages: {
                                 required: "La descripción es obligatoria xxx",
-                                minlength: "Escribe al menos 5 caracteres"
+                                minlength: window.RedaTrans.validations.descripcion_min
                             }
                         });
                     });
