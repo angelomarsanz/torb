@@ -36,8 +36,8 @@
                         </div>
                         <div class="col-md-9">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.php.nombre_producto_servicio') }}</label>
-                            <input type="text" name="actividades[{{ $actividad->id }}][nombre_experiencia]" 
-                                value="{{ old('actividades.'.$actividad->id.'.nombre_experiencia', $actividad->nombre_experiencia) }}" 
+                            <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]" 
+                                value="{{ old('actividades.'.$actividad->id.'.nombre_actividad', $actividad->nombre_actividad) }}" 
                                 class="form-control" placeholder="Ej: Tour Gastronómico" required>
                         </div>
                         <div class="col-12">

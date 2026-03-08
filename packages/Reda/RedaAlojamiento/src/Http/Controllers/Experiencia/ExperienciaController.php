@@ -108,8 +108,12 @@ class ExperienciaController extends Controller
                                 }
                 
                                 $actividad->update([
-                                    'descripcion_actividad' => $datos['descripcion_actividad'],
                                     'orden_actividad'       => $datos['orden_actividad'],
+                                    'nombre_actividad'      => $datos['nombre_actividad'],
+                                    'descripcion_actividad' => $datos['descripcion_actividad'],
+                                    'precio'                => $datos['precio'],
+                                    'currency_id'           => $datos['currency_id'],
+                                    'disponibilidad'        => $datos['disponibilidad']
                                 ]);
                             }
                         }

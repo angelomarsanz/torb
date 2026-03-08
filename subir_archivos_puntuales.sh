@@ -17,4 +17,7 @@ ARCHIVOS_PHP_PUNTUALES=(
         "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
         "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/partials/fila_actividad.blade.php"
         "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
+        "packages/Reda/RedaAlojamiento/database/migrations/2026_03_08_202105_rename_nombre_experiencia_to_nombre_actividad_in_actividades_experiencias_table.php"
+        "packages/Reda/RedaAlojamiento/src/Models/Experiencia/ActividadExperiencia.php"
+        "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
 )

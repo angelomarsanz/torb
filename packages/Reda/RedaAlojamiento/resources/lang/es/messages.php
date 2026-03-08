@@ -22,5 +22,9 @@ return [
         'precio_requerido' => 'El precio es obligatorio.',
         'precio_numerico' => 'El precio debe ser un número válido.',
         'precio_minimo' => 'El precio debe ser mayor a 0.',
+        'guardando' => 'Guardando...',
+        'subiendo' => 'Subiendo...',
+        'eliminar_actividad' => '¿Estás seguro de que deseas eliminar esta actividad? Esta acción no se puede deshacer.',
+        'error_eliminar_actividad' => 'Ocurrió un error al intentar eliminar la actividad.'
     ]
 ];

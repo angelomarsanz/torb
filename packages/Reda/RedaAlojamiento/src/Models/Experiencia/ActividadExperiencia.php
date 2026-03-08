@@ -25,7 +25,7 @@ class ActividadExperiencia extends Model
      */
     protected $fillable = [
         'experiencia_id',
-        'nombre_experiencia', 
+        'nombre_actividad', 
         'descripcion_actividad',
         'foto_actividad',
         'orden_actividad',

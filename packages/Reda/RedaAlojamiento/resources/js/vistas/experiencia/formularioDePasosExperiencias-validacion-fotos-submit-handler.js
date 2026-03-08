@@ -68,15 +68,9 @@ $(function() {
             case 'actividades':
                 // 1. Inicializar el validador
                 const validadorActividades = $('#list_des').validate({
-                    ignore: [], // IMPORTANTE: Esto permite validar el input de foto aunque tenga display:none
                     errorPlacement: function(error, element) {
-                        if (element.hasClass('upload_photos')) {
-                            // Coloca el error debajo del contenedor de la foto
-                            error.insertAfter(element.closest('.actividad-foto-card-container'));
-                        } else {
-                            error.addClass('text-danger small font-weight-bold');
-                            error.insertAfter(element);
-                        }
+                        error.addClass('text-danger small font-weight-bold');
+                        error.insertAfter(element);
                     },
                     highlight: function(element) {
                         $(element).addClass('is-invalid');
@@ -85,6 +79,35 @@ $(function() {
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
+                        let tieneErroresDeFoto = false;
+                        
+                        // Limpiar errores previos de fotos
+                        $('.error-foto-js').remove();
+                        $('.actividad-foto-card-container').css('border-color', '');
+                                    
+                        // VALIDACIÓN MANUAL DE FOTOS (Usando la clase de tus cards)
+                        $('.fila-actividad-container').each(function() {
+                            const fila = $(this);
+                            
+                            // Buscamos el contenedor de la foto según tu Blade
+                            const contenedor = fila.find('.actividad-foto-card-container');
+                            const tieneImagen = contenedor.find('img').length > 0;
+
+                            if (!tieneImagen) {
+                                tieneErroresDeFoto = true;
+                                contenedor.css('border', '2px solid #dc3545');
+                                // Insertar el mensaje de error
+                                const mensajeError = window.RedaTrans.javascript.foto_requerido;
+                                contenedor.after(`<div class="text-danger error-foto-js mt-1" style="font-size: 13px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i>${mensajeError}</div>`);
+                            }
+                        });
+            
+                        if (tieneErroresDeFoto) {
+                            $('html, body').animate({ 
+                                scrollTop: ($('.error-foto-js').first().offset().top - 150) 
+                            }, 500);
+                            return false; 
+                        }
                         $("#btn_next").attr("disabled", true);
                         $(".spinner").removeClass('d-none');
                         $("#btn_next-text").text(window.RedaTrans.javascript.guardando);
@@ -144,21 +167,14 @@ $(function() {
                     });
 
                     $('input[name*="[foto_actividad]"]').each(function() {
-                        const inputFoto = $(this);
-                        // Buscamos el contenedor de la card de esta fila específica
-                        const contenedor = inputFoto.closest('.actividad-foto-card-container');
-                    
-                        inputFoto.rules('add', {
-                            // REGLA DE PRESENCIA UNIFORME
-                            required: function() {
-                                // Es requerido SOLO SI no hay una imagen (img) visible en su contenedor
-                                return contenedor.find('img').length === 0;
-                            },
-                            // REGLA DE FORMATO
+                        $(this).rules('add', {
                             extension: "jpg|jpeg|png|gif",
                             messages: {
-                                required: window.RedaTrans.javascript.foto_requerido,
                                 extension: window.RedaTrans.javascript.foto_formato
+                            },
+                            // Esto asegura que el error de formato no rompa el diseño de tu card
+                            errorPlacement: function(error, element) {
+                                error.insertAfter(element.closest('.actividad-foto-card-container'));
                             }
                         });
                     });
@@ -203,16 +219,6 @@ $(function() {
                             container.css('border-color', '');
                             container.siblings('.error-foto-js').remove();
                         }
-                    }
-                });
-
-                // Forzar validación cuando el usuario selecciona un archivo
-                $(document).on('change', '.upload_photos', function() {
-                    $(this).valid(); // Esto quita el mensaje de error apenas seleccionan la foto
-                    
-                    // Opcional: Si quieres que el borde rojo se quite al seleccionar
-                    if ($(this).val() !== '') {
-                        $(this).closest('.actividad-foto-card-container').css('border', '');
                     }
                 });
                 
