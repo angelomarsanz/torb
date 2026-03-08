@@ -12,7 +12,7 @@
                     </div>
 
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
-                        <h4 class="font-weight-700">{{ __('reda-alojamiento::messages.general.productos_servicios') }}</h4>
+                        <h4 class="font-weight-700">{{ __('reda-alojamiento::messages.php.productos_servicios') }}</h4>
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             

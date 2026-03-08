@@ -102,6 +102,7 @@
 @endpush
 
 @section('validation_script')
+    <script>window.RedaTrans = @json(__('reda-alojamiento::messages'));</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('public/js/additional-method.min.js') }}"></script>

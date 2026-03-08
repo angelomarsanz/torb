@@ -10,12 +10,20 @@ $(function() {
             case 'descripcion':
                 $('#list_des').validate({
                     rules: {
-                        titulo: { required: true, maxlength: 255 },
+                        titulo: { required: true, minlength: 5 },
                         descripcion: { required: true, minlength: 20 }
                     },
                     messages: {
-                        titulo: { required: window.RedaTrans.validations.titulo_required },
-                        descripcion: { minlength: window.RedaTrans.validations.descripcion_min }
+                        titulo: 
+                        { 
+                            required: window.RedaTrans.javascript.titulo_requerido,
+                            minlength: window.RedaTrans.javascript.titulo_minimo
+                        },
+                        descripcion: 
+                        {
+                            required: window.RedaTrans.javascript.descripcion_requerido,
+                            minlength: window.RedaTrans.javascript.descripcion_minimo 
+                        }
                     },
                     submitHandler: function(form) {
                         $("#btn_next").attr("disabled", true);
@@ -38,9 +46,9 @@ $(function() {
                         }
                     },
                     messages: {
-                        'photos[]': {
-                            required: "Por favor, sube al menos una foto.",
-                            extension: "Solo se permiten imágenes (jpg, jpeg, png, gif)."
+                        'photo': {
+                            required: window.RedaTrans.javascript.foto_requerido,
+                            extension: window.RedaTrans.javascript.foto_formato
                         }
                     },
                     submitHandler: function(form) {
@@ -89,7 +97,8 @@ $(function() {
                                 tieneErroresDeFoto = true;
                                 contenedor.css('border', '2px solid #dc3545');
                                 // Insertar el mensaje de error
-                                contenedor.after('<div class="text-danger error-foto-js mt-1" style="font-size: 13px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i> La foto es obligatoria</div>');
+                                const mensajeError = window.RedaTrans.javascript.foto_requerido;
+                                contenedor.after(`<div class="text-danger error-foto-js mt-1" style="font-size: 13px; font-weight: 700;"><i class="fa fa-exclamation-circle"></i>${mensajeError}</div>`);
                             }
                         });
             
@@ -114,9 +123,9 @@ $(function() {
                             number: true,
                             min: 1,
                             messages: {
-                                required: "Obligatorio",
-                                number: "Solo números",
-                                min: "Mínimo 1"
+                                required: window.RedaTrans.javascript.numero_requerido,
+                                number: window.RedaTrans.javascript.numero_numerico,
+                                min: window.RedaTrans.javascript.numero_minimo
                             }
                         });
                     });
@@ -125,8 +134,10 @@ $(function() {
                     $('input[name*="[nombre_experiencia]"]').each(function() {
                         $(this).rules('add', {
                             required: true,
+                            minlength: 2,
                             messages: {
-                                required: "El nombre es obligatorio"
+                                required: window.RedaTrans.javascript.nombre_requerido,
+                                minlength: window.RedaTrans.javascript.nombre_minimo
                             }
                         });
                     });
@@ -136,8 +147,8 @@ $(function() {
                             required: true,
                             minlength: 20,
                             messages: {
-                                required: "La descripción es obligatoria xxx",
-                                minlength: window.RedaTrans.validations.descripcion_min
+                                required: window.RedaTrans.javascript.descripcion_requerido,
+                                minlength: window.RedaTrans.javascript.descripcion_minimo
                             }
                         });
                     });
@@ -148,9 +159,9 @@ $(function() {
                             number: true,
                             min: 0.01,
                             messages: {
-                                required: "Ingrese un precio",
-                                number: "Formato inválido",
-                                min: "Debe ser mayor a 0"
+                                required: window.RedaTrans.javascript.precio_requerido,
+                                number: window.RedaTrans.javascript.precio_numerico,
+                                min: window.RedaTrans.javascript.precio_minimo
                             }
                         });
                     });
