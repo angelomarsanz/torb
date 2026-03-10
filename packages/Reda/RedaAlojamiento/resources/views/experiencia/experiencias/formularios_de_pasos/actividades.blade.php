@@ -12,7 +12,7 @@
                     </div>
 
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
-                        <h4 class="font-weight-700">{{ __('reda-alojamiento::messages.php.productos_servicios') }}</h4>
+                        <h4 class="font-weight-700">{{ __('reda-alojamiento::messages.php.productos_y_servicios') }}</h4>
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             
@@ -32,7 +32,7 @@
                                 <div class="row m-0 justify-content-between">
                                     <button type="submit" class="btn vbtn-outline-success text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3" id="btn_next">
                                         <i class="spinner fa fa-spinner fa-spin d-none"></i>
-                                        <span id="btn_next-text">{{ __('Siguiente') }}</span>
+                                        <span id="btn_next-text">{{ __('reda-alojamiento::messages.php.siguiente') }}</span>
                                     </button>
                                 </div>
                             </div>
@@ -40,7 +40,7 @@
                                 class="btn-floating-add-simple" 
                                 id="btn-add-actividad" 
                                 data-url="{{ route('reda.experiencias.actividades.add', $result->id) }}" 
-                                title="Agregar una nueva actividad">
+                                title="{{ __('reda-alojamiento::messages.php.agregar_una_nueva_actividad') }}">
                                 <i class="fa fa-plus"></i>
                             </button>                        
                         </form>
@@ -54,7 +54,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ __('Recortar Imagen') }}</h5>
+                <h5 class="modal-title">{{ __('reda-alojamiento::messages.php.recortar_imagen') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -66,8 +66,8 @@
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="crop_photo_id" value="">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" class="btn btn-success" id="crop-and-upload" data-origen="actividades-experiencias">{{ __('Guardar Cambios') }}</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('reda-alojamiento::messages.php.cancelar') }}</button>
+                <button type="button" class="btn btn-success" id="crop-and-upload" data-origen="actividades-experiencias">{{ __('reda-alojamiento::messages.php.guardar_cambios') }}</button>
             </div>
         </div>
     </div>

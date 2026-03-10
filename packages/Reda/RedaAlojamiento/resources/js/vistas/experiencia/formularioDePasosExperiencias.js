@@ -16,13 +16,13 @@ $(function() {
                     messages: {
                         titulo: 
                         { 
-                            required: window.RedaTrans.javascript.titulo_requerido,
-                            minlength: window.RedaTrans.javascript.titulo_minimo
+                            required: window.RedaTrans.javascript.el_titulo_es_obligatorio,
+                            minlength: window.RedaTrans.javascript.el_titulo_debe_tener_al_menos_5_caracteres
                         },
                         descripcion: 
                         {
-                            required: window.RedaTrans.javascript.descripcion_requerido,
-                            minlength: window.RedaTrans.javascript.descripcion_minimo 
+                            required: window.RedaTrans.javascript.la_descripcion_es_obligatoria,
+                            minlength: window.RedaTrans.javascript.la_descripcion_debe_tener_al_menos_20_caracteres 
                         }
                     },
                     submitHandler: function(form) {
@@ -47,8 +47,8 @@ $(function() {
                     },
                     messages: {
                         'photo': {
-                            required: window.RedaTrans.javascript.foto_requerido,
-                            extension: window.RedaTrans.javascript.foto_formato
+                            required: window.RedaTrans.javascript.la_foto_es_obligatoria,
+                            extension: window.RedaTrans.javascript.solo_se_permiten_imagenes_jpg_jpeg_png_gif
                         }
                     },
                     submitHandler: function(form) {
@@ -100,9 +100,9 @@ $(function() {
                             number: true,
                             min: 1,
                             messages: {
-                                required: window.RedaTrans.javascript.numero_requerido,
-                                number: window.RedaTrans.javascript.numero_numerico,
-                                min: window.RedaTrans.javascript.numero_minimo
+                                required: window.RedaTrans.javascript.el_numero_de_la_actividad_es_obligatorio,
+                                number: window.RedaTrans.javascript.el_numero_de_la_actividad_debe_ser_un_numero_valido,
+                                min: window.RedaTrans.javascript.el_numero_de_la_actividad_debe_ser_mayor_a_0
                             }
                         });
                     });
@@ -113,8 +113,8 @@ $(function() {
                             required: true,
                             minlength: 2,
                             messages: {
-                                required: window.RedaTrans.javascript.nombre_requerido,
-                                minlength: window.RedaTrans.javascript.nombre_minimo
+                                required: window.RedaTrans.javascript.el_nombre_es_obligatorio,
+                                minlength: window.RedaTrans.javascript.el_nombre_debe_tener_al_menos_2_caracteres
                             }
                         });
                     });
@@ -124,8 +124,8 @@ $(function() {
                             required: true,
                             minlength: 20,
                             messages: {
-                                required: window.RedaTrans.javascript.descripcion_requerido,
-                                minlength: window.RedaTrans.javascript.descripcion_minimo
+                                required: window.RedaTrans.javascript.la_descripcion_es_obligatoria,
+                                minlength: window.RedaTrans.javascript.la_descripcion_debe_tener_al_menos_20_caracteres
                             }
                         });
                     });
@@ -136,9 +136,9 @@ $(function() {
                             number: true,
                             min: 0.01,
                             messages: {
-                                required: window.RedaTrans.javascript.precio_requerido,
-                                number: window.RedaTrans.javascript.precio_numerico,
-                                min: window.RedaTrans.javascript.precio_minimo
+                                required: window.RedaTrans.javascript.el_precio_es_obligatorio,
+                                number: window.RedaTrans.javascript.el_precio_debe_ser_un_numero_valido,
+                                min: window.RedaTrans.javascript.el_precio_debe_ser_mayor_a_0
                             }
                         });
                     });
@@ -157,8 +157,8 @@ $(function() {
                             // REGLA DE FORMATO
                             extension: "jpg|jpeg|png|gif",
                             messages: {
-                                required: window.RedaTrans.javascript.foto_requerido,
-                                extension: window.RedaTrans.javascript.foto_formato
+                                required: window.RedaTrans.javascript.la_foto_es_obligatoria,
+                                extension: window.RedaTrans.javascript.solo_se_permiten_imagenes_jpg_jpeg_png_gif
                             }
                         });
                     });
@@ -263,7 +263,7 @@ $(function() {
                     let url = $(this).data('url');
                     let fila = $(`#fila-actividad-${id}`);
                 
-                    if (confirm(window.RedaTrans.javascript.eliminar_actividad)) {
+                    if (confirm(window.RedaTrans.javascript.estas_seguro_de_que_deseas_eliminar_esta_actividad_esta_accion_no_se_puede_deshacer)) {
                         $.ajax({
                             url: url,
                             type: 'DELETE',
@@ -281,7 +281,7 @@ $(function() {
                                 }
                             },
                             error: function() {
-                                alert(window.RedaTrans.javascript.error_eliminar_actividad);
+                                alert(window.RedaTrans.javascript.ocurrio_un_error_al_intentar_eliminar_la_actividad);
                             }
                         });
                     }

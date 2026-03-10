@@ -2,14 +2,14 @@
     @php
         // Definimos los pasos para iterar o simplemente los listamos
         $steps = [
-            'descripcion' => __('Descripción'),
-            'fotos'       => __('Fotos'),
-            'actividades' => __('Actividades'),
-            'ubicacion'   => __('Ubicación'),
-            'horario'     => __('Horario'),
-            'precio'      => __('Precio'),
-            'informacion_adicional' => __('Información adicional'),
-            'anfitrion'   => __('Anfitrión'),
+            'descripcion'           => __('reda-alojamiento::messages.php.descripcion'),
+            'fotos'                 => __('reda-alojamiento::messages.php.fotos'),
+            'actividades'           => __('reda-alojamiento::messages.php.productos_y_servicios'),
+            'ubicacion'             => __('reda-alojamiento::messages.php.ubicacion'),
+            'horario'               => __('reda-alojamiento::messages.php.horario'),
+            'precio'                => __('reda-alojamiento::messages.php.precio'),
+            'informacion_adicional' => __('reda-alojamiento::messages.php.informacion_adicional'),
+            'anfitrion'             => __('reda-alojamiento::messages.php.anfitrion')
         ];
     @endphp
 

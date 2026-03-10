@@ -5,12 +5,12 @@
 $(function () {
     const selectorEnlaceReferencia = 'a[aria-label="property-create"]';
     const botonId = 'nav-publica-experiencia';
-    // Usar `href` relativo y la misma clase de estilo que "List your Space".
+    const textoBoton = window.RedaTrans.javascript.publica_tu_negocio;
     const botonHtml = `
         <div class="nav-item ml-2" id="${botonId}" data-role="added-by-reda">
             <a class="nav-link p-2" href="https://pruebas.redetronic.com/reda/crear-experiencia" aria-label="experiencia-create">
                 <button class="btn vbtn-outline-success text-14 font-weight-700 p-0 mt-2 pl-4 pr-4">
-                    <p class="p-3 mb-0">Publica tu experiencia</p>
+                    <p class="p-3 mb-0">${textoBoton}</p>
                 </button>
             </a>
         </div>
