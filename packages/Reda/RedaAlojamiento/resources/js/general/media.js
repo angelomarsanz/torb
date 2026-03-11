@@ -3,10 +3,11 @@
 console.log('Se cargó correctamente media.js v8');
 // Crear el contenedor del loader
 if ($('#custom-loader').length === 0) {
+    const procesando = window.RedaAlojamiento.general.procesando;
     const loaderHtml = `
         <div id="custom-loader" class="loader-overlay">
             <div id="loader-content"></div>
-            <h4 id="loader-text" class="font-weight-700">Procesando...</h4>
+            <h4 id="loader-text" class="font-weight-700">${procesando}</h4>
         </div>`;
     $('body').append(loaderHtml);
 }
@@ -40,6 +41,19 @@ $(document).on('change', '.upload_photos', function() {
     console.log('ID capturado al cambiar archivo:', actividadId);
 
     if (file) {
+        const extensionesPermitidas = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+        if (!extensionesPermitidas.exec(file.name)) {
+            alert(window.RedaAlojamiento.general.solo_se_permiten_imagenes_jpg_jpeg_png_gif);
+            $(this).val('');
+            return false;
+        }
+
+        if (file.size > 25600) {
+            alert(RedaAlojamiento.general.el_archivo_es_muy_pesado_máximo_25_mb);
+            $(this).val('');
+            return false;
+        }
+
         const origen = $('#crop-and-upload').data('origen');
 
         let reader = new FileReader();
@@ -162,7 +176,7 @@ $('#crop-and-upload').on('click', function() {
     let $btn = $(this);
     cropper.getCroppedCanvas().toBlob((blob) => {
         $('#cropModal').modal('hide'); // Cerramos el modal para que se vea la animación central
-        window.showLoader('crop', 'Recortando y subiendo imagen...');
+        window.showLoader('crop', window.RedaAlojamiento.general.recortando_y_subiendo_imagen);
         let formData = new FormData();
         const origen = $(this).data('origen');
 
@@ -198,7 +212,7 @@ $('#crop-and-upload').on('click', function() {
             success: function(response) {
                 console.log("Respuesta del servidor:", response);
                 if(response.success) {
-                    $('#loader-text').text('¡Imagen actualizada!');
+                    $('#loader-text').text(window.RedaAlojamiento.general.imagen_actualizada);
                     setTimeout(() => {
                         $('#custom-loader').fadeOut();
                         // DISPARAR EVENTO PERSONALIZADO
@@ -215,13 +229,13 @@ $('#crop-and-upload').on('click', function() {
                 else
                 {
                     $('#custom-loader').fadeOut();
-                    alert('Error: ' + response.message);
+                    alert(window.RedaAlojamiento.general.error + response.message);
                 }
             },
             error: function(xhr) {
                 $('#custom-loader').fadeOut();
-                let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Error al guardar la imagen';
-                alert('Error del servidor: ' + msg); // Mensaje de error
+                let msg = xhr.responseJSON ? xhr.responseJSON.message : window.RedaAlojamiento.general.error_al_guardar_la_imagen;
+                alert(window.RedaAlojamiento.general.error_del_servidor + msg); // Mensaje de error
             }
         });
     });
@@ -234,7 +248,7 @@ $(document).on('click', '.make-default', function(e) {
     let starUrl = APP_URL + '/reda/make-default-photo';
     let expId = $('#experiencia_id').val();
     const origen = $(this).data('origen');
-    showLoader('star', 'Marcando como foto de portada...');
+    showLoader('star', window.RedaAlojamiento.general.marcando_como_foto_de_portada);
 
     $.post(starUrl, {
         _token: $('input[name="_token"]').val(),
@@ -243,7 +257,7 @@ $(document).on('click', '.make-default', function(e) {
         origen: origen
     }, function(response) {
         if (response.success) {
-            $('#loader-text').text('¡Portada actualizada!');
+            $('#loader-text').text(window.RedaAlojamiento.general.portada_actualizada);
             setTimeout(() => {
                 $('#custom-loader').fadeOut();
                 // DISPARAR EVENTO PERSONALIZADO
@@ -258,11 +272,11 @@ $(document).on('click', '.make-default', function(e) {
             }, 800);
         } else {
             $('#custom-loader').fadeOut();
-            alert('Error al marcar como predeterminada');
+            alert(window.RedaAlojamiento.general.error_al_marcar_como_predeterminada);
         }
     }).fail(function() {
         $('#custom-loader').fadeOut();
-        alert('Error en el servidor');
+        alert(window.RedaAlojamiento.general.error_en_el_servidor);
     });
 });
 
@@ -272,15 +286,15 @@ $(document).on('click', '.delete-photo', function(e) {
     let photoId = $(this).data('id');
     let deleteUrl = APP_URL + '/reda/delete-photo';
     const origen = $(this).data('origen');
-    if (confirm('¿Estás seguro de eliminar esta foto?')) {
-        showLoader('delete', 'Eliminando permanentemente...');
+    if (confirm(window.RedaAlojamiento.general.estas_seguro_de_eliminar_esta_foto)) {
+        showLoader('delete', window.RedaAlojamiento.general.eliminando_permanentemente);
         $.post(deleteUrl, {
             _token: $('input[name="_token"]').val(),
             photo_id: photoId,
             origen: origen
         },function(response) {
             if (response.success) {
-                $('#loader-text').text('Eliminado con éxito');
+                $('#loader-text').text(window.RedaAlojamiento.general.eliminado_con_exito);
                 setTimeout(() => {
                     $('#custom-loader').fadeOut();
                     // DISPARAR EVENTO PERSONALIZADO
@@ -295,11 +309,11 @@ $(document).on('click', '.delete-photo', function(e) {
                 }, 800);
             } else {
                 $('#custom-loader').fadeOut();
-                alert('Error al eliminar');
+                alert(window.RedaAlojamiento.general.error_al_eliminar);
             }
         }).fail(function() {
             $('#custom-loader').fadeOut();
-            alert('Error en el servidor, no se pudo eliminar la foto');
+            alert(window.RedaAlojamiento.general.error_en_el_servidor_no_se_pudo_eliminar_la_foto);
         });
     }
 });

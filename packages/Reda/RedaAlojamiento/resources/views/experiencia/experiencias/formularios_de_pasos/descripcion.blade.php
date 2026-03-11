@@ -16,16 +16,16 @@
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0 ">
                                 <div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-sm-0 ">
-                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('reda-alojamiento::messages.php.nombre_y_descripcion') }}</h4>
+                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('reda-alojamiento::messages.general.nombre_y_descripcion') }}</h4>
                                 </div>
 
                                 <div class="row mt-4 p-4">
                                     <div class="col-md-12">
-                                        <label>{{ __('reda-alojamiento::messages.php.nombre_del_negocio') }} <span class="text-danger">*</span></label>
+                                        <label>{{ __('reda-alojamiento::messages.general.nombre_del_negocio') }} <span class="text-danger">*</span></label>
                                         <input type="text" name="titulo" class="form-control text-16" value="{{ $result->titulo }}">
                                     </div>
                                     <div class="col-md-12 mt-4">
-                                        <label>{{ __('reda-alojamiento::messages.php.descripcion_del_negocio') }} <span class="text-danger">*</span></label>
+                                        <label>{{ __('reda-alojamiento::messages.general.descripcion_del_negocio') }} <span class="text-danger">*</span></label>
                                         <textarea name="descripcion" class="form-control text-16" rows="6">{{ $result->descripcion }}</textarea>
                                     </div>
                                 </div>
@@ -35,7 +35,7 @@
                                 <div class="row m-0 justify-content-between">
                                     <button type="submit" class="btn vbtn-outline-success text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3" id="btn_next">
                                         <i class="spinner fa fa-spinner fa-spin d-none"></i>
-                                        <span id="btn_next-text">{{ __('reda-alojamiento::messages.php.siguiente') }}</span>
+                                        <span id="btn_next-text">{{ __('reda-alojamiento::messages.general.siguiente') }}</span>
                                     </button>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
 @endsection
 
 @section('validation_script')
-    <script>window.RedaTrans = @json(__('reda-alojamiento::messages'));</script>
+    <script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

@@ -17,14 +17,14 @@
                             <input type="hidden" id="experiencia_id" value="{{ $result->id }}">
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0">
                                 <div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-sm-0">
-                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('reda-alojamiento::messages.php.fotos') }}</h4>
+                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('reda-alojamiento::messages.general.fotos') }}</h4>
                                 </div>
 
                                 <div class="row mt-4 p-4">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger d-none" id="error-message"></div>
                                         <input type="file" name="photo" class="upload_photos" accept="image/*" class="form-control">
-                                        <p class="text-14 mt-2 text-muted">{{ __('reda-alojamiento::messages.php.elige_imagenes_de_alta_calidad_jpg_png_gif') }}</p>
+                                        <p class="text-14 mt-2 text-muted">{{ __('reda-alojamiento::messages.general.elige_imagenes_de_alta_calidad_jpg_png_gif') }}</p>
                                     </div>
                                 </div>
 
@@ -51,7 +51,7 @@
                                         </div>
                                     @empty
                                         <div class="col-md-12" id="no-photos-message">
-                                            <p class="text-center text-muted">{{ __('reda-alojamiento::messages.php.no_hay_fotos_subidas_todavia') }}</p>
+                                            <p class="text-center text-muted">{{ __('reda-alojamiento::messages.general.no_hay_fotos_subidas_todavia') }}</p>
                                         </div>
                                     @endforelse
                                 </div>
@@ -102,7 +102,7 @@
 @endpush
 
 @section('validation_script')
-    <script>window.RedaTrans = @json(__('reda-alojamiento::messages'));</script>
+    <script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('public/js/additional-method.min.js') }}"></script>

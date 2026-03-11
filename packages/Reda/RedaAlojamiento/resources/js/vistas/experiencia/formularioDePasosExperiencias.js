@@ -4,7 +4,6 @@ $(function() {
     const container = $('.formulario-de-pasos-experiencias');
     if (container.length) {
         const currentStep = container.data('step');
-        console.log('Cargando las validaciones para el paso:', currentStep);
 
         switch (currentStep) {
             case 'descripcion':
@@ -16,47 +15,29 @@ $(function() {
                     messages: {
                         titulo: 
                         { 
-                            required: window.RedaTrans.javascript.el_titulo_es_obligatorio,
-                            minlength: window.RedaTrans.javascript.el_titulo_debe_tener_al_menos_5_caracteres
+                            required: window.RedaAlojamiento.general.el_nombre_del_negocio_es_obligatorio,
+                            minlength: window.RedaAlojamiento.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres
                         },
                         descripcion: 
                         {
-                            required: window.RedaTrans.javascript.la_descripcion_es_obligatoria,
-                            minlength: window.RedaTrans.javascript.la_descripcion_debe_tener_al_menos_20_caracteres 
+                            required: window.RedaAlojamiento.general.la_descripcion_es_obligatoria,
+                            minlength: window.RedaAlojamiento.general.la_descripcion_debe_tener_al_menos_20_caracteres 
                         }
                     },
                     submitHandler: function(form) {
                         $("#btn_next").attr("disabled", true);
                         $(".spinner").removeClass('d-none');
-                        $("#btn_next-text").text(window.RedaTrans.javascript.guardando);
+                        $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
                         return true;
                     }
                 });
                 break;
 
             case 'fotos':
-                // CONFIGURACIÓN DE VALIDACIÓN
-                $('#img_form').validate({
-                    rules: {
-                        'photo': { // Cambiado de 'photos[]' a 'photo'
-                            required: function() {
-                                return $('.photo-item').length === 0;
-                            },
-                            extension: "jpg|jpeg|png|gif"
-                        }
-                    },
-                    messages: {
-                        'photo': {
-                            required: window.RedaTrans.javascript.la_foto_es_obligatoria,
-                            extension: window.RedaTrans.javascript.solo_se_permiten_imagenes_jpg_jpeg_png_gif
-                        }
-                    },
-                    submitHandler: function(form) {
-                        $("#btn_next").attr("disabled", true);
-                        $(".spinner").removeClass('d-none');
-                        $("#btn_next-text").text(window.RedaTrans.javascript.subiendo);
-                        return true;
-                    }
+                $('#img_form').on('submit', function() {
+                    $("#btn_next").attr("disabled", true);
+                    $(".spinner").removeClass('d-none');
+                    $("#btn_next-text").text(window.RedaAlojamiento.general.continuando);
                 });
 
                 document.addEventListener('mediaUpdated', function(e) {
@@ -66,30 +47,10 @@ $(function() {
                 break;    
 
             case 'actividades':
-                // 1. Inicializar el validador
-                const validadorActividades = $('#list_des').validate({
-                    ignore: [], // IMPORTANTE: Esto permite validar el input de foto aunque tenga display:none
-                    errorPlacement: function(error, element) {
-                        if (element.hasClass('upload_photos')) {
-                            // Coloca el error debajo del contenedor de la foto
-                            error.insertAfter(element.closest('.actividad-foto-card-container'));
-                        } else {
-                            error.addClass('text-danger small font-weight-bold');
-                            error.insertAfter(element);
-                        }
-                    },
-                    highlight: function(element) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element) {
-                        $(element).removeClass('is-invalid');
-                    },
-                    submitHandler: function(form) {
-                        $("#btn_next").attr("disabled", true);
-                        $(".spinner").removeClass('d-none');
-                        $("#btn_next-text").text(window.RedaTrans.javascript.guardando);
-                        form.submit();
-                    }
+                $('#actividades_form').on('submit', function() {
+                    $("#btn_next").attr("disabled", true);
+                    $(".spinner").removeClass('d-none');
+                    $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
                 });
             
                 function aplicarReglasDinamicas() {            
@@ -100,9 +61,9 @@ $(function() {
                             number: true,
                             min: 1,
                             messages: {
-                                required: window.RedaTrans.javascript.el_numero_de_la_actividad_es_obligatorio,
-                                number: window.RedaTrans.javascript.el_numero_de_la_actividad_debe_ser_un_numero_valido,
-                                min: window.RedaTrans.javascript.el_numero_de_la_actividad_debe_ser_mayor_a_0
+                                required: window.RedaAlojamiento.general.el_numero_de_la_actividad_es_obligatorio,
+                                number: window.RedaAlojamiento.general.el_numero_de_la_actividad_debe_ser_un_numero_valido,
+                                min: window.RedaAlojamiento.general.el_numero_de_la_actividad_debe_ser_mayor_a_cero
                             }
                         });
                     });
@@ -111,10 +72,10 @@ $(function() {
                     $('input[name*="[nombre_actividad]"]').each(function() {
                         $(this).rules('add', {
                             required: true,
-                            minlength: 2,
+                            minlength: 3,
                             messages: {
-                                required: window.RedaTrans.javascript.el_nombre_es_obligatorio,
-                                minlength: window.RedaTrans.javascript.el_nombre_debe_tener_al_menos_2_caracteres
+                                required: window.RedaAlojamiento.general.el_nombre_del_producto_o_servicio_es_obligatorio,
+                                minlength: window.RedaAlojamiento.general.el_nombre_del_producto_o_servicio_debe_tener_al_menos_3_caracteres
                             }
                         });
                     });
@@ -124,8 +85,8 @@ $(function() {
                             required: true,
                             minlength: 20,
                             messages: {
-                                required: window.RedaTrans.javascript.la_descripcion_es_obligatoria,
-                                minlength: window.RedaTrans.javascript.la_descripcion_debe_tener_al_menos_20_caracteres
+                                required: window.RedaAlojamiento.general.la_descripcion_es_obligatoria,
+                                minlength: window.RedaAlojamiento.general.la_descripcion_debe_tener_al_menos_20_caracteres
                             }
                         });
                     });
@@ -136,9 +97,9 @@ $(function() {
                             number: true,
                             min: 0.01,
                             messages: {
-                                required: window.RedaTrans.javascript.el_precio_es_obligatorio,
-                                number: window.RedaTrans.javascript.el_precio_debe_ser_un_numero_valido,
-                                min: window.RedaTrans.javascript.el_precio_debe_ser_mayor_a_0
+                                required: window.RedaAlojamiento.general.el_precio_es_obligatorio,
+                                number: window.RedaAlojamiento.general.el_precio_debe_ser_un_numero_valido,
+                                min: window.RedaAlojamiento.general.el_precio_debe_ser_mayor_a_cero
                             }
                         });
                     });
@@ -157,8 +118,8 @@ $(function() {
                             // REGLA DE FORMATO
                             extension: "jpg|jpeg|png|gif",
                             messages: {
-                                required: window.RedaTrans.javascript.la_foto_es_obligatoria,
-                                extension: window.RedaTrans.javascript.solo_se_permiten_imagenes_jpg_jpeg_png_gif
+                                required: window.RedaAlojamiento.general.la_foto_es_obligatoria,
+                                extension: window.RedaAlojamiento.general.solo_se_permiten_imagenes_jpg_jpeg_png_gif
                             }
                         });
                     });
@@ -203,16 +164,6 @@ $(function() {
                             container.css('border-color', '');
                             container.siblings('.error-foto-js').remove();
                         }
-                    }
-                });
-
-                // Forzar validación cuando el usuario selecciona un archivo
-                $(document).on('change', '.upload_photos', function() {
-                    $(this).valid(); // Esto quita el mensaje de error apenas seleccionan la foto
-                    
-                    // Opcional: Si quieres que el borde rojo se quite al seleccionar
-                    if ($(this).val() !== '') {
-                        $(this).closest('.actividad-foto-card-container').css('border', '');
                     }
                 });
                 
@@ -263,7 +214,7 @@ $(function() {
                     let url = $(this).data('url');
                     let fila = $(`#fila-actividad-${id}`);
                 
-                    if (confirm(window.RedaTrans.javascript.estas_seguro_de_que_deseas_eliminar_esta_actividad_esta_accion_no_se_puede_deshacer)) {
+                    if (confirm(window.RedaAlojamiento.general.estas_seguro_de_que_deseas_eliminar_esta_actividad_esta_accion_no_se_puede_deshacer)) {
                         $.ajax({
                             url: url,
                             type: 'DELETE',
@@ -281,7 +232,7 @@ $(function() {
                                 }
                             },
                             error: function() {
-                                alert(window.RedaTrans.javascript.ocurrio_un_error_al_intentar_eliminar_la_actividad);
+                                alert(window.RedaAlojamiento.general.ocurrio_un_error_al_intentar_eliminar_la_actividad);
                             }
                         });
                     }

@@ -18,6 +18,17 @@ use Illuminate\Support\Facades\File;
 class MediaController extends Controller
 {
     public function uploadPhoto(Request $request, $id) {
+        $request->validate(
+            [
+                'cropped_image' => 'required|image|mimes:jpg,jpeg,png,gif|max:25600',
+            ], 
+            [
+                'cropped_image.required' => __('reda-alojamiento::messages.general.la_foto_es_obligatoria'),
+                'cropped_image.image'    => __('reda-alojamiento::messages.general.el_archivo_debe_ser_una_imagen'),
+                'cropped_image.mimes' => __('reda-alojamiento::messages.general.solo_se_permiten_imagenes_jpg_jpeg_png_gif'),
+                'cropped_image.max' => __('reda-alojamiento::messages.general.el_archivo_es_muy_pesado_máximo_25_mb'),
+            ]);
+
         if ($request->hasFile('cropped_image')) {
             $origen = $request->origen;
             switch ($origen) {
@@ -104,10 +115,17 @@ class MediaController extends Controller
             switch ($origen) {
                 case 'fotos-experiencias':
                     // Validación básica
-                    $request->validate([
-                        'photo_id' => 'required|exists:fotos_experiencias,id',
-                        'cropped_image' => 'required|max:5120',
-                    ]);
+                    $request->validate(
+                        [
+                            'photo_id' => 'required|exists:fotos_experiencias,id',
+                            'cropped_image' => 'required|max:25600',
+                        ],
+                        [
+                            'photo_id.required' => __('reda-alojamiento::messages.general.el_id_de_la_foto_es_obligatorio'),
+                            'photo_id.exists' => __('reda-alojamiento::messages.general.el_id_de_la_foto_no_existe_en_la_base_de_datos'),
+                            'cropped_image.required' => __('reda-alojamiento::messages.general.la_foto_es_obligatoria'),
+                            'cropped_image.max' => __('reda-alojamiento::messages.general.el_archivo_es_muy_pesado_máximo_25_mb'),
+                        ]);
                 
                     $foto = FotoExperiencia::find($request->photo_id);
                 
@@ -166,7 +184,7 @@ class MediaController extends Controller
                 return response()->json(['success' => true]);
                 break;
             case 'actividades-experiencias':
-                // Lógica para actividades (Próximamente)
+                // 
                 break;
         }
     }
@@ -187,7 +205,7 @@ class MediaController extends Controller
                     break;
 
                 case 'fotos-actividades':
-                    // Lógica para actividades (Próximamente)
+                    // N/A 
                     break;
             }
         }

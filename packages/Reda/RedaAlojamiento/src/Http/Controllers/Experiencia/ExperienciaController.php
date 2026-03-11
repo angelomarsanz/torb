@@ -21,7 +21,14 @@ class ExperienciaController extends Controller
     public function create(Request $request)
     {
         if ($request->isMethod('post')) {
-            $request->validate(['titulo' => 'required|max:255']);
+            $request->validate(
+                [
+                    'titulo' => 'required|min:5'
+                ], 
+                [
+                    'titulo.required' => __('reda-alojamiento::messages.general.el_nombre_del_negocio_es_obligatorio'),
+                    'titulo.min'      => __('reda-alojamiento::messages.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres'),
+                ]);
 
             // 1. Crear Experiencia Principal
             $experiencia = new Experiencia;
@@ -70,10 +77,17 @@ class ExperienciaController extends Controller
         elseif ($request->isMethod('post')) {
             switch ($paso) {
                 case 'descripcion':
-                    $request->validate([
-                        'titulo' => 'required|max:255',
-                        'descripcion' => 'required|min:20'
-                    ]);
+                    $request->validate(
+                        [
+                            'titulo' => 'required|min:5',
+                            'descripcion' => 'required|min:20'
+                        ], 
+                        [
+                            'titulo.required' => __('reda-alojamiento::messages.general.el_nombre_del_negocio_es_obligatorio'),
+                            'titulo.min'      => __('reda-alojamiento::messages.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres'),
+                            'descripcion.required' => __('reda-alojamiento::messages.general.la_descripcion_es_obligatoria'),
+                            'descripcion.min'      => __('reda-alojamiento::messages.general.la_descripcion_debe_tener_al_menos_20_caracteres'),
+                        ]);
                     $result->titulo = $request->titulo;
                     $result->descripcion = $request->descripcion;
                     $result->save();
@@ -81,29 +95,51 @@ class ExperienciaController extends Controller
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'fotos']);
                 
                 case 'fotos':
+                    $conteoFotos = FotoExperiencia::where('experiencia_id', $id)->count();
+        
+                    if ($conteoFotos == 0) {
+                        return back()->withErrors(['foto' => __('reda-alojamiento::messages.javascript.la_foto_es_obligatoria')]);
+                    }
+
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);
 
                 case 'actividades':
-                    $request->validate([
-                        'actividades.*.orden_actividad' => 'required|integer|min:1',
-                        'actividades.*.descripcion_actividad' => 'required|string|min:5',
-                    ], [
-                        // Mensajes personalizados
-                        'actividades.*.orden_actividad.required' => 'El número es obligatorio.',
-                        'actividades.*.orden_actividad.min' => 'Debe ser mayor a cero.',
-                        'actividades.*.descripcion_actividad.required' => 'La descripción es obligatoria.',
-                    ]);
+                    $request->validate(
+                        [
+                            'actividades.*.orden_actividad' => 'required|integer|min:1',
+                            'actividades.*.nombre_actividad' => 'required|min:3',
+                            'actividades.*.descripcion_actividad' => 'required|min:20',
+                            'actividades.*.precio' => 'required|numeric|min:0.01',
+                            
+                        ], 
+                        [
+                            // Número
+                            'actividades.*.orden_actividad.required' => __('reda-alojamiento::messages.general.el_numero_de_la_actividad_es_obligatorio'),
+                            'actividades.*.orden_actividad.integer' => __('reda-alojamiento::messages.general.el_numero_de_la_actividad_debe_ser_un_numero_valido'),
+                            'actividades.*.orden_actividad.min' => __('reda-alojamiento::messages.general.el_numero_de_la_actividad_debe_ser_mayor_a_cero'),
+
+                            // Nombre
+                            'actividades.*.nombre_actividad.required' => __('reda-alojamiento::messages.general.el_nombre_del_producto_o_servicio_es_obligatorio'),
+                            'actividades.*.nombre_actividad.min' => __('reda-alojamiento::messages.general.el_nombre_del_producto_o_servicio_debe_tener_al_menos_3_caracteres'),
+
+                            // Descripción
+                            'actividades.*.descripcion_actividad.required' => __('reda-alojamiento::messages.general.la_descripcion_es_obligatoria'),
+                            'actividades.*.descripcion_actividad.min' => __('reda-alojamiento::messages.general.la_descripcion_debe_tener_al_menos_20_caracteres'),
+
+                            // Precio
+                            'actividades.*.precio.required' => __('reda-alojamiento::messages.general.el_precio_es_obligatorio'),
+                            'actividades.*.precio.numeric' => __('reda-alojamiento::messages.general.el_precio_debe_ser_un_numero_valido'),
+                            'actividades.*.precio.min' => __('reda-alojamiento::messages.general.el_precio_debe_ser_mayor_a_cero'),
+                        ]);
                 
                     if ($request->has('actividades') && is_array($request->actividades)) {
                         foreach ($request->actividades as $id_actividad => $datos) {
                             $actividad = ActividadExperiencia::find($id_actividad);
                 
                             if ($actividad) {
-                                // VALIDACIÓN CRÍTICA:
                                 if (empty($actividad->foto_actividad)) {
-                                    // Importante: Usar back() con withErrors y asegurar que la clave sea correcta
                                     return back()->withErrors([
-                                        "foto_actividad_id_" . $id_actividad => "Falta la foto en la actividad Nro. " . $datos['orden_actividad']
+                                        "foto_actividad_id_" . $id_actividad => __('reda-alojamiento::messages.general.falta_la_foto_en_la_actividad_nro') . $datos['orden_actividad']
                                     ])->withInput();
                                 }
                 
@@ -120,28 +156,27 @@ class ExperienciaController extends Controller
                     }
                 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'ubicacion'])
-                                        ->with('success', 'Actividades actualizadas con éxito.');
+                                ->with('success', __('reda-alojamiento::messages.general.productos_y_servicios_actualizados_con_exito'));
 
                 case 'ubicacion':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'horario'])
-                    ->with('success', 'Ubicación actualizada con éxito.');
+                    ->with('success', __('reda-alojamiento::messages.general.ubicacion_actualizada_con_exito'));
                 
                 case 'horario':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
-                    ->with('success', 'Horario actualizado con éxito.');
+                    ->with('success', __('reda-alojamiento::messages.general.horario_actualizado_con_exito'));
 
                 case 'precio':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
-                    ->with('success', 'Precio actualizado con éxito.');
+                    ->with('success', __('reda-alojamiento::messages.general.precio_actualizado_con_exito'));
 
                 case 'informacion_adicional':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
-                    ->with('success', 'Información actualizada con éxito.');
+                    ->with('success', __('reda-alojamiento::messages.general.informacion_adicional_actualizada_con_exito'));
 
                 case 'anfitrion':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
-                    ->with('success', 'Anfitrión actualizado con éxito.');
-    
+                    ->with('success', __('reda-alojamiento::messages.general.anfitrion_actualizado_con_exito'));
             }
         }
     }
@@ -180,7 +215,7 @@ class ExperienciaController extends Controller
         $actividad = ActividadExperiencia::find($id);
     
         if (!$actividad) {
-            return response()->json(['success' => false, 'message' => 'Actividad no encontrada'], 404);
+            return response()->json(['success' => false, 'message' => __('reda-alojamiento::messages.general.producto_o_servicio_no_encontrado')], 404);
         }
     
         $directoryPath = public_path('images/actividades_experiencias/' . $id);
@@ -196,13 +231,13 @@ class ExperienciaController extends Controller
     
             return response()->json([
                 'success' => true,
-                'message' => '¡Actividad y sus archivos eliminados correctamente!'
+                'message' => __('reda-alojamiento::messages.general.producto_o_servicio_y_sus_archivos_eliminados_correctamente')
             ]);
             
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false, 
-                'message' => 'Error al eliminar: ' . $e->getMessage()
+                'message' => __('reda-alojamiento::messages.general.error_al_eliminar:') . $e->getMessage()
             ], 500);
         }        
     }

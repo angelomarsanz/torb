@@ -5,7 +5,7 @@
 $(function () {
     const selectorEnlaceReferencia = 'a[aria-label="property-create"]';
     const botonId = 'nav-publica-experiencia';
-    const textoBoton = window.RedaTrans.javascript.publica_tu_negocio;
+    const textoBoton = window.RedaAlojamiento.general.publica_tu_negocio;
     const botonHtml = `
         <div class="nav-item ml-2" id="${botonId}" data-role="added-by-reda">
             <a class="nav-link p-2" href="https://pruebas.redetronic.com/reda/crear-experiencia" aria-label="experiencia-create">
