@@ -48,7 +48,7 @@ $(document).on('change', '.upload_photos', function() {
             return false;
         }
 
-        if (file.size > 25600) {
+        if (file.size > 26214400) {
             alert(RedaAlojamiento.general.el_archivo_es_muy_pesado_máximo_25_mb);
             $(this).val('');
             return false;

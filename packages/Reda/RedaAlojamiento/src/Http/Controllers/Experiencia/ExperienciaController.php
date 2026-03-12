@@ -98,7 +98,7 @@ class ExperienciaController extends Controller
                     $conteoFotos = FotoExperiencia::where('experiencia_id', $id)->count();
         
                     if ($conteoFotos == 0) {
-                        return back()->withErrors(['foto' => __('reda-alojamiento::messages.javascript.la_foto_es_obligatoria')]);
+                        return back()->withErrors(['foto' => __('reda-alojamiento::messages.general.la_foto_es_obligatoria')]);
                     }
 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);

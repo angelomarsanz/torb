@@ -47,10 +47,13 @@ $(function() {
                 break;    
 
             case 'actividades':
-                $('#actividades_form').on('submit', function() {
-                    $("#btn_next").attr("disabled", true);
-                    $(".spinner").removeClass('d-none');
-                    $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
+                const validator = $('#list_des').validate({
+                    submitHandler: function(form) {
+                        $("#btn_next").attr("disabled", true);
+                        $(".spinner").removeClass('d-none');
+                        $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
+                        return true;
+                    }
                 });
             
                 function aplicarReglasDinamicas() {            

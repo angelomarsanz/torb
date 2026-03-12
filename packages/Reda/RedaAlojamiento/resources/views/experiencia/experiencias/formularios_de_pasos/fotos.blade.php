@@ -26,6 +26,13 @@
                                         <input type="file" name="photo" class="upload_photos" accept="image/*" class="form-control">
                                         <p class="text-14 mt-2 text-muted">{{ __('reda-alojamiento::messages.general.elige_imagenes_de_alta_calidad_jpg_png_gif') }}</p>
                                     </div>
+                                    @error('foto')
+                                        <div class="mb-3">
+                                            <span class="text-danger font-weight-700 text-14">
+                                                <i class="fa fa-exclamation-circle mr-1"></i> {{ $message }}
+                                            </span>
+                                        </div>
+                                    @enderror
                                 </div>
 
                                 <div class="row p-4" id="photo-list">
