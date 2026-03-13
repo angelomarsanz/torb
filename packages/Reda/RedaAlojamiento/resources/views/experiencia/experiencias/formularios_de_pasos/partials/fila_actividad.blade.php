@@ -27,18 +27,20 @@
                                 name="actividades[{{ $actividad->id }}][orden_actividad]" 
                                 value="{{ old('actividades.'.$actividad->id.'.orden_actividad', $actividad->orden_actividad) }}" 
                                 class="form-control text-center @error('actividades.'.$actividad->id.'.orden_actividad') is-invalid @enderror" 
-                                min="1" 
-                                required
                             >
                             @error('actividades.'.$actividad->id.'.orden_actividad')
-                                <span class="text-danger small font-weight-700">{{ __('reda-alojamiento::messages.general.debe_ser_un_numero_valido_mayor_a_cero') }}</span>
+                                <span class="text-danger small font-weight-700">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="col-md-9">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }} <span class="text-danger">*</label>
                             <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]" 
                                 value="{{ old('actividades.'.$actividad->id.'.nombre_actividad', $actividad->nombre_actividad) }}" 
-                                class="form-control" placeholder="" required>
+                                class="form-control" placeholder=""
+                            >
+                            @error('actividades.'.$actividad->id.'.nombre_actividad')
+                                <span class="text-danger small font-weight-700">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="col-12">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.descripcion') }} <span class="text-danger">*</label>
@@ -47,9 +49,9 @@
                                 class="form-control @error('actividades.'.$actividad->id.'.descripcion_actividad') is-invalid @enderror" 
                                 rows="2" 
                                 placeholder="Haz una descripción del producto o servicio"
-                                required>{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}</textarea>
+                            >{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}</textarea>
                             @error('actividades.'.$actividad->id.'.descripcion_actividad')
-                                <span class="text-danger small font-weight-700">Este campo es obligatorio.</span>
+                                <span class="text-danger small font-weight-700">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -59,7 +61,11 @@
                                 <span class="input-group-text bg-white border-end-0"><i class="fa fa-tag text-muted"></i></span>
                                 <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio]" 
                                     value="{{ old('actividades.'.$actividad->id.'.precio', $actividad->precio) }}" 
-                                    class="form-control border-start-0 validar-precio" placeholder="0.00"> 
+                                    class="form-control border-start-0 validar-precio" placeholder="0.00"
+                                >
+                                @error('actividades.'.$actividad->id.'.precio')
+                                    <span class="text-danger small font-weight-700">{{ $message }}</span>
+                                @enderror 
                             </div>
                         </div>
                         

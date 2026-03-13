@@ -23,10 +23,20 @@
                                     <div class="col-md-12">
                                         <label>{{ __('reda-alojamiento::messages.general.nombre_del_negocio') }} <span class="text-danger">*</span></label>
                                         <input type="text" name="titulo" class="form-control text-16" value="{{ $result->titulo }}">
+                                        @error('titulo')
+                                            <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">
+                                                <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="col-md-12 mt-4">
                                         <label>{{ __('reda-alojamiento::messages.general.descripcion_del_negocio') }} <span class="text-danger">*</span></label>
                                         <textarea name="descripcion" class="form-control text-16" rows="6">{{ $result->descripcion }}</textarea>
+                                        @error('descripcion')
+                                            <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">
+                                                <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

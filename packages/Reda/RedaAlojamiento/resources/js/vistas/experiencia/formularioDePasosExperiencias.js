@@ -7,6 +7,7 @@ $(function() {
 
         switch (currentStep) {
             case 'descripcion':
+                
                 $('#list_des').validate({
                     rules: {
                         titulo: { required: true, minlength: 5 },
@@ -31,6 +32,7 @@ $(function() {
                         return true;
                     }
                 });
+                
                 break;
 
             case 'fotos':
@@ -56,7 +58,7 @@ $(function() {
                     }
                 });
             
-                function aplicarReglasDinamicas() {            
+                function aplicarReglasDinamicas() {     
                     // Validación para ORDEN
                     $('input[name*="[orden_actividad]"]').each(function() {
                         $(this).rules('add', {

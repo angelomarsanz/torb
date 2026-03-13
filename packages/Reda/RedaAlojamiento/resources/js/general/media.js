@@ -53,7 +53,7 @@ $(document).on('change', '.upload_photos', function() {
             $(this).val('');
             return false;
         }
-
+        
         const origen = $('#crop-and-upload').data('origen');
 
         let reader = new FileReader();
