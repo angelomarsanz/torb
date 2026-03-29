@@ -25,4 +25,5 @@ ARCHIVOS_PHP_PUNTUALES=(
         "packages/Reda/RedaAlojamiento/resources/js/general/media.js"
         "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
         "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php"
+        "app/Http/Helpers/Common.php"
 )
