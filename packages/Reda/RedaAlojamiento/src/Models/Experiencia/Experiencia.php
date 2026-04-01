@@ -1,7 +1,7 @@
 <?php
 
 // CAMBIO CRUCIAL 1: Nuevo namespace del paquete + la subcarpeta Experiencia
-namespace Reda\RedaAlojamiento\Models\Experiencia; 
+namespace Reda\RedaAlojamiento\Models\Experiencia;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,9 +22,9 @@ class Experiencia extends Model
      *
      * @var string
      */
-    // NOTA: Si ya ejecutaste la migración con 'experiencias', déjalo así. 
+    // NOTA: Si ya ejecutaste la migración con 'experiencias', déjalo así.
     // Si quieres usar el nombre recomendado del paquete, debería ser 'reda_experiencias'.
-    protected $table = 'experiencias'; 
+    protected $table = 'experiencias';
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +35,7 @@ class Experiencia extends Model
         'user_id', // ¡No olvides añadirlo al fillable!
         'titulo',
         'descripcion',
+        'categoria_negocio',
         'ruta_imagenes',
         'latitud_encuentro',
         'longitud_encuentro',

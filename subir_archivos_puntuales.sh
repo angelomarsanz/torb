@@ -11,19 +11,9 @@
 #   )
 ARCHIVOS_PHP_PUNTUALES=(
         #"Ninguno"
-        "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
-        "resources/views/common/foot.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/fotos.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/partials/fila_actividad.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/menu_lateral.blade.php"
-        "packages/Reda/RedaAlojamiento/resources/js/general/addPublicaExperienciaBtn.js"
-        "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js"
-        "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
-        "packages/Reda/RedaAlojamiento/resources/js/general/media.js"
-        "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
-        "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php"
-        "app/Http/Helpers/Common.php"
+        #"packages/Reda/RedaAlojamiento/database/migrations/2026_04_01_125540_add_categoria_negocio_to_experiencias_table.php"
+        "packages/Reda/RedaAlojamiento/src/Models/Experiencia/Experiencia.php"
+        "packages/Reda/RedaAlojamiento/database/migrations/2026_04_01_135608_add_tipo_producto_servicio_to_actividades_experiencias_table.php"
+        "packages/Reda/RedaAlojamiento/src/Models/Experiencia/ActividadExperiencia.php"
+
 )

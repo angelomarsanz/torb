@@ -5,7 +5,7 @@ namespace Reda\RedaAlojamiento\Models\Experiencia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Reda\RedaAlojamiento\Models\Experiencia\Experiencia;
-use App\Models\Currency; 
+use App\Models\Currency;
 
 class ActividadExperiencia extends Model
 {
@@ -25,13 +25,14 @@ class ActividadExperiencia extends Model
      */
     protected $fillable = [
         'experiencia_id',
-        'nombre_actividad', 
+        'nombre_actividad',
+        'tipo_producto_servicio',
         'descripcion_actividad',
         'foto_actividad',
         'orden_actividad',
-        'precio',             
-        'currency_id',        
-        'disponibilidad'      
+        'precio',
+        'currency_id',
+        'disponibilidad'
     ];
 
     /**
