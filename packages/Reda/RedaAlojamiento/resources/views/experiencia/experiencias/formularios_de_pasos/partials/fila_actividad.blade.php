@@ -8,25 +8,27 @@
                     </span>
                     <h5 class="card-title mb-0 font-weight-700 text-dark">{{ __('reda-alojamiento::messages.general.detalle_del_producto_o_servicio') }}</h5>
                 </div>
-                <button 
-                    type="button" class="btn btn-outline-danger btn-sm border-0 btn-delete-actividad-simple" 
-                    data-id="{{ $actividad->id }}" 
+                <button
+                    type="button" class="btn btn-outline-danger btn-sm border-0 btn-delete-actividad-simple"
+                    data-id="{{ $actividad->id }}"
                     data-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
                     title="Eliminar producto y/o servicio"
                 >
                     <i class="fa fa-trash-alt"></i>
-                </button>                
+                </button>
             </div>
             <div class="row g-3">
                 <div class="col-lg-8">
                     <div class="row g-3">
+
+                        <!-- Primera fila: Orden, nombre y actividad -->
                         <div class="col-md-3">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nro') }} <span class="text-danger">*</label>
-                            <input 
-                                type="number" 
-                                name="actividades[{{ $actividad->id }}][orden_actividad]" 
-                                value="{{ old('actividades.'.$actividad->id.'.orden_actividad', $actividad->orden_actividad) }}" 
-                                class="form-control text-center @error('actividades.'.$actividad->id.'.orden_actividad') is-invalid @enderror" 
+                            <input
+                                type="number"
+                                name="actividades[{{ $actividad->id }}][orden_actividad]"
+                                value="{{ old('actividades.'.$actividad->id.'.orden_actividad', $actividad->orden_actividad) }}"
+                                class="form-control text-center @error('actividades.'.$actividad->id.'.orden_actividad') is-invalid @enderror"
                             >
                             @error('actividades.'.$actividad->id.'.orden_actividad')
                                 <span class="text-danger small font-weight-700">{{ $message }}</span>
@@ -34,20 +36,22 @@
                         </div>
                         <div class="col-md-9">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }} <span class="text-danger">*</label>
-                            <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]" 
-                                value="{{ old('actividades.'.$actividad->id.'.nombre_actividad', $actividad->nombre_actividad) }}" 
+                            <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]"
+                                value="{{ old('actividades.'.$actividad->id.'.nombre_actividad', $actividad->nombre_actividad) }}"
                                 class="form-control" placeholder=""
                             >
                             @error('actividades.'.$actividad->id.'.nombre_actividad')
                                 <span class="text-danger small font-weight-700">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="col-12">
+
+                        <!-- Segunda fila: Descripción -->
+                        <div class="col-md-12">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.descripcion') }} <span class="text-danger">*</label>
-                            <textarea 
-                                name="actividades[{{ $actividad->id }}][descripcion_actividad]" 
-                                class="form-control @error('actividades.'.$actividad->id.'.descripcion_actividad') is-invalid @enderror" 
-                                rows="2" 
+                            <textarea
+                                name="actividades[{{ $actividad->id }}][descripcion_actividad]"
+                                class="form-control @error('actividades.'.$actividad->id.'.descripcion_actividad') is-invalid @enderror"
+                                rows="2"
                                 placeholder="Haz una descripción del producto o servicio"
                             >{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}</textarea>
                             @error('actividades.'.$actividad->id.'.descripcion_actividad')
@@ -55,37 +59,64 @@
                             @enderror
                         </div>
 
-                        <div class="col-md-4">
+                        <!-- Tercera fila: Tipo y precio -->
+                        <div class="col-md-7">
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.tipo_producto_o_servicio') }} <span class="text-danger">*</span></label>
+                            <select name="actividades[{{ $actividad->id }}][tipo_producto_servicio]" class="form-control" required>
+                                <option value="" {{ is_null(old('actividades.'.$actividad->id.'.tipo_producto_servicio', $actividad->tipo_producto_servicio)) ? 'selected' : '' }} disabled>
+                                    {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                </option>
+                                <option value="producto" {{ old('actividades.'.$actividad->id.'.tipo_producto_servicio', $actividad->tipo_producto_servicio) == 'producto' ? 'selected' : '' }}>
+                                    {{ __('reda-alojamiento::messages.general.producto') }}
+                                </option>
+                                <option value="servicio" {{ old('actividades.'.$actividad->id.'.tipo_producto_servicio', $actividad->tipo_producto_servicio) == 'servicio' ? 'selected' : '' }}>
+                                    {{ __('reda-alojamiento::messages.general.servicio') }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.precio') }} <span class="text-danger">*</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0"><i class="fa fa-tag text-muted"></i></span>
-                                <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio]" 
-                                    value="{{ old('actividades.'.$actividad->id.'.precio', $actividad->precio) }}" 
+                                <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio]"
+                                    value="{{ old('actividades.'.$actividad->id.'.precio', $actividad->precio) }}"
                                     class="form-control border-start-0 validar-precio" placeholder="0.00"
                                 >
                                 @error('actividades.'.$actividad->id.'.precio')
                                     <span class="text-danger small font-weight-700">{{ $message }}</span>
-                                @enderror 
+                                @enderror
                             </div>
                         </div>
-                        
+
+                        <!-- Tercera fila: Moneda y disponibilidad -->
                         <div class="col-md-4">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</label>
-                            <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-select form-control">
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
+                            <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control" required>
+                                <option value="" {{ is_null(old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id)) ? 'selected' : '' }} disabled>
+                                    {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                </option>
                                 @foreach($currencies as $currency)
-                                    <option value="{{ $currency->id }}" {{ (old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id) == $currency->id) ? 'selected' : '' }}>
-                                        {{ $currency->code }} 
+                                    <option value="{{ $currency->id }}" {{ old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id) == $currency->id ? 'selected' : '' }}>
+                                        {{ $currency->code }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</label>
-                            <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-select form-control">
-                                <option value="1" {{ old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad) == '1' ? 'selected' : '' }}>Disponible</option>
-                                <option value="0" {{ old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad) == '0' ? 'selected' : '' }}>No Disponible</option>
+                        <div class="col-md-8">
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</span></label>
+                            <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control" required>
+                                <option value="" {{ is_null(old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad)) ? 'selected' : '' }} disabled>
+                                    {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                </option>
+                                <option value="1" {{ old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad) == '1' ? 'selected' : '' }}>
+                                    {{ __('reda-alojamiento::messages.general.disponible') }}
+                                </option>
+                                <option value="0" {{ old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad) == '0' ? 'selected' : '' }}>
+                                    {{ __('reda-alojamiento::messages.general.no_disponible') }}
+                                </option>
                             </select>
                         </div>
+
                     </div>
                 </div>
 
@@ -93,7 +124,7 @@
                     <label class="form-label small font-weight-700 w-100 text-center mb-2">{{ __('reda-alojamiento::messages.general.imagen_de_la_actividad') }} <span class="text-danger">*</label>
                     <div class="actividad-foto-card-container {{ !$actividad->foto_actividad ? 'no-image' : '' }}" id="foto-container-{{ $actividad->id }}">
                         @if($actividad->foto_actividad)
-                            <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}" 
+                            <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}"
                                  class="img-fluid rounded-3 shadow-sm" alt="Foto">
                             <label class="edit-photo-overlay-outline" for="file-{{ $actividad->id }}" title="Cambiar imagen">
                                 <i class="fa fa-pencil-alt"></i>
@@ -104,7 +135,7 @@
                                 <span class="small text-muted">{{ __('reda-alojamiento::messages.general.subir_foto') }}</span>
                             </label>
                         @endif
-                        <input id="file-{{ $actividad->id }}" type="file" name="actividades[{{ $actividad->id }}][foto_actividad]" 
+                        <input id="file-{{ $actividad->id }}" type="file" name="actividades[{{ $actividad->id }}][foto_actividad]"
                                data-id="{{ $actividad->id }}" class="upload_photos" accept="image/*" style="display:none;">
                     </div>
                     @error("foto_actividad_id_" . $actividad->id)
