@@ -78,6 +78,7 @@ return [
         'producto_o_servicio_y_sus_archivos_eliminados_correctamente' => '¡Producto o servicio y sus archivos eliminados correctamente!',
         'el_nombre_del_producto_o_servicio_es_obligatorio' => 'El nombre del producto o servicio es obligatorio.',
         'el_nombre_del_producto_o_servicio_debe_tener_al_menos_3_caracteres' => 'El nombre del producto o servicio debe tener al menos 3 caracteres.',
+        'el_tipo_producto_o_servicio_es_obligatorio' => 'El tipo (producto o servicio) es obligatorio.',
         'el_tipo_de_moneda_es_obligatorio' => 'El tipo de moneda es obligatorio.',
         'debe_seleccionar_si_esta_disponible_o_no' => 'Debe seleccionar si está disponible o no.',
         'disponible' => 'Disponible',

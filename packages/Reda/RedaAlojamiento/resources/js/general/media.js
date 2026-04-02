@@ -27,12 +27,12 @@ window.showLoader = function(type, text) {
         // Animación de estrella con efecto de destello
         content = '<i class="fa fa-star loader-icon anim-star"></i>';
     }
-    
+
     $('#loader-content').html(content);
     $('#loader-text').text(text);
     $('#custom-loader').css('display', 'flex').hide().fadeIn();
 }
-                
+
 $(document).on('change', '.upload_photos', function() {
     let file = this.files[0];
     let inputSelect = $(this);
@@ -53,7 +53,7 @@ $(document).on('change', '.upload_photos', function() {
             $(this).val('');
             return false;
         }
-        
+
         const origen = $('#crop-and-upload').data('origen');
 
         let reader = new FileReader();
@@ -74,7 +74,7 @@ $(document).on('change', '.upload_photos', function() {
             {
                 // Limpiamos el photo_id porque es una foto NUEVA
                 $('#crop_photo_id').val('');
-            } 
+            }
             if (cropper) {
                 cropper.destroy();
             }
@@ -91,8 +91,8 @@ let cropper;
 // EVENTO: CLIC EN "EDITAR" (Para fotos que ya existen en la lista)
 $(document).on('click', '.btn-crop', function() {
     let photoId = $(this).data('id');
-    let photoSrc = $(this).data('src'); 
-    
+    let photoSrc = $(this).data('src');
+
     // CORRECCIÓN DE RUTA PARA EL MODAL
     let correctedSrc = photoSrc;
     if (photoSrc && photoSrc.indexOf('/public/') === -1) {
@@ -105,12 +105,12 @@ $(document).on('click', '.btn-crop', function() {
     $('#image-to-crop').attr('src', correctedSrcWithCacheBuster);
 
     $('#crop_photo_id').val(photoId);
-    
+
     // Destruir instancia previa de Cropper si existe
     if (cropper) {
         cropper.destroy();
     }
-    
+
     $('#cropModal').modal('show');
 });
 
@@ -124,9 +124,9 @@ $(document).on('keyup', function(e) { if (e.key === "Shift") isShiftPressed = fa
 // 2. Configuración del Cropper
 $('#cropModal').on('shown.bs.modal', function () {
     let image = document.getElementById('image-to-crop');
-    
+
     cropper = new Cropper(image, {
-        aspectRatio: NaN, 
+        aspectRatio: NaN,
         viewMode: 1,
         autoCropArea: 1,
         dragMode: 'move',
@@ -142,7 +142,7 @@ $('#cropModal').on('shown.bs.modal', function () {
             if (isShiftPressed) {
                 let data = cropper.getData();
                 let currentRatio = data.width / data.height;
-                
+
                 // Aplicamos el ratio pero SIN disparar el re-renderizado automático
                 cropper.options.aspectRatio = currentRatio;
                 cropper.setAspectRatio(currentRatio);
@@ -152,11 +152,11 @@ $('#cropModal').on('shown.bs.modal', function () {
         cropend: function () {
             // Guardamos la posición EXACTA donde el usuario dejó el ratón
             let lastData = cropper.getData();
-            
+
             // Volvemos a modo libre para que el usuario pueda mover lados individualmente
-            cropper.options.aspectRatio = NaN; 
-            cropper.setAspectRatio(NaN); 
-            
+            cropper.options.aspectRatio = NaN;
+            cropper.setAspectRatio(NaN);
+
             // FORZAMOS a que el marco se quede donde lo soltamos
             // Esto evita que Cropper lo expanda al tamaño original
             cropper.setData(lastData);
@@ -194,10 +194,10 @@ $('#crop-and-upload').on('click', function() {
 
         formData.append('cropped_image', blob, 'photo.jpg');
         formData.append('_token', $('input[name="_token"]').val());
-        
+
         // Si hay photoId es una edición, si no, es una subida nueva
-        let urlAction = photoId 
-            ? APP_URL + '/reda/crop-photo' 
+        let urlAction = photoId
+            ? APP_URL + '/reda/crop-photo'
             : APP_URL + '/reda/upload-photo/' + idPrincipal;
 
         formData.append('origen', origen);
@@ -216,14 +216,14 @@ $('#crop-and-upload').on('click', function() {
                     setTimeout(() => {
                         $('#custom-loader').fadeOut();
                         // DISPARAR EVENTO PERSONALIZADO
-                        const event = new CustomEvent('mediaUpdated', { 
-                            detail: { 
+                        const event = new CustomEvent('mediaUpdated', {
+                            detail: {
                                 origen: origen,
-                                accion: "crop-and-upload", 
+                                accion: "crop-and-upload",
                                 response: response,
-                            } 
+                            }
                         });
-                        document.dispatchEvent(event);                        
+                        document.dispatchEvent(event);
                     }, 800);
                 }
                 else
@@ -261,14 +261,14 @@ $(document).on('click', '.make-default', function(e) {
             setTimeout(() => {
                 $('#custom-loader').fadeOut();
                 // DISPARAR EVENTO PERSONALIZADO
-                const event = new CustomEvent('mediaUpdated', { 
-                    detail: { 
+                const event = new CustomEvent('mediaUpdated', {
+                    detail: {
                         origen: origen,
-                        accion: "make-default", 
+                        accion: "make-default",
                         response: response,
-                    } 
+                    }
                 });
-                document.dispatchEvent(event);                        
+                document.dispatchEvent(event);
             }, 800);
         } else {
             $('#custom-loader').fadeOut();
@@ -298,14 +298,14 @@ $(document).on('click', '.delete-photo', function(e) {
                 setTimeout(() => {
                     $('#custom-loader').fadeOut();
                     // DISPARAR EVENTO PERSONALIZADO
-                    const event = new CustomEvent('mediaUpdated', { 
-                        detail: { 
+                    const event = new CustomEvent('mediaUpdated', {
+                        detail: {
                             origen: origen,
-                            accion: "delete-photo", 
+                            accion: "delete-photo",
                             response: response,
-                        } 
+                        }
                     });
-                    document.dispatchEvent(event);                        
+                    document.dispatchEvent(event);
                 }, 800);
             } else {
                 $('#custom-loader').fadeOut();

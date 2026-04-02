@@ -155,6 +155,7 @@ class ExperienciaController extends Controller
                                     'orden_actividad'       => $datos['orden_actividad'],
                                     'nombre_actividad'      => $datos['nombre_actividad'],
                                     'descripcion_actividad' => $datos['descripcion_actividad'],
+                                    'tipo_producto_servicio'=> $datos['tipo_producto_servicio'],
                                     'precio'                => $datos['precio'],
                                     'currency_id'           => $datos['currency_id'],
                                     'disponibilidad'        => $datos['disponibilidad']

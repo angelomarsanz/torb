@@ -89,7 +89,7 @@
                         </div>
 
                         <!-- Tercera fila: Moneda y disponibilidad -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
                             <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control" required>
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id)) ? 'selected' : '' }} disabled>
@@ -102,7 +102,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</span></label>
                             <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control" required>
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad)) ? 'selected' : '' }} disabled>
