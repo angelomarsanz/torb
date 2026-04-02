@@ -115,10 +115,14 @@ class ExperienciaController extends Controller
                 case 'actividades':
                     $request->validate(
                         [
+                            'actividades' => 'required|array|min:1',
                             'actividades.*.orden_actividad' => 'required|integer|min:1',
                             'actividades.*.nombre_actividad' => 'required|min:3',
                             'actividades.*.descripcion_actividad' => 'required|min:20',
+                            'actividades.*.tipo_producto_servicio' => 'required',
                             'actividades.*.precio' => 'required|numeric|min:0.01',
+                            'actividades.*.currency_id' => 'required',
+                            'actividades.*.disponibilidad' => 'required',
                         ],
                         [
                             // Número
@@ -134,10 +138,19 @@ class ExperienciaController extends Controller
                             'actividades.*.descripcion_actividad.required' => __('reda-alojamiento::messages.general.la_descripcion_es_obligatoria'),
                             'actividades.*.descripcion_actividad.min' => __('reda-alojamiento::messages.general.la_descripcion_debe_tener_al_menos_20_caracteres'),
 
+                            // Tipo de producto o servicio
+                            'actividades.*.tipo_producto_servicio.required' => __('reda-alojamiento::messages.general.el_tipo_producto_o_servicio_es_obligatorio'),
+
                             // Precio
                             'actividades.*.precio.required' => __('reda-alojamiento::messages.general.el_precio_es_obligatorio'),
                             'actividades.*.precio.numeric' => __('reda-alojamiento::messages.general.el_precio_debe_ser_un_numero_valido'),
                             'actividades.*.precio.min' => __('reda-alojamiento::messages.general.el_precio_debe_ser_mayor_a_cero'),
+
+                            // Moneda
+                            'actividades.*.currency_id.required' => __('reda-alojamiento::messages.general.el_tipo_de_moneda_es_obligatorio'),
+
+                            // Disponibilidad
+                            'actividades.*.disponibilidad.required' => __('reda-alojamiento::messages.general.debe_seleccionar_si_esta_disponible_o_no'),
                         ]);
 
                     if ($request->has('actividades') && is_array($request->actividades)) {

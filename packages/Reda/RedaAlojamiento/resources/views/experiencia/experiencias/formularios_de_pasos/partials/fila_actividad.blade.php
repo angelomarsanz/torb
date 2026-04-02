@@ -73,6 +73,11 @@
                                     {{ __('reda-alojamiento::messages.general.servicio') }}
                                 </option>
                             </select>
+                            @error("actividades.{$actividad->id}.tipo_producto_servicio")
+                                <div class="text-danger small font-weight-700 mt-1">
+                                    <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <div class="col-md-5">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.precio') }} <span class="text-danger">*</label>
@@ -101,6 +106,11 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error("actividades.{$actividad->id}.currency_id")
+                                <div class="text-danger small font-weight-700 mt-1">
+                                    <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</span></label>
@@ -115,6 +125,11 @@
                                     {{ __('reda-alojamiento::messages.general.no_disponible') }}
                                 </option>
                             </select>
+                            @error("actividades.{$actividad->id}.disponibilidad")
+                                <div class="text-danger small font-weight-700 mt-1">
+                                    <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                     </div>
