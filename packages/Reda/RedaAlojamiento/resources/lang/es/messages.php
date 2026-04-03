@@ -86,6 +86,18 @@ return [
         'seleccione_una_opcion' => 'Seleccione una opción',
         'tipo_producto_o_servicio' => 'Tipo (producto o servicio)',
         'producto' => 'Producto',
-        'servicio' => 'Servicio'
+        'servicio' => 'Servicio',
+        'categoria_del_negocio' => 'Categoría del negocio',
+        'la_categoria_del_negocio_es_obligatoria' => 'La categoría del negocio es obligatoria.',
+        'categorias' => [
+                'artesania'   => 'Artesanía y Souvenirs',
+                'entretenimiento' => 'Entretenimiento / Vida nocturna',
+                'farmacia'    => 'Farmacia / Salud',
+                'lavanderia'  => 'Servicios de Lavandería',
+                'restaurante' => 'Restaurante / Gastronomía',
+                'tienda'      => 'Tienda de conveniencia / Supermercado',
+                'tour'        => 'Tours y Excursiones',
+                'transporte'  => 'Transporte / Alquiler de vehículos',
+            ],
     ],
 ];

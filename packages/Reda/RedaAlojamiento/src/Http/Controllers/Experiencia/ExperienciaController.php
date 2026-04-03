@@ -89,16 +89,19 @@ class ExperienciaController extends Controller
                     $request->validate(
                         [
                             'titulo' => 'required|min:5',
-                            'descripcion' => 'required|min:20'
+                            'descripcion' => 'required|min:20',
+                            'categoria_negocio' => 'required'
                         ],
                         [
                             'titulo.required' => __('reda-alojamiento::messages.general.el_nombre_del_negocio_es_obligatorio'),
                             'titulo.min'      => __('reda-alojamiento::messages.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres'),
                             'descripcion.required' => __('reda-alojamiento::messages.general.la_descripcion_es_obligatoria'),
                             'descripcion.min'      => __('reda-alojamiento::messages.general.la_descripcion_debe_tener_al_menos_20_caracteres'),
+                            'categoria_negocio.required' => __('reda-alojamiento::messages.general.la_categoria_del_negocio_es_obligatoria'),
                         ]);
                     $result->titulo = $request->titulo;
                     $result->descripcion = $request->descripcion;
+                    $result->categoria_negocio = $request->categoria_negocio; // Guardamos el valor
                     $result->save();
 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'fotos']);

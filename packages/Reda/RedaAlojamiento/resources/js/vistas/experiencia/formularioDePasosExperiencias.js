@@ -8,10 +8,18 @@ $(function() {
         switch (currentStep) {
             case 'descripcion':
 
+                if ($.isFunction($.fn.select2)) {
+                    $('.select-search').select2({
+                        placeholder: window.RedaAlojamiento.general.seleccione_una_opcion,
+                        width: '100%'
+                    });
+                }
+
                 $('#list_des').validate({
                     rules: {
                         titulo: { required: true, minlength: 5 },
-                        descripcion: { required: true, minlength: 20 }
+                        descripcion: { required: true, minlength: 20 },
+                        categoria_negocio: { required: true }, // Nueva regla
                     },
                     messages: {
                         titulo:
@@ -23,6 +31,17 @@ $(function() {
                         {
                             required: window.RedaAlojamiento.general.la_descripcion_es_obligatoria,
                             minlength: window.RedaAlojamiento.general.la_descripcion_debe_tener_al_menos_20_caracteres
+                        },
+                        categoria_negocio: {
+                            required: window.RedaAlojamiento.general.la_categoria_del_negocio_es_obligatoria // Nuevo mensaje
+                        },
+                    },
+                    errorPlacement: function(error, element) {
+                        // Manejo especial para que el error no quede oculto si usas select2
+                        if (element.hasClass('select-search') && element.next('.select2-container').length) {
+                            error.insertAfter(element.next('.select2-container'));
+                        } else {
+                            error.insertAfter(element);
                         }
                     },
                     submitHandler: function(form) {

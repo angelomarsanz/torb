@@ -62,7 +62,7 @@
                         <!-- Tercera fila: Tipo y precio -->
                         <div class="col-md-7">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.tipo_producto_o_servicio') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][tipo_producto_servicio]" class="form-control" required>
+                            <select name="actividades[{{ $actividad->id }}][tipo_producto_servicio]" class="form-control">
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.tipo_producto_servicio', $actividad->tipo_producto_servicio)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>
@@ -96,7 +96,7 @@
                         <!-- Tercera fila: Moneda y disponibilidad -->
                         <div class="col-md-6">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control" required>
+                            <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control">
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>
@@ -114,7 +114,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control" required>
+                            <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control">
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>

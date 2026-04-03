@@ -16,7 +16,7 @@
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0 ">
                                 <div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-sm-0 ">
-                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('reda-alojamiento::messages.general.nombre_y_descripcion') }}</h4>
+                                    <h4 class="text-18 font-weight-700 pl-3">{{ __('reda-alojamiento::messages.general.descripcion') }}</h4>
                                 </div>
 
                                 <div class="row mt-4 p-4">
@@ -33,6 +33,24 @@
                                         <label>{{ __('reda-alojamiento::messages.general.descripcion_del_negocio') }} <span class="text-danger">*</span></label>
                                         <textarea name="descripcion" class="form-control text-16" rows="6">{{ $result->descripcion }}</textarea>
                                         @error('descripcion')
+                                            <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">
+                                                <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-12 mt-4">
+                                        <label>{{ __('reda-alojamiento::messages.general.categoria_del_negocio') }} <span class="text-danger">*</span></label>
+                                        <select name="categoria_negocio" class="form-control text-16 select-search" id="categoria_negocio">
+                                            <option value="" disabled {{ (old('categoria_negocio') ?? $result->categoria_negocio) == '' ? 'selected' : '' }}>
+                                                {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                            </option>
+                                            @foreach(__('reda-alojamiento::messages.general.categorias') as $key => $value)
+                                                <option value="{{ $key }}" {{ (old('categoria_negocio') ?? $result->categoria_negocio) == $key ? 'selected' : '' }}>
+                                                    {{ $value }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('categoria_negocio')
                                             <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">
                                                 <i class="fa fa-exclamation-triangle"></i> {{ $message }}
                                             </div>
