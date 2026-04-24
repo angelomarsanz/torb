@@ -1,0 +1,1 @@
+export { menuLateralUsuario } from './menuLateralUsuario';

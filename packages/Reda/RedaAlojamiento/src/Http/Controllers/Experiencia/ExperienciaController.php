@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\File;
 
 class ExperienciaController extends Controller
 {
+    public function index(Request $request)
+    {
+        return view('reda-alojamiento::experiencia.experiencias.index');
+    }
+
     public function create(Request $request)
     {
         if ($request->isMethod('post')) {

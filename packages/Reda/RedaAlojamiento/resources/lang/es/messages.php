@@ -99,5 +99,6 @@ return [
                 'tour'        => 'Tours y Excursiones',
                 'transporte'  => 'Transporte / Alquiler de vehículos',
             ],
+        'negocios' => 'Negocios'
     ],
 ];

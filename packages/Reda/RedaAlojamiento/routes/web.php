@@ -25,7 +25,7 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaContro
 | Rutas Web del Paquete RedaAlojamiento
 |--------------------------------------------------------------------------
 |
-| Estas rutas son cargadas por el Service Provider del paquete. 
+| Estas rutas son cargadas por el Service Provider del paquete.
 | Se agrupan bajo el prefijo 'reda' para mantener la estructura de URL original.
 |
 */
@@ -38,13 +38,13 @@ Route::prefix('reda')->group(function () {
 
     // Administrativo
     Route::get('administrativos', [AdministrativoController::class, 'index'])->name('reda.administrativos.index');
-    
+
     // Billetera
     Route::get('billetera-huespedes', [BilleteraHuespedController::class, 'index'])->name('reda.billeteras_huespedes.index');
-    
+
     // Disputa
     Route::get('disputas', [DisputaController::class, 'index'])->name('reda.disputas.index');
-    
+
     // Experiencia - Módulos principales y sub-módulos
     Route::get('actividades-experiencias', [ActividadExperienciaController::class, 'index'])->name('reda.actividades_experiencias.index');
     Route::get('anfitrion-experiencias', [AnfitrionExperienciaController::class, 'index'])->name('reda.anfitriones_experiencias.index');
@@ -57,6 +57,8 @@ Route::prefix('reda')->group(function () {
     // 2. Rutas que requieren login de usuario (Grupo original con middleware)
     // ----------------------------------------------------------------------
     Route::group(['middleware' => ['web', 'reda.auth', 'locale']], function () {
+        Route::get('index-experiencias', [ExperienciaController::class, 'index'])->name('reda.experiencias.index');
+
         Route::match(['GET', 'POST'], 'crear-experiencia', [ExperienciaController::class, 'create'])
         ->name('reda.experiencias.create');
 
@@ -79,5 +81,5 @@ Route::prefix('reda')->group(function () {
         Route::post('experiencias/{id}/agregar-actividad', [ExperienciaController::class, 'agregarActividad'])->name('reda.experiencias.actividades.add');
 
         Route::delete('experiencias/actividades/delete/{id}', [ExperienciaController::class, 'deleteActividad'])->name('reda.experiencias.actividades.delete');
-    }); 
+    });
 });
