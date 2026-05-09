@@ -55,8 +55,8 @@
 }
 
 /* Animación Recorte */
-.anim-crop { 
-    animation: pulse-crop 1.5s infinite; 
+.anim-crop {
+    animation: pulse-crop 1.5s infinite;
 }
 
 @keyframes pulse-crop {
@@ -114,10 +114,10 @@
 
 /* Contenedor y Caja de Visión */
 .cropper-view-box {
-    outline: 3px solid #dc3545 !important; 
+    outline: 3px solid #dc3545 !important;
     // Forzamos la animación incluso en movimiento
     animation: border-color-pulse 2s infinite alternate !important;
-    overflow: visible !important; 
+    overflow: visible !important;
 }
 
 /* Líneas de la cuadrícula: Siempre Rojo/Naranja */
@@ -141,7 +141,7 @@
         border: 2px solid #fff !important;
         border-radius: 3px !important;
         z-index: 11 !important;
-        
+
         backface-visibility: hidden;
         will-change: transform;
         animation: vertex-grow 1.5s infinite ease-in-out, bg-color-pulse 2s infinite alternate !important;
@@ -230,7 +230,7 @@
         display: flex;
         align-items: center;
         gap: 5px;
-        
+
         &:hover {
             background: #fff;
             color: #28a745;
@@ -244,7 +244,7 @@
     color: #6c757d;
     text-align: center;
     width: 100%;
-    
+
     i { display: block; font-size: 20px; margin-bottom: 5px; }
 }
 
@@ -305,14 +305,14 @@
     right: 10px;
     width: 40px;
     height: 40px;
-    
+
     /* Relleno totalmente transparente */
-    background: transparent; 
-    
+    background: transparent;
+
     /* Borde e ícono en el naranja del cropper */
     border: 2px solid #fd7e14;
     color: #fd7e14;
-    
+
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -333,7 +333,7 @@
         background: #fd7e14;
         color: #ffffff;
         box-shadow: 0 4px 10px rgba(253, 126, 20, 0.3);
-        
+
         i {
             text-shadow: none;
         }
@@ -403,10 +403,26 @@
     justify-content: center;
 }
 
+/* --- OPCIÓN DINÁMICA DEL PLUGIN --- */
+.nav-item-plugin {
+    display: block;
+    width: 100%;
+    text-decoration: none !important;
+
+    li {
+        display: flex;
+        align-items: center;
+    }
+}
+
 /* Responsividad para la línea divisoria en PC */
 @media (min-width: 992px) {
     .border-start-lg {
         border-left: 1px solid #eee !important;
+    }
+    // Si en PC quieres asegurar el padding original:
+    .nav-item-plugin li {
+        padding-left: 25px !important;
     }
 }
 
@@ -416,5 +432,15 @@
     .actividad-foto-card-container {
         max-width: 100%;
         margin-top: 15px;
+    }
+    /* FIX para el menú lateral en móvil */
+    .nav-item-plugin {
+        margin-left: 0 !important; // Esto quita la sangría/espacio extra
+
+        li {
+            padding: 15px 20px !important; // Ajustamos el área táctil
+            border-bottom: 1px solid #f0f0f0 !important; // Separador sutil
+            margin-left: 0 !important;
+        }
     }
 }
