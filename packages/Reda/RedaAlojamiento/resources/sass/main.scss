@@ -433,14 +433,20 @@
         max-width: 100%;
         margin-top: 15px;
     }
-    /* FIX para el menú lateral en móvil */
     .nav-item-plugin {
-        margin-left: 0 !important; // Esto quita la sangría/espacio extra
+        margin-left: 0 !important;
+        padding: 0 !important; // Eliminamos el padding de 10px que detectamos en la inspección
+        display: block !important;
+        width: 100% !important;
 
         li {
-            padding: 15px 20px !important; // Ajustamos el área táctil
-            border-bottom: 1px solid #f0f0f0 !important; // Separador sutil
+            /* Forzamos que el LI interno ignore herencias extrañas */
             margin-left: 0 !important;
+            padding-left: 25px !important; // Alineación igual a Dashboard/Inbox
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+            border-top: none !important; // Quitamos bordes que vimos en la inspección
+            background-color: transparent !important;
         }
     }
 }

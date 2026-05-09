@@ -30,14 +30,17 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/general/media.js', 'public/js/reda/general/reda-general-media.min.js');
 
     // Js por vistas
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js', 
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js',
         'public/js/reda/vistas/experiencia/createExperiencias.min.js');
 
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js', 
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js',
         'public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js', 
+        'public/js/reda/vistas/experiencia/indexExperiencias.min.js');
 }
 
-mix.options({ 
+mix.options({
     manifest: false,
-    processCssUrls: false 
+    processCssUrls: false
 });
