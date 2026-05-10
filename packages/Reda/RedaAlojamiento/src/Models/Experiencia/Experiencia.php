@@ -64,6 +64,22 @@ class Experiencia extends Model
     }
 
     /**
+     * Obtiene la foto de portada o la primera disponible
+     */
+    public function getFotoPortadaAttribute()
+    {
+        // Buscamos primero la que tenga cover_photo = 1
+        $portada = $this->fotos()->where('cover_photo', 1)->first();
+        
+        // Si no hay, devolvemos la primera que aparezca
+        if (!$portada) {
+            $portada = $this->fotos()->first();
+        }
+        
+        return $portada;
+    }    
+
+    /**
      * Get the activities for the experience.
      */
     public function actividades()

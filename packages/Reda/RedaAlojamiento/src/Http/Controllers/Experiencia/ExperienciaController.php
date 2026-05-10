@@ -15,12 +15,21 @@ use Reda\RedaAlojamiento\Models\Experiencia\{
 };
 use Auth;
 use Illuminate\Support\Facades\File;
+use Session;
 
 class ExperienciaController extends Controller
 {
     public function index(Request $request)
     {
-        return view('reda-alojamiento::experiencia.experiencias.index');
+        $data['experiencias'] = Experiencia::with('fotos') // <-- Agregamos las fotos aquí
+                            ->where('user_id', Auth::id())
+                            ->orderBy('id', 'desc')
+                            ->paginate(Session::get('row_per_page') ?? 10);
+                        
+        // Necesitamos la moneda para mostrar los precios
+        $data['currentCurrency'] = \App\Http\Helpers\Common::getCurrentCurrency();
+
+        return view('reda-alojamiento::experiencia.experiencias.index', $data);
     }
 
     public function create(Request $request)
