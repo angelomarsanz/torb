@@ -16,6 +16,7 @@ use Reda\RedaAlojamiento\Models\Experiencia\{
 use Auth;
 use Illuminate\Support\Facades\File;
 use Session;
+use Illuminate\Support\Facades\DB;
 
 class ExperienciaController extends Controller
 {
@@ -25,7 +26,7 @@ class ExperienciaController extends Controller
                             ->where('user_id', Auth::id())
                             ->orderBy('id', 'desc')
                             ->paginate(Session::get('row_per_page') ?? 10);
-                        
+
         // Necesitamos la moneda para mostrar los precios
         $data['currentCurrency'] = \App\Http\Helpers\Common::getCurrentCurrency();
 
@@ -285,6 +286,81 @@ class ExperienciaController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => __('reda-alojamiento::messages.general.error_al_eliminar:') . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function destroy($id)
+    {
+        $experiencia = Experiencia::with(['actividades', 'fotos'])->find($id);
+
+        if (!$experiencia) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Experiencia no encontrada',
+                'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_no_encontrada'),
+                'respuesta' => '',
+                'code' => 404
+            ], 404);
+        }
+
+        // Seguridad: Verificar dueño
+        if ($experiencia->user_id != Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autorizado',
+                'mensaje_usuario' => __('reda-alojamiento::messages.general.usuario_no_autorizado'),
+                'respuesta' => '',
+                'code' => 403
+            ], 403);
+        }
+
+        DB::beginTransaction();
+        try {
+            // --- 1. PREPARAR RUTAS DE ARCHIVOS ---
+
+            // Ruta de la carpeta principal de la experiencia (donde están las fotos de fotos_experiencias)
+            $pathExperiencia = public_path('images/experiencias/' . $id);
+
+            // Rutas de carpetas de actividades (cada actividad tiene su propia carpeta por ID)
+            $actividadesIds = $experiencia->actividades->pluck('id')->toArray();
+
+            // --- 2. ELIMINAR ARCHIVOS FÍSICOS ---
+
+            // A. Borrar carpeta principal de la experiencia
+            if (File::isDirectory($pathExperiencia)) {
+                File::deleteDirectory($pathExperiencia);
+            }
+
+            // B. Borrar carpetas de cada actividad relacionada
+            foreach ($actividadesIds as $actividadId) {
+                $pathActividad = public_path('images/actividades_experiencias/' . $actividadId);
+                if (File::isDirectory($pathActividad)) {
+                    File::deleteDirectory($pathActividad);
+                }
+            }
+
+            // --- 3. ELIMINAR REGISTROS DE BASE DE DATOS ---
+
+            $experiencia->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Experiencia eliminada',
+                'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_eliminada_con_exito'),
+                'respuesta' => '',
+                'code' => 200
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error técnico al eliminar',
+                'mensaje_usuario' => __('reda-alojamiento::messages.general.error_tecnico_al_eliminar') . $e->getMessage(),
+                'respuesta' => '',
+                'code' => 500
             ], 500);
         }
     }

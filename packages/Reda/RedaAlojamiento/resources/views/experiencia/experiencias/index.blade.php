@@ -15,7 +15,7 @@
                         <div class="col-md-12 p-0 mb-3">
                             <div class="list-bacground mt-4 rounded-3 p-4 border d-flex justify-content-between align-items-center">
                                 <span class="text-18 pt-4 pb-4 font-weight-700">Mis Negocios</span>
-                                
+
                                 {{-- Botón para crear nuevo, similar al flujo de Airbnb --}}
                                 <a href="{{ url('reda/crear-experiencia') }}" class="btn vbg-default border">
                                     <i class="fa fa-plus"></i> Nuevo Negocio
@@ -37,15 +37,15 @@
 
                                                     @if($fotoPortada)
                                                         <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
-                                                            <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo) }}" 
-                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start" 
+                                                            <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo) }}"
+                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start"
                                                                 alt="{{ $experiencia->titulo }}"
                                                                 style="min-height: 150px; object-fit: cover;">
                                                         </a>
                                                     @else
                                                         <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
-                                                            <img src="{{ asset('public/img/unnamed.png') }}" 
-                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start" 
+                                                            <img src="{{ asset('public/img/unnamed.png') }}"
+                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start"
                                                                 alt="Sin foto"
                                                                 style="min-height: 150px; object-fit: cover;">
                                                         </a>
@@ -75,14 +75,11 @@
                                             {{-- Columna de Acciones --}}
                                             <div class="col-md-3 col-xl-3 border-start-lg p-4 d-flex flex-column justify-content-center">
                                                 <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/descripcion') }}" class="btn btn-outline-success btn-block mb-2">
-                                                    <i class="fa fa-edit"></i> Editar
+                                                    <i class="fa fa-edit"></i>
                                                 </a>
-                                                <form action="{{ url('reda/delete-experiencia/'.$experiencia->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este negocio?');">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-outline-danger btn-block">
-                                                        <i class="fa fa-trash"></i> Eliminar
-                                                    </button>
-                                                </form>
+                                                <button class="btn btn-sm btn-danger btn-delete-experiencia" data-id="{{ $experiencia->id }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
