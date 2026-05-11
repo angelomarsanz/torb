@@ -6,7 +6,7 @@ import { eliminarExperiencia } from './eliminarExperiencia.js';
   if ($(containerId).length) {
     console.log('Script para "Index Experiencias" cargado revisión 10-05-2026.');
     $(function() {
-        $(document).on('click', '.btn-delete-experiencia', async function(e) {
+        $(document).on('click', '.btn-eliminar-experiencia', async function(e) {
             e.preventDefault();
 
             const id = $(this).data('id');

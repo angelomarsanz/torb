@@ -59,6 +59,7 @@
                                                     <span class="badge bg-orange text-white mb-2">{{ ucfirst($experiencia->categoria_negocio ?? 'General') }}</span>
                                                 </div>
                                                 <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/descripcion') }}">
+                                                    <div class=\"text-muted small mb-1\">ID: {{ $experiencia->id }}</div>
                                                     <p class="text-18 font-weight-700 text-color">{{ $experiencia->titulo }}</p>
                                                 </a>
                                                 <p class="text-14 text-muted mt-2">
@@ -74,12 +75,21 @@
 
                                             {{-- Columna de Acciones --}}
                                             <div class="col-md-3 col-xl-3 border-start-lg p-4 d-flex flex-column justify-content-center">
-                                                <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/descripcion') }}" class="btn btn-outline-success btn-block mb-2">
-                                                    <i class="fa fa-edit"></i>
+                                                {{-- Botón Editar --}}
+                                                <a href="{{ url('reda/formulario-de-pasos-experiencias/' . $experiencia->id . '/descripcion') }}"
+                                                class="d-flex flex-column align-items-center text-center text-decoration-none mx-3"
+                                                style="color: #222 !important;">
+                                                    <i class="fa fa-edit" style="font-size: 20px !important; display: block !important; margin-bottom: 2px;"></i>
+                                                    <span class="font-weight-700" style="font-size: 13px; display: block;">Editar</span>
                                                 </a>
-                                                <button class="btn btn-sm btn-danger btn-delete-experiencia" data-id="{{ $experiencia->id }}">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
+                                                {{-- Botón Eliminar --}}
+                                                <a href="javascript:void(0)"
+                                                class="d-flex flex-column align-items-center text-center text-decoration-none mx-3 btn-eliminar-experiencia"
+                                                data-id="{{ $experiencia->id }}"
+                                                style="color: #dc3545 !important; cursor: pointer;">
+                                                    <i class="fa fa-trash" style="font-size: 20px !important; display: block !important; margin-bottom: 2px;"></i>
+                                                    <span class="font-weight-700" style="font-size: 13px; display: block;">Eliminar</span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
