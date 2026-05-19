@@ -18,7 +18,7 @@
 
 		<!-- Needed Js from Old Version End -->
 		<script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
-		<script src="{{ asset('public/js/reda/general/reda-general-main.min.js?v=' . time()) }}"></script>
+		<script src="{{ asset('public/js/reda/general/reda-general-main.min.js') }}?v={{ time() }}"></script>
 		@stack('scripts')
 	</body>
 </html>

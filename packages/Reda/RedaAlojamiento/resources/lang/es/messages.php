@@ -99,11 +99,12 @@ return [
                 'tour'        => 'Tours y Excursiones',
                 'transporte'  => 'Transporte / Alquiler de vehículos',
             ],
-        'negocios' => 'Negocios'
-    ],
-    'experiencia_no_encontrada' => 'Experiencia no encontrada.',
-    'usuario_no_autorizado' => 'Usuario no autorizado.',
-    'experiencia_eliminada_con_exito' => 'Experiencia eliminada con éxito.',
-    'error_tecnico_al_eliminar' => 'Error técnico al eliminar: ',
-    'error_en_el_servidor_de_Torbian' => 'Error en el servidor de Torbian',
+        'experiencia_no_encontrada' => 'Experiencia no encontrada.',
+        'usuario_no_autorizado' => 'Usuario no autorizado.',
+        'experiencia_eliminada_con_exito' => 'Experiencia eliminada con éxito.',
+        'error_tecnico_al_eliminar' => 'Error técnico al eliminar: ',
+        'error_en_el_servidor_de_Torbian' => 'Error en el servidor de Torbian',
+        'negocios' => 'Negocios',
+        'tipos_de_negocios' => 'Tipos de negocios'
+    ]
 ];

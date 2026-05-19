@@ -21,8 +21,15 @@ if (buildApp) {
 // Módulo RedaAlojamiento
 if (buildAlojamiento) {
     console.log('🏗️ Compilando: REDA Alojamiento');
+    // Css Admin
+    mix.sass('packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss', 'public/css/reda/admin/general/reda-admin-general-main.min.css');
+
     // Css general
     mix.sass('packages/Reda/RedaAlojamiento/resources/sass/main.scss', 'public/css/reda/reda-general-main.min.css');
+
+    // Js Admin para uso general
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/general/main.js', 'public/js/reda/admin/general/reda-admin-general-main.min.js');
 
     // Js para uso general
     mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general-main.min.js');

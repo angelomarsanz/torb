@@ -16,13 +16,11 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     #"webpack.mix.js"
 
-    #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/Experiencia.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/eliminarExperiencia.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
-    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
+    #"resources/views/admin/common/head.blade.php"
+    #"resources/views/admin/common/foot.blade.php"
 
-    #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/index.js"
-    #packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
+    #"packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/main.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/index.js"
+    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
 )
