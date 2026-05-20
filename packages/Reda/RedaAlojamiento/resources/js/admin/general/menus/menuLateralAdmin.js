@@ -8,11 +8,15 @@ export const menuLateralAdmin = () =>
             console.log('Script para "Menú Lateral Admin" cargado correctamente.');
 
             $(function() {
-                // 1. Ubicamos el botón de Properties
+                // Ubicamos el botón de Properties
                 const $propertiesMenuItem = $('.sidebar-menu a[href*="admin/properties"]').closest('li');
 
                 if ($propertiesMenuItem.length) {
-                    // 2. Insertamos la estructura HTML (Añadimos un identificador único id="menu-negocios" para controlarlo mejor)
+                    // Obtenemos la URL base de forma dinámica (ej: https://pruebas.redetronic.com)
+                    const baseUrl = window.location.origin;
+                    // Construimos el enlace hacia la ruta del plugin que creamos
+                    const linkOpcionesNegocios = `${baseUrl}/admin/reda/opciones-tipos-de-negocios`;
+                    // Insertamos la estructura HTML (Añadimos un identificador único id="menu-negocios" para controlarlo mejor)
                     const nuevoMenuHtml = `
                         <li class="treeview" id="menu-negocios">
                             <a href="#" class="negocios-toggle">
@@ -21,7 +25,7 @@ export const menuLateralAdmin = () =>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <li>
-                                    <a href="#"><span>${window.RedaAlojamiento.general.tipos_de_negocios}</span></a>
+                                    <a href="${linkOpcionesNegocios}"><span>${window.RedaAlojamiento.general.tipos_de_negocios}</span></a>
                                 </li>
                             </ul>
                         </li>

@@ -12,8 +12,8 @@
 ARCHIVOS_PHP_PUNTUALES=(
     #"Ninguno"
     #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-    #"packages/Reda/RedaAlojamiento/routes/web.php"
-    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    "packages/Reda/RedaAlojamiento/routes/web.php"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     #"webpack.mix.js"
 
     #"resources/views/admin/common/head.blade.php"
@@ -22,5 +22,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/index.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+
+    "packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
 )

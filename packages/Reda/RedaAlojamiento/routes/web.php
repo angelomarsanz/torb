@@ -11,6 +11,9 @@ use Reda\RedaAlojamiento\Http\Controllers\Administrativo\AdministrativoControlle
 use Reda\RedaAlojamiento\Http\Controllers\BilleteraHuesped\BilleteraHuespedController;
 use Reda\RedaAlojamiento\Http\Controllers\Disputa\DisputaController;
 
+// Controladores del admin 
+use Reda\RedaAlojamiento\Http\Controllers\Admin\Experiencia\ExperienciaController as AdminExperienciaController;
+
 // Controladores de Experiencia
 use Reda\RedaAlojamiento\Http\Controllers\Experiencia\ExperienciaController;
 use Reda\RedaAlojamiento\Http\Controllers\Experiencia\ActividadExperienciaController;
@@ -29,6 +32,36 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaContro
 | Se agrupan bajo el prefijo 'reda' para mantener la estructura de URL original.
 |
 */
+
+// Le asignamos el nombre 'login' que Laravel busca, apuntando al controlador del autor
+Route::get('admin/login', [\App\Http\Controllers\Admin\AdminController::class, 'login'])->name('login');
+
+// ----------------------------------------------------------------------
+// RUTAS DE ADMINISTRACIÓN (PLUGIN REDA ALOJAMIENTO)
+// ----------------------------------------------------------------------
+// Grupo principal para el administrador: fusiona el prefijo 'admin/reda'
+// y protege el acceso mediante el middleware 'admin' del proyecto original.
+Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'auth:admin']], function () {
+
+    // Subgrupo exclusivo para ExperienciaController
+    // Agrupa todas las rutas que apunten a este controlador usando la sintaxis de Laravel 8+
+    Route::controller(AdminExperienciaController::class)->group(function () {
+        
+        // Ruta para listar y gestionar las Opciones de Tipos de Negocios
+        // URL resultante: tu-dominio.com/admin/reda/opciones-tipos-de-negocios
+        Route::match(['GET', 'POST'], 'opciones-tipos-de-negocios', 'opcionesTiposDeNegocios')
+            ->name('reda.admin.opciones_tipos_de_negocios');
+
+        // Aquí podrás añadir fácilmente las próximas rutas para este controlador en el futuro, por ejemplo:
+        // Route::get('experiencias/listado', 'metodoListado')->name('reda.admin.experiencias.listado');
+        // Route::post('experiencias/guardar', 'metodoGuardar')->name('reda.admin.experiencias.guardar');
+        
+    });
+
+    // (Opcional) Si en el futuro creas otro controlador administrativo para el plugin, lo agrupas aquí abajo:
+    // Route::controller(OtroAdminController::class)->group(function () { ... });
+
+});
 
 Route::prefix('reda')->group(function () {
 
