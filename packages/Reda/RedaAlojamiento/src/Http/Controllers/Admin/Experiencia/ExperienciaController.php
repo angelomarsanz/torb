@@ -44,7 +44,7 @@ class ExperienciaController extends Controller
         return view('reda-alojamiento::admin.experiencia.tipos_de_negocios.opciones_tipos_de_negocios', compact('categorias'));
     }
 
-    public function storeOpcionTipoNegocio(Request $request)
+    public function xstoreOpcionTipoNegocio(Request $request)
     {
         // Validación de campos obligatorios
         $request->validate([
@@ -76,7 +76,7 @@ class ExperienciaController extends Controller
             'message' => 'Categoría guardada correctamente',
             'mensaje_usuario' => __('reda-alojamiento::messages.general.categoria_guardada_correctamente'),
             'respuesta' => '',
-            'code' => 400
+            'code' => 200
         ];
 
         Log::info("storeOpcionTipoNegocio: " . print_r($respuesta, true));

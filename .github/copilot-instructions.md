@@ -146,9 +146,9 @@ Para que las traducciones funcionen se debe colocar este script:
     <script>window.RedaTrans = @json(__('reda-alojamiento::messages'));</script>
 Al final de los archivos .blade preferiblemente al principio de la sección 'validation_script', en caso de que exista esa sección en el archivo .blade
 
-## PC LOCAL Y SERVIDOR VESTA DE DESARROLLO
+## PC LOCAL, servidor del IDE Cloud Shell Editor y servidor VESTA DE DESARROLLO
 - Este proyecto en mi computadora personal es solo para mantener los archivos fuentes, no para hacer pruebas. Las pruebas se hacen en un servidor Vesta creado especialmente para desarrollo.
-- La ejecución de los comandos linux en el servidor Vesta deben tener el prefijo: 
+- En el IDE Cloud Shell Editor no se ejecuta este proyecto para realizar pruebas, solo es como un lugar donde se tienen los archivos fuentes y se codifica, más no se hace pruebas, así que cuando la IA Gemini o Copilot este revisando un problema en uno o más archivos y quiera por ejemplo ejecutar php artisan... o algún comando de Linux, no creo que de los resultados esperados. Donde se pueden ejecutar esos comandos es el servidor Vesta que es donde se ejecuta y hacen las pruebas de funcionamiento de la aplicación y las IA no tienen acceso al servidor Vesta quien pudiera ejecutar esos comandos es que personalmente acceda vía remota al servidor Vesta y ejecute esos comandos usando estos prefijos:
 sudo -u appvac
 Si requiere php
 sudo -u appvac php8.2

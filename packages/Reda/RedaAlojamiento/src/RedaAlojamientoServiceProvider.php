@@ -55,6 +55,28 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
             __DIR__.'/../resources/lang' => resource_path('lang/vendor/reda-alojamiento'),
         ]);
 
+        /**
+         * GANCHO PARA RUTAS ORIGINALES
+         * Una vez que Laravel ha cargado todas las rutas (incluyendo las del proyecto original),
+         * buscamos las de login y les asignamos nombre para que los middleware funcionen
+         * sin tener que modificar el archivo routes/web.php original.
+         */
+        $this->app->booted(function () {
+            $router = $this->app['router'];
+            $routes = $router->getRoutes();
+
+            foreach ($routes as $route) {
+                // Asignamos 'login' a la ruta de usuario (evita error 500)
+                if ($route->uri() === 'login' && !$route->getName()) {
+                    $route->name('login');
+                }
+                // Asignamos 'admin.login' a la ruta de admin (para uso futuro)
+                if ($route->uri() === 'admin/login' && !$route->getName()) {
+                    $route->name('admin.login');
+                }
+            }
+        });
+
         /* PUBLICACIÓN DE ASSETS ESTÁTICOS
         // Ejemplo
         $this->publishes([

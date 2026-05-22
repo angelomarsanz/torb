@@ -24,15 +24,13 @@ const storeOpcionTipoNegocio = (url, formData) => {
                         respuestaServidor = {};
                     }
 
-                    console.log('storeOpcionTipoNegocio, respuestaServidor: ', respuestaServidor);
-
                     const mensajeErrorBase = window.RedaAlojamiento?.general?.error_en_el_servidor_de_Torbian || 'Error en el servidor de Torbian';
                     const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
 
                     resolve({
                         'success': false,
                         'message' : 'Error guardando categoría',
-                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}${detalleError}`,
                         'respuesta': respuestaServidor.respuesta || '',
                         'code': x.status !== 0 ? x.status : 504,
                     });
@@ -85,17 +83,16 @@ const storeOpcionTipoNegocio = (url, formData) => {
 
                 console.log('storeOpcionTipoNegocio, response: ', response)
 
+                const mensajeRaw = response.mensaje_usuario || (response.success ? response.message : 'Error inesperado en el servidor') || '';
+                const mensajeFinal = mensajeRaw.replace(/<br\s*\/?>/gi, '\n');
+
                 if (response.success) {
-                    console.log('success = true');
                     $('#modal-add-category').modal('hide');
-                    alert(response.mensaje_usuario || response.message);
+                    alert(mensajeFinal);
                     location.reload();
                 } else {
-                    console.log('success = false');
-                    alert('success = false, error al guardar la categoría');
-                    // const errorMsg = window.RedaAlojamiento?.general?.error_en_el_servidor_de_Torbian || 'Error inesperado en el servidor';
-                    // alert(errorMsg);
-
+                    $('#modal-add-category').modal('hide');
+                    alert(mensajeFinal);
                 }
                 $btn.prop('disabled', false);
                 $btn.find('.btn-text').text(window.RedaAlojamiento.general.guardar);

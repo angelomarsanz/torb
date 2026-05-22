@@ -104,7 +104,7 @@ return [
         'usuario_no_autorizado' => 'Usuario no autorizado.',
         'experiencia_eliminada_con_exito' => 'Experiencia eliminada con éxito.',
         'error_tecnico_al_eliminar' => 'Error técnico al eliminar: ',
-        'error_en_el_servidor_de_Torbian' => 'Error en el servidor de Torbian',
+        'error_en_el_servidor_de_Torbian' => 'Error en el servidor de Torbian.',
         'negocios' => 'Negocios',
         'tipos_de_negocios' => 'Tipos de negocios',
         'opciones_de_tipos_de_negocios' => 'Opciones de Tipos de Negocios',

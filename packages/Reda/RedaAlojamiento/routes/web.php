@@ -33,15 +33,12 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaContro
 |
 */
 
-// Le asignamos el nombre 'login' que Laravel busca, apuntando al controlador del autor
-Route::get('admin/login', [\App\Http\Controllers\Admin\AdminController::class, 'login'])->name('login');
-
 // ----------------------------------------------------------------------
 // RUTAS DE ADMINISTRACIÓN (PLUGIN REDA ALOJAMIENTO)
 // ----------------------------------------------------------------------
 // Grupo principal para el administrador: fusiona el prefijo 'admin/reda'
 // y protege el acceso mediante el middleware 'admin' del proyecto original.
-Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'auth:admin']], function () {
+Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']], function () {
 
     // Subgrupo exclusivo para ExperienciaController
     // Agrupa todas las rutas que apunten a este controlador usando la sintaxis de Laravel 8+
