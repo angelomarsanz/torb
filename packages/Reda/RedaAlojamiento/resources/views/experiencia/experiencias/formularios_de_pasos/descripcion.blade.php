@@ -44,7 +44,7 @@
                                             <option value="" disabled {{ (old('categoria_negocio') ?? $result->categoria_negocio) == '' ? 'selected' : '' }}>
                                                 {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                             </option>
-                                            @foreach(__('reda-alojamiento::messages.general.categorias') as $key => $value)
+                                            @foreach($categoriasNegocios as $key => $value)
                                                 <option value="{{ $key }}" {{ (old('categoria_negocio') ?? $result->categoria_negocio) == $key ? 'selected' : '' }}>
                                                     {{ $value }}
                                                 </option>

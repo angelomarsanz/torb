@@ -4,6 +4,7 @@ namespace Reda\RedaAlojamiento\Http\Controllers\Experiencia;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Settings;
 use App\Models\Currency;
 use Reda\RedaAlojamiento\Models\Experiencia\{
     Experiencia,
@@ -68,6 +69,8 @@ class ExperienciaController extends Controller
         $id = $request->id;
         $paso = $request->paso;
         $actividades = null;
+        $categoriasNegocios = [];
+
         // Cargamos la experiencia con TODAS sus relaciones de una sola vez
         $result = Experiencia::with([
             'fotos',
@@ -77,9 +80,16 @@ class ExperienciaController extends Controller
             'anfitrion'
         ])->findOrFail($id);
 
-        $result = Experiencia::with(['fotos', 'actividades', 'horarios', 'informaciones', 'anfitrion'])->findOrFail($id);
-
         if ($request->isMethod('get')) {
+            if ($paso === 'descripcion') {
+                $setting = Settings::where('name', 'opciones_tipos_de_negocios')->first();
+                if ($setting && !empty($setting->value)) {
+                    $dataJson = json_decode($setting->value, true);
+                    $categoriasNegocios = $dataJson['categorias'] ?? [];
+                    ksort($categoriasNegocios);
+                }
+            }
+
             if ($paso === 'actividades') {
                 $actividades = ActividadExperiencia::where('experiencia_id', $id)
                     ->orderBy('orden_actividad', 'asc')
@@ -96,7 +106,7 @@ class ExperienciaController extends Controller
             }
 
             return view("reda-alojamiento::experiencia.experiencias.formularios_de_pasos.$paso",
-                compact('result', 'paso', 'actividades'));
+                compact('result', 'paso', 'actividades', 'categoriasNegocios'));
         }
         elseif ($request->isMethod('post')) {
             switch ($paso) {
