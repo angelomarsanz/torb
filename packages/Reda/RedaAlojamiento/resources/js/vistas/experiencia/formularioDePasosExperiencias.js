@@ -95,7 +95,7 @@ $(function() {
                     }
                 });
 
-                // Inicialización de SortableJS para reordenar actividades
+                // Reordenar actividades en la vista de escritorio
                 const el = document.getElementById('actividades-sortable');
                 if (el) {
                     Sortable.create(el, {
@@ -144,12 +144,16 @@ $(function() {
                     let urlRuta = contenedor.data('reorder-url');
                     $('#sortable-cards-mobile .card-actividad-movil').each(function(index) {
                         let id = $(this).data('id');
-                        if(id) orden.push({ id: id, orden: index + 1 });
+                        if(id) {
+                            let nuevoOrden = index + 1;
+                            orden.push({ id: id, orden: nuevoOrden });
+                            $(this).find('.indice-actividad-movil').text(nuevoOrden);
+                        }
                     });
                     enviarNuevoOrden(orden, urlRuta);
                 }
 
-                // Función AJAX única para guardar el orden en la Base de Datos
+                // Función AJAX para guardar el orden en la Base de Datos
                 function enviarNuevoOrden(ordenArray, urlRuta) {
                     $.ajax({
                         url: urlRuta,

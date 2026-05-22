@@ -148,7 +148,7 @@ Al final de los archivos .blade preferiblemente al principio de la sección 'val
 
 ## PC LOCAL, servidor del IDE Cloud Shell Editor y servidor VESTA DE DESARROLLO
 - Este proyecto en mi computadora personal es solo para mantener los archivos fuentes, no para hacer pruebas. Las pruebas se hacen en un servidor Vesta creado especialmente para desarrollo.
-- En el IDE Cloud Shell Editor no se ejecuta este proyecto para realizar pruebas, solo es como un lugar donde se tienen los archivos fuentes y se codifica, más no se hace pruebas, así que cuando la IA Gemini o Copilot este revisando un problema en uno o más archivos y quiera por ejemplo ejecutar php artisan... o algún comando de Linux, no creo que de los resultados esperados. Donde se pueden ejecutar esos comandos es el servidor Vesta que es donde se ejecuta y hacen las pruebas de funcionamiento de la aplicación y las IA no tienen acceso al servidor Vesta quien pudiera ejecutar esos comandos es que personalmente acceda vía remota al servidor Vesta y ejecute esos comandos usando estos prefijos:
+- En el IDE Cloud Shell Editor no se ejecuta este proyecto para realizar pruebas, solo es como un lugar donde se tienen los archivos fuentes y se codifica, más no se hace pruebas, así que cuando la IA este revisando un problema en uno o más archivos y quiera por ejemplo ejecutar php artisan... o algún comando de Linux, no creo que de los resultados esperados. Donde se pueden ejecutar esos comandos es el servidor Vesta que es donde se ejecuta y hacen las pruebas de funcionamiento de la aplicación y las IA no tienen acceso al servidor Vesta quien pudiera ejecutar esos comandos es que personalmente acceda vía remota al servidor Vesta y ejecute esos comandos usando estos prefijos:
 sudo -u appvac
 Si requiere php
 sudo -u appvac php8.2
@@ -164,5 +164,5 @@ Hacerlo de esta manera:
     Para string o cualquier otro valor:
         Log::error("...");
 
-## Interacción con la IA: Gemini o Copilot Github
+## Interacción con la IA
 Por favor explicar de manera pedagógica cualquier cambio realizado en el plugin o cualquier código nuevo agregado. Cuando sean cambios particionar la pantalla, en el lado izquierdo mostrar el archivo original completo y en el lado derecho el archivo modificado completo. Resaltando con color las líneas modificadas, eliminadas o agregadas y mostrar la opción de aceptar o rechazar el cambio

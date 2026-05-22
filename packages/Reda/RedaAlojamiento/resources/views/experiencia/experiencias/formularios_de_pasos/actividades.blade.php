@@ -38,10 +38,10 @@
                                     <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
                                         @foreach($actividades as $actividad)
                                             <tr class="fila-actividad" data-id="{{ $actividad->id }}">
-                                                <td class="align-middle text-muted cursor-move"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v ml-1"></i></td>
+                                                <td class="align-middle text-muted cursor-move text-center"><i class="fa fa-bars"></i></td>
                                                 <td class="align-middle font-weight-bold indice-actividad">{{ $actividad->orden_actividad }}</td>
                                                 <td class="align-middle">
-                                                    <img src="{{ $actividad->foto_actividad ? asset('public/images/actividades_experiencias/'.$actividad->id.'/'.$actividad->foto_actividad) : asset('public/images/default-image.png') }}"
+                                                    <img src="{{ $actividad->foto_actividad ? asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) : asset('public/images/default-image.png') }}"
                                                          class="img-thumbnail rounded" style="width: 50px; height: 50px; object-fit: cover;">
                                                 </td>
                                                 <td class="align-middle text-truncate" style="max-width: 250px;">{{ $actividad->nombre_actividad ?: '---' }}</td>
@@ -63,6 +63,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <p class="text-muted small text-center mt-2 italic">
+                                    <i class="fa fa-info-circle mr-1"></i> Arrastra las filas desde las barras de la izquierda para reorganizarlas.
+                                </p>
                             </div>
 
                             <!-- Vista Móvil (Cards) -->
@@ -79,9 +82,9 @@
                                                         </div>
 
                                                         <div class="mr-3">
-                                                            @if(!empty($actividad->foto_actividad) && file_exists(public_path('images/actividades_experiencias/'.$actividad->id.'/'.$actividad->foto_actividad)))
-                                                                <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->id.'/'.$actividad->foto_actividad) }}"
-                                                                    alt="{{ $actividad->nombre }}"
+                                                            @if(!empty($actividad->foto_actividad) && file_exists(public_path('images/actividades_experiencias/'.$actividad->foto_actividad)))
+                                                                <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}"
+                                                                    alt="{{ $actividad->nombre_actividad }}"
                                                                     class="rounded img-thumbnail"
                                                                     style="width: 60px; height: 60px; object-fit: cover;">
                                                             @else
@@ -94,7 +97,8 @@
 
                                                         <div class="flex-grow-1">
                                                             <h6 class="font-weight-bold mb-1 text-dark text-truncate" style="max-width: 150px;">
-                                                                {{ $actividad->nombre }}
+                                                                <span class="indice-actividad-movil">{{ $actividad->orden_actividad }}</span>.
+                                                                {{ $actividad->nombre_actividad ?: '---' }}
                                                             </h6>
                                                             <p class="m-0 text-success font-weight-600 small">
                                                                 {{ moneyFormat($actividad->moneda->code ?? 'USD', $actividad->precio) }}
