@@ -135,4 +135,49 @@ class ExperienciaController extends Controller
 
         return response()->json($respuesta, $respuesta['code']);
     }
+
+    public function destroyOpcionTipoNegocio($clave)
+    {
+        // Buscamos el registro actual
+        $setting = DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->first();
+
+        if (!$setting || empty($setting->value)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Configuración no encontrada',
+                'code' => 404
+            ], 404);
+        }
+
+        $dataJson = json_decode($setting->value, true);
+
+        // Si existe la clave en las categorías, la eliminamos
+        if (isset($dataJson['categorias'][$clave])) {
+            unset($dataJson['categorias'][$clave]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'La categoría no existe',
+                'mensaje_usuario' => __('reda-alojamiento::messages.general.la_categoria_no_existe'),
+                'code' => 404
+            ], 404);
+        }
+
+        // Guardamos el JSON actualizado
+        DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->update([
+            'value' => json_encode($dataJson)
+        ]);
+
+        $respuesta = [
+            'success' => true,
+            'message' => 'Categoría eliminada correctamente',
+            'mensaje_usuario' => __('reda-alojamiento::messages.general.categoria_eliminada_con_exito'),
+            'respuesta' => '',
+            'code' => 200
+        ];
+
+        Log::info("destroyOpcionTipoNegocio: " . print_r($respuesta, true));
+
+        return response()->json($respuesta, $respuesta['code']);
+    }
 }
