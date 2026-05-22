@@ -18,6 +18,7 @@ use Auth;
 use Illuminate\Support\Facades\File;
 use Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ExperienciaController extends Controller
 {
@@ -104,6 +105,8 @@ class ExperienciaController extends Controller
                         ->paginate(10);
                 }
             }
+
+            Log::info("formularioDePasosExperiencias, actividades: " . print_r($actividades, true));
 
             return view("reda-alojamiento::experiencia.experiencias.formularios_de_pasos.$paso",
                 compact('result', 'paso', 'actividades', 'categoriasNegocios'));
@@ -230,6 +233,22 @@ class ExperienciaController extends Controller
             }
         }
     }
+
+    /**
+     * Actualiza el orden de las actividades vía Ajax.
+     */
+    public function reordenarActividades(Request $request)
+    {
+        $orden = $request->orden; // Array de IDs en el nuevo orden
+        if (is_array($orden)) {
+            foreach ($orden as $index => $id) {
+                ActividadExperiencia::where('id', $id)->update(['orden_actividad' => $index + 1]);
+            }
+            return response()->json(['success' => true, 'message' => __('reda-alojamiento::messages.general.orden_actualizado_con_exito')]);
+        }
+        return response()->json(['success' => false], 400);
+    }
+
     /**
      * Crea una actividad con valores por defecto para una experiencia.
      */

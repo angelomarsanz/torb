@@ -95,6 +95,80 @@ $(function() {
                     }
                 });
 
+                // Inicialización de SortableJS para reordenar actividades
+                const el = document.getElementById('actividades-sortable');
+                if (el) {
+                    Sortable.create(el, {
+                        handle: '.cursor-move',
+                        animation: 150,
+                        onEnd: function() {
+                            const orden = [];
+                            $('#actividades-sortable tr').each(function() {
+                                orden.push($(this).data('id'));
+                            });
+
+                            // Ajax para guardar el nuevo orden
+                            $.post($(el).data('reorder-url'), {
+                                _token: $('input[name="_token"]').val(),
+                                orden: orden
+                            }, function(response) {
+                                if (response.success) {
+                                    // Actualizar números visualmente
+                                    $('.indice-actividad').each(function(index) {
+                                        $(this).text(index + 1);
+                                    });
+                                    console.log('Orden actualizado');
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // --- Inicialización para la Vista Móvil (Cards) ---
+                let elCards = document.getElementById('sortable-cards-mobile');
+                if (elCards) {
+                    Sortable.create(elCards, {
+                        handle: '.handle-mobile', // Clase del icono de arrastre en las Cards móviles (fa-bars)
+                        animation: 150,
+                        ghostClass: 'bg-light',    // Efecto visual sutil al arrastrar
+                        onEnd: function (evt) {
+                            actualizarOrdenActividades();
+                        }
+                    });
+                }
+
+                // Función para procesar el orden en móvil
+                function actualizarOrdenActividades() {
+                    let orden = [];
+                    let contenedor = $('#actividades-cards-container');
+                    let urlRuta = contenedor.data('reorder-url');
+                    $('#sortable-cards-mobile .card-actividad-movil').each(function(index) {
+                        let id = $(this).data('id');
+                        if(id) orden.push({ id: id, orden: index + 1 });
+                    });
+                    enviarNuevoOrden(orden, urlRuta);
+                }
+
+                // Función AJAX única para guardar el orden en la Base de Datos
+                function enviarNuevoOrden(ordenArray, urlRuta) {
+                    $.ajax({
+                        url: urlRuta,
+                        type: 'POST',
+                        data: {
+                            _token: $('input[name="_token"]').val(),
+                            orden: ordenArray
+                        },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert('No se pudo guardar el nuevo orden.');
+                            }
+                        },
+                        error: function() {
+                            console.error('Error de red al intentar reordenar.');
+                        }
+                    });
+                }
+
                 function aplicarReglasDinamicas() {
                     // Validación para ORDEN
                     $('input[name*="[orden_actividad]"]').each(function() {
