@@ -70,7 +70,11 @@ const storeOpcionTipoNegocio = (url, formData) => {
 
                 // Validación básica manual (aunque el HTML5 tiene required)
                 if (clave === '' || nombre === '') {
-                    alert(window.RedaAlojamiento.general.ambos_campos_son_obligatorios);
+                    mostrarNotificacion(
+                        window.RedaAlojamiento.general.informacion,
+                        window.RedaAlojamiento.general.ambos_campos_son_obligatorios,
+                        'info'
+                    );
                     return;
                 }
 
@@ -84,15 +88,23 @@ const storeOpcionTipoNegocio = (url, formData) => {
                 console.log('storeOpcionTipoNegocio, response: ', response)
 
                 const mensajeRaw = response.mensaje_usuario || (response.success ? response.message : 'Error inesperado en el servidor') || '';
-                const mensajeFinal = mensajeRaw.replace(/<br\s*\/?>/gi, '\n');
+                // Ya no necesitamos reemplazar <br> por \n porque el modal soporta HTML
 
                 if (response.success) {
                     $('#modal-add-category').modal('hide');
-                    alert(mensajeFinal);
-                    location.reload();
+                    mostrarNotificacion(
+                        window.RedaAlojamiento.general.exito,
+                        mensajeRaw,
+                        'exito',
+                        true
+                    );
                 } else {
                     $('#modal-add-category').modal('hide');
-                    alert(mensajeFinal);
+                    mostrarNotificacion(
+                        window.RedaAlojamiento.general.error,
+                        mensajeRaw,
+                        'error'
+                    );
                 }
                 $btn.prop('disabled', false);
                 $btn.find('.btn-text').text(window.RedaAlojamiento.general.guardar);

@@ -14,7 +14,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #".github/copilot-instructions.md"
     #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     #"packages/Reda/RedaAlojamiento/routes/web.php"
-    #packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     #"webpack.mix.js"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
 
@@ -22,11 +22,15 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"resources/views/admin/common/foot.blade.php"
 
     #"packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_head.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_footer.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_notificaciones.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/index.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"
 
-    #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js"
+    "packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
 )

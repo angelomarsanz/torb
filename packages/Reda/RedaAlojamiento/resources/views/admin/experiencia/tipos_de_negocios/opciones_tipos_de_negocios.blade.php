@@ -82,7 +82,7 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="mt-2 pt-2 border-top">
                                                 <small class="text-muted d-block" style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">{{ __('reda-alojamiento::messages.general.descripcion_opcion') }}</small>
                                                 <p class="mb-0 text-dark f-14">{{ $descripcion }}</p>
@@ -117,8 +117,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="clave">{{ __('reda-alojamiento::messages.general.clave_key') }} <span class="text-danger">*</span></label>
-                        <input type="text" name="clave" id="clave" class="form-control" placeholder="ej: restaurante" required>
-                        <small class="text-muted">{{ __('reda-alojamiento::messages.general.identificador_unico_sin_espacios_ni_caracteres_especiales') }}</small>
+                        <input type="text" name="clave" id="clave" class="form-control" placeholder="ej: restaurante_gastronomia" required>
+                        <small class="text-muted">{{ __('reda-alojamiento::messages.general.identificador_unico_que_no_contenga_espacios_acentos_ni_caracteres_especiales') }}</small>
                     </div>
                     <div class="form-group">
                         <label for="nombre">{{ __('reda-alojamiento::messages.general.nombre_descripcion') }} <span class="text-danger">*</span></label>

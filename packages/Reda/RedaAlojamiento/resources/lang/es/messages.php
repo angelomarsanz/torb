@@ -115,10 +115,14 @@ return [
         'acciones' => 'Acciones',
         'no_se_encontraron_opciones_de_tipos_de_negocios' => 'No se encontraron opciones de tipos de negocios registradas',
         'agregar_nueva_categoria' => 'Agregar nueva categoría',
-        'identificador_unico_sin_espacios_ni_caracteres_especiales' => 'Identificador único (sin espacios ni caracteres especiales).',
+        'identificador_unico_que_no_contenga_espacios_acentos_ni_caracteres_especiales' => 'Identificador único que no contenga espacios, acentos ni caracteres especiales.',
         'nombre_descripcion' => 'Nombre / Descripción',
         'guardar' => 'Guardar',
         'ambos_campos_son_obligatorios' => 'Ambos campos son obligatorios.',
-        'categoria_guardada_correctamente' => 'Categoría guardada correctamente.'
+        'categoria_guardada_correctamente' => 'Categoría guardada correctamente.',
+        'notificacion' => 'Notificación',
+        'exito' => '¡Éxito!',
+        'aceptar' => 'Aceptar',
+        'informacion' => 'Información'
     ]
 ];

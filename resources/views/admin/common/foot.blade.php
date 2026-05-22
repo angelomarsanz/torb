@@ -75,8 +75,7 @@
 <script type="text/javascript" src="{{  asset('public/backend/dist/js/demo.js') }}"></script>
 <script type="text/javascript" src="{{  asset('public/backend/dist/js/custom.js') }}"></script>
 <script type="text/javascript" src="{{  asset('public/backend/js/daterangecustom.js') }}"></script>
-<script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
-<script type="text/javascript" src="{{  asset('public/js/reda/admin/general/reda-admin-general-main.min.js') }}?v={{ time() }}"></script>
+@include('reda-alojamiento::admin.general.main_footer')
 
 </body>
 

@@ -44,7 +44,7 @@ class ExperienciaController extends Controller
         return view('reda-alojamiento::admin.experiencia.tipos_de_negocios.opciones_tipos_de_negocios', compact('categorias'));
     }
 
-    public function xstoreOpcionTipoNegocio(Request $request)
+    public function storeOpcionTipoNegocio(Request $request)
     {
         // Validación de campos obligatorios
         $request->validate([

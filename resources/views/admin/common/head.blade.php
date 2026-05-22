@@ -48,7 +48,7 @@
 			<link href="{{ asset('public/backend/css/style2.min.css') }}" rel="stylesheet" type="text/css" />
 			<link href="{{ asset('public/backend/css/style.min.css') }}" rel="stylesheet" type="text/css" />
 			<link href="{{ asset('public/css/glyphicon.min.css') }}" rel="stylesheet" type="text/css" />
-            <link href="{{ asset('public/css/reda/admin/general/reda-admin-general-main.min.css') }}?v={{ time() }}" rel="stylesheet" type="text/css" />
+            @include('reda-alojamiento::admin.general.main_head')
 			@stack('css')
 		</head>
 	<body class="hold-transition skin-blue sidebar-mini">
