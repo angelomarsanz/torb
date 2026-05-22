@@ -41,10 +41,10 @@
                                                 </td>
                                                 <td style="text-align: center;">
                                                     <div class="btn-group">
-                                                        <a href="#" class="btn btn-xs btn-primary btn-flat" data-toggle="tooltip" title="Editar">
+                                                        <button type="button" class="btn btn-xs btn-primary btn-flat btn-edit-category" data-clave="{{ $clave }}" data-nombre="{{ $descripcion }}" data-toggle="tooltip" title="Editar">
                                                             <i class="fa fa-edit"></i>
-                                                        </a>
-                                                        <button type="button" class="btn btn-xs btn-danger btn-flat" data-toggle="tooltip" title="Eliminar">
+                                                        </button>
+                                                        <button type="button" class="btn btn-xs btn-danger btn-flat btn-delete-category" data-clave="{{ $clave }}" data-toggle="tooltip" title="Eliminar">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -74,10 +74,10 @@
                                                     <strong class="text-blue" style="font-size: 15px;">{{ $clave }}</strong>
                                                 </div>
                                                 <div class="btn-group">
-                                                    <a href="#" class="btn btn-sm btn-default btn-flat border" data-toggle="tooltip" title="Editar">
+                                                    <button type="button" class="btn btn-sm btn-default btn-flat border btn-edit-category" data-clave="{{ $clave }}" data-nombre="{{ $descripcion }}" data-toggle="tooltip" title="Editar">
                                                         <i class="fa fa-edit text-primary"></i>
-                                                    </a>
-                                                    <button type="button" class="btn btn-sm btn-default btn-flat border" data-toggle="tooltip" title="Eliminar">
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-default btn-flat border btn-delete-category" data-clave="{{ $clave }}" data-toggle="tooltip" title="Eliminar">
                                                         <i class="fa fa-trash text-danger"></i>
                                                     </button>
                                                 </div>
@@ -104,14 +104,15 @@
 	</section>
 </div>
 
-<!-- Modal para Agregar Categoría -->
-<div class="modal fade" id="modal-add-category" role="dialog">
+<!-- Modal para Agregar/Editar Categoría -->
+<div class="modal fade" id="modal-category" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="form-add-category" method="POST" action="{{ route('reda.admin.opciones_tipos_de_negocios.store') }}">
+            <form id="form-category" method="POST" action="{{ route('reda.admin.opciones_tipos_de_negocios.store') }}">
                 @csrf
+                <input type="hidden" name="old_clave" id="old_clave">
                 <div class="modal-header d-flex align-items-center justify-content-between">
-                    <h4 class="modal-title">{{ __('reda-alojamiento::messages.general.agregar_nueva_categoria') }}</h4>
+                    <h4 class="modal-title" id="modal-title-category">{{ __('reda-alojamiento::messages.general.agregar_nueva_categoria') }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -140,8 +141,14 @@
 
 @section('validate_script')
     <script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
+    {{-- Agregamos las rutas que necesitamos en JS --}}
+    <script>
+        window.RedaRutas = {
+            store_categoria: "{{ route('reda.admin.opciones_tipos_de_negocios.store') }}",
+            update_categoria: "{{ route('reda.admin.opciones_tipos_de_negocios.update') }}"
+        };
+    </script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
-    {{-- Corregí la comilla de cierre perdida que tenías en tu asset anterior (js}}?v=) --}}
     <script type="text/javascript" src="{{ asset('public/js/reda/admin/vistas/experiencia/opcionesTipoDeNegocios.min.js') }}?v={{ time() }}"></script>
     <script>
         $(document).ready(function() {

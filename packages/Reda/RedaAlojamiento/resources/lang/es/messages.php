@@ -120,9 +120,18 @@ return [
         'guardar' => 'Guardar',
         'ambos_campos_son_obligatorios' => 'Ambos campos son obligatorios.',
         'categoria_guardada_correctamente' => 'Categoría guardada correctamente.',
-        'notificacion' => 'Notificación',
+        'categoria_actualizada_correctamente' => 'Categoría actualizada correctamente.',
+        'notificacion' => 'Notificacion',
         'exito' => '¡Éxito!',
         'aceptar' => 'Aceptar',
-        'informacion' => 'Información'
+        'informacion' => 'Información',
+        'confirmar_accion' => 'Confirmar acción',
+        'eliminar' => 'Eliminar',
+        'actualizar' => 'Actualizar',
+        'editar_categoria' => 'Editar categoría',
+        'estas_seguro_de_eliminar_esta_categoria' => '¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.',
+
+        'categoria_eliminada_con_exito' => 'Categoría eliminada con éxito.',
+        'error_al_eliminar_la_categoria' => 'Ocurrió un error al intentar eliminar la categoría.'
     ]
 ];

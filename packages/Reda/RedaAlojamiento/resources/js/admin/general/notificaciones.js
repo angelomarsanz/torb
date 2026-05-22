@@ -47,3 +47,41 @@ window.mostrarNotificacion = (titulo, mensaje, tipo = 'info', recargar = false) 
         $modal.modal('show');
     })(jQuery);
 }
+
+/**
+ * Muestra un modal de confirmación.
+ * @param {string} mensaje - Mensaje de la pregunta.
+ * @param {function} callback - Función que se ejecuta si el usuario confirma.
+ * @param {string} titulo - Título opcional.
+ * @param {string} textoBoton - Texto del botón de acción (ej: 'Eliminar').
+ */
+window.mostrarConfirmacion = (mensaje, callback, titulo = '', textoBoton = '') => {
+    (function( $ ) {
+        "use strict";
+        const $modal = $('#modal-confirmacion');
+        const $btnConfirmar = $('#btn-confirmar-si');
+
+        $('#confirmacion-mensaje').html(mensaje);
+        if (titulo) $('#confirmacion-titulo').text(titulo);
+        if (textoBoton) $btnConfirmar.find('.btn-text').text(textoBoton);
+
+        // Limpiar eventos previos y asignar el nuevo callback
+        $btnConfirmar.off('click').on('click', async function() {
+            // Mostrar spinner en el botón de confirmación
+            const $btn = $(this);
+            $btn.prop('disabled', true);
+            $btn.find('.fa-spinner').removeClass('d-none');
+
+            if (callback && typeof callback === 'function') {
+                await callback();
+            }
+
+            // Restaurar botón y cerrar
+            $btn.prop('disabled', false);
+            $btn.find('.fa-spinner').addClass('d-none');
+            $modal.modal('hide');
+        });
+
+        $modal.modal('show');
+    })(jQuery);
+}

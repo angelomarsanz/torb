@@ -53,6 +53,14 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
         Route::post('opciones-tipos-de-negocios/store', 'storeOpcionTipoNegocio')
             ->name('reda.admin.opciones_tipos_de_negocios.store');
 
+        // Ruta para actualizar una categoría vía Ajax
+        Route::post('opciones-tipos-de-negocios/update', 'updateOpcionTipoNegocio')
+            ->name('reda.admin.opciones_tipos_de_negocios.update');
+
+        // Ruta para eliminar una categoría vía Ajax
+        Route::delete('opciones-tipos-de-negocios/destroy/{clave}', 'destroyOpcionTipoNegocio')
+            ->name('reda.admin.opciones_tipos_de_negocios.destroy');
+
         // Aquí podrás añadir fácilmente las próximas rutas para este controlador en el futuro, por ejemplo:
         // Route::get('experiencias/listado', 'metodoListado')->name('reda.admin.experiencias.listado');
         // Route::post('experiencias/guardar', 'metodoGuardar')->name('reda.admin.experiencias.guardar');

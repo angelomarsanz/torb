@@ -38,6 +38,8 @@ class ExperienciaController extends Controller
             // Decodificamos el JSON que viene de la base de datos
             $dataJson = json_decode($setting->value, true);
             $categorias = $dataJson['categorias'] ?? [];
+            // Ordenamos alfabéticamente por la clave (key)
+            ksort($categorias);
         }
 
         // Retornamos la vista pasando el listado de categorías
@@ -80,6 +82,56 @@ class ExperienciaController extends Controller
         ];
 
         Log::info("storeOpcionTipoNegocio: " . print_r($respuesta, true));
+
+        return response()->json($respuesta, $respuesta['code']);
+    }
+
+    public function updateOpcionTipoNegocio(Request $request)
+    {
+        // Validación de campos obligatorios
+        $request->validate([
+            'old_clave' => 'required|string',
+            'clave'     => 'required|string',
+            'nombre'    => 'required|string',
+        ]);
+
+        // Buscamos el registro actual
+        $setting = DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->first();
+
+        if (!$setting || empty($setting->value)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Configuración no encontrada',
+                'code' => 404
+            ], 404);
+        }
+
+        $dataJson = json_decode($setting->value, true);
+
+        // Si la clave cambió, eliminamos la anterior
+        if ($request->old_clave !== $request->clave) {
+            if (isset($dataJson['categorias'][$request->old_clave])) {
+                unset($dataJson['categorias'][$request->old_clave]);
+            }
+        }
+
+        // Agregamos/Actualizamos la categoría
+        $dataJson['categorias'][$request->clave] = $request->nombre;
+
+        // Guardamos los cambios
+        DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->update([
+            'value' => json_encode($dataJson)
+        ]);
+
+        $respuesta = [
+            'success' => true,
+            'message' => 'Categoría actualizada correctamente',
+            'mensaje_usuario' => __('reda-alojamiento::messages.general.categoria_actualizada_correctamente'),
+            'respuesta' => '',
+            'code' => 200
+        ];
+
+        Log::info("updateOpcionTipoNegocio: " . print_r($respuesta, true));
 
         return response()->json($respuesta, $respuesta['code']);
     }
