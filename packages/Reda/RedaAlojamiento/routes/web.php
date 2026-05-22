@@ -11,7 +11,7 @@ use Reda\RedaAlojamiento\Http\Controllers\Administrativo\AdministrativoControlle
 use Reda\RedaAlojamiento\Http\Controllers\BilleteraHuesped\BilleteraHuespedController;
 use Reda\RedaAlojamiento\Http\Controllers\Disputa\DisputaController;
 
-// Controladores del admin 
+// Controladores del admin
 use Reda\RedaAlojamiento\Http\Controllers\Admin\Experiencia\ExperienciaController as AdminExperienciaController;
 
 // Controladores de Experiencia
@@ -46,16 +46,20 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'auth:admin']], 
     // Subgrupo exclusivo para ExperienciaController
     // Agrupa todas las rutas que apunten a este controlador usando la sintaxis de Laravel 8+
     Route::controller(AdminExperienciaController::class)->group(function () {
-        
+
         // Ruta para listar y gestionar las Opciones de Tipos de Negocios
         // URL resultante: tu-dominio.com/admin/reda/opciones-tipos-de-negocios
         Route::match(['GET', 'POST'], 'opciones-tipos-de-negocios', 'opcionesTiposDeNegocios')
             ->name('reda.admin.opciones_tipos_de_negocios');
 
+        // Ruta para guardar una nueva categoría vía Ajax
+        Route::post('opciones-tipos-de-negocios/store', 'storeOpcionTipoNegocio')
+            ->name('reda.admin.opciones_tipos_de_negocios.store');
+
         // Aquí podrás añadir fácilmente las próximas rutas para este controlador en el futuro, por ejemplo:
         // Route::get('experiencias/listado', 'metodoListado')->name('reda.admin.experiencias.listado');
         // Route::post('experiencias/guardar', 'metodoGuardar')->name('reda.admin.experiencias.guardar');
-        
+
     });
 
     // (Opcional) Si en el futuro creas otro controlador administrativo para el plugin, lo agrupas aquí abajo:

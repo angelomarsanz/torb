@@ -42,6 +42,7 @@ return [
         'el_archivo_debe_ser_una_imagen' => 'El archivo debe ser una imagen.',
         'solo_se_permiten_imagenes_jpg_jpeg_png_gif' => 'Solo se permiten imágenes: jpg, jpeg, png, gif.',
         'el_archivo_es_muy_pesado_máximo_25_mb' => 'El archivo es muy pesado (máximo 25 MB)',
+        'error_al_guardar_la_categoria' => 'Ocurrió un error al intentar guardar la categoría.',
         'el_id_de_la_foto_es_obligatorio' => 'El ID de la foto es obligatorio.',
         'el_id_de_la_foto_no_existe_en_la_base_de_datos' => 'El ID de la foto no existe en la base de datos.',
         'el_precio_es_obligatorio' => 'El precio es obligatorio.',
@@ -105,6 +106,19 @@ return [
         'error_tecnico_al_eliminar' => 'Error técnico al eliminar: ',
         'error_en_el_servidor_de_Torbian' => 'Error en el servidor de Torbian',
         'negocios' => 'Negocios',
-        'tipos_de_negocios' => 'Tipos de negocios'
+        'tipos_de_negocios' => 'Tipos de negocios',
+        'opciones_de_tipos_de_negocios' => 'Opciones de Tipos de Negocios',
+        'listado_de_categorias_configuradas' => 'Listado de categorías configuradas',
+        'agregar_nueva' => 'Agregar nueva',
+        'clave_key' => 'Clave (Key)',
+        'descripcion_opcion' => 'Descripción / Opción',
+        'acciones' => 'Acciones',
+        'no_se_encontraron_opciones_de_tipos_de_negocios' => 'No se encontraron opciones de tipos de negocios registradas',
+        'agregar_nueva_categoria' => 'Agregar nueva categoría',
+        'identificador_unico_sin_espacios_ni_caracteres_especiales' => 'Identificador único (sin espacios ni caracteres especiales).',
+        'nombre_descripcion' => 'Nombre / Descripción',
+        'guardar' => 'Guardar',
+        'ambos_campos_son_obligatorios' => 'Ambos campos son obligatorios.',
+        'categoria_guardada_correctamente' => 'Categoría guardada correctamente.'
     ]
 ];

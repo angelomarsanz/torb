@@ -3,9 +3,9 @@
 		<head>
 			<meta charset="utf-8">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-			
+
 			<title> {{ siteName() }} | Dashboard </title>
-			
+
 			<meta name="csrf-token" content="{{ csrf_token() }}">
 
 			<!-- Tell the browser to be responsive to screen width -->
@@ -47,8 +47,8 @@
 			<link href="{{ asset('public/backend/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
 			<link href="{{ asset('public/backend/css/style2.min.css') }}" rel="stylesheet" type="text/css" />
 			<link href="{{ asset('public/backend/css/style.min.css') }}" rel="stylesheet" type="text/css" />
-			<link href="{{ asset('public/css/glyphicon.min.min.css') }}" rel="stylesheet" type="text/css" />
-			<link href="{{ asset('public/css/reda/admin/general/reda-admin-general-main.min.css') }}?v={{ time() }}" rel="stylesheet" type="text/css" />
+			<link href="{{ asset('public/css/glyphicon.min.css') }}" rel="stylesheet" type="text/css" />
+            <link href="{{ asset('public/css/reda/admin/general/reda-admin-general-main.min.css') }}?v={{ time() }}" rel="stylesheet" type="text/css" />
 			@stack('css')
 		</head>
 	<body class="hold-transition skin-blue sidebar-mini">

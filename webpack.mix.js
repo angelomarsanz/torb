@@ -31,6 +31,11 @@ if (buildAlojamiento) {
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/general/main.js', 'public/js/reda/admin/general/reda-admin-general-main.min.js');
 
+    // Js Admin por vistas
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js',
+        'public/js/reda/admin/vistas/experiencia/opcionesTipoDeNegocios.min.js');
+
     // Js para uso general
     mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general-main.min.js');
 
@@ -43,7 +48,7 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js',
         'public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js');
 
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js', 
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js',
         'public/js/reda/vistas/experiencia/indexExperiencias.min.js');
 }
 
