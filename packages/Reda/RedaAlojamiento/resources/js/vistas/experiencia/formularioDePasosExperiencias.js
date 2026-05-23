@@ -128,10 +128,13 @@ $(function() {
                 let elCards = document.getElementById('sortable-cards-mobile');
                 if (elCards) {
                     Sortable.create(elCards, {
-                        handle: '.handle-mobile', // Clase del icono de arrastre en las Cards móviles (fa-bars)
                         animation: 150,
-                        ghostClass: 'bg-light',    // Efecto visual sutil al arrastrar
-                        onEnd: function (evt) {
+                        ghostClass: 'bg-light',
+                        filter: '.btn, .btn *', // Evita que el arrastre se active al pulsar botones o sus iconos
+                        preventOnFilter: false, // Permite que los eventos de clic en los botones sigan funcionando
+                        delay: 200,             // Retraso de 200ms para diferenciar "scroll" de "arrastrar"
+                        delayOnTouchOnly: true, // El retraso solo se aplica en dispositivos táctiles
+                        onEnd: function () {
                             actualizarOrdenActividades();
                         }
                     });
@@ -375,10 +378,14 @@ $(function() {
                     });
                 });
 
-                $(document).on('click', '.btn-delete-actividad-simple', function() {
-                    let id = $(this).data('id');
-                    let url = $(this).data('url');
-                    let fila = $(`#fila-actividad-${id}`);
+                $(document).on('click', '.btn-delete-actividad', function() {
+                    let id = $(this).data('delete-id');
+                    let url = $(this).data('delete-url');
+
+                    // Seleccionamos todos los elementos (escritorio y móvil) que comparten la clase de esta actividad.
+                    // Al usar una clase en lugar de ID, garantizamos que se eliminen ambos simultáneamente
+                    // independientemente de la vista en la que se encuentre el usuario.
+                    let filas = $(`.fila-actividad-${id}`);
 
                     if (confirm(window.RedaAlojamiento.general.estas_seguro_de_que_deseas_eliminar_esta_actividad_esta_accion_no_se_puede_deshacer)) {
                         $.ajax({
@@ -389,12 +396,14 @@ $(function() {
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    // Animación de desvanecimiento y remoción de la fila
-                                    fila.fadeOut(400, function() {
-                                        $(this).remove();
+                                    // Iniciamos la animación de salida. No eliminamos los elementos dentro
+                                    // del callback individual para no romper la promesa de la colección.
+                                    filas.fadeOut(400).promise().done(function() {
+                                        // Una vez que todas las animaciones terminaron, removemos los elementos
+                                        filas.remove();
+                                        // Mostramos el mensaje traducido para el usuario
+                                        alert(response.mensaje_usuario || response.message);
                                     });
-                                    // Mensaje de éxito (puedes usar un toast o alert)
-                                    alert(response.message);
                                 }
                             },
                             error: function() {

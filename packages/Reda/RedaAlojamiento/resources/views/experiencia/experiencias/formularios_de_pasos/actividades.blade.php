@@ -37,7 +37,7 @@
                                     </thead>
                                     <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
                                         @foreach($actividades as $actividad)
-                                            <tr class="fila-actividad" data-id="{{ $actividad->id }}">
+                                            <tr class="fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
                                                 <td class="align-middle text-muted cursor-move text-center"><i class="fa fa-bars"></i></td>
                                                 <td class="align-middle font-weight-bold indice-actividad">{{ $actividad->orden_actividad }}</td>
                                                 <td class="align-middle">
@@ -56,7 +56,7 @@
                                                     <div class="btn-group shadow-sm border rounded">
                                                         <button type="button" class="btn btn-sm btn-white text-info btn-modal-actividad" data-mode="view" data-id="{{ $actividad->id }}" title="Ver"><i class="fa fa-eye"></i></button>
                                                         <button type="button" class="btn btn-sm btn-white text-warning btn-modal-actividad" data-mode="edit" data-id="{{ $actividad->id }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
-                                                        <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad-simple" data-id="{{ $actividad->id }}" data-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
+                                                        <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad" data-delete-id="{{ $actividad->id }}" data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -64,7 +64,7 @@
                                     </tbody>
                                 </table>
                                 <p class="text-muted small text-center mt-2 italic">
-                                    <i class="fa fa-info-circle mr-1"></i> Arrastra las filas desde las barras de la izquierda para reorganizarlas.
+                                    <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las filas desde las barras de la izquierda hacia cualquier posición que desees.
                                 </p>
                             </div>
 
@@ -73,7 +73,7 @@
                                 @if($actividades->count() > 0)
                                     <div id="sortable-cards-mobile">
                                         @foreach($actividades as $actividad)
-                                            <div class="card mb-3 shadow-sm card-actividad-movil" data-id="{{ $actividad->id }}">
+                                            <div class="card mb-3 shadow-sm card-actividad-movil cursor-move fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
                                                 <div class="card-body p-3">
                                                     <div class="d-flex align-items-center">
 
@@ -115,8 +115,8 @@
 
                                                             <button type="button"
                                                                     class="btn btn-sm btn-outline-danger btn-delete-actividad p-1 mt-1"
-                                                                    data-id="{{ $actividad->id }}"
-                                                                    data-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
+                                                                    data-delete-id="{{ $actividad->id }}"
+                                                                    data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
                                                                     title="{{ __('reda-alojamiento::messages.general.eliminar') }}">
                                                                 <i class="fa fa-trash"></i>
                                                             </button>
@@ -128,7 +128,7 @@
                                         @endforeach
                                     </div>
                                     <p class="text-muted small text-center mt-2 italic">
-                                        <i class="fa fa-info-circle mr-1"></i> Arrastra las tarjetas desde las barras de la izquierda para reorganizarlas.
+                                        <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las tarjetas desde las barras de la izquierda o desde cualquier espacio vacío hacia la posición que desees.
                                     </p>
                                 @else
                                     <div class="text-center py-4 text-muted">
