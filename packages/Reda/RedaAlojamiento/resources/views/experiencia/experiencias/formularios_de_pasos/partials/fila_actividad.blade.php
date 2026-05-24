@@ -8,33 +8,13 @@
                     </span>
                     <h5 class="card-title mb-0 font-weight-700 text-dark">{{ __('reda-alojamiento::messages.general.detalle_del_producto_o_servicio') }}</h5>
                 </div>
-                <button
-                    type="button" class="btn btn-outline-danger btn-sm border-0 btn-delete-actividad-simple"
-                    data-id="{{ $actividad->id }}"
-                    data-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
-                    title="Eliminar producto y/o servicio"
-                >
-                    <i class="fa fa-trash-alt"></i>
-                </button>
             </div>
             <div class="row g-3">
                 <div class="col-lg-8">
                     <div class="row g-3">
 
-                        <!-- Primera fila: Orden, nombre y actividad -->
-                        <div class="col-md-3">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nro') }} <span class="text-danger">*</label>
-                            <input
-                                type="number"
-                                name="actividades[{{ $actividad->id }}][orden_actividad]"
-                                value="{{ old('actividades.'.$actividad->id.'.orden_actividad', $actividad->orden_actividad) }}"
-                                class="form-control text-center @error('actividades.'.$actividad->id.'.orden_actividad') is-invalid @enderror"
-                            >
-                            @error('actividades.'.$actividad->id.'.orden_actividad')
-                                <span class="text-danger small font-weight-700">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="col-md-9">
+                        <!-- Primera fila: nombre y actividad -->
+                        <div class="col-md-12">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }} <span class="text-danger">*</label>
                             <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]"
                                 value="{{ old('actividades.'.$actividad->id.'.nombre_actividad', $actividad->nombre_actividad) }}"

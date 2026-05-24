@@ -147,7 +147,6 @@ class ExperienciaController extends Controller
                     $request->validate(
                         [
                             'actividades' => 'required|array|min:1',
-                            'actividades.*.orden_actividad' => 'required|integer|min:1',
                             'actividades.*.nombre_actividad' => 'required|min:3',
                             'actividades.*.descripcion_actividad' => 'required|min:20',
                             'actividades.*.tipo_producto_servicio' => 'required',
@@ -156,11 +155,6 @@ class ExperienciaController extends Controller
                             'actividades.*.disponibilidad' => 'required',
                         ],
                         [
-                            // Número
-                            'actividades.*.orden_actividad.required' => __('reda-alojamiento::messages.general.el_numero_de_la_actividad_es_obligatorio'),
-                            'actividades.*.orden_actividad.integer' => __('reda-alojamiento::messages.general.el_numero_de_la_actividad_debe_ser_un_numero_valido'),
-                            'actividades.*.orden_actividad.min' => __('reda-alojamiento::messages.general.el_numero_de_la_actividad_debe_ser_mayor_a_cero'),
-
                             // Nombre
                             'actividades.*.nombre_actividad.required' => __('reda-alojamiento::messages.general.el_nombre_del_producto_o_servicio_es_obligatorio'),
                             'actividades.*.nombre_actividad.min' => __('reda-alojamiento::messages.general.el_nombre_del_producto_o_servicio_debe_tener_al_menos_3_caracteres'),
@@ -191,12 +185,11 @@ class ExperienciaController extends Controller
                             if ($actividad) {
                                 if (empty($actividad->foto_actividad)) {
                                     return back()->withErrors([
-                                        "foto_actividad_id_" . $id_actividad => __('reda-alojamiento::messages.general.falta_la_foto_en_la_actividad_nro') . $datos['orden_actividad']
+                                        "foto_actividad_id_" . $id_actividad => __('reda-alojamiento::messages.general.falta_la_foto_en_la_actividad')
                                     ])->withInput();
                                 }
 
                                 $actividad->update([
-                                    'orden_actividad'       => $datos['orden_actividad'],
                                     'nombre_actividad'      => $datos['nombre_actividad'],
                                     'descripcion_actividad' => $datos['descripcion_actividad'],
                                     'tipo_producto_servicio'=> $datos['tipo_producto_servicio'],
@@ -206,6 +199,13 @@ class ExperienciaController extends Controller
                                 ]);
                             }
                         }
+                    }
+
+                    // Si el usuario hizo clic en "Guardar" dentro del flujo de agregar producto
+                    // nos quedamos en el mismo paso para mostrar la lista actualizada.
+                    if ($request->stay_on_step == '1') {
+                        return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades'])
+                                    ->with('success', __('reda-alojamiento::messages.general.producto_o_servicio_guardado_con_exito'));
                     }
 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'ubicacion'])

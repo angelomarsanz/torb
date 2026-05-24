@@ -21,132 +21,152 @@
 
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
+                            <input type="hidden" name="stay_on_step" id="stay_on_step" value="0">
 
-                            <!-- Vista de Escritorio (Tabla) -->
-                            <div class="table-responsive d-none d-md-block">
-                                <table class="table table-hover border rounded">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th width="50"></th> <!-- Handle drag -->
-                                            <th width="60">{{ __('reda-alojamiento::messages.general.nro') }}</th>
-                                            <th width="80">{{ __('reda-alojamiento::messages.general.fotos') }}</th>
-                                            <th>{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }}</th>
-                                            <th width="150">{{ __('reda-alojamiento::messages.general.precio') }}</th>
-                                            <th width="150" class="text-center">{{ __('reda-alojamiento::messages.general.acciones') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
-                                        @foreach($actividades as $actividad)
-                                            <tr class="fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
-                                                <td class="align-middle text-muted cursor-move text-center"><i class="fa fa-bars"></i></td>
-                                                <td class="align-middle font-weight-bold indice-actividad">{{ $actividad->orden_actividad }}</td>
-                                                <td class="align-middle">
-                                                    <img src="{{ $actividad->foto_actividad ? asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) : asset('public/images/default-image.png') }}"
-                                                         class="img-thumbnail rounded" style="width: 50px; height: 50px; object-fit: cover;">
-                                                </td>
-                                                <td class="align-middle text-truncate" style="max-width: 250px;">{{ $actividad->nombre_actividad ?: '---' }}</td>
-                                                <td class="align-middle">
-                                                    @if($actividad->precio)
-                                                        {{ $actividad->currency->code ?? '' }} {{ number_format($actividad->precio, 2) }}
-                                                    @else
-                                                        <span class="text-muted small">---</span>
-                                                    @endif
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <div class="btn-group shadow-sm border rounded">
-                                                        <button type="button" class="btn btn-sm btn-white text-info btn-modal-actividad" data-mode="view" data-id="{{ $actividad->id }}" title="Ver"><i class="fa fa-eye"></i></button>
-                                                        <button type="button" class="btn btn-sm btn-white text-warning btn-modal-actividad" data-mode="edit" data-id="{{ $actividad->id }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
-                                                        <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad" data-delete-id="{{ $actividad->id }}" data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
-                                                    </div>
-                                                </td>
+                            <div id="productos-servicios-list-container">
+                                <!-- Vista de Escritorio (Tabla) -->
+                                <div class="table-responsive d-none d-md-block">
+                                    <table class="table table-hover border rounded">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th width="50"></th> <!-- Handle drag -->
+                                                <th width="60">{{ __('reda-alojamiento::messages.general.nro') }}</th>
+                                                <th width="80">{{ __('reda-alojamiento::messages.general.fotos') }}</th>
+                                                <th>{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }}</th>
+                                                <th width="150">{{ __('reda-alojamiento::messages.general.precio') }}</th>
+                                                <th width="150" class="text-center">{{ __('reda-alojamiento::messages.general.acciones') }}</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <p class="text-muted small text-center mt-2 italic">
-                                    <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las filas desde las barras de la izquierda hacia cualquier posición que desees.
-                                </p>
-                            </div>
-
-                            <!-- Vista Móvil (Cards) -->
-                            <div class="d-md-none" id="actividades-cards-container" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
-                                @if($actividades->count() > 0)
-                                    <div id="sortable-cards-mobile">
-                                        @foreach($actividades as $actividad)
-                                            <div class="card mb-3 shadow-sm card-actividad-movil cursor-move fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
-                                                <div class="card-body p-3">
-                                                    <div class="d-flex align-items-center">
-
-                                                        <div class="handle-mobile mr-3 text-muted" style="cursor: move; font-size: 1.2rem;">
-                                                            <i class="fa fa-bars"></i>
+                                        </thead>
+                                        <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
+                                            @foreach($actividades as $actividad)
+                                                <tr class="fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
+                                                    <td class="align-middle text-muted cursor-move text-center"><i class="fa fa-bars"></i></td>
+                                                    <td class="align-middle font-weight-bold indice-actividad">{{ $actividad->orden_actividad }}</td>
+                                                    <td class="align-middle">
+                                                        <img src="{{ $actividad->foto_actividad ? asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) : asset('public/images/default-image.png') }}"
+                                                            class="img-thumbnail rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    </td>
+                                                    <td class="align-middle text-truncate" style="max-width: 250px;">{{ $actividad->nombre_actividad ?: '---' }}</td>
+                                                    <td class="align-middle">
+                                                        @if($actividad->precio)
+                                                            {{ $actividad->currency->code ?? '' }} {{ number_format($actividad->precio, 2) }}
+                                                        @else
+                                                            <span class="text-muted small">---</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <div class="btn-group shadow-sm border rounded">
+                                                            <button type="button" class="btn btn-sm btn-white text-info btn-modal-actividad" data-mode="view" data-id="{{ $actividad->id }}" title="Ver"><i class="fa fa-eye"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-white text-warning btn-modal-actividad" data-mode="edit" data-id="{{ $actividad->id }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad" data-delete-id="{{ $actividad->id }}" data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
                                                         </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <p class="text-muted small text-center mt-2 italic">
+                                        <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las filas desde las barras de la izquierda hacia cualquier posición que desees.
+                                    </p>
+                                </div>
 
-                                                        <div class="mr-3">
-                                                            @if(!empty($actividad->foto_actividad) && file_exists(public_path('images/actividades_experiencias/'.$actividad->foto_actividad)))
-                                                                <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}"
-                                                                    alt="{{ $actividad->nombre_actividad }}"
-                                                                    class="rounded img-thumbnail"
-                                                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                                            @else
-                                                                <img src="{{ asset('public/images/default-image.png') }}"
-                                                                    alt="Default"
-                                                                    class="rounded img-thumbnail"
-                                                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                                            @endif
+                                <!-- Vista Móvil (Cards) -->
+                                <div class="d-md-none" id="actividades-cards-container" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
+                                    @if($actividades->count() > 0)
+                                        <div id="sortable-cards-mobile">
+                                            @foreach($actividades as $actividad)
+                                                <div class="card mb-3 shadow-sm card-actividad-movil cursor-move fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex align-items-center">
+
+                                                            <div class="handle-mobile mr-3 text-muted" style="cursor: move; font-size: 1.2rem;">
+                                                                <i class="fa fa-bars"></i>
+                                                            </div>
+
+                                                            <div class="mr-3">
+                                                                @if(!empty($actividad->foto_actividad) && file_exists(public_path('images/actividades_experiencias/'.$actividad->foto_actividad)))
+                                                                    <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}"
+                                                                        alt="{{ $actividad->nombre_actividad }}"
+                                                                        class="rounded img-thumbnail"
+                                                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                                                @else
+                                                                    <img src="{{ asset('public/images/default-image.png') }}"
+                                                                        alt="Default"
+                                                                        class="rounded img-thumbnail"
+                                                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                                                @endif
+                                                            </div>
+
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="font-weight-bold mb-1 text-dark text-truncate" style="max-width: 150px;">
+                                                                    <span class="indice-actividad-movil">{{ $actividad->orden_actividad }}</span>.
+                                                                    {{ $actividad->nombre_actividad ?: '---' }}
+                                                                </h6>
+                                                                <p class="m-0 text-success font-weight-600 small">
+                                                                    {{ moneyFormat($actividad->moneda->code ?? 'USD', $actividad->precio) }}
+                                                                </p>
+                                                            </div>
+
+                                                            <div class="d-flex flex-column align-items-end justify-content-between" style="height: 60px;">
+                                                                <button type="button"
+                                                                        class="btn btn-sm btn-outline-primary btn-edit-actividad p-1"
+                                                                        data-id="{{ $actividad->id }}"
+                                                                        title="{{ __('reda-alojamiento::messages.general.editar') }}">
+                                                                    <i class="fa fa-edit"></i>
+                                                                </button>
+
+                                                                <button type="button"
+                                                                        class="btn btn-sm btn-outline-danger btn-delete-actividad p-1 mt-1"
+                                                                        data-delete-id="{{ $actividad->id }}"
+                                                                        data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
+                                                                        title="{{ __('reda-alojamiento::messages.general.eliminar') }}">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </div>
+
                                                         </div>
-
-                                                        <div class="flex-grow-1">
-                                                            <h6 class="font-weight-bold mb-1 text-dark text-truncate" style="max-width: 150px;">
-                                                                <span class="indice-actividad-movil">{{ $actividad->orden_actividad }}</span>.
-                                                                {{ $actividad->nombre_actividad ?: '---' }}
-                                                            </h6>
-                                                            <p class="m-0 text-success font-weight-600 small">
-                                                                {{ moneyFormat($actividad->moneda->code ?? 'USD', $actividad->precio) }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div class="d-flex flex-column align-items-end justify-content-between" style="height: 60px;">
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-primary btn-edit-actividad p-1"
-                                                                    data-id="{{ $actividad->id }}"
-                                                                    title="{{ __('reda-alojamiento::messages.general.editar') }}">
-                                                                <i class="fa fa-edit"></i>
-                                                            </button>
-
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-danger btn-delete-actividad p-1 mt-1"
-                                                                    data-delete-id="{{ $actividad->id }}"
-                                                                    data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
-                                                                    title="{{ __('reda-alojamiento::messages.general.eliminar') }}">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        </div>
-
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
+                                        <p class="text-muted small text-center mt-2 italic">
+                                            <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las tarjetas desde las barras de la izquierda o desde cualquier espacio vacío hacia la posición que desees.
+                                        </p>
+                                    @else
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fa fa-folder-open-o fa-2x mb-2"></i>
+                                            <p class="m-0">No hay actividades registradas todavía.</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="col-md-12 p-0 mt-4 mb-5">
+                                    <div class="row m-0 justify-content-between">
+                                        <button type="submit" class="btn vbtn-outline-success text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3" id="btn_next">
+                                            <i class="spinner fa fa-spinner fa-spin d-none"></i>
+                                            <span id="btn_next-text">{{ __('reda-alojamiento::messages.general.siguiente') }}</span>
+                                        </button>
                                     </div>
-                                    <p class="text-muted small text-center mt-2 italic">
-                                        <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las tarjetas desde las barras de la izquierda o desde cualquier espacio vacío hacia la posición que desees.
-                                    </p>
-                                @else
-                                    <div class="text-center py-4 text-muted">
-                                        <i class="fa fa-folder-open-o fa-2x mb-2"></i>
-                                        <p class="m-0">No hay actividades registradas todavía.</p>
-                                    </div>
-                                @endif
+                                </div>
                             </div>
 
-                            <div class="col-md-12 p-0 mt-4 mb-5">
+                            <!-- Contenedor para nuevas actividades (Formularios completos) -->
+                            <div id="actividades-wrapper" class="row mt-4"></div>
+
+                            <div id="new-producto-actions" class="col-md-12 p-0 mt-4 mb-5 d-none">
                                 <div class="row m-0 justify-content-between">
-                                    <button type="submit" class="btn vbtn-outline-success text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3" id="btn_next">
-                                        <i class="spinner fa fa-spinner fa-spin d-none"></i>
-                                        <span id="btn_next-text">{{ __('reda-alojamiento::messages.general.siguiente') }}</span>
+                                    <button type="button" class="btn btn-outline-secondary text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3" id="btn-cancel-new-producto">
+                                        {{ __('reda-alojamiento::messages.general.cancelar') }}
+                                    </button>
+                                    <button type="button" class="btn vbtn-success text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3" id="btn-save-new-producto">
+                                        <i class="fa fa-spinner fa-spin d-none spinner-save"></i>
+                                        <span id="btn-save-new-producto-text">{{ __('reda-alojamiento::messages.general.guardar') }}</span>
                                     </button>
                                 </div>
                             </div>
                         </form>
+
+                        @include('reda-alojamiento::general.modal_notificaciones')
                     </div>
                 </div>
             </div>

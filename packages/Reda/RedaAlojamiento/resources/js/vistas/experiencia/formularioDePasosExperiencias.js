@@ -88,12 +88,14 @@ $(function() {
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        $("#btn_next").attr("disabled", true);
-                        $(".spinner").removeClass('d-none');
-                        $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
+                        $("#btn_next, #btn-save-new-producto").attr("disabled", true);
+                        $(".spinner, .spinner-save").removeClass('d-none');
+                        $("#btn_next-text, #btn-save-new-producto-text").text(window.RedaAlojamiento.general.guardando);
                         return true;
                     }
                 });
+
+                let currentNewActivityId = null;
 
                 // Reordenar actividades en la vista de escritorio
                 const el = document.getElementById('actividades-sortable');
@@ -177,20 +179,6 @@ $(function() {
                 }
 
                 function aplicarReglasDinamicas() {
-                    // Validación para ORDEN
-                    $('input[name*="[orden_actividad]"]').each(function() {
-                        $(this).rules('add', {
-                            required: true,
-                            number: true,
-                            min: 1,
-                            messages: {
-                                required: window.RedaAlojamiento.general.el_numero_de_la_actividad_es_obligatorio,
-                                number: window.RedaAlojamiento.general.el_numero_de_la_actividad_debe_ser_un_numero_valido,
-                                min: window.RedaAlojamiento.general.el_numero_de_la_actividad_debe_ser_mayor_a_cero
-                            }
-                        });
-                    });
-
                     // REGLA ADICIONAL: Nombre de la actividad (que también es required en tu Blade)
                     $('input[name*="[nombre_actividad]"]').each(function() {
                         $(this).rules('add', {
@@ -339,8 +327,8 @@ $(function() {
                 $('#btn-add-actividad').on('click', function(e) {
                     e.preventDefault();
 
-                    // Obtenemos la URL del atributo data-url que pusimos en el botón
-                    const url = $(this).data('url');
+                    // Obtenemos la URL del atributo data-add-url que pusimos en el botón
+                    const url = $(this).data('add-url');
                     const btn = $(this);
 
                     btn.prop('disabled', true).css('opacity', '0.5');
@@ -355,27 +343,69 @@ $(function() {
                         },
                         success: function(response) {
                             if (response.success) {
-                                $('#actividades-wrapper').append(response.html);
+                                currentNewActivityId = response.id;
+                                
+                                // Ocultar lista y botón add
+                                $('#productos-servicios-list-container').addClass('d-none');
+                                btn.hide();
+
+                                // Mostrar formulario y acciones nuevas
+                                $('#actividades-wrapper').html(response.html);
+                                $('#new-producto-actions').removeClass('d-none');
+                                
                                 aplicarReglasDinamicas();
 
-                                // Efecto visual de entrada
-                                const nuevaCard = $('.fila-actividad-container').last();
-                                nuevaCard.hide().fadeIn(800);
-
-                                // Scroll suave hacia la nueva card
+                                // Scroll suave hacia el inicio del formulario
                                 $('html, body').animate({
-                                    scrollTop: nuevaCard.offset().top - 100
+                                    scrollTop: $('#actividades-wrapper').offset().top - 100
                                 }, 500);
                             }
                         },
                         error: function(jqXHR) {
                             console.error(jqXHR.responseText);
-                            alert('Error al agregar la actividad.');
+                            // Mostrar notificación de error
+                            $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                            $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
+                            $('#notificacion-mensaje').text(window.RedaAlojamiento.general.ocurrio_un_error_al_intentar_agregar_la_actividad || 'Ocurrió un error al intentar agregar la actividad.');
+                            $('#modal-notificacion').modal('show');
                         },
                         complete: function() {
                             btn.prop('disabled', false).css('opacity', '1');
                         }
                     });
+                });
+
+                $('#btn-cancel-new-producto').on('click', function() {
+                    if (currentNewActivityId) {
+                        const deleteUrl = APP_URL + '/reda/experiencias/actividades/delete/' + currentNewActivityId;
+                        
+                        $(this).prop('disabled', true);
+                        
+                        $.ajax({
+                            url: deleteUrl,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('input[name="_token"]').val()
+                            },
+                            success: function(response) {
+                                // Recargamos para limpiar todo y volver al estado inicial del paso
+                                location.reload();
+                            },
+                            error: function() {
+                                // Si falla el borrado, al menos refrescamos para no dejar basura visual
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        location.reload();
+                    }
+                });
+
+                $('#btn-save-new-producto').on('click', function() {
+                    // Marcamos que queremos quedarnos en el mismo paso
+                    $('#stay_on_step').val('1');
+                    // Disparamos el submit del formulario principal
+                    $('#list_des').submit();
                 });
 
                 $(document).on('click', '.btn-delete-actividad', function() {
