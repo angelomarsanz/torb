@@ -96,6 +96,76 @@ $(function() {
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
+                        const stayOnStep = $('#stay_on_step').val() === '1';
+
+                        if (stayOnStep) {
+                            const $form = $(form);
+                            const url = $form.attr('action');
+                            const formData = new FormData(form);
+
+                            $("#btn-save-new-producto").attr("disabled", true);
+                            $(".spinner-save").removeClass('d-none');
+                            $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
+
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
+                                        // Mostrar notificación de éxito
+                                        $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
+                                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!");
+                                        const mensajeExito = response.mensaje_usuario || window.RedaAlojamientoJson["Actividad agregada exitosamente"] || "Actividad agregada exitosamente";
+                                        $('#notificacion-mensaje').text(mensajeExito);
+                                        $('#modal-notificacion').modal('show');
+
+                                        // Al cerrar el modal, refrescar la página para ver los cambios en la lista
+                                        $('#modal-notificacion').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                                            const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                            window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                                        });
+                                    } else {
+                                        // Error reportado por el servidor
+                                        $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
+                                        $('#notificacion-mensaje').text(response.mensaje_usuario || response.message || window.RedaAlojamientoJson["Ocurrió un error al intentar guardar la actividad."] || "Ocurrió un error al intentar guardar la actividad.");
+                                        $('#modal-notificacion').modal('show');
+
+                                        // Reactivar botón
+                                        $("#btn-save-new-producto").attr("disabled", false);
+                                        $(".spinner-save").addClass('d-none');
+                                        $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
+                                    }
+                                },
+                                error: function(jqXHR) {
+                                    console.error(jqXHR.responseText);
+                                    let mensaje = window.RedaAlojamientoJson["Ocurrió un error al intentar guardar la actividad."] || "Ocurrió un error al intentar guardar la actividad.";
+                                    
+                                    try {
+                                        const resp = JSON.parse(jqXHR.responseText);
+                                        if (resp.mensaje_usuario) mensaje = resp.mensaje_usuario;
+                                        else if (resp.message) mensaje = resp.message;
+                                    } catch (e) {}
+
+                                    $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                                    $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
+                                    $('#notificacion-mensaje').text(mensaje);
+                                    $('#modal-notificacion').modal('show');
+
+                                    // Reactivar botón
+                                    $("#btn-save-new-producto").attr("disabled", false);
+                                    $(".spinner-save").addClass('d-none');
+                                    $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
+                                }
+                            });
+                            return false; // Evitar el envío normal
+                        }
+
+                        // Comportamiento normal para el botón Siguiente
                         $("#btn_next, #btn-save-new-producto").attr("disabled", true);
                         $(".spinner, .spinner-save").removeClass('d-none');
                         $("#btn_next-text, #btn-save-new-producto-text").text(window.RedaAlojamiento.general.guardando);
@@ -352,7 +422,7 @@ $(function() {
                         success: function(response) {
                             if (response.success) {
                                 currentNewActivityId = response.id;
-                                
+
                                 // Ocultar lista y botón add
                                 $('#productos-servicios-list-container').addClass('d-none');
                                 btn.hide();
@@ -360,7 +430,7 @@ $(function() {
                                 // Mostrar formulario y acciones nuevas
                                 $('#actividades-wrapper').html(response.html);
                                 $('#new-producto-actions').removeClass('d-none');
-                                
+
                                 aplicarReglasDinamicas();
 
                                 // Scroll suave hacia el inicio del formulario
@@ -386,9 +456,9 @@ $(function() {
                 $('#btn-cancel-new-producto').on('click', function() {
                     if (currentNewActivityId) {
                         const deleteUrl = APP_URL + '/reda/experiencias/actividades/delete/' + currentNewActivityId;
-                        
+
                         $(this).prop('disabled', true);
-                        
+
                         $.ajax({
                             url: deleteUrl,
                             type: 'DELETE',

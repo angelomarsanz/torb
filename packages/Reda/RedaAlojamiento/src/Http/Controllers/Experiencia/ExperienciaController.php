@@ -184,8 +184,15 @@ class ExperienciaController extends Controller
 
                             if ($actividad) {
                                 if (empty($actividad->foto_actividad)) {
+                                    $errorMsg = __('Falta la foto en la actividad');
+                                    if ($request->ajax()) {
+                                        return response()->json([
+                                            'success' => false,
+                                            'mensaje_usuario' => $errorMsg
+                                        ], 422);
+                                    }
                                     return back()->withErrors([
-                                        "foto_actividad_id_" . $id_actividad => __('reda-alojamiento::messages.general.falta_la_foto_en_la_actividad')
+                                        "foto_actividad_id_" . $id_actividad => $errorMsg
                                     ])->withInput();
                                 }
 
@@ -204,8 +211,14 @@ class ExperienciaController extends Controller
                     // Si el usuario hizo clic en "Guardar" dentro del flujo de agregar producto
                     // nos quedamos en el mismo paso para mostrar la lista actualizada.
                     if ($request->stay_on_step == '1') {
+                        if ($request->ajax()) {
+                            return response()->json([
+                                'success' => true,
+                                'mensaje_usuario' => __('Producto o servicio guardado con éxito')
+                            ]);
+                        }
                         return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades'])
-                                    ->with('success', __('reda-alojamiento::messages.general.producto_o_servicio_guardado_con_exito'));
+                                    ->with('success', __('Producto o servicio guardado con éxito'));
                     }
 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'ubicacion'])

@@ -1,3 +1,11 @@
 {
-    "Productos y servicios" : "Productos y Servicios"
+    "Productos y servicios" : "Productos y Servicios",
+    "¡Éxito!": "¡Éxito!",
+    "Actividad agregada exitosamente": "Actividad agregada exitosamente",
+    "Producto o servicio guardado con éxito": "Producto o servicio guardado con éxito",
+    "Falta la foto en la actividad": "Falta la foto en la actividad",
+    "Guardando...": "Guardando...",
+    "Error": "Error",
+    "Ocurrió un error al intentar guardar la actividad.": "Ocurrió un error al intentar guardar la actividad.",
+    "Guardar actividad": "Guardar actividad"
 }
