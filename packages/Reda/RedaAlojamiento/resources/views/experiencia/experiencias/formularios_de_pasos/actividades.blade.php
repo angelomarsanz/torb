@@ -14,7 +14,7 @@
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="font-weight-700 m-0">{{ __('reda-alojamiento::messages.general.productos_y_servicios') }}</h4>
-                            <button type="button" class="btn vbtn-outline-success font-weight-700" id="btn-add-actividad" data-url="{{ route('reda.experiencias.actividades.add', $result->id) }}">
+                            <button type="button" class="btn vbtn-outline-success font-weight-700" id="btn-add-actividad" data-add-url="{{ route('reda.experiencias.actividades.add', $result->id) }}">
                                 <i class="fa fa-plus-circle mr-1"></i> {{ __('reda-alojamiento::messages.general.agregar_una_nueva_actividad') }}
                             </button>
                         </div>

@@ -25,13 +25,13 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $router = $this->app['router'];
-    
+
         // Esto registra tu middleware con una prioridad alta
         $router->aliasMiddleware('reda.auth', \Reda\RedaAlojamiento\Http\Middleware\CheckPluginAuth::class);
 
         // Carga las rutas
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        
+
         // Carga las vistas con el nuevo namespace 'reda-alojamiento-js'
         // Esto permite referencias como: 'reda-alojamiento-js::experiencia.index'
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'reda-alojamiento');
@@ -54,6 +54,12 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/lang' => resource_path('lang/vendor/reda-alojamiento'),
         ]);
+
+        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/reda-alojamiento'),
+        ], 'reda-alojamiento-translations'); // Añadido un tag para orden
 
         /**
          * GANCHO PARA RUTAS ORIGINALES

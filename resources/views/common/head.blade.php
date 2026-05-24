@@ -28,7 +28,7 @@
 		<link rel="stylesheet" href="{{ asset('public/css/vendors/bootstrap/bootstrap.min.css') }}">
 		<link rel="stylesheet" href="{{ asset('public/css/vendors/fontawesome/css/all.min.css') }}">
 		<link rel="stylesheet" href="{{ asset('public/css/style.css') }}">
-		<link rel="stylesheet" href="{{ asset('public/css/reda/reda-general-main.min.css') }}?v={{ time() }}">
 		<!--CSS new version end-->
+        @include('reda-alojamiento::general.main_head')
 	</head>
 <body>

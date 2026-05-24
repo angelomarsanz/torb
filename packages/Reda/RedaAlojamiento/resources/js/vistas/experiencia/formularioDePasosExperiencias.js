@@ -379,15 +379,22 @@ $(function() {
                 });
 
                 $(document).on('click', '.btn-delete-actividad', function() {
-                    let id = $(this).data('delete-id');
-                    let url = $(this).data('delete-url');
+                    const btn = $(this);
+                    const id = btn.data('delete-id');
+                    const url = btn.data('delete-url');
+                    const filas = $(`.fila-actividad-${id}`);
 
-                    // Seleccionamos todos los elementos (escritorio y móvil) que comparten la clase de esta actividad.
-                    // Al usar una clase en lugar de ID, garantizamos que se eliminen ambos simultáneamente
-                    // independientemente de la vista en la que se encuentre el usuario.
-                    let filas = $(`.fila-actividad-${id}`);
+                    // Configurar el modal de confirmación
+                    $('#confirmacion-mensaje').text(window.RedaAlojamiento.general.estas_seguro_de_que_deseas_eliminar_esta_actividad_esta_accion_no_se_puede_deshacer);
+                    $('#modal-confirmacion').modal('show');
 
-                    if (confirm(window.RedaAlojamiento.general.estas_seguro_de_que_deseas_eliminar_esta_actividad_esta_accion_no_se_puede_deshacer)) {
+                    // Limpiar eventos previos del botón de confirmación
+                    $('#btn-confirmar-si').off('click').on('click', function() {
+                        const btnConfirmar = $(this);
+                        btnConfirmar.prop('disabled', true);
+                        btnConfirmar.find('.btn-text').addClass('d-none');
+                        btnConfirmar.find('.fa-spinner').removeClass('d-none');
+
                         $.ajax({
                             url: url,
                             type: 'DELETE',
@@ -396,21 +403,42 @@ $(function() {
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    // Iniciamos la animación de salida. No eliminamos los elementos dentro
-                                    // del callback individual para no romper la promesa de la colección.
                                     filas.fadeOut(400).promise().done(function() {
-                                        // Una vez que todas las animaciones terminaron, removemos los elementos
                                         filas.remove();
-                                        // Mostramos el mensaje traducido para el usuario
-                                        alert(response.mensaje_usuario || response.message);
+                                        $('#modal-confirmacion').modal('hide');
+
+                                        // Mostrar notificación de éxito
+                                        $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
+                                        $('#notificacion-titulo').text(window.RedaAlojamiento.general.exito || '¡Éxito!');
+                                        $('#notificacion-mensaje').text(response.mensaje_usuario || response.message);
+                                        $('#modal-notificacion').modal('show');
                                     });
+                                } else {
+                                    $('#modal-confirmacion').modal('hide');
+
+                                    // Mostrar notificación de error
+                                    $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                                    $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
+                                    $('#notificacion-mensaje').text(response.mensaje_usuario || response.message);
+                                    $('#modal-notificacion').modal('show');
                                 }
                             },
                             error: function() {
-                                alert(window.RedaAlojamiento.general.ocurrio_un_error_al_intentar_eliminar_la_actividad);
+                                $('#modal-confirmacion').modal('hide');
+
+                                // Mostrar notificación de error
+                                $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                                $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
+                                $('#notificacion-mensaje').text(window.RedaAlojamiento.general.ocurrio_un_error_al_intentar_eliminar_la_actividad);
+                                $('#modal-notificacion').modal('show');
+                            },
+                            complete: function() {
+                                btnConfirmar.prop('disabled', false);
+                                btnConfirmar.find('.btn-text').removeClass('d-none');
+                                btnConfirmar.find('.fa-spinner').addClass('d-none');
                             }
                         });
-                    }
+                    });
                 });
 
                 break;

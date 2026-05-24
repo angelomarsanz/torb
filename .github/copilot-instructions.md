@@ -31,8 +31,8 @@ Los nombres de variables deben estar en español.
 Para el admin: packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss (por favor codificar los estilos del admin en este archivo)
 Para el frontend: packages/Reda/RedaAlojamiento/resources/sass/frontend/main.scss (por favor codificar los estilos del frontend en este archivo)
 Esos estilos se agregan al proyecto principal en los archivos:
-En el admin: resources/views/admin/common/head.blade.php
-En el frontend: resources/views/common/head.blade.php
+"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_head.blade.php"
+"packages/Reda/RedaAlojamiento/resources/views/general/main_head.blade.php"
 Los índices o listas para las vistas de escritorio pueden hacerse con "table" pero para las vistas de celular deben ser más modernos tipo tarjetas bien ordenadas y con una buena interfaz agradable para manipular en el celular.
 
 ## JavaScript Específico (Frontend)
@@ -47,6 +47,9 @@ Para el frontend: packages/Reda/RedaAlojamiento/resources/js
     Igualmente se divide en dos carpetas:
         general (javascript para uso general en el proyecto)
         vistas (javascript para cada vista)
+Los archivos de javascript se agregan al proyecto principal en:
+"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_footer.blade.php"
+"packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
 
 Los peticiones ajax tendrán esta estructura:
     Función llamadora:
@@ -96,14 +99,14 @@ Los peticiones ajax tendrán esta estructura:
                             }
                             console.log('respuestaServidor', respuestaServidor);
 
-                            const mensajeErrorBase = window.RedaAlojamiento?.general?.error_en_el_servidor_de_Torbian || 'Error en el servidor de Torbian';
+                            const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                             const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
 
                             // 2. Construimos la respuesta usando los datos reales del servidor si existen
 
                             let respuesta = {
                                 'success': false,
-                                'message' : 'Error eliminando experiencia',
+                                'message' : window.RedaAlojamientoJson["Error eliminando experiencia"] || 'Error eliminando experiencia',
                                 'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
                                 'respuesta': respuestaServidor.respuesta || '',
                                 'code': x.status !== 0 ? x.status : 504,
@@ -125,26 +128,64 @@ webpack.mix.js
 Las respuestas del servidor para funciones internas y peticiones ajax tendrán esta estructura:
     $respuesta = [
         'success' => true,
-        'message' => 'Experiencia eliminada', // Un mensaje corto para uso del desarrollador o soporte técnico
-        'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_eliminada_con_exito'), // Un mensaje explicativo y traducido para el usuario
+        'message' => __('Experiencia eliminada'), // Un mensaje corto para uso del desarrollador o soporte técnico
+        'mensaje_usuario' => __(Experiencia eliminada con exito'), // Un mensaje explicativo y traducido para el usuario
         'respuesta' => '', // La respuesta esperada por la función llamadora, puede ser '', un string, vector u objeto
         'code' => 200
     ];
     return response()->json($respuesta, $respuesta['code']);
 
 ## Traducciones
-Para crear los mensajes de traducción en el vector del archivo packages/Reda/RedaAlojamiento/resources/lang/es/messages.php, se deben seguir estas indicaciones:
-La clave debe ser lo más parecido al texto del mensaje, debe contener todas las palabras del texto unidad por guión bajo, sin acentos y sin carácteres especiales. Ejemplo:
+En este plugin se usan dos tipos de traducciones: 
+    Archivo php: packages/Reda/RedaAlojamiento/resources/lang/es/messages.php
+    Archivo .json: packages/Reda/RedaAlojamiento/resources/lang/es.json
+Inicialmente se comenzó a usar la traducción con archivo php, pero resulta muy incómoda así que se decidió agregar la traducción con archivo .json que es más sencilla. Los textos que usan el archivo php se mantendran y cualquier nueva traducción se hará con el archivo .json.
+Las traducciones con .json se harán así:
+    En los controladores:
+        $respuesta = [
+            'mensaje_respuesta' => __('Verificación exitosa'), ....
+    En las vistas blade se accede a las traducciones:
+        <p>{{ __('Prueba de integración con Mercado Libre para importar productos') }}</p>
+    En los archivos Javascript se accede a las traducciones de esta manera:
+        En las validaciones:
+            messages: {
+                titulo: {
+                    // Si no encuentra la traducción, muestra el texto que tú escribas a la derecha
+                    required: window.RedaAlojamientoJson["Nombre del negocio"] || "Nombre del negocio",
+                    minlength: window.RedaAlojamientoJson["Mínimo 5 caracteres"] || "Mínimo 5 caracteres"
+                }
+            }
+        En los contenidos dinámicos cargados con Javascript:
+            // HTML del Modal
+            const modalHtml = `
+                <div class="modal fade" id="${modalId}" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel">${window.RedaAlojamientoJson["Listado del Importador"] || "Listado del Importador"}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ${window.RedaAlojamientoJson["Listado del Importador"] || "Listado del Importador"}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            En cualquier otra parte del archivo javascript:
+                alert(window.RedaAlojamientoJson["Contenido dinámico para Index Importadores ha sido cargado y el modal está listo"] || "Contenido dinámico para Index Importadores ha sido cargado y el modal está listo.");
+Y las traducciones ya existentes con el archivo php (que ya no seguirán haciéndose con el archivo php) se crearon así:
+La clave lo más parecido al texto del mensaje, unidas por guión bajo, sin acentos y sin carácteres especiales. Ejemplo:
 'este_es_un_mensaje_con_acento_informacion_y_caracteres_especiales' => 'Este es un mensaje con acento información y caracteres especiales !!!!'
-Las traducciones en los archivos html deben ser como en este ejemplo:
+En los archivos html se aplicaron así:
 <label for="nombre">{{ __('reda-alojamiento::messages.general.nombre_descripcion') }} <span class="text-danger">*</span></label>
-En los archivos Javascript, se usará el signo de interrogación, por ejemplo:
+En los archivos Javascript, se usaron así:
 const mensajeErrorBase = window.RedaAlojamiento?.general?.error_en_el_servidor_de_Torbian || 'Error en el servidor de Torbian';
-En los archivos php, se usará así, por ejemplo:
+Y en los archivos php, se codificaron así:
 'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_eliminada_con_exito'),
-Para que las traducciones funcionen se debe colocar este script:
+Y en cada vista .blade se colocó este script en la sección 'validation_script':
     <script>window.RedaTrans = @json(__('reda-alojamiento::messages'));</script>
-Al final de los archivos .blade preferiblemente al principio de la sección 'validation_script', en caso de que exista esa sección en el archivo .blade
 
 ## PC LOCAL, servidor del IDE Cloud Shell Editor y servidor VESTA DE DESARROLLO
 - Este proyecto en mi computadora personal es solo para mantener los archivos fuentes, no para hacer pruebas. Las pruebas se hacen en un servidor Vesta creado especialmente para desarrollo.
