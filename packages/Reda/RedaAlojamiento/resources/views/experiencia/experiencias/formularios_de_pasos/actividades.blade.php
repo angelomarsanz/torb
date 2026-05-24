@@ -5,7 +5,7 @@
     <div class="row m-0">
         @include('users.sidebar')
         <div class="col-md-10">
-            <div class="main-panel min-height mt-4">
+            <div class="main-panel min-height mt-4" id="seccion-productos-servicios">
                 <div class="row justify-content-center">
                     <div class="col-md-3 pl-4 pr-4">
                         @include('pasos::menu_lateral')

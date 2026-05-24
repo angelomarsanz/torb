@@ -5,6 +5,14 @@ $(function() {
     if (container.length) {
         const currentStep = container.data('step');
 
+        // Auto-scroll para el menú horizontal en móviles
+        const activeStep = document.querySelector('.stepper-menu-container li.is-active');
+        if (activeStep && window.innerWidth < 768) {
+            setTimeout(() => {
+                activeStep.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }, 300);
+        }
+
         switch (currentStep) {
             case 'descripcion':
 
@@ -388,16 +396,18 @@ $(function() {
                                 _token: $('input[name="_token"]').val()
                             },
                             success: function(response) {
-                                // Recargamos para limpiar todo y volver al estado inicial del paso
-                                location.reload();
+                                // Forzamos una recarga completa con un parámetro aleatorio para limpiar caché/estado
+                                const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                             },
                             error: function() {
-                                // Si falla el borrado, al menos refrescamos para no dejar basura visual
-                                location.reload();
+                                const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                             }
                         });
                     } else {
-                        location.reload();
+                        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                        window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                     }
                 });
 
@@ -449,7 +459,7 @@ $(function() {
                                     // Mostrar notificación de error
                                     $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
                                     $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
-                                    $('#notificacion-mensaje').text(response.mensaje_usuario || response.message);
+                                    $('#notificacion-mensaje').text(window.RedaAlojamiento.general.error || response.mensaje_usuario || response.message);
                                     $('#modal-notificacion').modal('show');
                                 }
                             },

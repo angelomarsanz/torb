@@ -367,6 +367,87 @@
     }
 }
 
+/* --- MENU LATERAL / STEPPER RESPONSIVO --- */
+.stepper-menu-container {
+    .list-group.customlisting {
+        li {
+            margin-bottom: 15px;
+            list-style: none;
+            a {
+                display: block;
+                width: 100%;
+                text-align: left;
+                white-space: nowrap;
+                transition: all 0.3s ease;
+                
+                &.active-side {
+                    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .stepper-menu-container {
+        margin-bottom: 25px;
+        background: #fff;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+        position: sticky;
+        top: 0; // Se ajustará automáticamente debajo del header si el header es sticky
+        z-index: 990;
+        margin-left: -15px; // Compensar padding del contenedor col-md-3
+        margin-right: -15px;
+        box-shadow: 0 4px 6px -4px rgba(0,0,0,0.05);
+
+        .list-group.customlisting {
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 5px 15px;
+            border: none;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; // Firefox
+            &::-webkit-scrollbar { display: none; } // Chrome/Safari/Edge
+
+            li {
+                margin-bottom: 0;
+                margin-right: 10px;
+                flex: 0 0 auto;
+
+                a {
+                    padding: 8px 18px !important;
+                    font-size: 13px !important;
+                    border-radius: 20px !important;
+                    border: 1px solid #e0e0e0;
+                    background-color: #fcfcfc;
+                    color: #666;
+                    font-weight: 600;
+                    
+                    &.active-side {
+                        background-color: #28a745 !important;
+                        color: #fff !important;
+                        border-color: #28a745 !important;
+                        box-shadow: 0 3px 8px rgba(40, 167, 69, 0.3);
+                    }
+                    
+                    &:not(.active-side):hover {
+                        background-color: #f0f0f0;
+                        border-color: #ccc;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Ajuste para el panel principal en móvil para que el menú sticky no lo cubra si es necesario
+    .main-panel {
+        margin-top: 10px !important;
+    }
+}
+
 .bg-orange { background-color: #fd7e14; }
 
 .actividad-foto-card-container {
