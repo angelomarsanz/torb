@@ -186,10 +186,14 @@ class ExperienciaController extends Controller
                                 if (empty($actividad->foto_actividad)) {
                                     $errorMsg = __('Falta la foto en la actividad');
                                     if ($request->ajax()) {
-                                        return response()->json([
+                                        $respuesta = [
                                             'success' => false,
-                                            'mensaje_usuario' => $errorMsg
-                                        ], 422);
+                                            'message' => 'Missing photo in activity',
+                                            'mensaje_usuario' => $errorMsg,
+                                            'respuesta' => '',
+                                            'code' => 422
+                                        ];
+                                        return response()->json($respuesta, $respuesta['code']);
                                     }
                                     return back()->withErrors([
                                         "foto_actividad_id_" . $id_actividad => $errorMsg
@@ -212,10 +216,14 @@ class ExperienciaController extends Controller
                     // nos quedamos en el mismo paso para mostrar la lista actualizada.
                     if ($request->stay_on_step == '1') {
                         if ($request->ajax()) {
-                            return response()->json([
+                            $respuesta = [
                                 'success' => true,
-                                'mensaje_usuario' => __('Producto o servicio guardado con éxito')
-                            ]);
+                                'message' => 'Product or service saved successfully',
+                                'mensaje_usuario' => __('Producto o servicio guardado con éxito'),
+                                'respuesta' => '',
+                                'code' => 200
+                            ];
+                            return response()->json($respuesta, $respuesta['code']);
                         }
                         return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades'])
                                     ->with('success', __('Producto o servicio guardado con éxito'));
@@ -257,9 +265,23 @@ class ExperienciaController extends Controller
             foreach ($orden as $index => $id) {
                 ActividadExperiencia::where('id', $id)->update(['orden_actividad' => $index + 1]);
             }
-            return response()->json(['success' => true, 'message' => __('reda-alojamiento::messages.general.orden_actualizado_con_exito')]);
+            $respuesta = [
+                'success' => true,
+                'message' => 'Order updated successfully',
+                'mensaje_usuario' => __('Orden actualizado con éxito'),
+                'respuesta' => '',
+                'code' => 200
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
-        return response()->json(['success' => false], 400);
+        $respuesta = [
+            'success' => false,
+            'message' => 'Invalid order data',
+            'mensaje_usuario' => __('Error al actualizar el orden'),
+            'respuesta' => '',
+            'code' => 400
+        ];
+        return response()->json($respuesta, $respuesta['code']);
     }
 
     /**
@@ -293,11 +315,17 @@ class ExperienciaController extends Controller
             // Pasamos 'actividad' a una vista parcial o la renderizamos aquí
             $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies'))->render();
 
-            return response()->json([
+            $respuesta = [
                 'success' => true,
-                'html' => $html,
-                'id' => $actividad->id
-            ]);
+                'message' => 'Activity added successfully',
+                'mensaje_usuario' => __('Actividad agregada exitosamente'),
+                'respuesta' => [
+                    'html' => $html,
+                    'id' => $actividad->id
+                ],
+                'code' => 200
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
     }
     public function deleteActividad($id)
@@ -305,7 +333,14 @@ class ExperienciaController extends Controller
         $actividad = ActividadExperiencia::find($id);
 
         if (!$actividad) {
-            return response()->json(['success' => false, 'message' => __('reda-alojamiento::messages.general.producto_o_servicio_no_encontrado')], 404);
+            $respuesta = [
+                'success' => false,
+                'message' => 'Product or service not found',
+                'mensaje_usuario' => __('Producto o servicio no encontrado'),
+                'respuesta' => '',
+                'code' => 404
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
 
         $directoryPath = public_path('images/actividades_experiencias/' . $id);
@@ -319,16 +354,24 @@ class ExperienciaController extends Controller
             // Eliminamos el registro de la base de datos
             $actividad->delete();
 
-            return response()->json([
+            $respuesta = [
                 'success' => true,
-                'message' => __('reda-alojamiento::messages.general.producto_o_servicio_y_sus_archivos_eliminados_correctamente')
-            ]);
+                'message' => 'Product or service and files deleted correctly',
+                'mensaje_usuario' => __('Producto o servicio y sus archivos eliminados correctamente'),
+                'respuesta' => '',
+                'code' => 200
+            ];
+            return response()->json($respuesta, $respuesta['code']);
 
         } catch (\Exception $e) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => __('reda-alojamiento::messages.general.error_al_eliminar:') . $e->getMessage()
-            ], 500);
+                'message' => 'Error deleting activity: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al eliminar el producto o servicio'),
+                'respuesta' => '',
+                'code' => 500
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
     }
     public function destroy($id)
@@ -336,24 +379,26 @@ class ExperienciaController extends Controller
         $experiencia = Experiencia::with(['actividades', 'fotos'])->find($id);
 
         if (!$experiencia) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => 'Experiencia no encontrada',
-                'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_no_encontrada'),
+                'message' => 'Experience not found',
+                'mensaje_usuario' => __('Experiencia no encontrada'),
                 'respuesta' => '',
                 'code' => 404
-            ], 404);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
 
         // Seguridad: Verificar dueño
         if ($experiencia->user_id != Auth::id()) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => 'Usuario no autorizado',
-                'mensaje_usuario' => __('reda-alojamiento::messages.general.usuario_no_autorizado'),
+                'message' => 'Unauthorized user',
+                'mensaje_usuario' => __('Usuario no autorizado'),
                 'respuesta' => '',
                 'code' => 403
-            ], 403);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
 
         DB::beginTransaction();
@@ -387,23 +432,25 @@ class ExperienciaController extends Controller
 
             DB::commit();
 
-            return response()->json([
+            $respuesta = [
                 'success' => true,
-                'message' => 'Experiencia eliminada',
-                'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_eliminada_con_exito'),
+                'message' => 'Experience deleted successfully',
+                'mensaje_usuario' => __('Experiencia eliminada con éxito'),
                 'respuesta' => '',
                 'code' => 200
-            ]);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => 'Error técnico al eliminar',
-                'mensaje_usuario' => __('reda-alojamiento::messages.general.error_tecnico_al_eliminar') . $e->getMessage(),
+                'message' => 'Technical error deleting experience: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error técnico al eliminar la experiencia'),
                 'respuesta' => '',
                 'code' => 500
-            ], 500);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
     }
 }

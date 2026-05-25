@@ -95,7 +95,7 @@ $(function() {
                     unhighlight: function(element) {
                         $(element).removeClass('is-invalid');
                     },
-                    submitHandler: function(form) {
+                    submitHandler: async function(form) {
                         const stayOnStep = $('#stay_on_step').val() === '1';
 
                         if (stayOnStep) {
@@ -107,61 +107,32 @@ $(function() {
                             $(".spinner-save").removeClass('d-none');
                             $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
 
-                            $.ajax({
-                                url: url,
-                                type: 'POST',
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                                dataType: 'json',
-                                success: function(response) {
-                                    if (response.success) {
-                                        // Mostrar notificación de éxito
-                                        $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
-                                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!");
-                                        const mensajeExito = response.mensaje_usuario || window.RedaAlojamientoJson["Actividad agregada exitosamente"] || "Actividad agregada exitosamente";
-                                        $('#notificacion-mensaje').text(mensajeExito);
-                                        $('#modal-notificacion').modal('show');
+                            const response = await guardarActividadAjax(url, formData);
 
-                                        // Al cerrar el modal, refrescar la página para ver los cambios en la lista
-                                        $('#modal-notificacion').off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                                            const baseUrl = window.location.href.split('#')[0].split('?')[0];
-                                            window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
-                                        });
-                                    } else {
-                                        // Error reportado por el servidor
-                                        $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
-                                        $('#notificacion-mensaje').text(response.mensaje_usuario || response.message || window.RedaAlojamientoJson["Ocurrió un error al intentar guardar la actividad."] || "Ocurrió un error al intentar guardar la actividad.");
-                                        $('#modal-notificacion').modal('show');
+                            if (response.success) {
+                                // Mostrar notificación de éxito
+                                $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
+                                $('#notificacion-titulo').text(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!");
+                                $('#notificacion-mensaje').text(response.mensaje_usuario);
+                                $('#modal-notificacion').modal('show');
 
-                                        // Reactivar botón
-                                        $("#btn-save-new-producto").attr("disabled", false);
-                                        $(".spinner-save").addClass('d-none');
-                                        $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
-                                    }
-                                },
-                                error: function(jqXHR) {
-                                    console.error(jqXHR.responseText);
-                                    let mensaje = window.RedaAlojamientoJson["Ocurrió un error al intentar guardar la actividad."] || "Ocurrió un error al intentar guardar la actividad.";
-                                    
-                                    try {
-                                        const resp = JSON.parse(jqXHR.responseText);
-                                        if (resp.mensaje_usuario) mensaje = resp.mensaje_usuario;
-                                        else if (resp.message) mensaje = resp.message;
-                                    } catch (e) {}
+                                // Al cerrar el modal, refrescar la página
+                                $('#modal-notificacion').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                                    const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                    window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                                });
+                            } else {
+                                // Error reportado por el servidor o red
+                                $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                                $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
+                                $('#notificacion-mensaje').text(response.mensaje_usuario);
+                                $('#modal-notificacion').modal('show');
 
-                                    $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                                    $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
-                                    $('#notificacion-mensaje').text(mensaje);
-                                    $('#modal-notificacion').modal('show');
-
-                                    // Reactivar botón
-                                    $("#btn-save-new-producto").attr("disabled", false);
-                                    $(".spinner-save").addClass('d-none');
-                                    $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
-                                }
-                            });
+                                // Reactivar botón
+                                $("#btn-save-new-producto").attr("disabled", false);
+                                $(".spinner-save").addClass('d-none');
+                                $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
+                            }
                             return false; // Evitar el envío normal
                         }
 
@@ -175,31 +146,111 @@ $(function() {
 
                 let currentNewActivityId = null;
 
+                // --- Funciones AJAX con Estructura GEMINI.md ---
+
+                const reordenarActividadesAjax = (orden, url) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: {
+                                _token: $('input[name="_token"]').val(),
+                                orden: orden
+                            },
+                            success: (data) => resolve(data),
+                            error: (x) => {
+                                let respServ = {};
+                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
+                                resolve({
+                                    success: false,
+                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al actualizar el orden"] || "Error al actualizar el orden")
+                                });
+                            }
+                        });
+                    });
+                };
+
+                const agregarActividadAjax = (url) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { _token: $('input[name="_token"]').val() },
+                            success: (data) => resolve(data),
+                            error: (x) => {
+                                let respServ = {};
+                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
+                                resolve({
+                                    success: false,
+                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al intentar agregar la actividad"] || "Ocurrió un error al intentar agregar la actividad.")
+                                });
+                            }
+                        });
+                    });
+                };
+
+                const eliminarActividadAjax = (url) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: { _token: $('input[name="_token"]').val() },
+                            success: (data) => resolve(data),
+                            error: (x) => {
+                                let respServ = {};
+                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
+                                resolve({
+                                    success: false,
+                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al intentar eliminar la actividad"] || "Ocurrió un error al intentar eliminar la actividad.")
+                                });
+                            }
+                        });
+                    });
+                };
+
+                const guardarActividadAjax = (url, formData) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: (data) => resolve(data),
+                            error: (x) => {
+                                let respServ = {};
+                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
+                                resolve({
+                                    success: false,
+                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al intentar guardar la actividad"] || "Ocurrió un error al intentar guardar la actividad.")
+                                });
+                            }
+                        });
+                    });
+                };
+
                 // Reordenar actividades en la vista de escritorio
                 const el = document.getElementById('actividades-sortable');
                 if (el) {
                     Sortable.create(el, {
                         handle: '.cursor-move',
                         animation: 150,
-                        onEnd: function() {
+                        onEnd: async function() {
                             const orden = [];
                             $('#actividades-sortable tr').each(function() {
                                 orden.push($(this).data('id'));
                             });
 
-                            // Ajax para guardar el nuevo orden
-                            $.post($(el).data('reorder-url'), {
-                                _token: $('input[name="_token"]').val(),
-                                orden: orden
-                            }, function(response) {
-                                if (response.success) {
-                                    // Actualizar números visualmente
-                                    $('.indice-actividad').each(function(index) {
-                                        $(this).text(index + 1);
-                                    });
-                                    console.log('Orden actualizado');
-                                }
-                            });
+                            const response = await reordenarActividadesAjax(orden, $(el).data('reorder-url'));
+                            if (response.success) {
+                                // Actualizar números visualmente
+                                $('.indice-actividad').each(function(index) {
+                                    $(this).text(index + 1);
+                                });
+                                console.log('Orden actualizado');
+                            }
                         }
                     });
                 }
@@ -208,12 +259,12 @@ $(function() {
                 let elCards = document.getElementById('sortable-cards-mobile');
                 if (elCards) {
                     Sortable.create(elCards, {
+                        handle: '.cursor-move', // Usamos la misma clase de agarre que en escritorio
                         animation: 150,
                         ghostClass: 'bg-light',
-                        filter: '.btn, .btn *', // Evita que el arrastre se active al pulsar botones o sus iconos
-                        preventOnFilter: false, // Permite que los eventos de clic en los botones sigan funcionando
-                        delay: 200,             // Retraso de 200ms para diferenciar "scroll" de "arrastrar"
-                        delayOnTouchOnly: true, // El retraso solo se aplica en dispositivos táctiles
+                        filter: '.btn, .btn *',
+                        preventOnFilter: false,
+                        delay: 100,             // Un pequeño delay para estabilidad
                         onEnd: function () {
                             actualizarOrdenActividades();
                         }
@@ -221,39 +272,28 @@ $(function() {
                 }
 
                 // Función para procesar el orden en móvil
-                function actualizarOrdenActividades() {
+                async function actualizarOrdenActividades() {
                     let orden = [];
                     let contenedor = $('#actividades-cards-container');
                     let urlRuta = contenedor.data('reorder-url');
+
+                    // 1. Actualización visual inmediata
                     $('#sortable-cards-mobile .card-actividad-movil').each(function(index) {
                         let id = $(this).data('id');
                         if(id) {
-                            let nuevoOrden = index + 1;
-                            orden.push({ id: id, orden: nuevoOrden });
-                            $(this).find('.indice-actividad-movil').text(nuevoOrden);
+                            orden.push(id);
+                            $(this).find('.indice-actividad-movil').text(index + 1);
                         }
                     });
-                    enviarNuevoOrden(orden, urlRuta);
-                }
 
-                // Función AJAX para guardar el orden en la Base de Datos
-                function enviarNuevoOrden(ordenArray, urlRuta) {
-                    $.ajax({
-                        url: urlRuta,
-                        type: 'POST',
-                        data: {
-                            _token: $('input[name="_token"]').val(),
-                            orden: ordenArray
-                        },
-                        success: function(response) {
-                            if (!response.success) {
-                                alert('No se pudo guardar el nuevo orden.');
-                            }
-                        },
-                        error: function() {
-                            console.error('Error de red al intentar reordenar.');
+                    // 2. Guardado asíncrono
+                    if (orden.length > 0) {
+                        const response = await reordenarActividadesAjax(orden, urlRuta);
+                        if (!response.success) {
+                            alert(response.mensaje_usuario);
                         }
-                    });
+                        console.log('Orden móvil sincronizado');
+                    }
                 }
 
                 function aplicarReglasDinamicas() {
@@ -402,7 +442,7 @@ $(function() {
                     }
                 });
 
-                $('#btn-add-actividad').on('click', function(e) {
+                $('#btn-add-actividad').on('click', async function(e) {
                     e.preventDefault();
 
                     // Obtenemos la URL del atributo data-add-url que pusimos en el botón
@@ -411,46 +451,34 @@ $(function() {
 
                     btn.prop('disabled', true).css('opacity', '0.5');
 
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            // Enviamos el token CSRF que Laravel necesita para el POST
-                            _token: $('input[name="_token"]').val()
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                currentNewActivityId = response.id;
+                    const response = await agregarActividadAjax(url);
 
-                                // Ocultar lista y botón add
-                                $('#productos-servicios-list-container').addClass('d-none');
-                                btn.hide();
+                    if (response.success) {
+                        currentNewActivityId = response.respuesta.id;
 
-                                // Mostrar formulario y acciones nuevas
-                                $('#actividades-wrapper').html(response.html);
-                                $('#new-producto-actions').removeClass('d-none');
+                        // Ocultar lista y botón add
+                        $('#productos-servicios-list-container').addClass('d-none');
+                        btn.hide();
 
-                                aplicarReglasDinamicas();
+                        // Mostrar formulario y acciones nuevas
+                        $('#actividades-wrapper').html(response.respuesta.html);
+                        $('#new-producto-actions').removeClass('d-none');
 
-                                // Scroll suave hacia el inicio del formulario
-                                $('html, body').animate({
-                                    scrollTop: $('#actividades-wrapper').offset().top - 100
-                                }, 500);
-                            }
-                        },
-                        error: function(jqXHR) {
-                            console.error(jqXHR.responseText);
-                            // Mostrar notificación de error
-                            $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                            $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
-                            $('#notificacion-mensaje').text(window.RedaAlojamiento.general.ocurrio_un_error_al_intentar_agregar_la_actividad || 'Ocurrió un error al intentar agregar la actividad.');
-                            $('#modal-notificacion').modal('show');
-                        },
-                        complete: function() {
-                            btn.prop('disabled', false).css('opacity', '1');
-                        }
-                    });
+                        aplicarReglasDinamicas();
+
+                        // Scroll suave hacia el inicio del formulario
+                        $('html, body').animate({
+                            scrollTop: $('#actividades-wrapper').offset().top - 100
+                        }, 500);
+                    } else {
+                        // Mostrar notificación de error
+                        $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                        $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
+                        $('#notificacion-mensaje').text(response.mensaje_usuario);
+                        $('#modal-notificacion').modal('show');
+                    }
+
+                    btn.prop('disabled', false).css('opacity', '1');
                 });
 
                 $('#btn-cancel-new-producto').on('click', function() {
@@ -499,55 +527,38 @@ $(function() {
                     $('#modal-confirmacion').modal('show');
 
                     // Limpiar eventos previos del botón de confirmación
-                    $('#btn-confirmar-si').off('click').on('click', function() {
+                    $('#btn-confirmar-si').off('click').on('click', async function() {
                         const btnConfirmar = $(this);
                         btnConfirmar.prop('disabled', true);
                         btnConfirmar.find('.btn-text').addClass('d-none');
                         btnConfirmar.find('.fa-spinner').removeClass('d-none');
 
-                        $.ajax({
-                            url: url,
-                            type: 'DELETE',
-                            data: {
-                                _token: $('input[name="_token"]').val()
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    filas.fadeOut(400).promise().done(function() {
-                                        filas.remove();
-                                        $('#modal-confirmacion').modal('hide');
+                        const response = await eliminarActividadAjax(url);
 
-                                        // Mostrar notificación de éxito
-                                        $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
-                                        $('#notificacion-titulo').text(window.RedaAlojamiento.general.exito || '¡Éxito!');
-                                        $('#notificacion-mensaje').text(response.mensaje_usuario || response.message);
-                                        $('#modal-notificacion').modal('show');
-                                    });
-                                } else {
-                                    $('#modal-confirmacion').modal('hide');
-
-                                    // Mostrar notificación de error
-                                    $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                                    $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
-                                    $('#notificacion-mensaje').text(window.RedaAlojamiento.general.error || response.mensaje_usuario || response.message);
-                                    $('#modal-notificacion').modal('show');
-                                }
-                            },
-                            error: function() {
+                        if (response.success) {
+                            filas.fadeOut(400).promise().done(function() {
+                                filas.remove();
                                 $('#modal-confirmacion').modal('hide');
 
-                                // Mostrar notificación de error
-                                $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                                $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
-                                $('#notificacion-mensaje').text(window.RedaAlojamiento.general.ocurrio_un_error_al_intentar_eliminar_la_actividad);
+                                // Mostrar notificación de éxito
+                                $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
+                                $('#notificacion-titulo').text(window.RedaAlojamiento.general.exito || '¡Éxito!');
+                                $('#notificacion-mensaje').text(response.mensaje_usuario);
                                 $('#modal-notificacion').modal('show');
-                            },
-                            complete: function() {
-                                btnConfirmar.prop('disabled', false);
-                                btnConfirmar.find('.btn-text').removeClass('d-none');
-                                btnConfirmar.find('.fa-spinner').addClass('d-none');
-                            }
-                        });
+                            });
+                        } else {
+                            $('#modal-confirmacion').modal('hide');
+
+                            // Mostrar notificación de error
+                            $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                            $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
+                            $('#notificacion-mensaje').text(response.mensaje_usuario);
+                            $('#modal-notificacion').modal('show');
+                        }
+
+                        btnConfirmar.prop('disabled', false);
+                        btnConfirmar.find('.btn-text').removeClass('d-none');
+                        btnConfirmar.find('.fa-spinner').addClass('d-none');
                     });
                 });
 

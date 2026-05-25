@@ -11,7 +11,7 @@
 #   )
 ARCHIVOS_PHP_PUNTUALES=(
     #"Ninguno"
-    #".github/copilot-instructions.md"
+    ".github/copilot-instructions.md"
     #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     #"packages/Reda/RedaAlojamiento/routes/web.php"
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
@@ -46,8 +46,8 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/menu_lateral.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/partials/fila_actividad.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/partials/fila_actividad.blade.php"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
 )

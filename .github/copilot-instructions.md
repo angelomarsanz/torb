@@ -2,7 +2,7 @@
 
 ## Plugin packages/Reda/Alojamiento
 Este no es un proyecto propio, es de otro "autor" y es parecido a la famosa aplicación Airbnb para ofrecer hospedaje de apartamentos, casas, habitaciones, etc para hospedaje de temporada.
-El usuario solicitó crear un módulo de "Experiencias" para ofrecer a los huéspedes, pero luego cambió de opinión y pidió que en lugar de "Experiencias" fuese algo más amplio como "Negocios". Cualquier negocio que ofrezca productos y/o servicios para los huéspedes. Así que se creó inicialmente el módulo Experiencias. dentro del plugin packages/Reda/RedaAlojamiento. Este es el primer módulo que se está desarrollando.
+El usuario solicitó crear un módulo de "Experiencias" para ofrecer a los huéspedes, pero luego cambió de opinión y pidió que en lugar de "Experiencias" fuese algo más amplio como "Negocios". Cualquier negocio que ofrezca productos y/o servicios para los huéspedes. Así que de ahora en adelante las "experiencias" se refieren a "negocios" y las actividades de las experiencias ahora son los productos y servicios.
 
 ## Directrices del proyecto
 Evitar en lo posible modificar los archivos originales del proyecto. Si es muy necesario agregar dos o tres líneas en un archivo original para agregar algún gancho o filtro parecidos a los usados en Wordpress para adicionar código personalizado
@@ -186,6 +186,8 @@ Y en los archivos php, se codificaron así:
 'mensaje_usuario' => __('reda-alojamiento::messages.general.experiencia_eliminada_con_exito'),
 Y en cada vista .blade se colocó este script en la sección 'validation_script':
     <script>window.RedaTrans = @json(__('reda-alojamiento::messages'));</script>
+Cuando se modifique un código existente y se encuentre con una traducción que está en packages/Reda/RedaAlojamiento/resources/lang/es/messages.php se debe crear esas traducciones en es.json y ya no usar la de message.php, así poco a poco se van a ir sustituyendo las traducciones de message.php por las de es.json.
+
 
 ## PC LOCAL, servidor del IDE Cloud Shell Editor y servidor VESTA DE DESARROLLO
 - Este proyecto en mi computadora personal es solo para mantener los archivos fuentes, no para hacer pruebas. Las pruebas se hacen en un servidor Vesta creado especialmente para desarrollo.
@@ -207,3 +209,6 @@ Hacerlo de esta manera:
 
 ## Interacción con la IA
 Por favor explicar de manera pedagógica cualquier cambio realizado en el plugin o cualquier código nuevo agregado. Cuando sean cambios particionar la pantalla, en el lado izquierdo mostrar el archivo original completo y en el lado derecho el archivo modificado completo. Resaltando con color las líneas modificadas, eliminadas o agregadas y mostrar la opción de aceptar o rechazar el cambio
+
+## Autorización de codigo nuevo o modificado
+Cuando se terminen de agregar código nuevo en un archivo o se haya modificado el existente, siempre se debe hacer una pausa y mostrar los cambios en una pantalla dividida en dos: En el lado izquierdo el archivo original y en el derecho el archivo con las sugerencias de código nuevo o modificado, con un botón de aceptar o rechazar y siempre se debe esperar que yo ACEPTE O RECHACE el código por favor
