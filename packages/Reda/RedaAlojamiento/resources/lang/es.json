@@ -7,5 +7,7 @@
     "Guardando...": "Guardando...",
     "Error": "Error",
     "Ocurrió un error al intentar guardar la actividad.": "Ocurrió un error al intentar guardar la actividad.",
-    "Guardar actividad": "Guardar actividad"
+    "Guardar actividad": "Guardar actividad",
+    "Formulario de actividad recuperado con éxito": "Formulario de actividad recuperado con éxito",
+    "Ocurrió un error al intentar recuperar el formulario de la actividad.": "Ocurrió un error al intentar recuperar el formulario de la actividad."
 }

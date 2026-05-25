@@ -57,7 +57,7 @@
                                                     <td class="align-middle text-center">
                                                         <div class="btn-group shadow-sm border rounded">
                                                             <button type="button" class="btn btn-sm btn-white text-info btn-modal-actividad" data-mode="view" data-id="{{ $actividad->id }}" title="Ver"><i class="fa fa-eye"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-white text-warning btn-modal-actividad" data-mode="edit" data-id="{{ $actividad->id }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-white text-warning btn-edit-actividad" data-id="{{ $actividad->id }}" data-edit-url="{{ route('reda.experiencias.actividades.get_form', $actividad->id) }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
                                                             <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad" data-delete-id="{{ $actividad->id }}" data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
                                                         </div>
                                                     </td>
@@ -111,6 +111,7 @@
                                                                 <button type="button"
                                                                         class="btn btn-sm btn-outline-primary btn-edit-actividad p-1"
                                                                         data-id="{{ $actividad->id }}"
+                                                                        data-edit-url="{{ route('reda.experiencias.actividades.get_form', $actividad->id) }}"
                                                                         title="{{ __('reda-alojamiento::messages.general.editar') }}">
                                                                     <i class="fa fa-edit"></i>
                                                                 </button>

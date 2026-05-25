@@ -145,6 +145,7 @@ $(function() {
                 });
 
                 let currentNewActivityId = null;
+                let isEditingActividad = false;
 
                 // --- Funciones AJAX con Estructura GEMINI.md ---
 
@@ -158,13 +159,26 @@ $(function() {
                                 orden: orden
                             },
                             success: (data) => resolve(data),
-                            error: (x) => {
-                                let respServ = {};
-                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
-                                resolve({
-                                    success: false,
-                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al actualizar el orden"] || "Error al actualizar el orden")
-                                });
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error al actualizar el orden"] || 'Error al actualizar el orden',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
                             }
                         });
                     });
@@ -178,13 +192,58 @@ $(function() {
                             dataType: 'json',
                             data: { _token: $('input[name="_token"]').val() },
                             success: (data) => resolve(data),
-                            error: (x) => {
-                                let respServ = {};
-                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
-                                resolve({
-                                    success: false,
-                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al intentar agregar la actividad"] || "Ocurrió un error al intentar agregar la actividad.")
-                                });
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error al intentar agregar la actividad"] || 'Error al intentar agregar la actividad',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
+                            }
+                        });
+                    });
+                };
+
+                const obtenerFormularioActividadAjax = (url) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: (data) => resolve(data),
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error al intentar recuperar el formulario"] || 'Error al intentar recuperar el formulario',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
                             }
                         });
                     });
@@ -197,13 +256,26 @@ $(function() {
                             type: 'DELETE',
                             data: { _token: $('input[name="_token"]').val() },
                             success: (data) => resolve(data),
-                            error: (x) => {
-                                let respServ = {};
-                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
-                                resolve({
-                                    success: false,
-                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al intentar eliminar la actividad"] || "Ocurrió un error al intentar eliminar la actividad.")
-                                });
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error al intentar eliminar la actividad"] || 'Error al intentar eliminar la actividad',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
                             }
                         });
                     });
@@ -219,13 +291,26 @@ $(function() {
                             contentType: false,
                             dataType: 'json',
                             success: (data) => resolve(data),
-                            error: (x) => {
-                                let respServ = {};
-                                try { respServ = JSON.parse(x.responseText); } catch (e) { }
-                                resolve({
-                                    success: false,
-                                    mensaje_usuario: respServ.mensaje_usuario || (window.RedaAlojamientoJson["Error al intentar guardar la actividad"] || "Ocurrió un error al intentar guardar la actividad.")
-                                });
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error al intentar guardar la actividad"] || 'Error al intentar guardar la actividad',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
                             }
                         });
                     });
@@ -455,6 +540,7 @@ $(function() {
 
                     if (response.success) {
                         currentNewActivityId = response.respuesta.id;
+                        isEditingActividad = false;
 
                         // Ocultar lista y botón add
                         $('#productos-servicios-list-container').addClass('d-none');
@@ -473,7 +559,46 @@ $(function() {
                     } else {
                         // Mostrar notificación de error
                         $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                        $('#notificacion-titulo').text(window.RedaAlojamiento.general.error || 'Error');
+                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || 'Error');
+                        $('#notificacion-mensaje').text(response.mensaje_usuario);
+                        $('#modal-notificacion').modal('show');
+                    }
+
+                    btn.prop('disabled', false).css('opacity', '1');
+                });
+
+                $(document).on('click', '.btn-edit-actividad', async function(e) {
+                    e.preventDefault();
+                    const btn = $(this);
+                    const id = btn.data('id');
+                    const url = btn.data('edit-url');
+
+                    btn.prop('disabled', true).css('opacity', '0.5');
+
+                    const response = await obtenerFormularioActividadAjax(url);
+
+                    if (response.success) {
+                        isEditingActividad = true;
+                        currentNewActivityId = null;
+
+                        // Ocultar lista y botón add
+                        $('#productos-servicios-list-container').addClass('d-none');
+                        $('#btn-add-actividad').hide();
+
+                        // Mostrar formulario y acciones
+                        $('#actividades-wrapper').html(response.respuesta.html);
+                        $('#new-producto-actions').removeClass('d-none');
+
+                        aplicarReglasDinamicas();
+
+                        // Scroll suave
+                        $('html, body').animate({
+                            scrollTop: $('#actividades-wrapper').offset().top - 100
+                        }, 500);
+                    } else {
+                        // Mostrar notificación de error
+                        $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || 'Error');
                         $('#notificacion-mensaje').text(response.mensaje_usuario);
                         $('#modal-notificacion').modal('show');
                     }
@@ -498,11 +623,23 @@ $(function() {
                                 const baseUrl = window.location.href.split('#')[0].split('?')[0];
                                 window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                             },
-                            error: function() {
+                            error: function(x, xs, xt) {
+                                // Aplicamos la misma lógica de normalización incluso en la cancelación
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('Error cancelando:', respuestaServidor);
+
                                 const baseUrl = window.location.href.split('#')[0].split('?')[0];
                                 window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                             }
                         });
+                    } else if (isEditingActividad) {
+                        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                        window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                     } else {
                         const baseUrl = window.location.href.split('#')[0].split('?')[0];
                         window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';

@@ -260,28 +260,40 @@ class ExperienciaController extends Controller
      */
     public function reordenarActividades(Request $request)
     {
-        $orden = $request->orden; // Array de IDs en el nuevo orden
-        if (is_array($orden)) {
-            foreach ($orden as $index => $id) {
-                ActividadExperiencia::where('id', $id)->update(['orden_actividad' => $index + 1]);
+        try {
+            $orden = $request->orden; // Array de IDs en el nuevo orden
+            if (is_array($orden)) {
+                foreach ($orden as $index => $id) {
+                    ActividadExperiencia::where('id', $id)->update(['orden_actividad' => $index + 1]);
+                }
+                $respuesta = [
+                    'success' => true,
+                    'message' => 'Order updated successfully',
+                    'mensaje_usuario' => __('Orden actualizado con éxito'),
+                    'respuesta' => '',
+                    'code' => 200
+                ];
+                return response()->json($respuesta, $respuesta['code']);
             }
+            
             $respuesta = [
-                'success' => true,
-                'message' => 'Order updated successfully',
-                'mensaje_usuario' => __('Orden actualizado con éxito'),
+                'success' => false,
+                'message' => 'Invalid order data',
+                'mensaje_usuario' => __('Error al actualizar el orden'),
                 'respuesta' => '',
-                'code' => 200
+                'code' => 400
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+        } catch (\Exception $e) {
+            $respuesta = [
+                'success' => false,
+                'message' => 'Error reordering activities: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error técnico al reordenar las actividades'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
             ];
             return response()->json($respuesta, $respuesta['code']);
         }
-        $respuesta = [
-            'success' => false,
-            'message' => 'Invalid order data',
-            'mensaje_usuario' => __('Error al actualizar el orden'),
-            'respuesta' => '',
-            'code' => 400
-        ];
-        return response()->json($respuesta, $respuesta['code']);
     }
 
     /**
@@ -289,63 +301,132 @@ class ExperienciaController extends Controller
      */
     private function crearActividadInicial($experienciaId)
     {
-        $ultimoOrden = ActividadExperiencia::where('experiencia_id', $experienciaId)
-            ->max('orden_actividad') ?? 0;
+        try {
+            $ultimoOrden = ActividadExperiencia::where('experiencia_id', $experienciaId)
+                ->max('orden_actividad') ?? 0;
 
-        return ActividadExperiencia::create([
-            'experiencia_id'          => $experienciaId,
-            'orden_actividad'         => $ultimoOrden + 1,
-            'nombre_actividad'        => '',
-            'descripcion_actividad'   => '',
-            'tipo_producto_servicio'  => null, // Nueva columna
-            'precio'                  => null,
-            'currency_id'             => null,
-            'disponibilidad'          => null,
-            'foto_actividad'          => null
-        ]);
-    }
-    public function agregarActividad(Request $request, $id)
-    {
-        $actividad = $this->crearActividadInicial($id);
+            $actividad = ActividadExperiencia::create([
+                'experiencia_id'          => $experienciaId,
+                'orden_actividad'         => $ultimoOrden + 1,
+                'nombre_actividad'        => '',
+                'descripcion_actividad'   => '',
+                'tipo_producto_servicio'  => null, // Nueva columna
+                'precio'                  => null,
+                'currency_id'             => null,
+                'disponibilidad'          => null,
+                'foto_actividad'          => null
+            ]);
 
-        if ($request->ajax()) {
-            $currencies = Currency::where('status', 'Active')->get();
-
-            // Retornamos el HTML de la fila para insertarlo directamente
-            // Pasamos 'actividad' a una vista parcial o la renderizamos aquí
-            $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies'))->render();
-
-            $respuesta = [
+            return [
                 'success' => true,
-                'message' => 'Activity added successfully',
-                'mensaje_usuario' => __('Actividad agregada exitosamente'),
-                'respuesta' => [
-                    'html' => $html,
-                    'id' => $actividad->id
-                ],
+                'message' => 'Initial activity created',
+                'mensaje_usuario' => __('Actividad inicial creada'),
+                'respuesta' => $actividad,
                 'code' => 200
             ];
-            return response()->json($respuesta, $respuesta['code']);
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error creating initial activity: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al crear la actividad inicial'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
+            ];
         }
     }
-    public function deleteActividad($id)
-    {
-        $actividad = ActividadExperiencia::find($id);
 
-        if (!$actividad) {
+    public function agregarActividad(Request $request, $id)
+    {
+        $resultado = $this->crearActividadInicial($id);
+        
+        if (!$resultado['success']) {
+            return response()->json($resultado, $resultado['code']);
+        }
+
+        $actividad = $resultado['respuesta'];
+
+        if ($request->ajax()) {
+            try {
+                $currencies = Currency::where('status', 'Active')->get();
+
+                // Retornamos el HTML de la fila para insertarlo directamente
+                $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies'))->render();
+
+                $respuesta = [
+                    'success' => true,
+                    'message' => 'Activity added successfully',
+                    'mensaje_usuario' => __('Actividad agregada exitosamente'),
+                    'respuesta' => [
+                        'html' => $html,
+                        'id' => $actividad->id
+                    ],
+                    'code' => 200
+                ];
+                return response()->json($respuesta, $respuesta['code']);
+            } catch (\Exception $e) {
+                $respuesta = [
+                    'success' => false,
+                    'message' => 'Error rendering activity: ' . $e->getMessage(),
+                    'mensaje_usuario' => __('Error al preparar la actividad agregada'),
+                    'respuesta' => $e->getMessage(),
+                    'code' => 500
+                ];
+                return response()->json($respuesta, $respuesta['code']);
+            }
+        }
+    }
+
+    public function getActividadForm(Request $request, $id)
+    {
+        try {
+            $actividad = ActividadExperiencia::findOrFail($id);
+            $currencies = Currency::where('status', 'Active')->get();
+
+            if ($request->ajax()) {
+                $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies'))->render();
+
+                $respuesta = [
+                    'success' => true,
+                    'message' => 'Activity form retrieved successfully',
+                    'mensaje_usuario' => __('Formulario de actividad recuperado con éxito'),
+                    'respuesta' => [
+                        'html' => $html,
+                        'id' => $actividad->id
+                    ],
+                    'code' => 200
+                ];
+                return response()->json($respuesta, $respuesta['code']);
+            }
+        } catch (\Exception $e) {
             $respuesta = [
                 'success' => false,
-                'message' => 'Product or service not found',
-                'mensaje_usuario' => __('Producto o servicio no encontrado'),
-                'respuesta' => '',
-                'code' => 404
+                'message' => 'Error getting activity form: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al recuperar el formulario de la actividad'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
             ];
             return response()->json($respuesta, $respuesta['code']);
         }
+    }
 
-        $directoryPath = public_path('images/actividades_experiencias/' . $id);
-
+    public function deleteActividad($id)
+    {
         try {
+            $actividad = ActividadExperiencia::find($id);
+
+            if (!$actividad) {
+                $respuesta = [
+                    'success' => false,
+                    'message' => 'Product or service not found',
+                    'mensaje_usuario' => __('Producto o servicio no encontrado'),
+                    'respuesta' => '',
+                    'code' => 404
+                ];
+                return response()->json($respuesta, $respuesta['code']);
+            }
+
+            $directoryPath = public_path('images/actividades_experiencias/' . $id);
+
             // Eliminamos el directorio completo y su contenido
             if (File::isDirectory($directoryPath)) {
                 File::deleteDirectory($directoryPath);
@@ -368,7 +449,7 @@ class ExperienciaController extends Controller
                 'success' => false,
                 'message' => 'Error deleting activity: ' . $e->getMessage(),
                 'mensaje_usuario' => __('Error al eliminar el producto o servicio'),
-                'respuesta' => '',
+                'respuesta' => $e->getMessage(),
                 'code' => 500
             ];
             return response()->json($respuesta, $respuesta['code']);
@@ -447,7 +528,7 @@ class ExperienciaController extends Controller
                 'success' => false,
                 'message' => 'Technical error deleting experience: ' . $e->getMessage(),
                 'mensaje_usuario' => __('Error técnico al eliminar la experiencia'),
-                'respuesta' => '',
+                'respuesta' => $e->getMessage(),
                 'code' => 500
             ];
             return response()->json($respuesta, $respuesta['code']);

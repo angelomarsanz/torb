@@ -134,6 +134,7 @@ Las respuestas del servidor para funciones internas y peticiones ajax tendrán e
         'code' => 200
     ];
     return response()->json($respuesta, $respuesta['code']);
+Esa estructura de respuesta debe aplicarse para cualquier tipo de función en el servidor, en los controladores y otros archivos que ejecute funciones globales, ya que si por ejemplo se accede a la base de datos o tal vez una respuesta negativa de una API externa, puede ocurrir un error y el detalle de ese error debe ir en el atributo "respuesta" y cuando todo es positivo y la función llamadora necesita una respuesta, tal vez un string, un valor numérico, un vector u objeto eso debe ir en el atributo "respuesta" y la función llamadora accedería a ese atributo para obtener la respuesta requerida y ejecutar algún otro proceso dependiendo de la respuesta o tal vez mostrarla al usuario.
 
 ## Traducciones
 En este plugin se usan dos tipos de traducciones: 

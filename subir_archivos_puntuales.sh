@@ -11,9 +11,9 @@
 #   )
 ARCHIVOS_PHP_PUNTUALES=(
     #"Ninguno"
-    ".github/copilot-instructions.md"
+    #".github/copilot-instructions.md"
     #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-    #"packages/Reda/RedaAlojamiento/routes/web.php"
+    "packages/Reda/RedaAlojamiento/routes/web.php"
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     #"webpack.mix.js"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
