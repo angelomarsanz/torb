@@ -18,6 +18,14 @@ Los nombres de variables deben estar en español.
 ## Archivos de migraciones
 - Solo crear los archivos de migraciones, no ejecutarlos.
 - Los nombres de tablas y columnas deben estar en español
+- Se deben crear los archivos de migraciones en la carpeta: packages/Reda/RedaAlojamiento/database/migrations. Para ello se debe ejecutar el comando en el servidor vesta de desarrollo:
+    sudo -u appvac php8.2 artisan make:migration nombre_del_nuevo_archivo_de_migracion --table=experiencias --path=packages/Reda/RedaAlojamiento/database/migrations
+- Los nombres de los archivos de migración deben ser en español
+- Cuando se haga una migración todas las columnas nuevas de cualquier tabla, deben aceptar valores nulos, excepto el ID de la tabla.
+- Recordad cuando se haga una migración crear o modificar el archivo modelo correspondiente en el directorio: 
+    packages/Reda/RedaAlojamiento/app/Models
+- Para crear las migraciones:
+    sudo -u appvac php8.2 artisan migrate
 
 ## Estilo de Código General
 - Los comentarios deben estar en español.
@@ -135,6 +143,16 @@ Las respuestas del servidor para funciones internas y peticiones ajax tendrán e
     ];
     return response()->json($respuesta, $respuesta['code']);
 Esa estructura de respuesta debe aplicarse para cualquier tipo de función en el servidor, en los controladores y otros archivos que ejecute funciones globales, ya que si por ejemplo se accede a la base de datos o tal vez una respuesta negativa de una API externa, puede ocurrir un error y el detalle de ese error debe ir en el atributo "respuesta" y cuando todo es positivo y la función llamadora necesita una respuesta, tal vez un string, un valor numérico, un vector u objeto eso debe ir en el atributo "respuesta" y la función llamadora accedería a ese atributo para obtener la respuesta requerida y ejecutar algún otro proceso dependiendo de la respuesta o tal vez mostrarla al usuario.
+Si por ejemplo en alguna respuesta de una función el atributo "respuesta" del json no aplica o no hace falta se debe enviar entonces un cadena vacía, pero siempre deben estar todos los atributos de la estructura de la respuesta, por ejemplo: 
+
+    $respuesta = [
+        'success' => true,
+        'message' => __('Experiencia eliminada'), 
+        'mensaje_usuario' => __(Experiencia eliminada con exito'), 
+        'respuesta' => '', // Si no hay nada que enviar se asigna un cadena vacía, pero siempre deben estar presentes todos los atributos de la estructura de la respuesta
+        'code' => 200
+    ];
+
 
 ## Traducciones
 En este plugin se usan dos tipos de traducciones: 
@@ -196,8 +214,6 @@ Cuando se modifique un código existente y se encuentre con una traducción que 
 sudo -u appvac
 Si requiere php
 sudo -u appvac php8.2
-Para migraciones
-sudo -u appvac php8.2 artisan migrate
 
 ## Escribir en el log de Laravel
 Hacerlo de esta manera:

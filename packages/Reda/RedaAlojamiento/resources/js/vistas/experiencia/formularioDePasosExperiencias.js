@@ -316,6 +316,41 @@ $(function() {
                     });
                 };
 
+                const actualizarPreciosLoteAjax = (datos) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: APP_URL + '/reda/experiencias/actividades/actualizar-precios-lote',
+                            type: 'POST',
+                            data: {
+                                _token: $('input[name="_token"]').val(),
+                                ...datos
+                            },
+                            success: (data) => resolve(data),
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error al actualizar los precios en lote"] || 'Error al actualizar los precios en lote',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
+                            }
+                        });
+                    });
+                };
+
                 // Reordenar actividades en la vista de escritorio
                 const el = document.getElementById('actividades-sortable');
                 if (el) {
@@ -381,6 +416,106 @@ $(function() {
                     }
                 }
 
+                // --- Lógica de Selección y Acciones en Lote ---
+
+                function toggleBulkActions() {
+                    const totalSelected = $('.check-actividad:checked').length;
+                    if (totalSelected > 0) {
+                        $('#bulk-actions-container').removeClass('d-none');
+                    } else {
+                        $('#bulk-actions-container').addClass('d-none');
+                        $('#bulk_action_select').val('');
+                    }
+                }
+
+                $(document).on('change', '#check-all-actividades', function() {
+                    $('.check-actividad').prop('checked', $(this).prop('checked'));
+                    $('#check-all-actividades-mobile').prop('checked', $(this).prop('checked'));
+                    toggleBulkActions();
+                });
+
+                $(document).on('change', '#check-all-actividades-mobile', function() {
+                    $('.check-actividad').prop('checked', $(this).prop('checked'));
+                    $('#check-all-actividades').prop('checked', $(this).prop('checked'));
+                    toggleBulkActions();
+                });
+
+                $(document).on('change', '.check-actividad', function() {
+                    const totalCheckboxes = $('.check-actividad').length;
+                    const totalChecked = $('.check-actividad:checked').length;
+                    
+                    $('#check-all-actividades, #check-all-actividades-mobile').prop('checked', totalCheckboxes === totalChecked);
+                    toggleBulkActions();
+                });
+
+                $('#bulk_action_select').on('change', function() {
+                    const val = $(this).val();
+                    if (val === 'multiplicar_precio') {
+                        $('#modalBulkPriceUpdate').modal('show');
+                    }
+                });
+
+                $('#btn-aceptar-bulk-price').on('click', async function() {
+                    const ids = $('.check-actividad:checked').map(function() { return $(this).val(); }).get();
+                    const tipoCambio = $('input[name="tipo_cambio"]:checked').val();
+                    const porcentaje = $('#bulk_porcentaje').val();
+                    const preciosAfectar = $('.check-precio-afectar:checked').map(function() { return $(this).val(); }).get();
+
+                    if (!porcentaje || porcentaje <= 0) {
+                        alert(window.RedaAlojamientoJson["Debe ingresar un porcentaje válido"] || "Debe ingresar un porcentaje válido");
+                        return;
+                    }
+
+                    if (preciosAfectar.length === 0) {
+                        alert(window.RedaAlojamientoJson["Debe seleccionar al menos un precio a afectar"] || "Debe seleccionar al menos un precio a afectar");
+                        return;
+                    }
+
+                    const btn = $(this);
+                    btn.prop('disabled', true);
+                    btn.find('.spinner-bulk').removeClass('d-none');
+                    btn.find('.btn-text').addClass('d-none');
+
+                    const response = await actualizarPreciosLoteAjax({
+                        ids: ids,
+                        tipo_cambio: tipoCambio,
+                        porcentaje: porcentaje,
+                        precios_afectar: preciosAfectar
+                    });
+
+                    if (response.success) {
+                        $('#modalBulkPriceUpdate').modal('hide');
+                        // Mostrar notificación de éxito
+                        $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
+                        $('#notificacion-titulo').text(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!");
+                        $('#notificacion-mensaje').text(response.mensaje_usuario);
+                        $('#modal-notificacion').modal('show');
+
+                        $('#modal-notificacion').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                            location.reload();
+                        });
+                    } else {
+                        alert(response.mensaje_usuario);
+                    }
+
+                    btn.prop('disabled', false);
+                    btn.find('.spinner-bulk').addClass('d-none');
+                    btn.find('.btn-text').removeClass('d-none');
+                });
+
+                // Toggle para Precio en Bolívares
+                $(document).on('change', '.radio-tipo-carga', function() {
+                    const container = $(this).closest('.fila-actividad-container');
+                    const divPrecio = container.find('.div-precio-bolivares');
+                    const inputPrecio = container.find('.input-precio-bolivares');
+
+                    if ($(this).val() === 'manual') {
+                        divPrecio.removeClass('d-none');
+                    } else {
+                        divPrecio.addClass('d-none');
+                    }
+                });
+
                 function aplicarReglasDinamicas() {
                     // REGLA ADICIONAL: Nombre de la actividad (que también es required en tu Blade)
                     $('input[name*="[nombre_actividad]"]').each(function() {
@@ -427,6 +562,34 @@ $(function() {
                         });
                     });
 
+                    // Validación Precio para pago en bolívares (Manual)
+                    $('.input-precio-bolivares').each(function() {
+                        $(this).rules('add', {
+                            required: function(element) {
+                                return $(element).closest('.fila-actividad-container').find('.radio-tipo-carga:checked').val() === 'manual';
+                            },
+                            number: true,
+                            min: 0.01,
+                            messages: {
+                                required: window.RedaAlojamientoJson["El precio para pago en bolívares es obligatorio"] || "El precio para pago en bolívares es obligatorio",
+                                number: window.RedaAlojamiento.general.el_precio_debe_ser_un_numero_valido,
+                                min: window.RedaAlojamientoJson["Mínimo 0.01"] || "Mínimo 0.01"
+                            }
+                        });
+                    });
+
+                    // Validación Moneda Complementaria (Manual)
+                    $('.select-moneda-complementaria').each(function() {
+                        $(this).rules('add', {
+                            required: function(element) {
+                                return $(element).closest('.fila-actividad-container').find('.radio-tipo-carga:checked').val() === 'manual';
+                            },
+                            messages: {
+                                required: window.RedaAlojamientoJson["Debe seleccionar una moneda"] || "Debe seleccionar una moneda"
+                            }
+                        });
+                    });
+
                     // Moneda
                     $('select[name*="[currency_id]"]').each(function() {
                         $(this).rules('add', {
@@ -443,6 +606,16 @@ $(function() {
                             required: true,
                             messages: {
                                 required: window.RedaAlojamiento.general.debe_seleccionar_si_esta_disponible_o_no
+                            }
+                        });
+                    });
+
+                    // Estatus
+                    $('select[name*="[estatus_producto_servicio]"]').each(function() {
+                        $(this).rules('add', {
+                            required: true,
+                            messages: {
+                                required: window.RedaAlojamientoJson["Debe seleccionar un estatus"] || "Debe seleccionar un estatus"
                             }
                         });
                     });

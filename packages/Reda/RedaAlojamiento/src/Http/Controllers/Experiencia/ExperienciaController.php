@@ -153,6 +153,8 @@ class ExperienciaController extends Controller
                             'actividades.*.precio' => 'required|numeric|min:0.01',
                             'actividades.*.currency_id' => 'required',
                             'actividades.*.disponibilidad' => 'required',
+                            'actividades.*.precio_pago_bolivares' => 'nullable|required_if:actividades.*.tipo_carga_precio_local,manual|numeric|min:0.01',
+                            'actividades.*.moneda_pago_bolivares' => 'nullable|required_if:actividades.*.tipo_carga_precio_local,manual',
                         ],
                         [
                             // Nombre
@@ -176,6 +178,12 @@ class ExperienciaController extends Controller
 
                             // Disponibilidad
                             'actividades.*.disponibilidad.required' => __('reda-alojamiento::messages.general.debe_seleccionar_si_esta_disponible_o_no'),
+
+                            // Pago en Bolívares (Manual)
+                            'actividades.*.precio_pago_bolivares.required_if' => __('El precio para pago en bolívares es obligatorio'),
+                            'actividades.*.precio_pago_bolivares.numeric' => __('reda-alojamiento::messages.general.el_precio_debe_ser_un_numero_valido'),
+                            'actividades.*.precio_pago_bolivares.min' => __('Mínimo 0.01'),
+                            'actividades.*.moneda_pago_bolivares.required_if' => __('Debe seleccionar una moneda'),
                         ]);
 
                     if ($request->has('actividades') && is_array($request->actividades)) {
@@ -200,13 +208,23 @@ class ExperienciaController extends Controller
                                     ])->withInput();
                                 }
 
+                                $datosComplementarios = [
+                                    'precio_pago_bolivares'  => $datos['precio_pago_bolivares'] ?? null,
+                                    'moneda_pago_bolivares'  => $datos['moneda_pago_bolivares'] ?? null,
+                                    'precio_promocion'       => $datos['precio_promocion'] ?? null,
+                                    'moneda_precio_promocion' => $datos['moneda_precio_promocion'] ?? null,
+                                ];
+
                                 $actividad->update([
                                     'nombre_actividad'      => $datos['nombre_actividad'],
                                     'descripcion_actividad' => $datos['descripcion_actividad'],
                                     'tipo_producto_servicio'=> $datos['tipo_producto_servicio'],
                                     'precio'                => $datos['precio'],
                                     'currency_id'           => $datos['currency_id'],
-                                    'disponibilidad'        => $datos['disponibilidad']
+                                    'disponibilidad'        => $datos['disponibilidad'],
+                                    'estatus_producto_servicio' => $datos['estatus_producto_servicio'] ?? 'activo',
+                                    'tipo_carga_precio_local' => $datos['tipo_carga_precio_local'] ?? 'automatico_bcv',
+                                    'precios_monedas_complementarios' => json_encode($datosComplementarios)
                                 ]);
                             }
                         }
@@ -275,7 +293,7 @@ class ExperienciaController extends Controller
                 ];
                 return response()->json($respuesta, $respuesta['code']);
             }
-            
+
             $respuesta = [
                 'success' => false,
                 'message' => 'Invalid order data',
@@ -314,6 +332,7 @@ class ExperienciaController extends Controller
                 'precio'                  => null,
                 'currency_id'             => null,
                 'disponibilidad'          => null,
+                'estatus_producto_servicio' => 'activo',
                 'foto_actividad'          => null
             ]);
 
@@ -338,7 +357,7 @@ class ExperienciaController extends Controller
     public function agregarActividad(Request $request, $id)
     {
         $resultado = $this->crearActividadInicial($id);
-        
+
         if (!$resultado['success']) {
             return response()->json($resultado, $resultado['code']);
         }
@@ -532,6 +551,69 @@ class ExperienciaController extends Controller
                 'code' => 500
             ];
             return response()->json($respuesta, $respuesta['code']);
+        }
+    }
+
+    public function actualizarPreciosLote(Request $request)
+    {
+        try {
+            $ids = $request->ids;
+            $tipoCambio = $request->tipo_cambio; // 'aumento' o 'disminucion'
+            $porcentaje = floatval($request->porcentaje);
+            $preciosAfectar = $request->precios_afectar; // Array: ['general', 'bolivares', 'promocion']
+
+            if (empty($ids) || !is_array($ids)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No activities selected',
+                    'mensaje_usuario' => __('Debe seleccionar al menos una actividad'),
+                    'respuesta' => '',
+                    'code' => 400
+                ], 400);
+            }
+
+            $factor = ($tipoCambio === 'aumento') ? (1 + ($porcentaje / 100)) : (1 - ($porcentaje / 100));
+
+            $actividades = ActividadExperiencia::whereIn('id', $ids)->get();
+
+            foreach ($actividades as $actividad) {
+                $datosComplementarios = json_decode($actividad->precios_monedas_complementarios, true) ?: [];
+
+                // 1. Precio General
+                if (in_array('general', $preciosAfectar) && $actividad->precio) {
+                    $actividad->precio = round($actividad->precio * $factor, 2);
+                }
+
+                // 2. Precio Pago en Bolívares
+                if (in_array('bolivares', $preciosAfectar) && isset($datosComplementarios['precio_pago_bolivares'])) {
+                    $datosComplementarios['precio_pago_bolivares'] = round($datosComplementarios['precio_pago_bolivares'] * $factor, 2);
+                }
+
+                // 3. Precio Promoción
+                if (in_array('promocion', $preciosAfectar) && isset($datosComplementarios['precio_promocion'])) {
+                    $datosComplementarios['precio_promocion'] = round($datosComplementarios['precio_promocion'] * $factor, 2);
+                }
+
+                $actividad->precios_monedas_complementarios = json_encode($datosComplementarios);
+                $actividad->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Prices updated successfully in bulk',
+                'mensaje_usuario' => __('Precios actualizados con éxito para las actividades seleccionadas'),
+                'respuesta' => '',
+                'code' => 200
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating prices in bulk: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al actualizar los precios en lote'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
+            ], 500);
         }
     }
 }

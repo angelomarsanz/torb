@@ -125,7 +125,7 @@ Route::prefix('reda')->group(function () {
         Route::get('experiencias/actividades/get-form/{id}', [ExperienciaController::class, 'getActividadForm'])->name('reda.experiencias.actividades.get_form');
 
         Route::post('experiencias/actividades/reordenar', [ExperienciaController::class, 'reordenarActividades'])->name('reda.experiencias.actividades.reordenar');
-
+        Route::post('experiencias/actividades/actualizar-precios-lote', [ExperienciaController::class, 'actualizarPreciosLote'])->name('reda.experiencias.actividades.actualizar_precios_lote');
         Route::delete('experiencias/actividades/delete/{id}', [ExperienciaController::class, 'deleteActividad'])->name('reda.experiencias.actividades.delete');
 
         Route::delete('experiencias/eliminar-experiencia/{id}', [ExperienciaController::class, 'destroy'])->name('reda.experiencias.destroy');

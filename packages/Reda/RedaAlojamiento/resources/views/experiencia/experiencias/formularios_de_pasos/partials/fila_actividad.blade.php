@@ -1,3 +1,6 @@
+@php
+    $datosComplementarios = json_decode($actividad->precios_monedas_complementarios, true) ?? [];
+@endphp
 <div class="col-12 mb-4 fila-actividad-container" id="fila-actividad-{{ $actividad->id }}">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
@@ -13,7 +16,7 @@
                 <div class="col-lg-8">
                     <div class="row g-3">
 
-                        <!-- Primera fila: nombre y actividad -->
+                        <!-- 1. Nombre -->
                         <div class="col-md-12">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }} <span class="text-danger">*</label>
                             <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]"
@@ -25,7 +28,7 @@
                             @enderror
                         </div>
 
-                        <!-- Segunda fila: Descripción -->
+                        <!-- 2. Descripción -->
                         <div class="col-md-12">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.descripcion') }} <span class="text-danger">*</label>
                             <textarea
@@ -39,8 +42,8 @@
                             @enderror
                         </div>
 
-                        <!-- Tercera fila: Tipo y precio -->
-                        <div class="col-md-7">
+                        <!-- 3. Tipo de producto o servicio -->
+                        <div class="col-md-12">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.tipo_producto_o_servicio') }} <span class="text-danger">*</span></label>
                             <select name="actividades[{{ $actividad->id }}][tipo_producto_servicio]" class="form-control">
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.tipo_producto_servicio', $actividad->tipo_producto_servicio)) ? 'selected' : '' }} disabled>
@@ -59,7 +62,9 @@
                                 </div>
                             @enderror
                         </div>
-                        <div class="col-md-5">
+
+                        <!-- 4. Precio y Moneda General -->
+                        <div class="col-md-7">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.precio') }} <span class="text-danger">*</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0"><i class="fa fa-tag text-muted"></i></span>
@@ -67,14 +72,13 @@
                                     value="{{ old('actividades.'.$actividad->id.'.precio', $actividad->precio) }}"
                                     class="form-control border-start-0 validar-precio" placeholder="0.00"
                                 >
-                                @error('actividades.'.$actividad->id.'.precio')
-                                    <span class="text-danger small font-weight-700">{{ $message }}</span>
-                                @enderror
                             </div>
+                            @error('actividades.'.$actividad->id.'.precio')
+                                <span class="text-danger small font-weight-700">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        <!-- Tercera fila: Moneda y disponibilidad -->
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
                             <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control">
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id)) ? 'selected' : '' }} disabled>
@@ -92,6 +96,96 @@
                                 </div>
                             @enderror
                         </div>
+
+                        <!-- 5. Precio para pago en bolívares (Radio e Inputs) -->
+                        <div class="col-md-12">
+                            <label class="form-label small font-weight-700">{{ __('Precio para pago en bolívares') }}</label>
+                            <div class="d-flex flex-wrap gap-x-4 mb-2 mt-1">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input radio-tipo-carga" type="radio" 
+                                           name="actividades[{{ $actividad->id }}][tipo_carga_precio_local]" 
+                                           id="manual-{{ $actividad->id }}" value="manual" 
+                                           style="cursor: pointer; transform: scale(1.1);"
+                                           {{ old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local) == 'manual' ? 'checked' : '' }}>
+                                    <label class="form-check-label small font-weight-600" for="manual-{{ $actividad->id }}" 
+                                           style="cursor: pointer; margin-left: 10px;">
+                                        {{ __('Carga manual') }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input radio-tipo-carga" type="radio" 
+                                           name="actividades[{{ $actividad->id }}][tipo_carga_precio_local]" 
+                                           id="automatico-{{ $actividad->id }}" value="automatico_bcv" 
+                                           style="cursor: pointer; transform: scale(1.1);"
+                                           {{ old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local) == 'automatico_bcv' || is_null(old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local)) ? 'checked' : '' }}>
+                                    <label class="form-check-label small font-weight-600" for="automatico-{{ $actividad->id }}" 
+                                           style="cursor: pointer; margin-left: 10px;">
+                                        {{ __('Cálculo automático BCV') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 div-precio-bolivares {{ old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local) == 'manual' ? '' : 'd-none' }}">
+                            <div class="row g-2">
+                                <div class="col-md-7">
+                                    <label class="form-label small font-weight-700">{{ __('Precio para pago en bolívares:') }} <span class="text-danger">*</span></label>
+                                    <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio_pago_bolivares]"
+                                        value="{{ old('actividades.'.$actividad->id.'.precio_pago_bolivares', $datosComplementarios['precio_pago_bolivares'] ?? '') }}"
+                                        class="form-control input-precio-bolivares" placeholder="0.00"
+                                    >
+                                    @error('actividades.'.$actividad->id.'.precio_pago_bolivares')
+                                        <span class="text-danger small font-weight-700">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
+                                    <select name="actividades[{{ $actividad->id }}][moneda_pago_bolivares]" class="form-control select-moneda-complementaria">
+                                        <option value="" {{ is_null(old('actividades.'.$actividad->id.'.moneda_pago_bolivares', $datosComplementarios['moneda_pago_bolivares'] ?? null)) ? 'selected' : '' }} disabled>
+                                            {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                        </option>
+                                        @foreach($currencies as $currency)
+                                            <option value="{{ $currency->id }}" {{ old('actividades.'.$actividad->id.'.moneda_pago_bolivares', $datosComplementarios['moneda_pago_bolivares'] ?? null) == $currency->id ? 'selected' : '' }}>
+                                                {{ $currency->code }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error("actividades.{$actividad->id}.moneda_pago_bolivares")
+                                        <div class="text-danger small font-weight-700 mt-1">
+                                            <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Precio y Moneda de Promoción -->
+                        <div class="col-md-12">
+                            <div class="row g-2">
+                                <div class="col-md-7">
+                                    <label class="form-label small font-weight-700">{{ __('Precio promoción:') }}</label>
+                                    <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio_promocion]"
+                                        value="{{ old('actividades.'.$actividad->id.'.precio_promocion', $datosComplementarios['precio_promocion'] ?? '') }}"
+                                        class="form-control" placeholder="0.00"
+                                    >
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small font-weight-700">{{ __('Moneda promoción') }}</label>
+                                    <select name="actividades[{{ $actividad->id }}][moneda_precio_promocion]" class="form-control">
+                                        <option value="" {{ is_null(old('actividades.'.$actividad->id.'.moneda_precio_promocion', $datosComplementarios['moneda_precio_promocion'] ?? null)) ? 'selected' : '' }}>
+                                            {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                        </option>
+                                        @foreach($currencies as $currency)
+                                            <option value="{{ $currency->id }}" {{ (old('actividades.'.$actividad->id.'.moneda_precio_promocion', $datosComplementarios['moneda_precio_promocion'] ?? null)) == $currency->id ? 'selected' : '' }}>
+                                                {{ $currency->code }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Disponibilidad -->
                         <div class="col-md-6">
                             <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</span></label>
                             <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control">
@@ -106,6 +200,27 @@
                                 </option>
                             </select>
                             @error("actividades.{$actividad->id}.disponibilidad")
+                                <div class="text-danger small font-weight-700 mt-1">
+                                    <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                        <!-- 8. Estatus Producto/Servicio -->
+                        <div class="col-md-6">
+                            <label class="form-label small font-weight-700">{{ __('Estatus') }} <span class="text-danger">*</span></label>
+                            <select name="actividades[{{ $actividad->id }}][estatus_producto_servicio]" class="form-control">
+                                <option value="" {{ is_null(old('actividades.'.$actividad->id.'.estatus_producto_servicio', $actividad->estatus_producto_servicio)) ? 'selected' : '' }} disabled>
+                                    {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
+                                </option>
+                                <option value="activo" {{ old('actividades.'.$actividad->id.'.estatus_producto_servicio', $actividad->estatus_producto_servicio) == 'activo' || is_null($actividad->estatus_producto_servicio) ? 'selected' : '' }}>
+                                    {{ __('Activo') }}
+                                </option>
+                                <option value="inactivo" {{ old('actividades.'.$actividad->id.'.estatus_producto_servicio', $actividad->estatus_producto_servicio) == 'inactivo' ? 'selected' : '' }}>
+                                    {{ __('Inactivo') }}
+                                </option>
+                            </select>
+                            @error("actividades.{$actividad->id}.estatus_producto_servicio")
                                 <div class="text-danger small font-weight-700 mt-1">
                                     <i class="fa fa-exclamation-triangle"></i> {{ $message }}
                                 </div>

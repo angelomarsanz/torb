@@ -19,6 +19,20 @@
                             </button>
                         </div>
 
+                        <div id="bulk-actions-container" class="mb-3 d-none">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="bulk_action_select" class="font-weight-600 small mb-1">{{ __('Acciones en lote') }}</label>
+                                        <select id="bulk_action_select" class="form-control form-control-sm">
+                                            <option value="">{{ __('Seleccione una acción...') }}</option>
+                                            <option value="multiplicar_precio">{{ __('Multiplicar precio por un porcentaje') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <input type="hidden" name="stay_on_step" id="stay_on_step" value="0">
@@ -29,7 +43,15 @@
                                     <table class="table table-hover border rounded">
                                         <thead class="bg-light">
                                             <tr>
-                                                <th width="50"></th> <!-- Handle drag -->
+                                                <th width="80">
+                                                    <div class="d-flex align-items-center justify-content-center">
+                                                        <div class="mr-2"></div> <!-- Spacer for drag handle alignment -->
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="check-all-actividades">
+                                                            <label class="custom-control-label" for="check-all-actividades"></label>
+                                                        </div>
+                                                    </div>
+                                                </th>
                                                 <th width="60">{{ __('reda-alojamiento::messages.general.nro') }}</th>
                                                 <th width="80">{{ __('reda-alojamiento::messages.general.fotos') }}</th>
                                                 <th>{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }}</th>
@@ -40,7 +62,15 @@
                                         <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
                                             @foreach($actividades as $actividad)
                                                 <tr class="fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
-                                                    <td class="align-middle text-muted cursor-move text-center"><i class="fa fa-bars"></i></td>
+                                                    <td class="align-middle text-muted text-center">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <div class="cursor-move mr-2"><i class="fa fa-bars"></i></div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input check-actividad" id="check-actividad-{{ $actividad->id }}" value="{{ $actividad->id }}">
+                                                                <label class="custom-control-label" for="check-actividad-{{ $actividad->id }}"></label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
                                                     <td class="align-middle font-weight-bold indice-actividad">{{ $actividad->orden_actividad }}</td>
                                                     <td class="align-middle">
                                                         <img src="{{ $actividad->foto_actividad ? asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) : asset('public/images/default-image.png') }}"
@@ -73,14 +103,24 @@
                                 <!-- Vista Móvil (Cards) -->
                                 <div class="d-md-none" id="actividades-cards-container" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
                                     @if($actividades->count() > 0)
+                                        <div class="mb-2 pl-2">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="check-all-actividades-mobile">
+                                                <label class="custom-control-label font-weight-600" for="check-all-actividades-mobile">{{ __('Seleccionar todas') }}</label>
+                                            </div>
+                                        </div>
                                         <div id="sortable-cards-mobile">
                                             @foreach($actividades as $actividad)
-                                                <div class="card mb-3 shadow-sm card-actividad-movil cursor-move fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
+                                                <div class="card mb-3 shadow-sm card-actividad-movil fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
                                                     <div class="card-body p-3">
                                                         <div class="d-flex align-items-center">
 
-                                                            <div class="handle-mobile mr-3 text-muted" style="cursor: move; font-size: 1.2rem;">
-                                                                <i class="fa fa-bars"></i>
+                                                            <div class="d-flex flex-column align-items-center mr-3 text-muted">
+                                                                <div class="cursor-move mb-2" style="font-size: 1.2rem;"><i class="fa fa-bars"></i></div>
+                                                                <div class="custom-control custom-checkbox p-0 m-0" style="min-height: auto;">
+                                                                    <input type="checkbox" class="custom-control-input check-actividad" id="check-actividad-mobile-{{ $actividad->id }}" value="{{ $actividad->id }}">
+                                                                    <label class="custom-control-label" for="check-actividad-mobile-{{ $actividad->id }}" style="padding-left: 1.5rem;"></label>
+                                                                </div>
                                                             </div>
 
                                                             <div class="mr-3">
@@ -170,6 +210,63 @@
                         @include('reda-alojamiento::general.modal_notificaciones')
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Bulk Price Update -->
+<div class="modal fade" id="modalBulkPriceUpdate" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title font-weight-700">{{ __('Actualizar precios por porcentaje') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formBulkPriceUpdate">
+                    <div class="form-group">
+                        <label class="font-weight-600">{{ __('Tipo de cambio') }}</label>
+                        <div class="d-flex">
+                            <div class="custom-control custom-radio mr-3">
+                                <input type="radio" id="tipo_cambio_aumento" name="tipo_cambio" class="custom-control-input" value="aumento" checked>
+                                <label class="custom-control-label" for="tipo_cambio_aumento">{{ __('Aumento') }}</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="tipo_cambio_disminucion" name="tipo_cambio" class="custom-control-input" value="disminucion">
+                                <label class="custom-control-label" for="tipo_cambio_disminucion">{{ __('Disminución') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bulk_porcentaje" class="font-weight-600">{{ __('Porcentaje (%)') }}</label>
+                        <input type="number" id="bulk_porcentaje" name="porcentaje" class="form-control" placeholder="Ej: 10" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-600">{{ __('Precios a afectar') }}</label>
+                        <div class="custom-control custom-checkbox mb-2">
+                            <input type="checkbox" class="custom-control-input check-precio-afectar" id="check_precio_general" value="general" checked>
+                            <label class="custom-control-label" for="check_precio_general">{{ __('Precio general') }}</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mb-2">
+                            <input type="checkbox" class="custom-control-input check-precio-afectar" id="check_precio_bolivares" value="bolivares">
+                            <label class="custom-control-label" for="check_precio_bolivares">{{ __('Precio para pago en Bolívares') }}</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input check-precio-afectar" id="check_precio_promocion" value="promocion">
+                            <label class="custom-control-label" for="check_precio_promocion">{{ __('Precio promoción') }}</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('reda-alojamiento::messages.general.cancelar') }}</button>
+                <button type="button" class="btn btn-success" id="btn-aceptar-bulk-price">
+                    <i class="fa fa-spinner fa-spin d-none spinner-bulk"></i>
+                    <span class="btn-text">{{ __('Aceptar') }}</span>
+                </button>
             </div>
         </div>
     </div>

@@ -43,7 +43,8 @@ class Experiencia extends Model
         'precio_persona',
         'precio_grupo',
         'minimo_personas_grupo',
-        'reglas_cancelacion'
+        'reglas_cancelacion',
+        'horarios'
     ];
 
     /**
@@ -70,14 +71,14 @@ class Experiencia extends Model
     {
         // Buscamos primero la que tenga cover_photo = 1
         $portada = $this->fotos()->where('cover_photo', 1)->first();
-        
+
         // Si no hay, devolvemos la primera que aparezca
         if (!$portada) {
             $portada = $this->fotos()->first();
         }
-        
+
         return $portada;
-    }    
+    }
 
     /**
      * Get the activities for the experience.

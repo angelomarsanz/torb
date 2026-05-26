@@ -30,8 +30,11 @@ class ActividadExperiencia extends Model
         'descripcion_actividad',
         'tipo_producto_servicio',
         'precio',
+        'precios_monedas_complementarios',
+        'tipo_carga_precio_local',
         'currency_id',
         'disponibilidad',
+        'estatus_producto_servicio',
         'foto_actividad'
     ];
 
