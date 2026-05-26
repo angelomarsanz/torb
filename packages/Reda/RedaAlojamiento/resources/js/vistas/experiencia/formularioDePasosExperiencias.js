@@ -147,6 +147,30 @@ $(function() {
                 let currentNewActivityId = null;
                 let isEditingActividad = false;
 
+                // --- Gestión de Historial para Navegación Móvil ---
+
+                const restaurarVistaLista = () => {
+                    const wrapper = $('#actividades-wrapper');
+                    if (wrapper.children().length > 0) {
+                        wrapper.empty();
+                        $('#new-producto-actions').addClass('d-none');
+                        $('#productos-servicios-list-container').removeClass('d-none');
+                        $('#btn-add-actividad').show();
+                        
+                        currentNewActivityId = null;
+                        isEditingActividad = false;
+
+                        $('html, body').animate({
+                            scrollTop: $('#productos-servicios-list-container').offset().top - 100
+                        }, 300);
+                    }
+                };
+
+                $(window).on('popstate', function(event) {
+                    // Si el usuario presiona "Atrás" en el celular y estamos en el formulario, restauramos la lista
+                    restaurarVistaLista();
+                });
+
                 // --- Funciones AJAX con Estructura GEMINI.md ---
 
                 const reordenarActividadesAjax = (orden, url) => {
@@ -355,21 +379,24 @@ $(function() {
                 const el = document.getElementById('actividades-sortable');
                 if (el) {
                     Sortable.create(el, {
-                        handle: '.cursor-move',
                         animation: 150,
+                        ghostClass: 'bg-light',
+                        filter: '.btn, .btn *, .custom-control, .custom-control *', // No arrastrar si se toca un botón o checkbox
+                        preventOnFilter: false,
                         onEnd: async function() {
                             const orden = [];
                             $('#actividades-sortable tr').each(function() {
-                                orden.push($(this).data('id'));
+                                const id = $(this).data('id');
+                                if (id) orden.push(id);
                             });
 
-                            const response = await reordenarActividadesAjax(orden, $(el).data('reorder-url'));
-                            if (response.success) {
-                                // Actualizar números visualmente
-                                $('.indice-actividad').each(function(index) {
-                                    $(this).text(index + 1);
-                                });
-                                console.log('Orden actualizado');
+                            if (orden.length > 0) {
+                                const response = await reordenarActividadesAjax(orden, $(el).data('reorder-url'));
+                                if (response.success) {
+                                    $('.indice-actividad').each(function(index) {
+                                        $(this).text(index + 1);
+                                    });
+                                }
                             }
                         }
                     });
@@ -379,12 +406,10 @@ $(function() {
                 let elCards = document.getElementById('sortable-cards-mobile');
                 if (elCards) {
                     Sortable.create(elCards, {
-                        handle: '.cursor-move', // Usamos la misma clase de agarre que en escritorio
                         animation: 150,
                         ghostClass: 'bg-light',
-                        filter: '.btn, .btn *',
+                        filter: '.btn, .btn *, .custom-checkbox, .custom-checkbox *', // No arrastrar si se toca un botón o checkbox
                         preventOnFilter: false,
-                        delay: 100,             // Un pequeño delay para estabilidad
                         onEnd: function () {
                             actualizarOrdenActividades();
                         }
@@ -715,6 +740,9 @@ $(function() {
                         currentNewActivityId = response.respuesta.id;
                         isEditingActividad = false;
 
+                        // Empujamos estado al historial para manejar el botón "Atrás" del celular
+                        history.pushState({ view: 'form-actividad' }, '');
+
                         // Ocultar lista y botón add
                         $('#productos-servicios-list-container').addClass('d-none');
                         btn.hide();
@@ -754,6 +782,9 @@ $(function() {
                         isEditingActividad = true;
                         currentNewActivityId = null;
 
+                        // Empujamos estado al historial para manejar el botón "Atrás" del celular
+                        history.pushState({ view: 'form-actividad' }, '');
+
                         // Ocultar lista y botón add
                         $('#productos-servicios-list-container').addClass('d-none');
                         $('#btn-add-actividad').hide();
@@ -792,30 +823,30 @@ $(function() {
                                 _token: $('input[name="_token"]').val()
                             },
                             success: function(response) {
-                                // Forzamos una recarga completa con un parámetro aleatorio para limpiar caché/estado
-                                const baseUrl = window.location.href.split('#')[0].split('?')[0];
-                                window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                                // Usamos history.back() si estamos en el estado del formulario
+                                if (window.history.state && window.history.state.view === 'form-actividad') {
+                                    history.back();
+                                } else {
+                                    const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                    window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                                }
                             },
                             error: function(x, xs, xt) {
-                                // Aplicamos la misma lógica de normalización incluso en la cancelación
-                                let respuestaServidor = {};
-                                try {
-                                    respuestaServidor = JSON.parse(x.responseText);
-                                } catch (e) {
-                                    respuestaServidor = {};
+                                if (window.history.state && window.history.state.view === 'form-actividad') {
+                                    history.back();
+                                } else {
+                                    const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                    window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                                 }
-                                console.log('Error cancelando:', respuestaServidor);
-
-                                const baseUrl = window.location.href.split('#')[0].split('?')[0];
-                                window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                             }
                         });
-                    } else if (isEditingActividad) {
-                        const baseUrl = window.location.href.split('#')[0].split('?')[0];
-                        window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
                     } else {
-                        const baseUrl = window.location.href.split('#')[0].split('?')[0];
-                        window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                        if (window.history.state && window.history.state.view === 'form-actividad') {
+                            history.back();
+                        } else {
+                            const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                            window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                        }
                     }
                 });
 

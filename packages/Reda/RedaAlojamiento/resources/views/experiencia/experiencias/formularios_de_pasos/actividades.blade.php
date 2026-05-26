@@ -43,14 +43,14 @@
                                     <table class="table table-hover border rounded">
                                         <thead class="bg-light">
                                             <tr>
-                                                <th width="80">
-                                                    <div class="d-flex align-items-center justify-content-center">
-                                                        <div class="mr-2"></div> <!-- Spacer for drag handle alignment -->
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="check-all-actividades">
-                                                            <label class="custom-control-label" for="check-all-actividades"></label>
-                                                        </div>
+                                                <th width="40" class="text-center">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="check-all-actividades">
+                                                        <label class="custom-control-label" for="check-all-actividades"></label>
                                                     </div>
+                                                </th>
+                                                <th width="40" class="text-center">
+                                                    <i class="fa fa-arrows-alt-v text-muted" title="{{ __('Reordenar') }}"></i>
                                                 </th>
                                                 <th width="60">{{ __('reda-alojamiento::messages.general.nro') }}</th>
                                                 <th width="80">{{ __('reda-alojamiento::messages.general.fotos') }}</th>
@@ -62,13 +62,15 @@
                                         <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
                                             @foreach($actividades as $actividad)
                                                 <tr class="fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
+                                                    <td class="align-middle text-center">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input check-actividad" id="check-actividad-{{ $actividad->id }}" value="{{ $actividad->id }}">
+                                                            <label class="custom-control-label" for="check-actividad-{{ $actividad->id }}"></label>
+                                                        </div>
+                                                    </td>
                                                     <td class="align-middle text-muted text-center">
-                                                        <div class="d-flex align-items-center justify-content-center">
-                                                            <div class="cursor-move mr-2"><i class="fa fa-bars"></i></div>
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input check-actividad" id="check-actividad-{{ $actividad->id }}" value="{{ $actividad->id }}">
-                                                                <label class="custom-control-label" for="check-actividad-{{ $actividad->id }}"></label>
-                                                            </div>
+                                                        <div class="cursor-move p-2" style="cursor: move;">
+                                                            <i class="fa fa-bars cursor-move"></i>
                                                         </div>
                                                     </td>
                                                     <td class="align-middle font-weight-bold indice-actividad">{{ $actividad->orden_actividad }}</td>
@@ -103,23 +105,31 @@
                                 <!-- Vista Móvil (Cards) -->
                                 <div class="d-md-none" id="actividades-cards-container" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
                                     @if($actividades->count() > 0)
-                                        <div class="mb-2 pl-2">
+                                        <div class="mb-3 pl-4">
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input" id="check-all-actividades-mobile">
-                                                <label class="custom-control-label font-weight-600" for="check-all-actividades-mobile">{{ __('Seleccionar todas') }}</label>
+                                                <label class="custom-control-label font-weight-700 text-dark" for="check-all-actividades-mobile">{{ __('Seleccionar todas') }}</label>
                                             </div>
                                         </div>
                                         <div id="sortable-cards-mobile">
                                             @foreach($actividades as $actividad)
-                                                <div class="card mb-3 shadow-sm card-actividad-movil fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
+                                                <div class="card shadow-sm mb-3 card-actividad-movil fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
                                                     <div class="card-body p-3">
                                                         <div class="d-flex align-items-center">
+                                                            
+                                                            <!-- Columna de Control (Selección y Arrastre) -->
+                                                            <div class="d-flex flex-column align-items-center justify-content-center ml-2 mr-3 border-right pr-3 text-muted">
+                                                                <!-- Checkbox de Selección -->
+                                                                <div class="mb-3">
+                                                                    <div class="custom-control custom-checkbox p-0 m-0" style="min-height: auto;">
+                                                                        <input type="checkbox" class="custom-control-input check-actividad" id="check-actividad-mobile-{{ $actividad->id }}" value="{{ $actividad->id }}">
+                                                                        <label class="custom-control-label" for="check-actividad-mobile-{{ $actividad->id }}" style="padding-left: 1.5rem;"></label>
+                                                                    </div>
+                                                                </div>
 
-                                                            <div class="d-flex flex-column align-items-center mr-3 text-muted">
-                                                                <div class="cursor-move mb-2" style="font-size: 1.2rem;"><i class="fa fa-bars"></i></div>
-                                                                <div class="custom-control custom-checkbox p-0 m-0" style="min-height: auto;">
-                                                                    <input type="checkbox" class="custom-control-input check-actividad" id="check-actividad-mobile-{{ $actividad->id }}" value="{{ $actividad->id }}">
-                                                                    <label class="custom-control-label" for="check-actividad-mobile-{{ $actividad->id }}" style="padding-left: 1.5rem;"></label>
+                                                                <!-- Icono de Arrastre -->
+                                                                <div class="cursor-move" style="font-size: 1.2rem; cursor: move;">
+                                                                    <i class="fa fa-bars"></i>
                                                                 </div>
                                                             </div>
 
@@ -138,7 +148,7 @@
                                                             </div>
 
                                                             <div class="flex-grow-1">
-                                                                <h6 class="font-weight-bold mb-1 text-dark text-truncate" style="max-width: 150px;">
+                                                                <h6 class="font-weight-bold mb-1 text-dark text-truncate" style="max-width: 140px;">
                                                                     <span class="indice-actividad-movil">{{ $actividad->orden_actividad }}</span>.
                                                                     {{ $actividad->nombre_actividad ?: '---' }}
                                                                 </h6>
@@ -171,7 +181,7 @@
                                             @endforeach
                                         </div>
                                         <p class="text-muted small text-center mt-2 italic">
-                                            <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las tarjetas desde las barras de la izquierda o desde cualquier espacio vacío hacia la posición que desees.
+                                            <i class="fa fa-info-circle mr-1"></i> Para reorganizar los productos o servicios arrastra las tarjetas desde las barras de la izquierda hacia la posición que desees.
                                         </p>
                                     @else
                                         <div class="text-center py-4 text-muted">
@@ -321,6 +331,16 @@
 
 @push('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <style>
+        .cursor-move {
+            cursor: move !important;
+            touch-action: none;
+            user-select: none;
+        }
+        .cursor-move:hover {
+            color: #28a745 !important;
+        }
+    </style>
 @endpush
 
 @section('validation_script')
