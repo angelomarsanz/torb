@@ -35,6 +35,7 @@ class Experiencia extends Model
         'user_id', // ¡No olvides añadirlo al fillable!
         'titulo',
         'descripcion',
+        'ubicacion',
         'categoria_negocio',
         'ruta_imagenes',
         'latitud_encuentro',
@@ -45,6 +46,15 @@ class Experiencia extends Model
         'minimo_personas_grupo',
         'reglas_cancelacion',
         'horarios'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'ubicacion' => 'array',
     ];
 
     /**

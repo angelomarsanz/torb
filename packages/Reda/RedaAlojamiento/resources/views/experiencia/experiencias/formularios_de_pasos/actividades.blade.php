@@ -116,7 +116,7 @@
                                                 <div class="card shadow-sm mb-3 card-actividad-movil fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
                                                     <div class="card-body p-3">
                                                         <div class="d-flex align-items-center">
-                                                            
+
                                                             <!-- Columna de Control (Selección y Arrastre) -->
                                                             <div class="d-flex flex-column align-items-center justify-content-center ml-2 mr-3 border-right pr-3 text-muted">
                                                                 <!-- Checkbox de Selección -->

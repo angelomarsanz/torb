@@ -905,6 +905,89 @@ $(function() {
 
                 break;
 
+            case 'ubicacion':
+                function updateControls(addressComponents) {
+                    $('#address_line_1').val(addressComponents.addressLine1);
+                    if (addressComponents.city) {
+                        $('#city').val(addressComponents.city);
+                    }
+                    $('#state').val(addressComponents.stateOrProvince);
+                    $('#postal_code').val(addressComponents.postalCode);
+                    $('#country').val(addressComponents.country);
+                }
+
+                $('#map_view').locationpicker({
+                    location: {
+                        latitude: latitude,
+                        longitude: longitude
+                    },
+                    radius: 0,
+                    addressFormat: '',
+                    inputBinding: {
+                        latitudeInput: $('#latitude'),
+                        longitudeInput: $('#longitude'),
+                        locationNameInput: $('#address_line_1')
+                    },
+                    enableAutocomplete: true,
+                    onchanged: function (currentLocation, radius, isMarkerDropped) {
+                        var addressComponents = $(this).locationpicker('map').location.addressComponents;
+                        updateControls(addressComponents);
+                    },
+                    oninitialized: function (component) {
+                        var addressComponents = $(component).locationpicker('map').location.addressComponents;
+                        updateControls(addressComponents);
+                    }
+                });
+
+                $('#list_des').validate({
+                    ignore: [],
+                    rules: {
+                        address_line_1: { required: true, maxlength: 255 },
+                        address_line_2: { maxlength: 255 },
+                        city: { required: true },
+                        state: { required: true },
+                        country: { required: true },
+                        latitude: { required: true, min: -90, max: 90 }
+                    },
+                    submitHandler: function(form) {
+                        $('#btn_next').attr('disabled', true);
+                        $('.spinner').removeClass('d-none');
+                        $('#btn_next-text').text(window.RedaAlojamientoJson['Guardando...'] || 'Guardando...');
+                        return true;
+                    },
+                    messages: {
+                        address_line_1: {
+                            required: window.RedaAlojamientoJson['Dirección obligatoria'] || 'Dirección obligatoria',
+                            maxlength: window.RedaAlojamientoJson['Por favor, no introduzcas más de 255 caracteres.'] || 'Por favor, no introduzcas más de 255 caracteres.',
+                        },
+                        address_line_2: {
+                            maxlength: window.RedaAlojamientoJson['Por favor, no introduzcas más de 255 caracteres.'] || 'Por favor, no introduzcas más de 255 caracteres.',
+                        },
+                        city: {
+                            required: window.RedaAlojamientoJson['Ciudad obligatoria'] || 'Ciudad obligatoria',
+                        },
+                        state: {
+                            required: window.RedaAlojamientoJson['Estado obligatorio'] || 'Estado obligatorio',
+                        },
+                        country: {
+                            required: window.RedaAlojamientoJson['País obligatorio'] || 'País obligatorio',
+                        },
+                        latitude: {
+                            required: window.RedaAlojamientoJson['Debe fijar la posición en el mapa'] || 'Debe fijar la posición en el mapa',
+                            min: window.RedaAlojamientoJson['Debe fijar la posición en el mapa'] || 'Debe fijar la posición en el mapa',
+                            max: window.RedaAlojamientoJson['Debe fijar la posición en el mapa'] || 'Debe fijar la posición en el mapa'
+                        }
+                    },
+                    errorPlacement: function(error, element) {
+                        if (element.attr('name') == 'latitude') {
+                            error.insertAfter('.map-view-location');
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    }
+                });
+
+                break;
             // ... resto de los pasos
         }
     }

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\File;
 use Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Country;
+use Illuminate\Support\Facades\Validator;
 
 class ExperienciaController extends Controller
 {
@@ -43,8 +45,8 @@ class ExperienciaController extends Controller
                     'titulo' => 'required|min:5'
                 ],
                 [
-                    'titulo.required' => __('reda-alojamiento::messages.general.el_nombre_del_negocio_es_obligatorio'),
-                    'titulo.min'      => __('reda-alojamiento::messages.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres'),
+                    'titulo.required' => __('El nombre del negocio es obligatorio.'),
+                    'titulo.min'      => __('El nombre del negocio debe tener al menos 5 caracteres.'),
                 ]);
 
             // 1. Crear Experiencia Principal
@@ -106,10 +108,14 @@ class ExperienciaController extends Controller
                 }
             }
 
+            if ($paso === 'ubicacion') {
+                $country = Country::pluck('name', 'short_name');
+            }
+
             Log::info("formularioDePasosExperiencias, actividades: " . print_r($actividades, true));
 
             return view("reda-alojamiento::experiencia.experiencias.formularios_de_pasos.$paso",
-                compact('result', 'paso', 'actividades', 'categoriasNegocios'));
+                compact('result', 'paso', 'actividades', 'categoriasNegocios', 'country'));
         }
         elseif ($request->isMethod('post')) {
             switch ($paso) {
@@ -121,11 +127,11 @@ class ExperienciaController extends Controller
                             'categoria_negocio' => 'required'
                         ],
                         [
-                            'titulo.required' => __('reda-alojamiento::messages.general.el_nombre_del_negocio_es_obligatorio'),
-                            'titulo.min'      => __('reda-alojamiento::messages.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres'),
-                            'descripcion.required' => __('reda-alojamiento::messages.general.la_descripcion_es_obligatoria'),
-                            'descripcion.min'      => __('reda-alojamiento::messages.general.la_descripcion_debe_tener_al_menos_20_caracteres'),
-                            'categoria_negocio.required' => __('reda-alojamiento::messages.general.la_categoria_del_negocio_es_obligatoria'),
+                            'titulo.required' => __('El nombre del negocio es obligatorio.'),
+                            'titulo.min'      => __('El nombre del negocio debe tener al menos 5 caracteres.'),
+                            'descripcion.required' => __('La descripción es obligatoria.'),
+                            'descripcion.min'      => __('La descripción debe tener al menos 20 caracteres.'),
+                            'categoria_negocio.required' => __('La categoría del negocio es obligatoria.'),
                         ]);
                     $result->titulo = $request->titulo;
                     $result->descripcion = $request->descripcion;
@@ -138,7 +144,7 @@ class ExperienciaController extends Controller
                     $conteoFotos = FotoExperiencia::where('experiencia_id', $id)->count();
 
                     if ($conteoFotos == 0) {
-                        return back()->withErrors(['foto' => __('reda-alojamiento::messages.general.la_foto_es_obligatoria')]);
+                        return back()->withErrors(['foto' => __('La foto es obligatoria.')]);
                     }
 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);
@@ -158,30 +164,30 @@ class ExperienciaController extends Controller
                         ],
                         [
                             // Nombre
-                            'actividades.*.nombre_actividad.required' => __('reda-alojamiento::messages.general.el_nombre_del_producto_o_servicio_es_obligatorio'),
-                            'actividades.*.nombre_actividad.min' => __('reda-alojamiento::messages.general.el_nombre_del_producto_o_servicio_debe_tener_al_menos_3_caracteres'),
+                            'actividades.*.nombre_actividad.required' => __('El nombre del producto o servicio es obligatorio.'),
+                            'actividades.*.nombre_actividad.min' => __('El nombre del producto o servicio debe tener al menos 3 caracteres.'),
 
                             // Descripción
-                            'actividades.*.descripcion_actividad.required' => __('reda-alojamiento::messages.general.la_descripcion_es_obligatoria'),
-                            'actividades.*.descripcion_actividad.min' => __('reda-alojamiento::messages.general.la_descripcion_debe_tener_al_menos_20_caracteres'),
+                            'actividades.*.descripcion_actividad.required' => __('La descripción es obligatoria.'),
+                            'actividades.*.descripcion_actividad.min' => __('La descripción debe tener al menos 20 caracteres.'),
 
                             // Tipo de producto o servicio
-                            'actividades.*.tipo_producto_servicio.required' => __('reda-alojamiento::messages.general.el_tipo_producto_o_servicio_es_obligatorio'),
+                            'actividades.*.tipo_producto_servicio.required' => __('El tipo (producto o servicio) es obligatorio.'),
 
                             // Precio
-                            'actividades.*.precio.required' => __('reda-alojamiento::messages.general.el_precio_es_obligatorio'),
-                            'actividades.*.precio.numeric' => __('reda-alojamiento::messages.general.el_precio_debe_ser_un_numero_valido'),
-                            'actividades.*.precio.min' => __('reda-alojamiento::messages.general.el_precio_debe_ser_mayor_a_cero'),
+                            'actividades.*.precio.required' => __('El precio es obligatorio.'),
+                            'actividades.*.precio.numeric' => __('El precio debe ser un número válido.'),
+                            'actividades.*.precio.min' => __('El precio debe ser mayor a cero.'),
 
                             // Moneda
-                            'actividades.*.currency_id.required' => __('reda-alojamiento::messages.general.el_tipo_de_moneda_es_obligatorio'),
+                            'actividades.*.currency_id.required' => __('El tipo de moneda es obligatorio.'),
 
                             // Disponibilidad
-                            'actividades.*.disponibilidad.required' => __('reda-alojamiento::messages.general.debe_seleccionar_si_esta_disponible_o_no'),
+                            'actividades.*.disponibilidad.required' => __('Debe seleccionar si está disponible o no.'),
 
                             // Pago en Bolívares (Manual)
                             'actividades.*.precio_pago_bolivares.required_if' => __('El precio para pago en bolívares es obligatorio'),
-                            'actividades.*.precio_pago_bolivares.numeric' => __('reda-alojamiento::messages.general.el_precio_debe_ser_un_numero_valido'),
+                            'actividades.*.precio_pago_bolivares.numeric' => __('El precio debe ser un número válido.'),
                             'actividades.*.precio_pago_bolivares.min' => __('Mínimo 0.01'),
                             'actividades.*.moneda_pago_bolivares.required_if' => __('Debe seleccionar una moneda'),
                         ]);
@@ -248,27 +254,95 @@ class ExperienciaController extends Controller
                     }
 
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'ubicacion'])
-                                ->with('success', __('reda-alojamiento::messages.general.productos_y_servicios_actualizados_con_exito'));
+                                ->with('success', __('Productos y servicios actualizados con éxito.'));
 
                 case 'ubicacion':
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'horario'])
-                    ->with('success', __('reda-alojamiento::messages.general.ubicacion_actualizada_con_exito'));
+                    try {
+                        $request->validate(
+                            [
+                                'address_line_1'      => 'required|max:250',
+                                'country'             => 'required',
+                                'city'                => 'required',
+                                'state'               => 'required',
+                                'latitude'            => 'required|not_in:0',
+                            ],
+                            [
+                                'address_line_1.required' => __('Dirección obligatoria'),
+                                'country.required'        => __('País obligatorio'),
+                                'city.required'           => __('Ciudad obligatoria'),
+                                'state.required'          => __('Estado obligatorio'),
+                                'latitude.not_in'         => __('Debe fijar la posición en el mapa'),
+                            ]);
+
+                        $ubicacion = [
+                            'longitud'            => $request->longitude,
+                            'latitud'             => $request->latitude,
+                            'linea_uno_direccion' => $request->address_line_1,
+                            'lineaDosDireccion'   => $request->address_line_2,
+                            'ciudad'              => $request->city,
+                            'estado'              => $request->state,
+                            'pais'                => $request->country,
+                            'codigo_postal'       => $request->postal_code,
+                        ];
+
+                        $result->ubicacion = $ubicacion;
+                        $result->save();
+
+                        if ($request->ajax()) {
+                            $respuesta = [
+                                'success' => true,
+                                'message' => 'Location updated successfully',
+                                'mensaje_usuario' => __('Ubicación actualizada con éxito.'),
+                                'respuesta' => route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'horario']),
+                                'code' => 200
+                            ];
+                            return response()->json($respuesta, $respuesta['code']);
+                        }
+
+                        return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'horario'])
+                        ->with('success', __('Ubicación actualizada con éxito.'));
+
+                    } catch (\Illuminate\Validation\ValidationException $e) {
+                        if ($request->ajax()) {
+                            $respuesta = [
+                                'success' => false,
+                                'message' => 'Validation error in location',
+                                'mensaje_usuario' => $e->validator->errors()->first(),
+                                'respuesta' => $e->validator->errors(),
+                                'code' => 422
+                            ];
+                            return response()->json($respuesta, $respuesta['code']);
+                        }
+                        throw $e;
+                    } catch (\Exception $e) {
+                        if ($request->ajax()) {
+                            $respuesta = [
+                                'success' => false,
+                                'message' => 'Error updating location: ' . $e->getMessage(),
+                                'mensaje_usuario' => __('Error al actualizar la ubicación'),
+                                'respuesta' => $e->getMessage(),
+                                'code' => 500
+                            ];
+                            return response()->json($respuesta, $respuesta['code']);
+                        }
+                        return back()->withErrors(['error' => $e->getMessage()]);
+                    }
 
                 case 'horario':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
-                    ->with('success', __('reda-alojamiento::messages.general.horario_actualizado_con_exito'));
+                    ->with('success', __('Horario actualizado con éxito.'));
 
                 case 'precio':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
-                    ->with('success', __('reda-alojamiento::messages.general.precio_actualizado_con_exito'));
+                    ->with('success', __('Precio actualizado con éxito.'));
 
                 case 'informacion_adicional':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
-                    ->with('success', __('reda-alojamiento::messages.general.informacion_adicional_actualizada_con_exito'));
+                    ->with('success', __('Información actualizada con éxito.'));
 
                 case 'anfitrion':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
-                    ->with('success', __('reda-alojamiento::messages.general.anfitrion_actualizado_con_exito'));
+                    ->with('success', __('Anfitrión actualizado con éxito.'));
             }
         }
     }
@@ -437,7 +511,7 @@ class ExperienciaController extends Controller
                 $respuesta = [
                     'success' => false,
                     'message' => 'Product or service not found',
-                    'mensaje_usuario' => __('Producto o servicio no encontrado'),
+                    'mensaje_usuario' => __('Producto o servicio no encontrado.'),
                     'respuesta' => '',
                     'code' => 404
                 ];
@@ -457,7 +531,7 @@ class ExperienciaController extends Controller
             $respuesta = [
                 'success' => true,
                 'message' => 'Product or service and files deleted correctly',
-                'mensaje_usuario' => __('Producto o servicio y sus archivos eliminados correctamente'),
+                'mensaje_usuario' => __('¡Producto o servicio y sus archivos eliminados correctamente!'),
                 'respuesta' => '',
                 'code' => 200
             ];
@@ -482,7 +556,7 @@ class ExperienciaController extends Controller
             $respuesta = [
                 'success' => false,
                 'message' => 'Experience not found',
-                'mensaje_usuario' => __('Experiencia no encontrada'),
+                'mensaje_usuario' => __('Experiencia no encontrada.'),
                 'respuesta' => '',
                 'code' => 404
             ];
@@ -494,7 +568,7 @@ class ExperienciaController extends Controller
             $respuesta = [
                 'success' => false,
                 'message' => 'Unauthorized user',
-                'mensaje_usuario' => __('Usuario no autorizado'),
+                'mensaje_usuario' => __('Usuario no autorizado.'),
                 'respuesta' => '',
                 'code' => 403
             ];
@@ -535,7 +609,7 @@ class ExperienciaController extends Controller
             $respuesta = [
                 'success' => true,
                 'message' => 'Experience deleted successfully',
-                'mensaje_usuario' => __('Experiencia eliminada con éxito'),
+                'mensaje_usuario' => __('Experiencia eliminada con éxito.'),
                 'respuesta' => '',
                 'code' => 200
             ];
