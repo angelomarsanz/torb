@@ -928,7 +928,7 @@ $(function() {
                     inputBinding: {
                         latitudeInput: $('#latitude'),
                         longitudeInput: $('#longitude'),
-                        locationNameInput: $('#address_line_1')
+                        locationNameInput: $('#map_search')
                     },
                     enableAutocomplete: true,
                     onchanged: function (currentLocation, radius, isMarkerDropped) {
@@ -957,6 +957,7 @@ $(function() {
                 $('#list_des').validate({
                     ignore: [],
                     rules: {
+                        map_search: { required: true, maxlength: 255 },
                         address_line_1: { required: true, maxlength: 255 },
                         address_line_2: { maxlength: 255 },
                         city: { required: true },
@@ -971,6 +972,10 @@ $(function() {
                         return true;
                     },
                     messages: {
+                        map_search: {
+                            required: window.RedaAlojamientoJson['Búsqueda en el mapa obligatoria'] || 'Búsqueda en el mapa obligatoria',
+                            maxlength: window.RedaAlojamientoJson['Por favor, no introduzcas más de 255 caracteres.'] || 'Por favor, no introduzcas más de 255 caracteres.',
+                        },
                         address_line_1: {
                             required: window.RedaAlojamientoJson['Dirección obligatoria'] || 'Dirección obligatoria',
                             maxlength: window.RedaAlojamientoJson['Por favor, no introduzcas más de 255 caracteres.'] || 'Por favor, no introduzcas más de 255 caracteres.',

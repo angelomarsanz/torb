@@ -36,9 +36,10 @@
 
 								<div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
-										<label>{{ __('Línea de dirección 1') }} <span class="text-danger">*</span></label>
-										<input type="text" name="address_line_1" id="address_line_1" value="{{ $result->ubicacion['linea_uno_direccion'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Nombre de la casa/número + calle/carretera') }}">
-										<span class="text-danger">{{ $errors->first('address_line_1') }}</span>
+										<label>{{ __('Búsqueda en el mapa de Google') }} <span class="text-danger">*</span></label>
+										<p class="text-muted mt-2">{{ __('Si la ubicación en el mapa no es la correcta, por favor escriba o remplace el texto existente con el nombre de la zona o sector, ciudad y estado para que el mapa se posicione automáticamente en la ubicación correspondiente') }}</p>
+                                        <input type="text" name="map_search" id="map_search" value="{{ $result->ubicacion['busqueda_mapa'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Por favor escriba la zona, ciudad, estado para la búsqueda en el mapa') }}">
+										<span class="text-danger">{{ $errors->first('map_search') }}</span>
 									</div>
 								</div>
 
@@ -47,15 +48,23 @@
 										<div id="map_view" class="map-view-location" style="height: 400px; width: 100%;"></div>
 									</div>
 									<div class="col-md-12 mt-4 pl-5 pr-5">
-										<p>{{ __('Puedes mover el puntero para establecer la posición correcta en el mapa') }}</p>
+										<p>{{ __('Puedes mover el puntero para establecer la posición exacta en el mapa') }}</p>
 										<span class="text-danger">{{ $errors->first('latitude') }}</span>
+									</div>
+								</div>
+
+								<div class="row mt-4">
+									<div class="col-md-12 pl-5 pr-5">
+										<label>{{ __('Línea de dirección 1') }} <span class="text-danger">*</span></label>
+										<input type="text" name="address_line_1" id="address_line_1" value="{{ $result->ubicacion['linea_uno_direccion'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Nombre de la casa/número + calle/carretera') }}">
+										<span class="text-danger">{{ $errors->first('address_line_1') }}</span>
 									</div>
 								</div>
 
 								<div class="row mt-4">
 									<div class="col-md-6 mt-4 pl-5 pr-5">
 										<label>{{ __('Línea de dirección 2') }}</label>
-										<input type="text" name="address_line_2" id="address_line_2" value="{{ $result->ubicacion['lineaDosDireccion'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Apto., suite, código de acceso al edificio') }}">
+										<input type="text" name="address_line_2" id="address_line_2" value="{{ $result->ubicacion['linea_dos_direccion'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Apto., suite, código de acceso al edificio') }}">
 									</div>
 									<div class="col-md-6 mt-4 pl-5 pr-5">
 										<label>{{ __('Ciudad / Pueblo / Distrito') }}  <span class="text-danger">*</span></label>

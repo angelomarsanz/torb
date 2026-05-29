@@ -261,6 +261,7 @@ class ExperienciaController extends Controller
                     try {
                         $request->validate(
                             [
+                                'map_search'          => 'required|max:250',
                                 'address_line_1'      => 'required|max:250',
                                 'country'             => 'required',
                                 'city'                => 'required',
@@ -268,6 +269,7 @@ class ExperienciaController extends Controller
                                 'latitude'            => 'required|not_in:0',
                             ],
                             [
+                                'map_search.required'     => __('Búsqueda en el mapa obligatoria'),
                                 'address_line_1.required' => __('Dirección obligatoria'),
                                 'country.required'        => __('País obligatorio'),
                                 'city.required'           => __('Ciudad obligatoria'),
@@ -276,6 +278,7 @@ class ExperienciaController extends Controller
                             ]);
 
                         $ubicacion = [
+                            'busqueda_mapa'       => $request->map_search,
                             'longitud'            => $request->longitude,
                             'latitud'             => $request->latitude,
                             'linea_uno_direccion' => $request->address_line_1,
