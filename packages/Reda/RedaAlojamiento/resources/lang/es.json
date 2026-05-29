@@ -104,5 +104,7 @@
     "Error al recuperar el formulario de la actividad": "Error al recuperar el formulario de la actividad",
     "Error al eliminar el producto o servicio": "Error al eliminar el producto o servicio",
     "Si la ubicación en el mapa no es la correcta, por favor escriba o remplace el texto existente con el nombre de la zona o sector, ciudad y estado para que el mapa se posicione automáticamente en la ubicación correspondiente": "Si la ubicación en el mapa no es la correcta, por favor escriba o remplace el texto existente con el nombre de la zona o sector, ciudad y estado para que el mapa se posicione automáticamente en la ubicación correspondiente.",
-    "Puedes mover el puntero para establecer la posición exacta en el mapa" : "Puedes mover el puntero para establecer la posición exacta en el mapa."
+    "Puedes mover el puntero para establecer la posición exacta en el mapa" : "Puedes mover el puntero para establecer la posición exacta en el mapa.",
+    "Dirección del negocio": "Dirección del negocio",
+    "Dirección del negocio (complemento)": "Dirección del negocio (complemento)"
 }

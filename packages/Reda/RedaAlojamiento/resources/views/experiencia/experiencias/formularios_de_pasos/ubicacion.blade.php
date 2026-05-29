@@ -55,17 +55,20 @@
 
 								<div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
-										<label>{{ __('Línea de dirección 1') }} <span class="text-danger">*</span></label>
-										<input type="text" name="address_line_1" id="address_line_1" value="{{ $result->ubicacion['linea_uno_direccion'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Nombre de la casa/número + calle/carretera') }}">
+										<label>{{ __('Dirección del negocio') }} <span class="text-danger">*</span></label>
+										<input type="text" name="address_line_1" id="address_line_1" value="{{ $result->ubicacion['linea_uno_direccion'] ?? '' }}" class="form-control text-16 mt-2">
 										<span class="text-danger">{{ $errors->first('address_line_1') }}</span>
 									</div>
 								</div>
 
 								<div class="row mt-4">
-									<div class="col-md-6 mt-4 pl-5 pr-5">
-										<label>{{ __('Línea de dirección 2') }}</label>
-										<input type="text" name="address_line_2" id="address_line_2" value="{{ $result->ubicacion['linea_dos_direccion'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Apto., suite, código de acceso al edificio') }}">
+									<div class="col-md-12 pl-5 pr-5">
+										<label>{{ __('Dirección del negocio (complemento)') }}</label>
+										<input type="text" name="address_line_2" id="address_line_2" value="{{ $result->ubicacion['linea_dos_direccion'] ?? '' }}" class="form-control text-16 mt-2">
 									</div>
+								</div>
+
+								<div class="row mt-4">
 									<div class="col-md-6 mt-4 pl-5 pr-5">
 										<label>{{ __('Ciudad / Pueblo / Distrito') }}  <span class="text-danger">*</span></label>
 										<input type="text" name="city" id="city" value="{{ $result->ubicacion['ciudad'] ?? '' }}" class="form-control text-16 mt-2">
