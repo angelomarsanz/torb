@@ -44,7 +44,7 @@
 
 								<div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
-										<div id="map_view" class="map-view-location"></div>
+										<div id="map_view" class="map-view-location" style="height: 400px; width: 100%;"></div>
 									</div>
 									<div class="col-md-12 mt-4 pl-5 pr-5">
 										<p>{{ __('Puedes mover el puntero para establecer la posición correcta en el mapa') }}</p>
@@ -112,8 +112,9 @@
         let nextText = "{{ __('Siguiente') }}..";
         let fieldRequiredText = "{{ __('Este campo es obligatorio.') }}";
         let maxlengthText = "{{ __('Por favor, no introduzcas más de 255 caracteres.') }}";
-        let latitude = "{{ (isset($result->ubicacion['latitud']) && $result->ubicacion['latitud'] != '') ? $result->ubicacion['latitud'] : 0 }}";
-        let longitude = "{{ (isset($result->ubicacion['longitud']) && $result->ubicacion['longitud'] != '') ? $result->ubicacion['longitud'] : 0 }}";
+        // Coordenadas por defecto: Centro de Caracas (Plaza Bolívar)
+        let latitude = "{{ (isset($result->ubicacion['latitud']) && $result->ubicacion['latitud'] != '') ? $result->ubicacion['latitud'] : '10.5061' }}";
+        let longitude = "{{ (isset($result->ubicacion['longitud']) && $result->ubicacion['longitud'] != '') ? $result->ubicacion['longitud'] : '-66.9145' }}";
     </script>
     <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

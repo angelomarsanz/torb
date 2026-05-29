@@ -938,6 +938,19 @@ $(function() {
                     oninitialized: function (component) {
                         var addressComponents = $(component).locationpicker('map').location.addressComponents;
                         updateControls(addressComponents);
+
+                    // Si estamos usando la ubicación por defecto de Caracas, intentamos geolocalizar al usuario
+                    if (latitude == '10.5061' && longitude == '-66.9145' && navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var userLat = position.coords.latitude;
+                            var userLng = position.coords.longitude;
+
+                            $(component).locationpicker('location', {
+                                latitude: userLat,
+                                longitude: userLng
+                            });
+                        });
+                    }
                     }
                 });
 
