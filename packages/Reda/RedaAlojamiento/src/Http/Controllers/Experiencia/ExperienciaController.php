@@ -73,6 +73,7 @@ class ExperienciaController extends Controller
         $paso = $request->paso;
         $actividades = null;
         $categoriasNegocios = [];
+        $country = [];
 
         // Cargamos la experiencia con TODAS sus relaciones de una sola vez
         $result = Experiencia::with([
