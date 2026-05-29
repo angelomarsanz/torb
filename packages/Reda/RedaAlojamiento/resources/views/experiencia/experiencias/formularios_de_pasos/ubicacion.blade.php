@@ -21,7 +21,7 @@
 
 								<input type="hidden" name='latitude' id='latitude' value="{{ $result->ubicacion['latitud'] ?? '' }}">
 								<input type="hidden" name='longitude' id='longitude' value="{{ $result->ubicacion['longitud'] ?? '' }}">
-								
+
                                 <div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
 										<label>{{ __('País') }} <span class="text-danger">*</span></label>

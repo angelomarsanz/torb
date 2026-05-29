@@ -156,7 +156,7 @@ $(function() {
                         $('#new-producto-actions').addClass('d-none');
                         $('#productos-servicios-list-container').removeClass('d-none');
                         $('#btn-add-actividad').show();
-                        
+
                         currentNewActivityId = null;
                         isEditingActividad = false;
 
@@ -468,7 +468,7 @@ $(function() {
                 $(document).on('change', '.check-actividad', function() {
                     const totalCheckboxes = $('.check-actividad').length;
                     const totalChecked = $('.check-actividad:checked').length;
-                    
+
                     $('#check-all-actividades, #check-all-actividades-mobile').prop('checked', totalCheckboxes === totalChecked);
                     toggleBulkActions();
                 });
@@ -908,12 +908,14 @@ $(function() {
             case 'ubicacion':
                 function updateControls(addressComponents) {
                     $('#address_line_1').val(addressComponents.addressLine1);
-                    if (addressComponents.city) {
-                        $('#city').val(addressComponents.city);
-                    }
-                    $('#state').val(addressComponents.stateOrProvince);
-                    $('#postal_code').val(addressComponents.postalCode);
-                    $('#country').val(addressComponents.country);
+
+                    if (addressComponents.city) $('#city').val(addressComponents.city);
+                    if (addressComponents.stateOrProvince) $('#state').val(addressComponents.stateOrProvince);
+                    if (addressComponents.postalCode) $('#postal_code').val(addressComponents.postalCode);
+                    if (addressComponents.country) $('#country').val(addressComponents.country);
+
+                    // Disparar validación después de actualizar para quitar mensajes de error
+                    $('#list_des').valid();
                 }
 
                 $('#map_view').locationpicker({

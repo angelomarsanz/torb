@@ -279,7 +279,7 @@ class ExperienciaController extends Controller
                             'longitud'            => $request->longitude,
                             'latitud'             => $request->latitude,
                             'linea_uno_direccion' => $request->address_line_1,
-                            'lineaDosDireccion'   => $request->address_line_2,
+                            'linea_dos_direccion' => $request->address_line_2,
                             'ciudad'              => $request->city,
                             'estado'              => $request->state,
                             'pais'                => $request->country,
