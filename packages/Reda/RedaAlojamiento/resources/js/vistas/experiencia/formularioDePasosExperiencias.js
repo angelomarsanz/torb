@@ -907,16 +907,42 @@ $(function() {
 
             case 'ubicacion':
                 function updateControls(addressComponents) {
-                    $('#address_line_1').val(addressComponents.addressLine1);
+                    console.log('[Ubicación] updateControls ejecutado con:', addressComponents);
+                    if (!addressComponents) return;
 
-                    if (addressComponents.city) $('#city').val(addressComponents.city);
-                    if (addressComponents.stateOrProvince) $('#state').val(addressComponents.stateOrProvince);
-                    if (addressComponents.postalCode) $('#postal_code').val(addressComponents.postalCode);
-                    if (addressComponents.country) $('#country').val(addressComponents.country);
+                    const mapping = {
+                        '#address_line_1': addressComponents.addressLine1,
+                        '#city': addressComponents.city,
+                        '#state': addressComponents.stateOrProvince,
+                        '#postal_code': addressComponents.postalCode,
+                        '#country': addressComponents.country
+                    };
 
-                    // Disparar validación después de actualizar para quitar mensajes de error
-                    $('#list_des').valid();
+                    $.each(mapping, function(selector, valorGoogle) {
+                        const input = $(selector);
+                        if (input.length) {
+                            const valorActual = (input.val() || '').trim();
+                            
+                            // Lógica de decisión:
+                            // 1. Si el campo está vacío, lo llenamos.
+                            // 2. Si el usuario movió el marcador (isMarkerDropped), lo actualizamos SIEMPRE.
+                            // 3. Si NO movió el marcador y el campo YA TIENE datos, lo respetamos.
+                            
+                            if (valorGoogle && (valorActual === '' || window.isMarkerMoving)) {
+                                console.log(`[Ubicación] Actualizando ${selector}: "${valorActual}" -> "${valorGoogle}"`);
+                                input.val(valorGoogle);
+                            } else {
+                                console.log(`[Ubicación] Respetando valor existente en ${selector}: "${valorActual}"`);
+                            }
+                        }
+                    });
+
+                    if ($.isFunction($.fn.valid)) {
+                        $('#list_des').valid();
+                    }
                 }
+
+                window.isMarkerMoving = false;
 
                 $('#map_view').locationpicker({
                     location: {
@@ -932,25 +958,37 @@ $(function() {
                     },
                     enableAutocomplete: true,
                     onchanged: function (currentLocation, radius, isMarkerDropped) {
+                        console.log('[Ubicación] onchanged. isMarkerDropped:', isMarkerDropped);
+                        if (isMarkerDropped) {
+                            window.isMarkerMoving = true;
+                        }
                         var addressComponents = $(this).locationpicker('map').location.addressComponents;
                         updateControls(addressComponents);
+                        
+                        // Reseteamos el flag después de actualizar
+                        window.isMarkerMoving = false;
                     },
                     oninitialized: function (component) {
+                        console.log('[Ubicación] oninitialized');
                         var addressComponents = $(component).locationpicker('map').location.addressComponents;
+                        
+                        // En la inicialización, NO forzamos la actualización si los campos ya tienen datos
+                        // updateControls se encargará de respetar los valores de Blade
                         updateControls(addressComponents);
 
-                    // Si estamos usando la ubicación por defecto de Caracas, intentamos geolocalizar al usuario
-                    if (latitude == '10.5061' && longitude == '-66.9145' && navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function(position) {
-                            var userLat = position.coords.latitude;
-                            var userLng = position.coords.longitude;
-
-                            $(component).locationpicker('location', {
-                                latitude: userLat,
-                                longitude: userLng
+                        // Solo geolocalizamos si es una experiencia nueva (Caracas por defecto)
+                        if (latitude == '10.5061' && longitude == '-66.9145' && navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                var userLat = position.coords.latitude;
+                                var userLng = position.coords.longitude;
+                                console.log('[Ubicación] Geolocalización detectada, moviendo mapa...');
+                                window.isMarkerMoving = true;
+                                $(component).locationpicker('location', {
+                                    latitude: userLat,
+                                    longitude: userLng
+                                });
                             });
-                        });
-                    }
+                        }
                     }
                 });
 

@@ -111,6 +111,37 @@ class ExperienciaController extends Controller
 
             if ($paso === 'ubicacion') {
                 $country = Country::pluck('name', 'short_name');
+                
+                // --- SOPORTE PARA NOMBRES DE COLUMNA CON/SIN ACENTO ---
+                $datosUbicacion = $result->ubicacion ?? $result->ubicación ?? null;
+                
+                // Si sigue siendo nulo, intentamos sacarlo manualmente de los atributos
+                if (!$datosUbicacion) {
+                    $atributos = $result->getAttributes();
+                    $datosUbicacion = $atributos['ubicacion'] ?? $atributos['ubicación'] ?? null;
+                }
+
+                // Si es un string (JSON sin decodificar), lo decodificamos
+                if (is_string($datosUbicacion)) {
+                    $datosUbicacion = json_decode($datosUbicacion, true);
+                }
+
+                // Normalizamos las claves para que Blade siempre las encuentre (sin acentos)
+                if (is_array($datosUbicacion)) {
+                    $result->ubicacion = [
+                        'busqueda_mapa'       => $datosUbicacion['busqueda_mapa'] ?? $datosUbicacion['búsqueda_mapa'] ?? '',
+                        'latitud'             => $datosUbicacion['latitud'] ?? '',
+                        'longitud'            => $datosUbicacion['longitud'] ?? '',
+                        'linea_uno_direccion' => $datosUbicacion['linea_uno_direccion'] ?? $datosUbicacion['línea_uno_dirección'] ?? '',
+                        'linea_dos_direccion' => $datosUbicacion['linea_dos_direccion'] ?? $datosUbicacion['línea_dos_dirección'] ?? '',
+                        'ciudad'              => $datosUbicacion['ciudad'] ?? '',
+                        'estado'              => $datosUbicacion['estado'] ?? '',
+                        'pais'                => $datosUbicacion['pais'] ?? $datosUbicacion['país'] ?? '',
+                        'codigo_postal'       => $datosUbicacion['codigo_postal'] ?? $datosUbicacion['código_postal'] ?? '',
+                    ];
+                }
+
+                Log::info("Ubicación normalizada para la vista: " . print_r($result->ubicacion, true));
             }
 
             Log::info("formularioDePasosExperiencias, actividades: " . print_r($actividades, true));

@@ -19,15 +19,15 @@
 									<h4 class="text-18 font-weight-700 pl-3">{{ __('Ubicación') }}</h4>
 								</div>
 
-								<input type="hidden" name='latitude' id='latitude' value="{{ $result->ubicacion['latitud'] ?? '' }}">
-								<input type="hidden" name='longitude' id='longitude' value="{{ $result->ubicacion['longitud'] ?? '' }}">
+								<input type="hidden" name='latitude' id='latitude' value="{{ data_get($result->ubicacion, 'latitud') }}">
+								<input type="hidden" name='longitude' id='longitude' value="{{ data_get($result->ubicacion, 'longitud') }}">
 
                                 <div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
 										<label>{{ __('País') }} <span class="text-danger">*</span></label>
 										<select id="country" name="country" class="form-control text-16 mt-2">
 											@foreach ($country as $key => $value)
-												<option value="{{ $key }}" {{ (isset($result->ubicacion['pais']) && $key == $result->ubicacion['pais']) ? 'selected' : '' }}>{{ $value }}</option>
+												<option value="{{ $key }}" {{ (data_get($result->ubicacion, 'pais') == $key) ? 'selected' : '' }}>{{ $value }}</option>
 											@endforeach
 										</select>
 										<span class="text-danger">{{ $errors->first('country') }}</span>
@@ -38,7 +38,7 @@
 									<div class="col-md-12 pl-5 pr-5">
 										<label>{{ __('Búsqueda en el mapa de Google') }} <span class="text-danger">*</span></label>
 										<p class="text-muted mt-2">{{ __('Si la ubicación en el mapa no es la correcta, por favor escriba o remplace el texto existente con el nombre de la zona o sector, ciudad y estado para que el mapa se posicione automáticamente en la ubicación correspondiente') }}</p>
-                                        <input type="text" name="map_search" id="map_search" value="{{ $result->ubicacion['busqueda_mapa'] ?? '' }}" class="form-control text-16 mt-2" placeholder="{{ __('Por favor escriba la zona, ciudad, estado para la búsqueda en el mapa') }}">
+                                        <input type="text" name="map_search" id="map_search" value="{{ data_get($result->ubicacion, 'busqueda_mapa') }}" class="form-control text-16 mt-2" placeholder="{{ __('Por favor escriba la zona, ciudad, estado para la búsqueda en el mapa') }}">
 										<span class="text-danger">{{ $errors->first('map_search') }}</span>
 									</div>
 								</div>
@@ -56,7 +56,7 @@
 								<div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
 										<label>{{ __('Dirección del negocio') }} <span class="text-danger">*</span></label>
-										<input type="text" name="address_line_1" id="address_line_1" value="{{ $result->ubicacion['linea_uno_direccion'] ?? '' }}" class="form-control text-16 mt-2">
+										<input type="text" name="address_line_1" id="address_line_1" value="{{ data_get($result->ubicacion, 'linea_uno_direccion') }}" class="form-control text-16 mt-2">
 										<span class="text-danger">{{ $errors->first('address_line_1') }}</span>
 									</div>
 								</div>
@@ -64,26 +64,26 @@
 								<div class="row mt-4">
 									<div class="col-md-12 pl-5 pr-5">
 										<label>{{ __('Dirección del negocio (complemento)') }}</label>
-										<input type="text" name="address_line_2" id="address_line_2" value="{{ $result->ubicacion['linea_dos_direccion'] ?? '' }}" class="form-control text-16 mt-2">
+										<input type="text" name="address_line_2" id="address_line_2" value="{{ data_get($result->ubicacion, 'linea_dos_direccion') }}" class="form-control text-16 mt-2">
 									</div>
 								</div>
 
 								<div class="row mt-4">
 									<div class="col-md-6 mt-4 pl-5 pr-5">
 										<label>{{ __('Ciudad / Pueblo / Distrito') }}  <span class="text-danger">*</span></label>
-										<input type="text" name="city" id="city" value="{{ $result->ubicacion['ciudad'] ?? '' }}" class="form-control text-16 mt-2">
+										<input type="text" name="city" id="city" value="{{ data_get($result->ubicacion, 'ciudad') }}" class="form-control text-16 mt-2">
 										<span class="text-danger">{{ $errors->first('city') }}</span>
 									</div>
 
 									<div class="col-md-6 mt-4 pl-5 pr-5">
 										<label>{{ __('Estado / Provincia / Condado / Región') }} <span class="text-danger">*</span></label>
-										<input type="text" name="state" id="state" value="{{ $result->ubicacion['estado'] ?? '' }}" class="form-control text-16 mt-2">
+										<input type="text" name="state" id="state" value="{{ data_get($result->ubicacion, 'estado') }}" class="form-control text-16 mt-2">
 										<span class="text-danger">{{ $errors->first('state') }}</span>
 									</div>
 
 									<div class="col-md-6 mt-4 pl-5 pr-5">
 										<label>{{ __('Código postal') }}</label>
-										<input type="text" name="postal_code" id="postal_code" value="{{ $result->ubicacion['codigo_postal'] ?? '' }}" class="form-control text-16 mt-2">
+										<input type="text" name="postal_code" id="postal_code" value="{{ data_get($result->ubicacion, 'codigo_postal') }}" class="form-control text-16 mt-2">
 										<span class="text-danger">{{ $errors->first('postal_code') }}</span>
 									</div>
 								</div>
@@ -121,12 +121,21 @@
 
     <script type="text/javascript">
         'use strict'
+        console.log('[DEBUG PHP] Ubicacion JSON:', {!! json_encode($result->ubicacion) !!});
+        
         let nextText = "{{ __('Siguiente') }}..";
         let fieldRequiredText = "{{ __('Este campo es obligatorio.') }}";
         let maxlengthText = "{{ __('Por favor, no introduzcas más de 255 caracteres.') }}";
-        // Coordenadas por defecto: Centro de Caracas (Plaza Bolívar)
-        let latitude = "{{ (isset($result->ubicacion['latitud']) && $result->ubicacion['latitud'] != '') ? $result->ubicacion['latitud'] : '10.5061' }}";
-        let longitude = "{{ (isset($result->ubicacion['longitud']) && $result->ubicacion['longitud'] != '') ? $result->ubicacion['longitud'] : '-66.9145' }}";
+        
+        // Extraemos valores con seguridad
+        let dbLat = "{{ data_get($result->ubicacion, 'latitud') }}";
+        let dbLng = "{{ data_get($result->ubicacion, 'longitud') }}";
+        
+        // Coordenadas por defecto: Centro de Caracas (Plaza Bolívar) si no hay en DB
+        let latitude = (dbLat && dbLat !== '') ? dbLat : '10.5061';
+        let longitude = (dbLng && dbLng !== '') ? dbLng : '-66.9145';
+
+        console.log('[DEBUG JS] Coordenadas finales:', latitude, longitude);
     </script>
     <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection
