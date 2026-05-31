@@ -55,6 +55,7 @@ class Experiencia extends Model
      */
     protected $casts = [
         'ubicacion' => 'array',
+        'horarios' => 'array',
     ];
 
     /**

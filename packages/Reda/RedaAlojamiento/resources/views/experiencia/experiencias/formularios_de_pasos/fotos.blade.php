@@ -43,7 +43,7 @@
                                                     <button type="button" class="reda-btn-photo-action make-default" data-id="{{ $foto->id }}" data-origen="fotos-experiencias">
                                                         <i class="fa-star {{ $foto->cover_photo ? 'fas text-warning' : 'far' }}"></i>
                                                     </button>
-                                                    
+
                                                     <div class="d-flex">
                                                         <button type="button" class="reda-btn-photo-action btn-crop mr-1" data-id="{{ $foto->id }}" data-src="{{ asset('images/experiencias/'.$result->id.'/'.$foto->photo) }}" data-origen="fotos-experiencias">
                                                             <i class="fa fa-crop text-info"></i>
@@ -114,5 +114,5 @@
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('public/js/additional-method.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
-	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
+	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasosExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

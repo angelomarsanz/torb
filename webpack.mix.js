@@ -46,7 +46,7 @@ if (buildAlojamiento) {
         'public/js/reda/vistas/experiencia/createExperiencias.min.js');
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js',
-        'public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js');
+        'public/js/reda/vistas/experiencia/formularioDePasosExperiencias.min.js');
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js',
         'public/js/reda/vistas/experiencia/indexExperiencias.min.js');

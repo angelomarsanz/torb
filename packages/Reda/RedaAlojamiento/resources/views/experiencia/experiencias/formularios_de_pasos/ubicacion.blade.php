@@ -122,20 +122,20 @@
     <script type="text/javascript">
         'use strict'
         console.log('[DEBUG PHP] Ubicacion JSON:', {!! json_encode($result->ubicacion) !!});
-        
+
         let nextText = "{{ __('Siguiente') }}..";
         let fieldRequiredText = "{{ __('Este campo es obligatorio.') }}";
         let maxlengthText = "{{ __('Por favor, no introduzcas más de 255 caracteres.') }}";
-        
+
         // Extraemos valores con seguridad
         let dbLat = "{{ data_get($result->ubicacion, 'latitud') }}";
         let dbLng = "{{ data_get($result->ubicacion, 'longitud') }}";
-        
+
         // Coordenadas por defecto: Centro de Caracas (Plaza Bolívar) si no hay en DB
         let latitude = (dbLat && dbLat !== '') ? dbLat : '10.5061';
         let longitude = (dbLng && dbLng !== '') ? dbLng : '-66.9145';
 
         console.log('[DEBUG JS] Coordenadas finales:', latitude, longitude);
     </script>
-    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasoExperiencias.min.js?v=' . time()) }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasosExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

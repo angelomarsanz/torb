@@ -128,6 +128,10 @@ Route::prefix('reda')->group(function () {
         Route::post('experiencias/actividades/actualizar-precios-lote', [ExperienciaController::class, 'actualizarPreciosLote'])->name('reda.experiencias.actividades.actualizar_precios_lote');
         Route::delete('experiencias/actividades/delete/{id}', [ExperienciaController::class, 'deleteActividad'])->name('reda.experiencias.actividades.delete');
 
+        // Rutas para Horarios (JSON en tabla experiencias)
+        Route::post('experiencias/{id}/guardar-horario', [ExperienciaController::class, 'guardarHorario'])->name('reda.experiencias.horario.guardar');
+        Route::delete('experiencias/{id}/eliminar-horario/{index}', [ExperienciaController::class, 'eliminarHorario'])->name('reda.experiencias.horario.eliminar');
+
         Route::delete('experiencias/eliminar-experiencia/{id}', [ExperienciaController::class, 'destroy'])->name('reda.experiencias.destroy');
     });
 });

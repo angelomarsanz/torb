@@ -905,9 +905,244 @@ $(function() {
 
                 break;
 
+            case 'horario':
+                let bloqueIndex = 0;
+
+                const crearBloqueHtml = (index, data = null) => {
+                    const horaDesde = data ? data.hora_desde : '';
+                    const ampmDesde = data ? data.ampm_desde : 'am';
+                    const horaHasta = data ? data.hora_hasta : '';
+                    const ampmHasta = data ? data.ampm_hasta : 'pm';
+
+                    return `
+                        <div class="row m-0 align-items-center mb-3 bloque-hora" data-index="${index}">
+                            <div class="col-md-5 col-5 p-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control hora-desde" name="bloques[${index}][hora_desde]" value="${horaDesde}" placeholder="00:00" required>
+                                    <div class="input-group-append">
+                                        <select class="form-control ampm-desde" name="bloques[${index}][ampm_desde]" style="padding: 0 5px; font-size: 12px;">
+                                            <option value="am" ${ampmDesde === 'am' ? 'selected' : ''}>AM</option>
+                                            <option value="pm" ${ampmDesde === 'pm' ? 'selected' : ''}>PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-1 text-center font-weight-700 p-0"> - </div>
+                            <div class="col-md-5 col-5 p-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control hora-hasta" name="bloques[${index}][hora_hasta]" value="${horaHasta}" placeholder="00:00" required>
+                                    <div class="input-group-append">
+                                        <select class="form-control ampm-hasta" name="bloques[${index}][ampm_hasta]" style="padding: 0 5px; font-size: 12px;">
+                                            <option value="am" ${ampmDesde === 'am' ? 'selected' : ''}>AM</option>
+                                            <option value="pm" ${ampmDesde === 'pm' ? 'selected' : ''}>PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-1 text-right p-0">
+                                <button type="button" class="btn btn-sm btn-link text-danger btn-remove-bloque">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                };
+
+                const resetModal = () => {
+                    $('#horario-index').val('');
+                    $('#form-modal-horario')[0].reset();
+                    $('#bloques-container').empty();
+                    $('.check-dia').prop('disabled', false).closest('.custom-control').css('opacity', '1');
+                    $('#btn-add-bloque').show();
+                    $('#btn-guardar-horario-modal').show();
+                    $('#form-modal-horario input, #form-modal-horario select').prop('disabled', false);
+                    bloqueIndex = 0;
+                    $('#bloques-container').append(crearBloqueHtml(bloqueIndex++));
+                };
+
+                const guardarHorarioAjax = (formData) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: APP_URL + '/reda/experiencias/' + EXPERIENCIA_ID + '/guardar-horario',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: (data) => resolve(data),
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : 'Error en el servidor',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario || 'Error al guardar el horario',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
+                            }
+                        });
+                    });
+                };
+
+                const eliminarHorarioAjax = (index) => {
+                    return new Promise((resolve) => {
+                        $.ajax({
+                            url: APP_URL + '/reda/experiencias/' + EXPERIENCIA_ID + '/eliminar-horario/' + index,
+                            type: 'DELETE',
+                            data: { _token: $('input[name="_token"]').val() },
+                            success: (data) => resolve(data),
+                            error: function (x, xs, xt) {
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : 'Error en el servidor',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario || 'Error al eliminar el horario',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
+                            }
+                        });
+                    });
+                };
+
+                $('#btn-agregar-horario').on('click', function() {
+                    resetModal();
+                    $('#modalHorarioLabel').text(window.RedaAlojamientoJson["Configurar Horario"] || "Configurar Horario");
+                    $('#modalHorario').modal('show');
+                });
+
+                $('#btn-add-bloque').on('click', function() {
+                    $('#bloques-container').append(crearBloqueHtml(bloqueIndex++));
+                });
+
+                $(document).on('keypress', '.bloque-hora input', function(e) {
+                    if (e.which == 13) {
+                        e.preventDefault();
+                        $('#btn-add-bloque').click();
+                        // Opcional: enfocar el nuevo input
+                        setTimeout(() => {
+                            $('#bloques-container .bloque-hora:last-child input:first').focus();
+                        }, 100);
+                    }
+                });
+
+                $(document).on('click', '.btn-remove-bloque', function() {
+                    if ($('.bloque-hora').length > 1) {
+                        $(this).closest('.bloque-hora').remove();
+                    }
+                });
+
+                $('#btn-guardar-horario-modal').on('click', async function() {
+                    const form = $('#form-modal-horario');
+                    if (!$('.check-dia:checked').length) {
+                        alert(window.RedaAlojamientoJson["Debe seleccionar al menos un día"] || "Debe seleccionar al menos un día");
+                        return;
+                    }
+
+                    let valid = true;
+                    $('.bloque-hora input').each(function() {
+                        if (!$(this).val()) {
+                            valid = false;
+                            $(this).addClass('is-invalid');
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    });
+
+                    if (!valid) return;
+
+                    const btn = $(this);
+                    btn.prop('disabled', true);
+                    btn.find('.spinner-save').removeClass('d-none');
+                    btn.find('.btn-text').addClass('d-none');
+
+                    const formData = new FormData(form[0]);
+                    const index = $('#horario-index').val();
+                    if (index !== '') {
+                        formData.append('index', index);
+                    }
+
+                    const response = await guardarHorarioAjax(formData);
+
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.mensaje_usuario);
+                        btn.prop('disabled', false);
+                        btn.find('.spinner-save').addClass('d-none');
+                        btn.find('.btn-text').removeClass('d-none');
+                    }
+                });
+
+                $(document).on('click', '.btn-ver-horario, .btn-editar-horario', function() {
+                    const isEdit = $(this).hasClass('btn-editar-horario');
+                    const index = $(this).data('index');
+                    const data = $(this).data('horario');
+
+                    resetModal();
+                    $('#horario-index').val(index);
+                    $('#bloques-container').empty();
+
+                    // Marcar días
+                    if (data.dias) {
+                        $.each(data.dias, function(key, dia) {
+                            $(`#dia-${dia}`).prop('checked', true);
+                        });
+                    }
+
+                    // Añadir bloques
+                    if (data.bloques) {
+                        $.each(data.bloques, function(key, bloque) {
+                            $('#bloques-container').append(crearBloqueHtml(bloqueIndex++, bloque));
+                        });
+                    }
+
+                    if (!isEdit) {
+                        $('#modalHorarioLabel').text(window.RedaAlojamientoJson["Ver Horario"] || "Ver Horario");
+                        $('.check-dia').prop('disabled', true).closest('.custom-control').css('opacity', '1');
+                        $('#form-modal-horario input, #form-modal-horario select').prop('disabled', true);
+                        $('.btn-remove-bloque, #btn-add-bloque, #btn-guardar-horario-modal').hide();
+                    } else {
+                        $('#modalHorarioLabel').text(window.RedaAlojamientoJson["Editar Horario"] || "Editar Horario");
+                    }
+
+                    $('#modalHorario').modal('show');
+                });
+
+                $(document).on('click', '.btn-eliminar-horario', function() {
+                    const index = $(this).data('index');
+                    $('#confirmacion-mensaje').text(window.RedaAlojamientoJson["¿Estás seguro de que deseas eliminar este horario?"] || "¿Estás seguro de que deseas eliminar este horario?");
+                    $('#modal-confirmacion').modal('show');
+
+                    $('#btn-confirmar-si').off('click').on('click', async function() {
+                        const btn = $(this);
+                        btn.prop('disabled', true);
+                        btn.find('.fa-spinner').removeClass('d-none');
+
+                        const response = await eliminarHorarioAjax(index);
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.mensaje_usuario);
+                            btn.prop('disabled', false);
+                            btn.find('.fa-spinner').addClass('d-none');
+                        }
+                    });
+                });
+
+                break;
+
             case 'ubicacion':
                 function updateControls(addressComponents) {
-                    console.log('[Ubicación] updateControls ejecutado con:', addressComponents);
                     if (!addressComponents) return;
 
                     const mapping = {
@@ -922,17 +1157,14 @@ $(function() {
                         const input = $(selector);
                         if (input.length) {
                             const valorActual = (input.val() || '').trim();
-                            
+
                             // Lógica de decisión:
                             // 1. Si el campo está vacío, lo llenamos.
                             // 2. Si el usuario movió el marcador (isMarkerDropped), lo actualizamos SIEMPRE.
                             // 3. Si NO movió el marcador y el campo YA TIENE datos, lo respetamos.
-                            
+
                             if (valorGoogle && (valorActual === '' || window.isMarkerMoving)) {
-                                console.log(`[Ubicación] Actualizando ${selector}: "${valorActual}" -> "${valorGoogle}"`);
                                 input.val(valorGoogle);
-                            } else {
-                                console.log(`[Ubicación] Respetando valor existente en ${selector}: "${valorActual}"`);
                             }
                         }
                     });
@@ -958,20 +1190,18 @@ $(function() {
                     },
                     enableAutocomplete: true,
                     onchanged: function (currentLocation, radius, isMarkerDropped) {
-                        console.log('[Ubicación] onchanged. isMarkerDropped:', isMarkerDropped);
                         if (isMarkerDropped) {
                             window.isMarkerMoving = true;
                         }
                         var addressComponents = $(this).locationpicker('map').location.addressComponents;
                         updateControls(addressComponents);
-                        
+
                         // Reseteamos el flag después de actualizar
                         window.isMarkerMoving = false;
                     },
                     oninitialized: function (component) {
-                        console.log('[Ubicación] oninitialized');
                         var addressComponents = $(component).locationpicker('map').location.addressComponents;
-                        
+
                         // En la inicialización, NO forzamos la actualización si los campos ya tienen datos
                         // updateControls se encargará de respetar los valores de Blade
                         updateControls(addressComponents);
@@ -981,7 +1211,6 @@ $(function() {
                             navigator.geolocation.getCurrentPosition(function(position) {
                                 var userLat = position.coords.latitude;
                                 var userLng = position.coords.longitude;
-                                console.log('[Ubicación] Geolocalización detectada, moviendo mapa...');
                                 window.isMarkerMoving = true;
                                 $(component).locationpicker('location', {
                                     latitude: userLat,

@@ -365,7 +365,7 @@ class ExperienciaController extends Controller
 
                 case 'horario':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
-                    ->with('success', __('Horario actualizado con éxito.'));
+                    ->with('success', __('Horarios confirmados con éxito.'));
 
                 case 'precio':
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
@@ -721,6 +721,94 @@ class ExperienciaController extends Controller
                 'message' => 'Error updating prices in bulk: ' . $e->getMessage(),
                 'mensaje_usuario' => __('Error al actualizar los precios en lote'),
                 'respuesta' => $e->getMessage(),
+                'code' => 500
+            ], 500);
+        }
+    }
+
+    public function guardarHorario(Request $request, $id)
+    {
+        try {
+            $experiencia = Experiencia::findOrFail($id);
+            $horarios = $experiencia->horarios ?? [];
+
+            $validator = Validator::make($request->all(), [
+                'dias' => 'required|array|min:1',
+                'bloques' => 'required|array|min:1',
+                'bloques.*.hora_desde' => 'required',
+                'bloques.*.ampm_desde' => 'required',
+                'bloques.*.hora_hasta' => 'required',
+                'bloques.*.ampm_hasta' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'mensaje_usuario' => __('Por favor complete todos los campos del horario.'),
+                    'respuesta' => $validator->errors(),
+                    'code' => 422
+                ], 422);
+            }
+
+            $nuevoHorario = [
+                'dias' => array_values($request->dias),
+                'bloques' => array_values($request->bloques)
+            ];
+
+            if ($request->has('index') && $request->index !== null && $request->index !== '') {
+                $horarios[$request->index] = $nuevoHorario;
+            } else {
+                $horarios[] = $nuevoHorario;
+            }
+
+            $experiencia->horarios = $horarios;
+            $experiencia->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Schedule saved successfully',
+                'mensaje_usuario' => __('Horario guardado con éxito'),
+                'respuesta' => $horarios,
+                'code' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Error al guardar el horario'),
+                'respuesta' => '',
+                'code' => 500
+            ], 500);
+        }
+    }
+
+    public function eliminarHorario(Request $request, $id, $index)
+    {
+        try {
+            $experiencia = Experiencia::findOrFail($id);
+            $horarios = $experiencia->horarios ?? [];
+
+            if (isset($horarios[$index])) {
+                unset($horarios[$index]);
+                $horarios = array_values($horarios);
+                $experiencia->horarios = $horarios;
+                $experiencia->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Schedule deleted successfully',
+                'mensaje_usuario' => __('Horario eliminado con éxito'),
+                'respuesta' => $horarios,
+                'code' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Error al eliminar el horario'),
+                'respuesta' => '',
                 'code' => 500
             ], 500);
         }
