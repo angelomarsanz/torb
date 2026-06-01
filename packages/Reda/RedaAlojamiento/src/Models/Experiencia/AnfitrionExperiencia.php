@@ -22,6 +22,7 @@ class AnfitrionExperiencia extends Model
         'identidad_verificada',
         'descripcion_anfitrion',
         'trayectoria_profesional',
+        'foto_anfitrion',
         'me_dedico_a',
         'intereses_anfitrion',
     ];

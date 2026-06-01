@@ -15,7 +15,7 @@
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0 ">
-                                <p>Precio</p>
+                                <p>Pago</p>
                             </div>
 
                             <div class="col-md-12 p-0 mt-4 mb-5">

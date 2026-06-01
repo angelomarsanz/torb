@@ -95,7 +95,7 @@ $(function() {
                     unhighlight: function(element) {
                         $(element).removeClass('is-invalid');
                     },
-                    submitHandler: async function(form) {
+                    submitHandler: function(form) {
                         const stayOnStep = $('#stay_on_step').val() === '1';
 
                         if (stayOnStep) {
@@ -107,32 +107,32 @@ $(function() {
                             $(".spinner-save").removeClass('d-none');
                             $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
 
-                            const response = await guardarActividadAjax(url, formData);
+                            guardarActividadAjax(url, formData).then(response => {
+                                if (response.success) {
+                                    // Mostrar notificación de éxito
+                                    $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
+                                    $('#notificacion-titulo').text(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!");
+                                    $('#notificacion-mensaje').text(response.mensaje_usuario);
+                                    $('#modal-notificacion').modal('show');
 
-                            if (response.success) {
-                                // Mostrar notificación de éxito
-                                $('#notificacion-icono').html('<i class="fa fa-check-circle fa-4x text-success"></i>');
-                                $('#notificacion-titulo').text(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!");
-                                $('#notificacion-mensaje').text(response.mensaje_usuario);
-                                $('#modal-notificacion').modal('show');
+                                    // Al cerrar el modal, refrescar la página
+                                    $('#modal-notificacion').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                                        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+                                        window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
+                                    });
+                                } else {
+                                    // Error reportado por el servidor o red
+                                    $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
+                                    $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
+                                    $('#notificacion-mensaje').text(response.mensaje_usuario);
+                                    $('#modal-notificacion').modal('show');
 
-                                // Al cerrar el modal, refrescar la página
-                                $('#modal-notificacion').off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                                    const baseUrl = window.location.href.split('#')[0].split('?')[0];
-                                    window.location.href = baseUrl + '?refresh=' + new Date().getTime() + '#seccion-productos-servicios';
-                                });
-                            } else {
-                                // Error reportado por el servidor o red
-                                $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
-                                $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || "Error");
-                                $('#notificacion-mensaje').text(response.mensaje_usuario);
-                                $('#modal-notificacion').modal('show');
-
-                                // Reactivar botón
-                                $("#btn-save-new-producto").attr("disabled", false);
-                                $(".spinner-save").addClass('d-none');
-                                $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
-                            }
+                                    // Reactivar botón
+                                    $("#btn-save-new-producto").attr("disabled", false);
+                                    $(".spinner-save").addClass('d-none');
+                                    $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
+                                }
+                            });
                             return false; // Evitar el envío normal
                         }
 
@@ -1270,6 +1270,47 @@ $(function() {
                             error.insertAfter('.map-view-location');
                         } else {
                             error.insertAfter(element);
+                        }
+                    }
+                });
+
+                break;
+
+            case 'anfitrion':
+                $('#list_des').validate({
+                    rules: {
+                        trayectoria_profesional: { required: true },
+                    },
+                    messages: {
+                        trayectoria_profesional: {
+                            required: window.RedaAlojamientoJson["La trayectoria profesional es obligatoria."] || "La trayectoria profesional es obligatoria.",
+                        },
+                    },
+                    submitHandler: function(form) {
+                        $("#btn_next").attr("disabled", true);
+                        $(".spinner").removeClass('d-none');
+                        $("#btn_next-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
+                        return true;
+                    }
+                });
+
+                document.addEventListener('mediaUpdated', function(e) {
+                    if (e.detail.origen === 'anfitrion-experiencia') {
+                        const data = e.detail.response;
+                        const container = $('#foto-container-anfitrion');
+                        const anfitrionId = data.id;
+                        const nuevaUrl = data.path;
+
+                        if (nuevaUrl && container.length) {
+                            container.html(`
+                                <img src="${nuevaUrl}?v=${new Date().getTime()}" class="img-fluid rounded-3 shadow-sm" alt="Foto">
+                                <label class="edit-photo-overlay-outline" for="file-anfitrion" title="Cambiar imagen">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </label>
+                                <input id="file-anfitrion" type="file" name="foto_anfitrion"
+                                       data-id="${anfitrionId}" class="upload_photos" accept="image/*" style="display:none;">
+                            `);
+                            container.removeClass('no-image');
                         }
                     }
                 });

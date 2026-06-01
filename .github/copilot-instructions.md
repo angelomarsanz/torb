@@ -229,3 +229,9 @@ Por favor explicar de manera pedagógica cualquier cambio realizado en el plugin
 
 ## Autorización de codigo nuevo o modificado
 Cuando se terminen de agregar código nuevo en un archivo o se haya modificado el existente, siempre se debe hacer una pausa y mostrar los cambios en una pantalla dividida en dos: En el lado izquierdo el archivo original y en el derecho el archivo con las sugerencias de código nuevo o modificado, con un botón de aceptar o rechazar y siempre se debe esperar que yo ACEPTE O RECHACE el código por favor
+
+## Manipulación de imágenes
+Para la manipulación de imágenes en las vistas se usará el script:
+<script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
+Y el controlador:
+packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php

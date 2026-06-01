@@ -111,10 +111,10 @@ class ExperienciaController extends Controller
 
             if ($paso === 'ubicacion') {
                 $country = Country::pluck('name', 'short_name');
-                
+
                 // --- SOPORTE PARA NOMBRES DE COLUMNA CON/SIN ACENTO ---
                 $datosUbicacion = $result->ubicacion ?? $result->ubicación ?? null;
-                
+
                 // Si sigue siendo nulo, intentamos sacarlo manualmente de los atributos
                 if (!$datosUbicacion) {
                     $atributos = $result->getAttributes();
@@ -182,49 +182,49 @@ class ExperienciaController extends Controller
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);
 
                 case 'actividades':
-                    $request->validate(
-                        [
-                            'actividades' => 'required|array|min:1',
-                            'actividades.*.nombre_actividad' => 'required|min:3',
-                            'actividades.*.descripcion_actividad' => 'required|min:20',
-                            'actividades.*.tipo_producto_servicio' => 'required',
-                            'actividades.*.precio' => 'required|numeric|min:0.01',
-                            'actividades.*.currency_id' => 'required',
-                            'actividades.*.disponibilidad' => 'required',
-                            'actividades.*.precio_pago_bolivares' => 'nullable|required_if:actividades.*.tipo_carga_precio_local,manual|numeric|min:0.01',
-                            'actividades.*.moneda_pago_bolivares' => 'nullable|required_if:actividades.*.tipo_carga_precio_local,manual',
-                        ],
-                        [
-                            // Nombre
-                            'actividades.*.nombre_actividad.required' => __('El nombre del producto o servicio es obligatorio.'),
-                            'actividades.*.nombre_actividad.min' => __('El nombre del producto o servicio debe tener al menos 3 caracteres.'),
-
-                            // Descripción
-                            'actividades.*.descripcion_actividad.required' => __('La descripción es obligatoria.'),
-                            'actividades.*.descripcion_actividad.min' => __('La descripción debe tener al menos 20 caracteres.'),
-
-                            // Tipo de producto o servicio
-                            'actividades.*.tipo_producto_servicio.required' => __('El tipo (producto o servicio) es obligatorio.'),
-
-                            // Precio
-                            'actividades.*.precio.required' => __('El precio es obligatorio.'),
-                            'actividades.*.precio.numeric' => __('El precio debe ser un número válido.'),
-                            'actividades.*.precio.min' => __('El precio debe ser mayor a cero.'),
-
-                            // Moneda
-                            'actividades.*.currency_id.required' => __('El tipo de moneda es obligatorio.'),
-
-                            // Disponibilidad
-                            'actividades.*.disponibilidad.required' => __('Debe seleccionar si está disponible o no.'),
-
-                            // Pago en Bolívares (Manual)
-                            'actividades.*.precio_pago_bolivares.required_if' => __('El precio para pago en bolívares es obligatorio'),
-                            'actividades.*.precio_pago_bolivares.numeric' => __('El precio debe ser un número válido.'),
-                            'actividades.*.precio_pago_bolivares.min' => __('Mínimo 0.01'),
-                            'actividades.*.moneda_pago_bolivares.required_if' => __('Debe seleccionar una moneda'),
-                        ]);
-
                     if ($request->has('actividades') && is_array($request->actividades)) {
+                        $request->validate(
+                            [
+                                'actividades' => 'required|array|min:1',
+                                'actividades.*.nombre_actividad' => 'required|min:3',
+                                'actividades.*.descripcion_actividad' => 'required|min:20',
+                                'actividades.*.tipo_producto_servicio' => 'required',
+                                'actividades.*.precio' => 'required|numeric|min:0.01',
+                                'actividades.*.currency_id' => 'required',
+                                'actividades.*.disponibilidad' => 'required',
+                                'actividades.*.precio_pago_bolivares' => 'nullable|required_if:actividades.*.tipo_carga_precio_local,manual|numeric|min:0.01',
+                                'actividades.*.moneda_pago_bolivares' => 'nullable|required_if:actividades.*.tipo_carga_precio_local,manual',
+                            ],
+                            [
+                                // Nombre
+                                'actividades.*.nombre_actividad.required' => __('El nombre del producto o servicio es obligatorio.'),
+                                'actividades.*.nombre_actividad.min' => __('El nombre del producto o servicio debe tener al menos 3 caracteres.'),
+
+                                // Descripción
+                                'actividades.*.descripcion_actividad.required' => __('La descripción es obligatoria.'),
+                                'actividades.*.descripcion_actividad.min' => __('La descripción debe tener al menos 20 caracteres.'),
+
+                                // Tipo de producto o servicio
+                                'actividades.*.tipo_producto_servicio.required' => __('El tipo (producto o servicio) es obligatorio.'),
+
+                                // Precio
+                                'actividades.*.precio.required' => __('El precio es obligatorio.'),
+                                'actividades.*.precio.numeric' => __('El precio debe ser un número válido.'),
+                                'actividades.*.precio.min' => __('El precio debe ser mayor a cero.'),
+
+                                // Moneda
+                                'actividades.*.currency_id.required' => __('El tipo de moneda es obligatorio.'),
+
+                                // Disponibilidad
+                                'actividades.*.disponibilidad.required' => __('Debe seleccionar si está disponible o no.'),
+
+                                // Pago en Bolívares (Manual)
+                                'actividades.*.precio_pago_bolivares.required_if' => __('El precio para pago en bolívares es obligatorio'),
+                                'actividades.*.precio_pago_bolivares.numeric' => __('El precio debe ser un número válido.'),
+                                'actividades.*.precio_pago_bolivares.min' => __('Mínimo 0.01'),
+                                'actividades.*.moneda_pago_bolivares.required_if' => __('Debe seleccionar una moneda'),
+                            ]);
+
                         foreach ($request->actividades as $id_actividad => $datos) {
                             $actividad = ActividadExperiencia::find($id_actividad);
 
@@ -364,20 +364,34 @@ class ExperienciaController extends Controller
                     }
 
                 case 'horario':
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
+                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
                     ->with('success', __('Horarios confirmados con éxito.'));
-
-                case 'precio':
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
-                    ->with('success', __('Precio actualizado con éxito.'));
-
-                case 'informacion_adicional':
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
-                    ->with('success', __('Información actualizada con éxito.'));
-
                 case 'anfitrion':
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
-                    ->with('success', __('Anfitrión actualizado con éxito.'));
+                    $request->validate(
+                        [
+                            'trayectoria_profesional' => 'required',
+                        ],
+                        [
+                            'trayectoria_profesional.required' => __('La información de Nosotros es obligatoria'),
+                        ]);
+
+                    $anfitrion = AnfitrionExperiencia::where('experiencia_id', $id)->first();
+                    if ($anfitrion) {
+                        if (empty($anfitrion->foto_anfitrion)) {
+                            return back()->withErrors(['foto_anfitrion' => __('La foto es obligatoria.')])->withInput();
+                        }
+
+                        $anfitrion->trayectoria_profesional = $request->trayectoria_profesional;
+                        $anfitrion->save();
+                    }
+                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
+                    ->with('success', __('Información de Nosotros actualizada con éxito'));
+                case 'informacion_adicional':
+                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
+                    ->with('success', __('Información adicional actualizada con éxito'));
+                case 'precio':
+                    return redirect()->route('reda.experiencias.index')
+                                ->with('success', __('Pago realizado con éxito'));
             }
         }
     }

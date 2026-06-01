@@ -106,7 +106,7 @@ Route::prefix('reda')->group(function () {
 
         Route::match(['GET', 'POST'], 'formulario-de-pasos-experiencias/{id}/{paso}', [ExperienciaController::class, 'formularioDePasosExperiencias'])
         ->name('reda.experiencias.pasos')
-        ->where(['paso' => 'descripcion|fotos|actividades|ubicacion|horario|precio|informacion_adicional|anfitrion']);
+        ->where(['paso' => 'descripcion|fotos|actividades|ubicacion|horario|anfitrion|informacion_adicional|precio']);
 
         Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])
         ->name('reda.upload_photo');

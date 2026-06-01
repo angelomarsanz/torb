@@ -102,6 +102,50 @@ class MediaController extends Controller
                         'file' => $actividadId.'/'.$fileName
                     ]);
                     break;
+
+                case 'anfitrion-experiencia':
+                    $anfitrionId = $id;
+                    $anfitrion = AnfitrionExperiencia::find($anfitrionId);
+    
+                    if (!$anfitrion) {
+                        return response()->json(['success' => false, 'message' => 'Anfitrión no encontrado'], 404);
+                    }
+    
+                    // Definir ruta y nombre de archivo
+                    $path = public_path('images/anfitriones_experiencias/' . $anfitrionId);
+                    
+                    // Si ya existe una foto, eliminarla físicamente
+                    if (!empty($anfitrion->foto_anfitrion)) {
+                        $oldPath = public_path('images/anfitriones_experiencias/' . $anfitrion->foto_anfitrion);
+                        if (File::exists($oldPath)) {
+                            File::delete($oldPath);
+                        }
+                    }
+    
+                    // Crear directorio si no existe
+                    if (!File::isDirectory($path)) {
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+    
+                    // Guardar nueva foto
+                    $file = $request->file('cropped_image');
+                    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = time() . '_' . $originalName . '.' . $extension;
+                    $file->move($path, $fileName);
+    
+                    // Actualizar la base de datos
+                    $anfitrion->foto_anfitrion = $anfitrionId.'/'.$fileName;
+                    $anfitrion->save();
+    
+                    return response()->json([
+                        'success' => true, 
+                        'message' => 'Foto de anfitrión actualizada',
+                        'id' => $anfitrionId,
+                        'path' => asset('public/images/anfitriones_experiencias/' . $anfitrionId.'/'.$fileName),
+                        'file' => $anfitrionId.'/'.$fileName
+                    ]);
+                    break;
             
             }
         }

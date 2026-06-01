@@ -79,7 +79,7 @@
     "Productos y servicios actualizados con éxito.": "Productos y servicios actualizados con éxito.",
     "Horario actualizado con éxito.": "Horario actualizado con éxito.",
     "Precio actualizado con éxito.": "Precio actualizado con éxito.",
-    "Información actualizada con éxito.": "Información actualizada con éxito.",
+    "Información adicional actualizada con éxito": "Información adicional actualizada con éxito.",
     "Anfitrión actualizado con éxito.": "Anfitrión actualizado con éxito.",
     "Seleccione una opción": "Seleccione una opción",
     "Continuando...": "Continuando...",
@@ -106,5 +106,13 @@
     "Si la ubicación en el mapa no es la correcta, por favor escriba o remplace el texto existente con el nombre de la zona o sector, ciudad y estado para que el mapa se posicione automáticamente en la ubicación correspondiente": "Si la ubicación en el mapa no es la correcta, por favor escriba o remplace el texto existente con el nombre de la zona o sector, ciudad y estado para que el mapa se posicione automáticamente en la ubicación correspondiente.",
     "Puedes mover el puntero para establecer la posición exacta en el mapa" : "Puedes mover el puntero para establecer la posición exacta en el mapa.",
     "Dirección del negocio": "Dirección del negocio",
-    "Dirección del negocio (complemento)": "Dirección del negocio (complemento)"
+    "Dirección del negocio (complemento)": "Dirección del negocio (complemento)",
+    "Nosotros": "Nosotros",
+    "Comente sobre ustedes, su experiencia en el negocio, personal capacitado, nombre o marca de clientes importantes que pueden recomendarlos, etc.": "Comente sobre ustedes, su experiencia en el negocio, personal capacitado, nombre o marca de clientes importantes que pueden recomendarlos, etc.",
+    "Suba una foto de usted o de su equipo de trabajo.": "Suba una foto de usted o de su equipo de trabajo.",
+    "Trayectoria profesional": "Trayectoria profesional",
+    "Foto de anfitrión": "Foto de anfitrión",
+    "La información de Nosotros es obligatoria": "La información de Nosotros es obligatoria.",
+    "Información de Nosotros actualizada con éxito": "Información de Nosotros actualizada con éxito.",
+    "Pago realizado con éxito": "Pago realizado con éxito."
 }

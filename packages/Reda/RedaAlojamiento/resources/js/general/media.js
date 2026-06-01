@@ -60,7 +60,7 @@ $(document).on('change', '.upload_photos', function() {
         reader.onload = function(e) {
             // Ponemos la imagen en el modal
             $('#image-to-crop').attr('src', e.target.result);
-            if (origen === 'actividades-experiencias') {
+            if (origen === 'actividades-experiencias' || origen === 'anfitrion-experiencia') {
                 if (actividadId == null)
                 {
                     actividadId = $(this).attr('data-id');
@@ -68,11 +68,11 @@ $(document).on('change', '.upload_photos', function() {
                 if (actividadId) {
                     $('#crop_photo_id').val(actividadId);
                 }
-                console.log('ID de actividad detectado y asignado:', actividadId);
+                console.log('ID detectado y asignado al modal:', actividadId);
             }
             else
             {
-                // Limpiamos el photo_id porque es una foto NUEVA
+                // Limpiamos el photo_id porque es una foto NUEVA (ej: fotos generales de la experiencia)
                 $('#crop_photo_id').val('');
             }
             if (cropper) {
