@@ -1316,6 +1316,18 @@ $(function() {
                 });
 
                 break;
+
+            case 'informacion_adicional':
+                $('#list_des').validate({
+                    submitHandler: function(form) {
+                        $("#btn_next").attr("disabled", true);
+                        $(".spinner").removeClass('d-none');
+                        $("#btn_next-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
+                        return true;
+                    }
+                });
+
+                break;
             // ... resto de los pasos
         }
     }

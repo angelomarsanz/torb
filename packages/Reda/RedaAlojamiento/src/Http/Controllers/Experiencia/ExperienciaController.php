@@ -387,6 +387,12 @@ class ExperienciaController extends Controller
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
                     ->with('success', __('Información de Nosotros actualizada con éxito'));
                 case 'informacion_adicional':
+                    $informacion = InformacionExperiencia::where('experiencia_id', $id)->first();
+                    if ($informacion) {
+                        $informacion->requisitos_viajero = $request->requisitos_viajero;
+                        $informacion->save();
+                    }
+
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
                     ->with('success', __('Información adicional actualizada con éxito'));
                 case 'precio':

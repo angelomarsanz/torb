@@ -62,15 +62,6 @@
                                                     <div class=\"text-muted small mb-1\">ID: {{ $experiencia->id }}</div>
                                                     <p class="text-18 font-weight-700 text-color">{{ $experiencia->titulo }}</p>
                                                 </a>
-                                                <p class="text-14 text-muted mt-2">
-                                                    <i class="fa fa-map-marker-alt"></i> Lat: {{ $experiencia->latitud_encuentro }}, Long: {{ $experiencia->longitud_encuentro }}
-                                                </p>
-                                                <div class="mt-3">
-                                                    <span class="text-16 font-weight-600">
-                                                        {!! $currentCurrency->symbol !!} {{ number_format($experiencia->precio_persona, 2) }}
-                                                    </span>
-                                                    <span class="text-14"> / por persona</span>
-                                                </div>
                                             </div>
 
                                             {{-- Columna de Acciones --}}

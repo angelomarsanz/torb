@@ -1,4 +1,4 @@
-﻿@extends('template')
+@extends('template')
 @section('main')
 <div class="formulario-de-pasos-experiencias" data-step="{{ $paso }}"></div>
 <div class="margin-top-85">
@@ -14,8 +14,15 @@
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
                         <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
-                            <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0 ">
-                                <p>Información adicional</p>
+                            <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-3 pr-sm-3 pt-4">
+                                <h4 class="font-weight-700 mb-4">{{ __('Información adicional') }}</h4>
+
+                                <div class="form-group">
+                                    <label for="requisitos_viajero" class="font-weight-700">
+                                        {{ __('Agregue cualquier información adicional que usted desee que se publique de su producto o servicio (opcional)') }}
+                                    </label>
+                                    <textarea name="requisitos_viajero" id="requisitos_viajero" class="form-control" rows="10" placeholder="{{ __('Describa aquí cualquier información adicional...') }}">{{ old('requisitos_viajero', $result->informaciones->first()->requisitos_viajero ?? '') }}</textarea>
+                                </div>
                             </div>
 
                             <div class="col-md-12 p-0 mt-4 mb-5">
