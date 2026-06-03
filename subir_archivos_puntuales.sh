@@ -19,9 +19,11 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"resources/views/common/head.blade.php"
     #"resources/views/common/foot.blade.php"
 
+    #"resources/views/home/home.blade.php"
+
     #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     #"webpack.mix.js"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
@@ -58,7 +60,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_notificaciones.blade.php"
 
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/menu_lateral.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/fotos.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
@@ -71,9 +73,11 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/precio.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/informacion_adicional.blade.php"
 
-
-    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/menus/index.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/media.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
 
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php"

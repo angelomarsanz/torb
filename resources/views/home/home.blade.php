@@ -2,7 +2,7 @@
 @push('css')
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/daterangepicker.min.css') }}" />
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/user-front.min.css') }}" />
-    
+
 @endpush
 
 @section('main')
@@ -164,7 +164,7 @@
 												@else
 													<a class="btn btn-sm book_mark_change" data-id="{{ $property->id }}"
 														style="color:#1dbf73 }}; ">
-														<span style="font-size: 22px;">	
+														<span style="font-size: 22px;">
 															<i class="fas fa-heart pl-2"></i>
 														</span>
 													</a>
@@ -273,7 +273,7 @@
 		const BaseURL = '{{ url("/") }}';
     </script>
     <script src="{{ asset('js/front.min.js') }}"></script>
-    
+
 @endsection
 
 
