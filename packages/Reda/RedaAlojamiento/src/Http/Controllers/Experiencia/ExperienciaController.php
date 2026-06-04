@@ -37,6 +37,19 @@ class ExperienciaController extends Controller
         return view('reda-alojamiento::experiencia.experiencias.index', $data);
     }
 
+    public function listadoFrontend(Request $request)
+    {
+        // Consultamos todas las experiencias para el frontend
+        $data['experiencias'] = Experiencia::with(['fotos', 'owner'])
+                            ->orderBy('id', 'desc')
+                            ->paginate(10);
+
+        // Necesitamos la moneda para mostrar los precios
+        $data['currentCurrency'] = \App\Http\Helpers\Common::getCurrentCurrency();
+
+        return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', $data);
+    }
+
     public function create(Request $request)
     {
         if ($request->isMethod('post')) {

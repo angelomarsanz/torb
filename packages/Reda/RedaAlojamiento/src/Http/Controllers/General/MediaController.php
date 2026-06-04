@@ -21,7 +21,7 @@ class MediaController extends Controller
         $request->validate(
             [
                 'cropped_image' => 'required|image|mimes:jpg,jpeg,png,gif|max:25600',
-            ], 
+            ],
             [
                 'cropped_image.required' => __('reda-alojamiento::messages.general.la_foto_es_obligatoria'),
                 'cropped_image.image'    => __('reda-alojamiento::messages.general.el_archivo_debe_ser_una_imagen'),
@@ -46,7 +46,7 @@ class MediaController extends Controller
                     $foto->experiencia_id = $id;
                     $foto->photo = $fileName;
                     $foto->serial = FotoExperiencia::where('experiencia_id', $id)->count() + 1;
-                    
+
                     // Si es la primera foto, marcar como portada
                     $foto->cover_photo = ($foto->serial == 1) ? 1 : 0;
                     $foto->save();
@@ -62,14 +62,14 @@ class MediaController extends Controller
                 case 'actividades-experiencias':
                     $actividadId = $id;
                     $actividad = ActividadExperiencia::find($actividadId);
-    
+
                     if (!$actividad) {
                         return response()->json(['success' => false, 'message' => 'Actividad no encontrada'], 404);
                     }
-    
+
                     // Definir ruta y nombre de archivo
                     $path = public_path('images/actividades_experiencias/' . $actividadId);
-                    
+
                     // Si ya existe una foto, eliminarla físicamente
                     if (!empty($actividad->foto_actividad)) {
                         $oldPath = public_path('images/actividades_experiencias/' . $actividad->foto_actividad);
@@ -77,25 +77,25 @@ class MediaController extends Controller
                             File::delete($oldPath);
                         }
                     }
-    
+
                     // Crear directorio si no existe
                     if (!File::isDirectory($path)) {
                         File::makeDirectory($path, 0777, true, true);
                     }
-    
+
                     // Guardar nueva foto
                     $file = $request->file('cropped_image');
                     $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                     $extension = $file->getClientOriginalExtension();
                     $fileName = time() . '_' . $originalName . '.' . $extension;
                     $file->move($path, $fileName);
-    
+
                     // 5. Actualizar la base de datos
                     $actividad->foto_actividad = $actividadId.'/'.$fileName;
                     $actividad->save();
-    
+
                     return response()->json([
-                        'success' => true, 
+                        'success' => true,
                         'message' => 'Foto de actividad actualizada',
                         'id' => $actividadId,
                         'path' => asset('public/images/actividades_experiencias/' . $actividadId.'/'.$fileName),
@@ -106,14 +106,14 @@ class MediaController extends Controller
                 case 'anfitrion-experiencia':
                     $anfitrionId = $id;
                     $anfitrion = AnfitrionExperiencia::find($anfitrionId);
-    
+
                     if (!$anfitrion) {
                         return response()->json(['success' => false, 'message' => 'Anfitrión no encontrado'], 404);
                     }
-    
+
                     // Definir ruta y nombre de archivo
                     $path = public_path('images/anfitriones_experiencias/' . $anfitrionId);
-                    
+
                     // Si ya existe una foto, eliminarla físicamente
                     if (!empty($anfitrion->foto_anfitrion)) {
                         $oldPath = public_path('images/anfitriones_experiencias/' . $anfitrion->foto_anfitrion);
@@ -121,32 +121,32 @@ class MediaController extends Controller
                             File::delete($oldPath);
                         }
                     }
-    
+
                     // Crear directorio si no existe
                     if (!File::isDirectory($path)) {
                         File::makeDirectory($path, 0777, true, true);
                     }
-    
+
                     // Guardar nueva foto
                     $file = $request->file('cropped_image');
                     $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                     $extension = $file->getClientOriginalExtension();
                     $fileName = time() . '_' . $originalName . '.' . $extension;
                     $file->move($path, $fileName);
-    
+
                     // Actualizar la base de datos
                     $anfitrion->foto_anfitrion = $anfitrionId.'/'.$fileName;
                     $anfitrion->save();
-    
+
                     return response()->json([
-                        'success' => true, 
+                        'success' => true,
                         'message' => 'Foto de anfitrión actualizada',
                         'id' => $anfitrionId,
                         'path' => asset('public/images/anfitriones_experiencias/' . $anfitrionId.'/'.$fileName),
                         'file' => $anfitrionId.'/'.$fileName
                     ]);
                     break;
-            
+
             }
         }
         return response()->json(['success' => false, 'message' => 'No se pudo subir la foto'], 400);
@@ -170,17 +170,17 @@ class MediaController extends Controller
                             'cropped_image.required' => __('reda-alojamiento::messages.general.la_foto_es_obligatoria'),
                             'cropped_image.max' => __('reda-alojamiento::messages.general.el_archivo_es_muy_pesado_máximo_25_mb'),
                         ]);
-                
+
                     $foto = FotoExperiencia::find($request->photo_id);
-                
+
                     if ($foto) {
                         // Definir la ruta física (donde se guarda)
                         $path = public_path('images/experiencias/' . $foto->experiencia_id);
-                        
+
                         // Mantener el nombre de archivo original para sobreescribirlo
                         $fileName = $foto->photo;
                         $file = $request->file('cropped_image');
-                        
+
                         // Asegurar que el directorio existe
                         if (!File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true, true);
@@ -190,16 +190,16 @@ class MediaController extends Controller
                         if (File::exists($path . '/' . $fileName)) {
                             File::delete($path . '/' . $fileName);
                         }
-                
+
                         // Mover el archivo (esto reemplaza la foto vieja físicamente)
                         $file->move($path, $fileName);
-                
+
                         // Generar la URL pública correcta para devolver al JS
                         // Usamos asset() que apunta a la carpeta public
                         $newUrl = asset('images/experiencias/' . $foto->experiencia_id . '/' . $fileName) . '?v=' . time();
-                
+
                         return response()->json([
-                            'success' => true, 
+                            'success' => true,
                             'message' => 'Foto actualizada correctamente',
                             'path' => $newUrl // Esto sirve para actualizar el src en el JS si decides no recargar
                         ]);
@@ -208,7 +208,7 @@ class MediaController extends Controller
 
                 case 'fotos-actividades':
                     // Lógica para actividades
-                    break;                    
+                    break;
             }
         }
         return response()->json(['success' => false, 'message' => 'No se pudo procesar la imagen'], 400);
@@ -224,11 +224,11 @@ class MediaController extends Controller
                 $foto = FotoExperiencia::find($request->photo_id);
                 $foto->cover_photo = 1;
                 $foto->save();
-                
+
                 return response()->json(['success' => true]);
                 break;
             case 'actividades-experiencias':
-                // 
+                //
                 break;
         }
     }
@@ -249,7 +249,7 @@ class MediaController extends Controller
                     break;
 
                 case 'fotos-actividades':
-                    // N/A 
+                    // N/A
                     break;
             }
         }

@@ -13,7 +13,7 @@ export const mostrarProductosServicios = () => {
 
         const botonId = 'btn-flotante-productos-servicios';
         const textoBoton = window.RedaAlojamientoJson["Productos y Servicios"] || "Productos y Servicios";
-        const urlProductosServicios = '#';
+        const urlProductosServicios = APP_URL + '/reda/listado-negocios';
 
         // Usamos el icono importado
         const iconoBoton = productosServiciosSvg;

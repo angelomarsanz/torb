@@ -36,6 +36,7 @@ Los nombres de variables deben estar en español.
     - En el Frontend se utiliza Bootstrap 4.5
     - En el Backend se utiliza Bootstrap 5.2.3
 - El plugin Reda/Alojamiento tiene sus propios estilos:
+Los estilos del frontend deben estar inspirados en los estilos de la popular aplicación Airbnb. Creo que son estilos con directrices de Material Design de Google aunque no estoy seguro.
 Para el admin: packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss (por favor codificar los estilos del admin en este archivo)
 Para el frontend: packages/Reda/RedaAlojamiento/resources/sass/frontend/main.scss (por favor codificar los estilos del frontend en este archivo)
 Esos estilos se agregan al proyecto principal en los archivos:

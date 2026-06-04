@@ -595,3 +595,126 @@
         }
     }
 }
+
+/* --- LISTADO DE NEGOCIOS (FRONTEAND) --- */
+
+.seccion-filtros {
+    padding: 20px 0;
+    border-bottom: 1px solid #ebebeb;
+    margin-bottom: 30px;
+}
+
+.seccion-destacados {
+    margin-bottom: 50px;
+    
+    .section-intro {
+        text-align: center;
+    }
+}
+
+.seccion-listado {
+    .section-intro {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+}
+
+.negocio-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    margin-bottom: 30px;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    }
+}
+
+.negocio-img-container {
+    position: relative;
+    width: 100%;
+    padding-top: 66.66%; /* 3:2 Aspect Ratio */
+    background-color: #f7f7f7;
+    border-radius: 12px; /* Redondeado en todas las esquinas */
+    overflow: hidden;
+
+    img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px; /* Asegura que la imagen también tenga el redondeado */
+    }
+
+    .badge-categoria {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        z-index: 2;
+    }
+
+    .btn-favorito {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #fff;
+        text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        font-size: 20px;
+        z-index: 2;
+    }
+}
+
+.negocio-info {
+    padding: 12px 4px;
+
+    .negocio-titulo {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #222;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .negocio-ubicacion {
+        font-size: 14px;
+        color: #717171;
+        margin-bottom: 6px;
+    }
+
+    .negocio-precio {
+        font-size: 15px;
+        font-weight: 600;
+        color: #222;
+
+        .negocio-precio-tipo {
+            font-weight: 400;
+            color: #222;
+        }
+    }
+}
+
+.placeholder-box {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-weight: 600;
+}
