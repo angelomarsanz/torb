@@ -21,7 +21,7 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     #"resources/views/home/home.blade.php"
 
-    #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+    "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/routes/web.php"
     #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
@@ -74,6 +74,9 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/informacion_adicional.blade.php"
 
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/menus/mostrarProductosServicios.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/productosServiciosSvg.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/index.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/media.js"

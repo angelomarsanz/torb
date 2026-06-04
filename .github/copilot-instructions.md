@@ -235,3 +235,9 @@ Para la manipulación de imágenes en las vistas se usará el script:
 <script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
 Y el controlador:
 packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php
+
+## Íconos personalizados .svg
+Para cualquier ícono personalizado .svg que se requiera crear en el plugin packages/Reda/RedaAlojamiento se debe crear el respectivo archivo .svg en packages/Reda/RedaAlojamiento/resources/js/general/iconos e importar en el archivo .js que lo vaya a usar
+
+## Paginación
+Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles
