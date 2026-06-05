@@ -1,7 +1,7 @@
 @extends('template')
 
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/user-front.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
 @endpush
 
 @section('main')
@@ -29,7 +29,7 @@
                             <label>{{ __('Distancia') }}<span id="radio_km_display">25 km</span></label>
                             <input type="range" name="radio" id="filtro_radio" min="1" max="50" value="25" class="custom-range">
                         </div>
-                        
+
                         <!-- Ubicación -->
                         <div class="col-md-5 search-item" id="item_ubicacion">
                             <label>{{ __('Ubicación del negocio') }}</label>
@@ -106,5 +106,5 @@
 @section('validation_script')
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
     <script src="{{ asset('public/js/reda/general/notificaciones.min.js?v=' . time()) }}"></script>
-    <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listado-experiencias.min.js?v=' . time()) }}"></script>
+    <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

@@ -39,6 +39,8 @@ if (buildAlojamiento) {
     // Js para uso general
     mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general-main.min.js');
 
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js', 'public/js/reda/general/notificaciones.min.js');
+
     mix.js('packages/Reda/RedaAlojamiento/resources/js/general/media.js', 'public/js/reda/general/reda-general-media.min.js');
 
     // Js por vistas
