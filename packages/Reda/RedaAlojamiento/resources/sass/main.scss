@@ -876,13 +876,67 @@
     }
 }
 
-.placeholder-box {
-    background: #f8f9fa;
-    border: 2px dashed #dee2e6;
+/* --- BOTÓN FLOTANTE ALOJAMIENTOS (PÁGINA DE NEGOCIOS) --- */
+.btn-flotante-alojamientos {
+    position: fixed;
+    top: 150px;
+    left: 20px;
+    z-index: 1050;
+    text-align: center;
+    background: #fff;
+    border: 2px solid #ff385c; // Usamos el color de Airbnb/Listado para diferenciar
     border-radius: 12px;
+    padding: 12px 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-decoration: none !important;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    color: #adb5bd;
-    font-weight: 600;
+    width: 90px;
+
+    &:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(255, 56, 92, 0.3);
+        background-color: #fff8f9;
+        border-color: #bd1e59;
+    }
+
+    svg {
+        width: 30px;
+        height: 30px;
+        color: #ff385c;
+        margin-bottom: 6px;
+
+        path, line, polyline, rect, circle {
+            stroke: currentColor;
+        }
+    }
+
+    span {
+        font-size: 11px;
+        font-weight: 800;
+        color: #333;
+        line-height: 1.1;
+        display: block;
+        text-transform: uppercase;
+    }
+}
+
+@media (max-width: 767px) {
+    .btn-flotante-alojamientos {
+        top: 100px;
+        left: 15px;
+        width: 75px;
+        padding: 8px 5px;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        span {
+            font-size: 9px;
+        }
+    }
 }

@@ -23,7 +23,7 @@
                     if (place.geometry) {
                         $('#filtro_lat').val(place.geometry.location.lat());
                         $('#filtro_lng').val(place.geometry.location.lng());
-                        
+
                         // Cambiar modo a ubicación
                         activarModoUbicacion();
                         ejecutarBusqueda();
@@ -63,7 +63,7 @@
             $(document).on('click', '.btn-favorito', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const $icono = $(this).find('i');
                 if ($icono.hasClass('far')) {
                     $icono.removeClass('far').addClass('fas text-danger');
@@ -80,11 +80,11 @@
                     // Notificar al usuario (opcional, según tu preferencia)
                     // window.mostrarNotificacion('Búsqueda por Distancia', 'Se ha priorizado la búsqueda por rango de KM. Se limpió la ubicación específica.', 'info');
                 }
-                
+
                 modoBusqueda = 'distancia';
                 $('#item_ubicacion').addClass('item-sombreado-visual');
                 $('#item_radio').removeClass('item-sombreado-visual');
-                
+
                 // Limpiar datos de ubicación para evitar conflictos en el servidor
                 $('#filtro_ubicacion').val('');
                 $('#filtro_lat').val('');
@@ -97,8 +97,8 @@
             function activarModoUbicacion() {
                 if (modoBusqueda === 'distancia') {
                     window.mostrarNotificacion(
-                        window.RedaAlojamientoJson["Búsqueda por Ubicación"] || 'Búsqueda por Ubicación', 
-                        window.RedaAlojamientoJson["Solo puede buscar por distancia o ubicación. Se ha restablecido el rango de distancia."] || 'Solo puede buscar por distancia o ubicación. Se ha restablecido el rango de distancia.', 
+                        window.RedaAlojamientoJson["Búsqueda por Ubicación"] || 'Búsqueda por Ubicación',
+                        window.RedaAlojamientoJson["Solo puede buscar por distancia o ubicación. Se ha restablecido el rango de distancia."] || 'Solo puede buscar por distancia o ubicación. Se ha restablecido el rango de distancia.',
                         'info'
                     );
                 }
@@ -106,7 +106,7 @@
                 modoBusqueda = 'ubicacion';
                 $('#item_radio').addClass('item-sombreado-visual');
                 $('#item_ubicacion').removeClass('item-sombreado-visual');
-                
+
                 // Restablecer slider a posición original (25km)
                 $('#filtro_radio').val(25);
                 $('#radio_km_display').text('25 km');
