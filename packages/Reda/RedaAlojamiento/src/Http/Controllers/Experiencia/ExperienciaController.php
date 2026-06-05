@@ -39,15 +39,93 @@ class ExperienciaController extends Controller
 
     public function listadoFrontend(Request $request)
     {
-        // Consultamos todas las experiencias para el frontend
-        $data['experiencias'] = Experiencia::with(['fotos', 'owner'])
-                            ->orderBy('id', 'desc')
-                            ->paginate(10);
+        // 1. Obtener Categorías desde Settings
+        $setting = DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->first();
+        $categoriasNegocios = [];
+        if ($setting && !empty($setting->value)) {
+            $dataJson = json_decode($setting->value, true);
+            $categoriasNegocios = $dataJson['categorias'] ?? [];
+            ksort($categoriasNegocios);
+        }
 
-        // Necesitamos la moneda para mostrar los precios
-        $data['currentCurrency'] = \App\Http\Helpers\Common::getCurrentCurrency();
+        // 2. Construir la consulta base
+        $query = Experiencia::with(['fotos', 'owner']);
 
-        return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', $data);
+        // 3. Aplicar Filtros si existen (para AJAX o búsqueda directa)
+        if ($request->filled('categoria')) {
+            $query->where('categoria_negocio', $request->categoria);
+        }
+
+        if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
+            $lat = $request->latitud;
+            $lng = $request->longitud;
+            $radio = $request->radio; // en km
+
+            // Fórmula de Haversine para filtrar por distancia
+            // Nota: Esto asume que la base de datos es MySQL 5.7+ para usar JSON_EXTRACT
+            $query->whereRaw("
+                (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))) 
+                * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?)) 
+                + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
+            ", [$lat, $lng, $lat, $radio]);
+        } elseif ($request->filled('ubicacion_texto')) {
+            $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+        }
+
+        // 4. Obtener Destacados (por ahora sin condiciones específicas, los más recientes)
+        $destacadosQuery = clone $query;
+        $destacados = $destacadosQuery->orderBy('id', 'desc')->take(8)->get();
+
+        // 5. Obtener Listado General con Paginación
+        $experiencias = $query->orderBy('id', 'desc')->paginate(10);
+
+        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+
+        // 6. Respuesta para AJAX
+        if ($request->ajax()) {
+            try {
+                $htmlDestacados = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
+                    'experiencias' => $destacados,
+                    'currentCurrency' => $currentCurrency
+                ])->render();
+
+                $htmlGeneral = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
+                    'experiencias' => $experiencias,
+                    'currentCurrency' => $currentCurrency
+                ])->render();
+
+                $htmlPaginacion = $experiencias->links('vendor.pagination.bootstrap-4')->render();
+
+                $respuesta = [
+                    'success' => true,
+                    'message' => 'Results retrieved successfully',
+                    'mensaje_usuario' => __('Resultados recuperados con éxito'),
+                    'respuesta' => [
+                        'html_destacados' => $htmlDestacados,
+                        'html_general'    => $htmlGeneral,
+                        'html_paginacion' => $htmlPaginacion,
+                        'total'           => $experiencias->total()
+                    ],
+                    'code' => 200
+                ];
+            } catch (\Exception $e) {
+                $respuesta = [
+                    'success' => false,
+                    'message' => 'Error rendering results: ' . $e->getMessage(),
+                    'mensaje_usuario' => __('Error al preparar los resultados'),
+                    'respuesta' => $e->getMessage(),
+                    'code' => 500
+                ];
+            }
+            return response()->json($respuesta, $respuesta['code']);
+        }
+
+        return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', compact(
+            'experiencias', 
+            'destacados', 
+            'categoriasNegocios', 
+            'currentCurrency'
+        ));
     }
 
     public function create(Request $request)

@@ -127,5 +127,14 @@
     "persona": "persona",
     "grupo": "grupo",
     "Consultar precio": "Consultar precio",
-    "No se encontraron negocios disponibles en este momento.": "No se encontraron negocios disponibles en este momento."
+    "No se encontraron negocios disponibles en este momento.": "No se encontraron negocios disponibles en este momento.",
+    "Categoría": "Categoría",
+    "Todas las categorías": "Todas las categorías",
+    "¿A dónde vas?": "¿A dónde vas?",
+    "Ubicación del negocio": "Ubicación del negocio",
+    "Sector, ciudad, estado...": "Sector, ciudad, estado...",
+    "Distancia": "Distancia",
+    "No se encontraron negocios disponibles con estos criterios.": "No se encontraron negocios disponibles con estos criterios.",
+    "Resultados recuperados con éxito": "Resultados recuperados con éxito",
+    "Error buscando negocios": "Error buscando negocios"
 }
