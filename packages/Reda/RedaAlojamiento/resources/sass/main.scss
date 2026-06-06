@@ -543,6 +543,161 @@
     }
 }
 
+.seccion-filtros {
+    padding: 10px 0;
+    margin-bottom: 10px;
+}
+
+.search-bar-negocios {
+    background: #fff;
+    border-radius: 40px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 10px 20px;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+}
+
+.search-item {
+    border-right: 1px solid #ddd;
+    padding: 8px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+
+    &.item-sombreado {
+        opacity: 0.4;
+        filter: grayscale(1);
+        pointer-events: none;
+    }
+
+    &.item-sombreado-visual {
+        opacity: 0.5;
+        filter: blur(0.5px);
+    }
+
+    label {
+        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        margin-bottom: 2px;
+        color: #000;
+        text-transform: uppercase;
+    }
+
+    select, input[type="text"] {
+        border: none;
+        width: 100%;
+        padding: 0;
+        font-size: 14px;
+        color: #222;
+        background: transparent;
+        height: 24px;
+        line-height: 24px;
+        text-overflow: ellipsis;
+
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        &::placeholder {
+            color: #717171;
+            opacity: 1;
+        }
+    }
+
+    .custom-range {
+        height: 1.4rem;
+        padding: 0;
+        background-color: transparent;
+        appearance: none;
+
+        &::-webkit-slider-runnable-track {
+            background-color: #ddd;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        &::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #1dbf73;
+            border-radius: 50%;
+            margin-top: -6px;
+            cursor: pointer;
+        }
+    }
+}
+
+#radio_km_display {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1dbf73;
+    margin-left: 5px;
+}
+
+.btn-search-negocio {
+    background: #1dbf73;
+    color: #fff !important;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    
+    i {
+        font-size: 16px;
+    }
+
+    &:hover {
+        background: #17a665;
+        transform: scale(1.05);
+    }
+}
+
+/* RESPONSIVIDAD PARA MÓVILES (BÚSQUEDA) */
+@media (max-width: 991px) {
+    .search-bar-negocios {
+        border-radius: 24px;
+        padding: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .search-item {
+        border-right: none !important;
+        border-bottom: 1px solid #eee;
+        padding: 12px 5px;
+        
+        &:last-of-type {
+            border-bottom: none;
+        }
+    }
+
+    .btn-search-negocio {
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 15px;
+        height: 48px;
+        
+        &::after {
+            content: " Buscar";
+            font-weight: 700;
+            margin-left: 10px;
+            font-size: 15px;
+        }
+    }
+}
+
 .container-carrusel {
     overflow-x: auto;
     overflow-y: hidden;
