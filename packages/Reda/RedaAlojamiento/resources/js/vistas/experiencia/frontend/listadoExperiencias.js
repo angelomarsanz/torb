@@ -1,6 +1,6 @@
 /**
  * packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js
- * Script para gestionar la interactividad de la vista de listado de negocios.
+ * Script para gestionar la interactividad de la vista de listado de comercios.
  */
 
 (function( $ ) {
@@ -9,54 +9,73 @@
     const containerId = '#listado_experiencias';
 
     if ($(containerId).length) {
-        console.log('Script para Listado de Negocios cargado correctamente');
+        console.log('Script para Listado de Comercios cargado correctamente');
 
         $(function() {
             let modoBusqueda = 'ninguno'; // 'distancia' o 'ubicacion'
 
-            // 1. Inicializar Google Places Autocomplete
-            const inputUbicacion = document.getElementById('filtro_ubicacion');
-            if (inputUbicacion) {
-                const autocomplete = new google.maps.places.Autocomplete(inputUbicacion);
+            // 1. Inicializar Google Places Autocomplete para ambos inputs (Desktop y Modal)
+            const inputsUbicacion = document.querySelectorAll('.filtro-ubicacion');
+            inputsUbicacion.forEach(input => {
+                const autocomplete = new google.maps.places.Autocomplete(input);
                 autocomplete.addListener('place_changed', function() {
                     const place = autocomplete.getPlace();
                     if (place.geometry) {
-                        $('#filtro_lat').val(place.geometry.location.lat());
-                        $('#filtro_lng').val(place.geometry.location.lng());
+                        const $parentForm = $(input).closest('form');
+                        $parentForm.find('.filtro-lat').val(place.geometry.location.lat());
+                        $parentForm.find('.filtro-lng').val(place.geometry.location.lng());
 
                         // Cambiar modo a ubicación
-                        activarModoUbicacion();
-                        ejecutarBusqueda();
+                        activarModoUbicacion($parentForm);
+                        ejecutarBusqueda($parentForm);
+                        
+                        // Si estamos en móvil, cerrar el modal tras seleccionar
+                        if ($('#modalBusquedaComercios').hasClass('show')) {
+                            $('#modalBusquedaComercios').modal('hide');
+                        }
                     }
                 });
-            }
-
-            // 2. Manejar el rango de distancia
-            $('#filtro_radio').on('input', function() {
-                $('#radio_km_display').text($(this).val() + ' km');
             });
 
-            $('#filtro_radio').on('change', function() {
-                activarModoDistancia();
-                ejecutarBusqueda();
+            // 2. Manejar el rango de distancia (Sync displays)
+            $(document).on('input', '.filtro-radio', function() {
+                const valor = $(this).val();
+                $('.radio-km-display').text(valor + ' km');
+                // Sincronizar el otro slider si existe
+                $('.filtro-radio').not(this).val(valor);
+            });
+
+            $(document).on('change', '.filtro-radio', function() {
+                const $parentForm = $(this).closest('form');
+                activarModoDistancia($parentForm);
+                ejecutarBusqueda($parentForm);
             });
 
             // Detectar si el usuario escribe manualmente en ubicación
-            $('#filtro_ubicacion').on('input', function() {
+            $(document).on('input', '.filtro-ubicacion', function() {
+                const $parentForm = $(this).closest('form');
                 if ($(this).val().length > 0 && modoBusqueda === 'distancia') {
-                    activarModoUbicacion();
+                    activarModoUbicacion($parentForm);
                 }
             });
 
             // 3. Manejar cambio de categoría
-            $('#filtro_categoria').on('change', function() {
-                ejecutarBusqueda();
+            $(document).on('change', '.filtro-categoria', function() {
+                const $parentForm = $(this).closest('form');
+                // Sincronizar el otro select
+                $('.filtro-categoria').not(this).val($(this).val());
+                ejecutarBusqueda($parentForm);
             });
 
             // 4. Manejar el envío del formulario (Enter o Botón)
-            $('#form_busqueda_negocios').on('submit', function(e) {
+            $(document).on('submit', '.form-busqueda-comercios', function(e) {
                 e.preventDefault();
-                ejecutarBusqueda();
+                ejecutarBusqueda($(this));
+                
+                // Si es el modal, cerrarlo
+                if ($(this).attr('id') === 'form_busqueda_negocios_movil') {
+                    $('#modalBusquedaComercios').modal('hide');
+                }
             });
 
             // 5. Botones de favoritos
@@ -66,57 +85,47 @@
 
                 const $icono = $(this).find('i');
                 if ($icono.hasClass('far')) {
-                    $icono.removeClass('far').addClass('fas text-danger');
+                    $icono.removeClass('far').addClass('fas text-success');
                 } else {
-                    $icono.removeClass('fas text-danger').addClass('far');
+                    $icono.removeClass('fas text-success').addClass('far');
                 }
             });
 
             /**
              * Lógica de Exclusividad: Activar Modo Distancia
              */
-            function activarModoDistancia() {
-                if (modoBusqueda === 'ubicacion') {
-                    // Notificar al usuario (opcional, según tu preferencia)
-                    // window.mostrarNotificacion('Búsqueda por Distancia', 'Se ha priorizado la búsqueda por rango de KM. Se limpió la ubicación específica.', 'info');
-                }
-
+            function activarModoDistancia($form) {
                 modoBusqueda = 'distancia';
+                
+                // Sombreado visual solo en desktop
                 $('#item_ubicacion').addClass('item-sombreado-visual');
                 $('#item_radio').removeClass('item-sombreado-visual');
 
-                // Limpiar datos de ubicación para evitar conflictos en el servidor
-                $('#filtro_ubicacion').val('');
-                $('#filtro_lat').val('');
-                $('#filtro_lng').val('');
+                // Limpiar datos de ubicación en todos los forms para consistencia
+                $('.filtro-ubicacion').val('');
+                $('.filtro-lat').val('');
+                $('.filtro-lng').val('');
             }
 
             /**
              * Lógica de Exclusividad: Activar Modo Ubicación
              */
-            function activarModoUbicacion() {
-                if (modoBusqueda === 'distancia') {
-                    window.mostrarNotificacion(
-                        window.RedaAlojamientoJson["Búsqueda por Ubicación"] || 'Búsqueda por Ubicación',
-                        window.RedaAlojamientoJson["Solo puede buscar por distancia o ubicación. Se ha restablecido el rango de distancia."] || 'Solo puede buscar por distancia o ubicación. Se ha restablecido el rango de distancia.',
-                        'info'
-                    );
-                }
-
+            function activarModoUbicacion($form) {
                 modoBusqueda = 'ubicacion';
+                
                 $('#item_radio').addClass('item-sombreado-visual');
                 $('#item_ubicacion').removeClass('item-sombreado-visual');
 
                 // Restablecer slider a posición original (25km)
-                $('#filtro_radio').val(25);
-                $('#radio_km_display').text('25 km');
+                $('.filtro-radio').val(25);
+                $('.radio-km-display').text('25 km');
             }
 
             /**
              * Orquestador de la búsqueda
              */
-            async function ejecutarBusqueda() {
-                const formData = $('#form_busqueda_negocios').serialize();
+            async function ejecutarBusqueda($form) {
+                const formData = $form.serialize();
                 const $contenedorDestacados = $('#contenedor_destacados');
                 const $contenedorGeneral = $('#contenedor_listado_general');
                 const $contenedorPaginacion = $('#contenedor_paginacion');
@@ -125,7 +134,7 @@
                 $contenedorDestacados.css('opacity', '0.5');
                 $contenedorGeneral.css('opacity', '0.5');
 
-                const respuestaBusqueda = await obtenerNegocios(formData);
+                const respuestaBusqueda = await obtenerComercios(formData);
 
                 if (respuestaBusqueda.success) {
                     const data = respuestaBusqueda.respuesta;
@@ -142,9 +151,9 @@
     }
 
     /**
-     * Función llamada para obtener negocios vía AJAX (Estructura Estándar)
+     * Función llamada para obtener comercios vía AJAX (Estructura Estándar)
      */
-    const obtenerNegocios = (filtros) => {
+    const obtenerComercios = (filtros) => {
         return new Promise((resolve) => {
             $.ajax({
                 url: window.location.pathname,

@@ -8,15 +8,25 @@
 <div id="listado_experiencias" class="container-fluid container-fluid-90 mt-5 pt-4">
 
     <!-- SECCIÓN 1: FILTROS (BARRA DE BÚSQUEDA) -->
-    <section class="seccion-filtros">
+    
+    <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
+    <div class="d-lg-none seccion-filtros-movil mb-4">
+        <div class="search-trigger-movil" data-toggle="modal" data-target="#modalBusquedaComercios">
+            <i class="fas fa-search"></i>
+            <span>{{ __('Buscar') }}</span>
+        </div>
+    </div>
+
+    <!-- Barra de Búsqueda Desktop (Solo visible en >= 992px) -->
+    <section class="seccion-filtros d-none d-lg-block">
         <div class="row justify-content-center">
             <div class="col-lg-11 col-xl-10">
                 <div class="search-bar-negocios">
-                    <form id="form_busqueda_negocios" class="row align-items-center m-0">
+                    <form id="form_busqueda_negocios" class="form-busqueda-comercios row align-items-center m-0">
                         <!-- Categoría -->
                         <div class="col-md-3 search-item" id="item_categoria">
                             <label>{{ __('Categoría') }}</label>
-                            <select name="categoria" id="filtro_categoria">
+                            <select name="categoria" class="filtro-categoria">
                                 <option value="">{{ __('Todas las categorías') }}</option>
                                 @foreach($categoriasNegocios as $clave => $nombre)
                                     <option value="{{ $clave }}">{{ $nombre }}</option>
@@ -26,16 +36,16 @@
 
                         <!-- Radio / Distancia -->
                         <div class="col-md-3 search-item" id="item_radio">
-                            <label>{{ __('Distancia') }}<span id="radio_km_display">25 km</span></label>
-                            <input type="range" name="radio" id="filtro_radio" min="1" max="50" value="25" class="custom-range">
+                            <label>{{ __('Distancia') }}<span class="radio-km-display">25 km</span></label>
+                            <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="25">
                         </div>
 
                         <!-- Ubicación -->
                         <div class="col-md-5 search-item" id="item_ubicacion">
                             <label>{{ __('Ubicación del negocio') }}</label>
-                            <input type="text" name="ubicacion_texto" id="filtro_ubicacion" placeholder="{{ __('Sector, ciudad, estado...') }}" autocomplete="off">
-                            <input type="hidden" name="latitud" id="filtro_lat">
-                            <input type="hidden" name="longitud" id="filtro_lng">
+                            <input type="text" name="ubicacion_texto" class="filtro-ubicacion" placeholder="{{ __('Sector, ciudad, estado...') }}" autocomplete="off">
+                            <input type="hidden" name="latitud" class="filtro-lat">
+                            <input type="hidden" name="longitud" class="filtro-lng">
                         </div>
 
                         <!-- Botón Buscar -->
@@ -49,6 +59,63 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal de Búsqueda Móvil -->
+    <div class="modal fade modal-busqueda-movil" id="modalBusquedaComercios" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Búsqueda de Comercios') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_busqueda_negocios_movil" class="form-busqueda-comercios">
+                        <div class="filtro-movil-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Categoría') }}</label>
+                            <select name="categoria" class="filtro-categoria form-control">
+                                <option value="">{{ __('Todas las categorías') }}</option>
+                                @foreach($categoriasNegocios as $clave => $nombre)
+                                    <option value="{{ $clave }}">{{ $nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="filtro-movil-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-success ml-2">25 km</span></label>
+                            <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="25">
+                            <div class="d-flex justify-content-between mt-1 text-muted f-12">
+                                <span>1 km</span>
+                                <span>50 km</span>
+                            </div>
+                        </div>
+
+                        <div class="filtro-movil-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Ubicación') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                                </div>
+                                <input type="text" name="ubicacion_texto" class="filtro-ubicacion form-control border-left-0" placeholder="{{ __('Sector, ciudad, estado...') }}" autocomplete="off">
+                            </div>
+                            <input type="hidden" name="latitud" class="filtro-lat">
+                            <input type="hidden" name="longitud" class="filtro-lng">
+                        </div>
+
+                        <div class="modal-footer-search mt-5">
+                            <button type="submit" class="btn btn-primary btn-block btn-lg btn-ejecutar-busqueda-movil">
+                                <i class="fas fa-search mr-2"></i> {{ __('Buscar') }}
+                            </button>
+                            <button type="button" class="btn btn-link btn-block text-muted" data-dismiss="modal">
+                                {{ __('Cancelar') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- SECCIÓN 2: DESTACADOS -->
     <section class="seccion-destacados mb-5">

@@ -543,6 +543,37 @@
     }
 }
 
+/* Trigger de Búsqueda Móvil (Airbnb Style) */
+.search-trigger-movil {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 40px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    cursor: pointer;
+    gap: 10px;
+    transition: all 0.2s ease;
+
+    i {
+        color: #1dbf73;
+        font-size: 16px;
+    }
+
+    span {
+        font-size: 14px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    &:active {
+        transform: scale(0.98);
+        background-color: #f7f7f7;
+    }
+}
+
 .seccion-filtros {
     padding: 10px 0;
     margin-bottom: 10px;
@@ -636,7 +667,7 @@
     }
 }
 
-#radio_km_display {
+.radio-km-display {
     font-size: 12px;
     font-weight: 700;
     color: #1dbf73;
@@ -665,36 +696,29 @@
     }
 }
 
-/* RESPONSIVIDAD PARA MÓVILES (BÚSQUEDA) */
-@media (max-width: 991px) {
-    .search-bar-negocios {
-        border-radius: 24px;
-        padding: 15px;
-        margin-bottom: 30px;
+/* Modal de Búsqueda Móvil */
+.modal-busqueda-movil {
+    .modal-content {
+        border-radius: 20px;
+        border: none;
     }
-    
-    .search-item {
-        border-right: none !important;
+    .modal-header {
         border-bottom: 1px solid #eee;
-        padding: 12px 5px;
-        
-        &:last-of-type {
-            border-bottom: none;
-        }
+        padding: 20px;
     }
-
-    .btn-search-negocio {
-        width: 100%;
-        border-radius: 8px;
-        margin-top: 15px;
-        height: 48px;
-        
-        &::after {
-            content: " Buscar";
-            font-weight: 700;
-            margin-left: 10px;
-            font-size: 15px;
-        }
+    .modal-body {
+        padding: 25px 20px;
+    }
+    .form-control {
+        border-radius: 10px;
+        height: 45px;
+    }
+    .btn-ejecutar-busqueda-movil {
+        background: #1dbf73;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        &:hover { background: #17a665; }
     }
 }
 
