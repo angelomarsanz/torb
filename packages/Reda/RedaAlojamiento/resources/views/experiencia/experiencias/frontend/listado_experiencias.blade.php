@@ -77,12 +77,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Botón Flotante de Alojamientos (Para regresar a la Home) -->
-    <a href="{{ url('/') }}" id="btn-flotante-alojamientos" class="btn-flotante-alojamientos" data-role="added-by-reda">
-        {!! file_get_contents(base_path('packages/Reda/RedaAlojamiento/resources/svg/alojamientos.svg')) !!}
-        <span>{{ __('Alojamientos') }}</span>
-    </a>
 </div>
 
 <!-- Modal Notificación (Si no está en el layout) -->

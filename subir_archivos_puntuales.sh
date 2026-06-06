@@ -17,16 +17,16 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"resources/views/admin/common/foot.blade.php"
 
     #"resources/views/common/head.blade.php"
+    #"resources/views/common/header.blade.php"
     #"resources/views/common/foot.blade.php"
 
     #"resources/views/home/home.blade.php"
 
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-    "packages/Reda/RedaAlojamiento/routes/web.php"
+    #"packages/Reda/RedaAlojamiento/routes/web.php"
     #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
-    "packages/Reda/RedaAlojamiento/resources/svg/alojamientos.svg"
-    "webpack.mix.js"
+    #"webpack.mix.js"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
 
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/Experiencia.php"
@@ -77,9 +77,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_cards.blade.php"
 
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/mostrarProductosServicios.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/productosServiciosSvg.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/comerciosSvg.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/alojamientosSvg.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/index.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/media.js"
