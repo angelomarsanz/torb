@@ -51,27 +51,31 @@
     </section>
 
     <!-- SECCIÓN 2: DESTACADOS -->
-    <section class="seccion-destacados">
-        <div class="section-intro mb-4 text-center">
-            <h2 class="text-24 font-weight-700">{{ __('Negocios Destacados') }}</h2>
+    <section class="seccion-destacados mb-5">
+        <div class="section-intro mb-4">
+            <h2 class="text-20 font-weight-700">{{ __('Comercios Destacados') }}</h2>
         </div>
-        <div class="row" id="contenedor_destacados">
-            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $destacados])
+        <div class="container-carrusel">
+            <div class="row flex-nowrap m-0" id="contenedor_destacados">
+                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $destacados])
+            </div>
         </div>
     </section>
 
     <!-- SECCIÓN 3: LISTADO PRINCIPAL -->
-    <section class="seccion-listado">
-        <div class="section-intro mb-4 text-center">
-            <h2 class="text-24 font-weight-700">{{ __('Explora todos los Negocios') }}</h2>
+    <section class="seccion-listado mb-5">
+        <div class="section-intro mb-4">
+            <h2 class="text-20 font-weight-700">{{ __('Explora todos los Comercios') }}</h2>
         </div>
 
-        <div class="row" id="contenedor_listado_general">
-            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $experiencias])
+        <div class="container-carrusel">
+            <div class="row flex-nowrap m-0" id="contenedor_listado_general">
+                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $experiencias])
+            </div>
         </div>
 
         <!-- PAGINACIÓN -->
-        <div class="row mt-2 mb-5">
+        <div class="row mt-4 mb-5">
             <div class="col-12 d-flex justify-content-center" id="contenedor_paginacion">
                 {{ $experiencias->links('vendor.pagination.bootstrap-4') }}
             </div>
@@ -80,7 +84,7 @@
 </div>
 
 <!-- Modal Notificación (Si no está en el layout) -->
-<div class="modal fade" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1080;">
+...<div class="modal fade" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1080;">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <div class="modal-header border-0 pb-0">

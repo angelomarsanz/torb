@@ -1,5 +1,5 @@
 @forelse($experiencias as $experiencia)
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+    <div class="col-item-carrusel">
         <div class="negocio-card" onclick="window.location.href='#'">
             <div class="negocio-img-container">
                 <span class="badge-categoria">{{ $experiencia->categoria_negocio }}</span>
@@ -25,8 +25,10 @@
             <div class="negocio-info">
                 <h3 class="negocio-titulo">{{ $experiencia->titulo }}</h3>
                 <p class="negocio-ubicacion">
-                    <i class="fas fa-map-marker-alt mr-1"></i>
                     {{ $experiencia->ubicacion['ciudad'] ?? __('Ubicación no especificada') }}
+                </p>
+                <p class="negocio-rating">
+                    <i class="fas fa-star"></i> 4.92
                 </p>
             </div>
         </div>
@@ -34,6 +36,6 @@
 @empty
     <div class="col-12 text-center py-5">
         <i class="fas fa-store-slash fa-4x mb-3 text-muted"></i>
-        <p class="text-18">{{ __('No se encontraron negocios disponibles con estos criterios.') }}</p>
+        <p class="text-16">{{ __('No se encontraron negocios disponibles con estos criterios.') }}</p>
     </div>
 @endforelse

@@ -531,148 +531,59 @@
         }
     }
 }
-/* --- LISTADO DE NEGOCIOS (FRONTEND) --- */
+/* --- LISTADO DE COMERCIOS (FRONTEND) --- */
 
 #listado_experiencias {
-    margin-top: 90px !important; /* Separación equilibrada del menú principal */
+    margin-top: 90px !important;
 }
 
 @media (max-width: 767px) {
     #listado_experiencias {
-        margin-top: 80px !important; /* Separación ajustada para móviles */
+        margin-top: 80px !important;
     }
 }
 
-.seccion-filtros {
-    padding: 10px 0;
-    margin-bottom: 10px;
+.container-carrusel {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    &::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+    margin: 0 -15px;
+    padding: 0 15px;
 }
 
-.search-bar-negocios {
-    background: #fff;
-    border-radius: 40px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 10px 20px;
-    margin-bottom: 25px;
-    border: 1px solid #ddd;
-    transition: box-shadow 0.2s ease;
-
-    &:hover {
-        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    }
+.col-item-carrusel {
+    flex: 0 0 25%; /* 4 items on desktop */
+    max-width: 25%;
+    padding: 0 8px;
+    scroll-snap-align: start;
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal;
 }
 
-.search-item {
-    border-right: 1px solid #ddd;
-    padding: 8px 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: opacity 0.3s ease, filter 0.3s ease;
-
-    &.item-sombreado {
-        opacity: 0.4;
-        filter: grayscale(1);
-        pointer-events: none; /* Evita clics accidentales mientras está sombreado */
-    }
-
-    &.item-sombreado-visual {
-        opacity: 0.5;
-        filter: blur(0.5px);
-    }
-
-    label {
-        display: block;
-        font-size: 11px;
-        font-weight: 800;
-        margin-bottom: 2px;
-        color: #000;
-        text-transform: uppercase;
-    }
-
-    select, input[type="text"] {
-        border: none;
-        width: 100%;
-        padding: 0;
-        font-size: 14px;
-        color: #222;
-        background: transparent;
-        height: 24px;
-        line-height: 24px;
-        text-overflow: ellipsis;
-
-        &:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        &::placeholder {
-            color: #717171;
-            opacity: 1;
-        }
-    }
-
-    /* Estilo para el slider de radio */
-    .custom-range {
-        height: 1.4rem;
-        padding: 0;
-        background-color: transparent;
-        appearance: none;
-
-        &::-webkit-slider-runnable-track {
-            background-color: #ddd;
-            height: 4px;
-            border-radius: 2px;
-        }
-
-        &::-webkit-slider-thumb {
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            background: #ff385c;
-            border-radius: 50%;
-            margin-top: -6px;
-            cursor: pointer;
-        }
+@media (max-width: 1200px) {
+    .col-item-carrusel {
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
     }
 }
 
-#radio_km_display {
-    font-size: 12px;
-    font-weight: 700;
-    color: #ff385c;
-    margin-left: 5px;
-}
-
-.btn-search-negocio {
-    background: #ff385c;
-    color: #fff !important;
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
-    
-    i {
-        font-size: 16px;
-    }
-
-    &:hover {
-        background: #bd1e59;
-        transform: scale(1.05);
+@media (max-width: 991px) {
+    .col-item-carrusel {
+        flex: 0 0 45%; /* ~2 items on tablet */
+        max-width: 45%;
     }
 }
 
-.seccion-destacados {
-    margin-bottom: 50px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 40px;
-    
-    .section-intro {
-        margin-bottom: 30px;
+@media (max-width: 767px) {
+    .col-item-carrusel {
+        flex: 0 0 42%; /* Peek effect: 2 full items and a bit of the 3rd */
+        max-width: 42%;
     }
 }
 
@@ -681,11 +592,11 @@
     background: transparent;
     transition: transform 0.2s ease;
     cursor: pointer;
-    margin-bottom: 35px;
+    margin-bottom: 15px;
 
     &:hover {
         .negocio-img-container img {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
     }
 }
@@ -693,11 +604,11 @@
 .negocio-img-container {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* 1:1 Aspect Ratio (Cuadrado como Airbnb moderno) */
+    padding-top: 90%; /* Smaller than square */
     background-color: #f7f7f7;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 
     img {
         position: absolute;
@@ -711,103 +622,62 @@
 
     .badge-categoria {
         position: absolute;
-        top: 12px;
-        left: 12px;
-        background: rgba(255, 255, 255, 0.95);
+        top: 10px;
+        left: 10px;
+        background: rgba(255, 255, 255, 0.9);
         color: #222;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
         z-index: 2;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         text-transform: uppercase;
     }
 
     .btn-favorito {
         position: absolute;
-        top: 12px;
-        right: 12px;
+        top: 10px;
+        right: 10px;
         background: none;
         border: none;
-        color: rgba(0, 0, 0, 0.5);
+        color: rgba(0, 0, 0, 0.4);
         stroke: white;
         stroke-width: 2px;
-        font-size: 24px;
+        font-size: 20px;
         z-index: 2;
-        transition: transform 0.2s ease, color 0.2s ease;
         padding: 0;
-
-        &:hover {
-            transform: scale(1.1);
-        }
-
-        &.text-danger {
-            color: #ff385c !important;
-        }
     }
 }
 
 .negocio-info {
     .negocio-titulo {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
-        margin-bottom: 2px;
+        margin-bottom: 1px;
         color: #222;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
+        white-space: nowrap;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .negocio-ubicacion {
-        font-size: 14px;
+        font-size: 13px;
         color: #717171;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
-}
 
-/* RESPONSIVIDAD PARA MÓVILES */
-@media (max-width: 991px) {
-    .search-bar-negocios {
-        border-radius: 24px;
-        padding: 15px;
-        margin-bottom: 30px;
-    }
-    
-    .search-item {
-        border-right: none !important;
-        border-bottom: 1px solid #eee;
-        padding: 12px 5px;
+    .negocio-rating {
+        font-size: 13px;
+        color: #222;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 3px;
         
-        &:last-of-type {
-            border-bottom: none;
+        i {
+            color: #1dbf73;
+            font-size: 11px;
         }
-    }
-
-    .btn-search-negocio {
-        width: 100%;
-        border-radius: 8px;
-        margin-top: 15px;
-        height: 48px;
-        
-        &::after {
-            content: " Buscar";
-            font-weight: 700;
-            margin-left: 10px;
-            font-size: 15px;
-        }
-    }
-
-    .negocio-card {
-        margin-bottom: 25px;
-    }
-}
-
-@media (max-width: 576px) {
-    .container-fluid-90 {
-        padding-left: 20px !important;
-        padding-right: 20px !important;
     }
 }
 
@@ -884,7 +754,7 @@
     .navbar-brand {
         margin-right: 5px !important;
         img {
-            max-width: 100px; // Reducir un poco el logo en móvil si es necesario
+            max-width: 100px;
         }
     }
 
@@ -912,7 +782,6 @@
 @media (max-width: 576px) {
     .navbar-brand {
         margin-right: 0 !important;
-        font-size: 16px; // En caso de que sea texto
         img {
             max-width: 85px;
         }
