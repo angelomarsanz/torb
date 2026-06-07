@@ -6,7 +6,44 @@
     if ($(containerId).length) {
         console.log('Script para Listado de Productos y Servicios cargado correctamente');
 
+        /**
+         * Inicializa el mapa de Google en modo solo lectura para mostrar la ubicación del negocio.
+         */
+        function initMapDetalle() {
+            if (typeof google === 'undefined' || !window.datosUbicacionNegocio) return;
+
+            const lat = parseFloat(window.datosUbicacionNegocio.lat);
+            const lng = parseFloat(window.datosUbicacionNegocio.lng);
+            const titulo = window.datosUbicacionNegocio.titulo || 'Negocio';
+
+            if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
+                console.warn('Coordenadas de ubicación no válidas');
+                $('#mapa_detalle_negocio').hide();
+                return;
+            }
+
+            const myLatLng = { lat: lat, lng: lng };
+            const map = new google.maps.Map(document.getElementById("mapa_detalle_negocio"), {
+                zoom: 15,
+                center: myLatLng,
+                disableDefaultUI: false,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+            });
+
+            new google.maps.Marker({
+                position: myLatLng,
+                map,
+                title: titulo,
+            });
+        }
+
         $(function() {
+            // Inicializar el mapa
+            initMapDetalle();
+
             // Manejo de Filtros Desktop
             $('#filtro_tipo_actividad').on('change', function() {
                 const tipo = $(this).val();

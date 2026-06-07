@@ -133,7 +133,7 @@ class ExperienciaController extends Controller
      */
     public function listadoProductosServicios(Request $request, $id)
     {
-        $experiencia = Experiencia::with(['fotos', 'actividades', 'owner'])->findOrFail($id);
+        $experiencia = Experiencia::with(['fotos', 'actividades', 'owner', 'anfitrion', 'informaciones'])->findOrFail($id);
         
         // Obtenemos todos los productos/servicios activos
         $actividades = $experiencia->actividades()

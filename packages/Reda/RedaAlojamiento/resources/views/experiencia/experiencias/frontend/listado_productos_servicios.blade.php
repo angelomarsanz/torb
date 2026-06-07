@@ -7,49 +7,17 @@
 @section('main')
 <div id="listado_productos_servicios" class="container-fluid p-0">
 
-    <!-- SECCIÓN 1: CARRUSEL DE FOTOS DEL NEGOCIO -->
-    <section class="seccion-carrusel-negocio">
-        @php
-            $fotos = $experiencia->fotos;
-            // Ordenar para que la de portada vaya primero
-            $fotosOrdenadas = $fotos->sortByDesc('cover_photo');
-        @endphp
-        <div id="carouselNegocio" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-                @forelse($fotosOrdenadas as $index => $foto)
-                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                        <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $foto->photo) }}" alt="{{ $experiencia->titulo }}">
-                    </div>
-                @empty
-                    <div class="carousel-item active">
-                        <img src="{{ asset('public/images/default-image.png') }}" alt="{{ $experiencia->titulo }}">
-                    </div>
-                @endforelse
-            </div>
-            @if($fotosOrdenadas->count() > 1)
-                <a class="carousel-control-prev" href="#carouselNegocio" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselNegocio" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            @endif
-        </div>
-    </section>
-
-    <!-- SECCIÓN 2: INFORMACIÓN DEL NEGOCIO -->
-    <section class="seccion-info-negocio">
-        <h1 class="negocio-detalle-titulo">{{ $experiencia->titulo }}</h1>
-        <p class="negocio-detalle-desc">{{ $experiencia->descripcion }}</p>
+    <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
+    <section class="seccion-info-negocio p-4">
+        <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
+        <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
         <div class="negocio-detalle-rating">
             <i class="fas fa-star"></i> 4.92
         </div>
     </section>
 
-    <!-- SECCIÓN 3: BARRA DE BÚSQUEDA -->
-    <section class="seccion-busqueda-actividades">
+    <!-- SECCIÓN 2: BARRA DE BÚSQUEDA -->
+    <section class="seccion-busqueda-actividades px-4 mb-4">
         <!-- Vista Desktop -->
         <div class="d-none d-lg-block">
             <div class="search-bar-actividades d-flex align-items-center">
@@ -102,9 +70,9 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 4: PRODUCTOS Y SERVICIOS EN PROMOCIÓN -->
+    <!-- SECCIÓN 3: PRODUCTOS Y SERVICIOS EN PROMOCIÓN -->
     @if($promociones->count() > 0)
-    <section class="seccion-productos">
+    <section class="seccion-productos px-4 mb-4">
         <h2 class="text-18 font-weight-700 mb-3">{{ __('Promociones Especiales') }}</h2>
         <div class="container-carrusel-productos">
             @foreach($promociones as $promo)
@@ -137,8 +105,8 @@
     </section>
     @endif
 
-    <!-- SECCIÓN 5: EXPLORAR TODOS -->
-    <section class="seccion-productos">
+    <!-- SECCIÓN 4: EXPLORAR TODOS -->
+    <section class="seccion-productos px-4 mb-4">
         <h2 class="text-18 font-weight-700 mb-3">{{ __('Explorar Todo') }}</h2>
         <div class="container-carrusel-productos" id="contenedor_todos_productos">
             @foreach($actividades as $actividad)
@@ -173,10 +141,136 @@
         </div>
     </section>
 
+    <hr class="mx-4">
+
+    <!-- SECCIÓN 5: UBICACIÓN -->
+    <section class="seccion-ubicacion-negocio px-4 mb-5">
+        <h2 class="text-22 font-weight-700 mb-3">{{ __('¿Dónde estarás?') }}</h2>
+        <div class="mb-3">
+            <p class="text-16 mb-1 font-weight-600">{{ $experiencia->ubicacion['linea_uno_direccion'] ?? '' }}</p>
+            @if(!empty($experiencia->ubicacion['linea_dos_direccion']))
+                <p class="text-16 mb-1">{{ $experiencia->ubicacion['linea_dos_direccion'] }}</p>
+            @endif
+            <p class="text-16 mb-0">{{ $experiencia->ubicacion['ciudad'] ?? '' }}, {{ $experiencia->ubicacion['estado'] ?? '' }}</p>
+        </div>
+        <div id="mapa_detalle_negocio" style="width: 100%; height: 300px; border-radius: 16px;"></div>
+    </section>
+
+    <hr class="mx-4">
+
+    <!-- SECCIÓN 6: HORARIOS -->
+    @if(!empty($experiencia->horarios))
+    <section class="seccion-horarios-negocio px-4 mb-5">
+        <h2 class="text-22 font-weight-700 mb-3">{{ __('Horarios') }}</h2>
+        <div class="row">
+            @foreach($experiencia->horarios as $horario)
+                <div class="col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm p-3" style="border-radius: 12px;">
+                        <p class="font-weight-700 mb-2">
+                            @foreach($horario['dias'] as $dia)
+                                {{ __(ucfirst($dia)) }}{{ !$loop->last ? ', ' : '' }}
+                            @endforeach
+                        </p>
+                        @foreach($horario['bloques'] as $bloque)
+                            <p class="mb-1 text-muted">
+                                {{ $bloque['hora_desde'] }} {{ $bloque['ampm_desde'] }} - {{ $bloque['hora_hasta'] }} {{ $bloque['ampm_hasta'] }}
+                            </p>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
+    <hr class="mx-4">
+    @endif
+
+    <!-- SECCIÓN 7: NOSOTROS -->
+    @if($experiencia->anfitrion)
+    <section class="seccion-nosotros-negocio px-4 mb-5">
+        <h2 class="text-22 font-weight-700 mb-4">{{ __('Conoce a tu anfitrión') }}</h2>
+        <div class="d-flex align-items-center mb-3">
+            <div class="mr-3">
+                @php
+                    $fotoAnfitrion = asset('public/images/default-image.png');
+                    if (!empty($experiencia->anfitrion->foto_anfitrion)) {
+                        $fotoAnfitrion = asset('public/images/anfitriones_experiencias/' . $experiencia->anfitrion->foto_anfitrion);
+                    }
+                @endphp
+                <img src="{{ $fotoAnfitrion }}" alt="Anfitrión" class="rounded-circle shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+            </div>
+            <div>
+                <h3 class="text-18 font-weight-700 mb-0">{{ $experiencia->owner->first_name }}</h3>
+                <p class="text-muted mb-0">{{ __('Anfitrión en Torbian') }}</p>
+            </div>
+        </div>
+        <div class="nosotros-texto text-16">
+            {!! nl2br(e($experiencia->anfitrion->trayectoria_profesional)) !!}
+        </div>
+    </section>
+    <hr class="mx-4">
+    @endif
+
+    <!-- SECCIÓN 8: GALERÍA (ESTILO INSTAGRAM) -->
+    @php
+        $fotos = $experiencia->fotos;
+        $fotosOrdenadas = $fotos->sortByDesc('cover_photo');
+    @endphp
+    @if($fotosOrdenadas->count() > 0)
+    <section class="seccion-galeria-instagram mb-5">
+        <h2 class="text-22 font-weight-700 px-4 mb-4">{{ __('Galería') }}</h2>
+        <div id="instagramGallery" class="carousel slide" data-ride="carousel" data-interval="false">
+            <div class="carousel-inner">
+                @foreach($fotosOrdenadas as $index => $foto)
+                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                        <div class="instagram-img-wrapper d-flex align-items-center justify-content-center bg-light">
+                            <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $foto->photo) }}" 
+                                 class="d-block instagram-img" 
+                                 alt="{{ $experiencia->titulo }}">
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            @if($fotosOrdenadas->count() > 1)
+                <a class="carousel-control-prev" href="#instagramGallery" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#instagramGallery" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+                <!-- Contador de fotos -->
+                <div class="instagram-counter px-3 py-1 bg-dark text-white rounded-pill shadow-sm" style="position: absolute; bottom: 20px; right: 20px; font-size: 12px; opacity: 0.8; z-index: 10;">
+                    <span id="current-photo">1</span> / {{ $fotosOrdenadas->count() }}
+                </div>
+            @endif
+        </div>
+    </section>
+    <hr class="mx-4">
+    @endif
+
+    <!-- SECCIÓN 9: INFORMACIÓN ADICIONAL -->
+    @if($experiencia->informaciones->first())
+    <section class="seccion-informacion-adicional px-4 mb-5">
+        <h2 class="text-22 font-weight-700 mb-3">{{ __('Cosas que debes saber') }}</h2>
+        <div class="text-16">
+            <h4 class="font-weight-700 text-18 mb-2">{{ __('Requisitos del cliente') }}</h4>
+            <p>{!! nl2br(e($experiencia->informaciones->first()->requisitos_viajero)) !!}</p>
+        </div>
+    </section>
+    @endif
+
 </div>
 @stop
 
 @section('validation_script')
+    <script>
+        window.datosUbicacionNegocio = {
+            lat: {{ $experiencia->ubicacion['latitud'] ?? 0 }},
+            lng: {{ $experiencia->ubicacion['longitud'] ?? 0 }},
+            titulo: "{{ $experiencia->titulo }}"
+        };
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
     <script src="{{ asset('public/js/reda/general/notificaciones.min.js?v=' . time()) }}"></script>
     <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoProductosServicios.min.js?v=' . time()) }}"></script>
