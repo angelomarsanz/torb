@@ -6,6 +6,7 @@
 
 @section('main')
 <div id="listado_productos_servicios" class="container-fluid p-0">
+    <div class="container p-0">
 
     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
     <section class="seccion-info-negocio p-4">
@@ -184,28 +185,57 @@
     <hr class="mx-4">
     @endif
 
-    <!-- SECCIÓN 7: NOSOTROS -->
+    <!-- SECCIÓN 7: SOBRE NOSOTROS -->
     @if($experiencia->anfitrion)
     <section class="seccion-nosotros-negocio px-4 mb-5">
-        <h2 class="text-22 font-weight-700 mb-4">{{ __('Conoce a tu anfitrión') }}</h2>
-        <div class="d-flex align-items-center mb-3">
-            <div class="mr-3">
+        <h2 class="text-22 font-weight-700 mb-4">{{ __('Sobre Nosotros') }}</h2>
+        
+        <div class="row align-items-start">
+            {{-- Lado Izquierdo: Imagen --}}
+            <div class="col-md-4 col-lg-3 mb-3 mb-md-0">
                 @php
                     $fotoAnfitrion = asset('public/images/default-image.png');
                     if (!empty($experiencia->anfitrion->foto_anfitrion)) {
                         $fotoAnfitrion = asset('public/images/anfitriones_experiencias/' . $experiencia->anfitrion->foto_anfitrion);
                     }
                 @endphp
-                <img src="{{ $fotoAnfitrion }}" alt="Anfitrión" class="rounded-circle shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                {{-- Flexbox para móvil: imagen pequeña al lado del nombre. En desktop se apila --}}
+                <div class="d-flex d-md-block align-items-center">
+                    <div class="mr-3 mr-md-0 mb-md-3">
+                        <img src="{{ $fotoAnfitrion }}" alt="{{ $experiencia->owner->first_name }}" 
+                             class="shadow-sm" 
+                             style="border-radius: 16px; object-fit: cover; width: 70px; height: 70px;" 
+                             id="img_nosotros_detalle">
+                    </div>
+                    <div class="d-md-none">
+                        <h3 class="text-18 font-weight-700 mb-0">{{ $experiencia->owner->first_name }}</h3>
+                        <p class="text-muted mb-0">{{ __('Anfitrión en Torbian') }}</p>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h3 class="text-18 font-weight-700 mb-0">{{ $experiencia->owner->first_name }}</h3>
-                <p class="text-muted mb-0">{{ __('Anfitrión en Torbian') }}</p>
+
+            {{-- Lado Derecho: Información --}}
+            <div class="col-md-8 col-lg-9">
+                <div class="d-none d-md-block mb-3">
+                    <h3 class="text-24 font-weight-700 mb-0">{{ $experiencia->owner->first_name }}</h3>
+                    <p class="text-muted mb-0">{{ __('Anfitrión en Torbian') }}</p>
+                </div>
+                <div class="nosotros-texto text-16">
+                    {!! nl2br(e($experiencia->anfitrion->trayectoria_profesional)) !!}
+                </div>
             </div>
         </div>
-        <div class="nosotros-texto text-16">
-            {!! nl2br(e($experiencia->anfitrion->trayectoria_profesional)) !!}
-        </div>
+
+        <style>
+            @media (min-width: 768px) {
+                #img_nosotros_detalle {
+                    width: 100% !important;
+                    height: auto !important;
+                    max-height: 400px;
+                    aspect-ratio: 1/1;
+                }
+            }
+        </style>
     </section>
     <hr class="mx-4">
     @endif
@@ -260,6 +290,7 @@
     </section>
     @endif
 
+    </div>
 </div>
 @stop
 
