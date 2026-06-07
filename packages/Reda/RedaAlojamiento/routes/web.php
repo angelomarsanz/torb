@@ -92,6 +92,7 @@ Route::prefix('reda')->group(function () {
     Route::get('anfitrion-experiencias', [AnfitrionExperienciaController::class, 'index'])->name('reda.anfitriones_experiencias.index');
     Route::get('experiencias', [ExperienciaController::class, 'index'])->name('reda.experiencias.index');
     Route::get('listado-negocios', [ExperienciaController::class, 'listadoFrontend'])->name('reda.experiencias.listado_frontend');
+    Route::get('listado-productos-servicios/{id}', [ExperienciaController::class, 'listadoProductosServicios'])->name('reda.experiencias.listado_productos_servicios');
     Route::get('horarios-experiencias', [HorarioExperienciaController::class, 'index'])->name('reda.horarios_experiencias.index');
     Route::get('informacion-experiencias', [InformacionExperienciaController::class, 'index'])->name('reda.informaciones_experiencias.index');
     Route::get('reservacion-experiencias', [ReservacionExperienciaController::class, 'index'])->name('reda.reservaciones_experiencias.index');

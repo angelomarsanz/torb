@@ -1,9 +1,18 @@
 @forelse($experiencias as $experiencia)
     <div class="col-item-carrusel">
-        <div class="negocio-card" onclick="window.location.href='#'">
+        <div class="negocio-card">
+            {{-- Botón Favorito: Directamente en la tarjeta para estar por encima del overlay link --}}
+            <button class="btn-favorito" type="button">
+                <i class="far fa-heart"></i>
+            </button>
+
+            <!-- Link Overlay: Cubre toda la tarjeta para la navegación -->
+            <a href="{{ route('reda.experiencias.listado_productos_servicios', ['id' => $experiencia->id]) }}" class="negocio-card-overlay-link" title="{{ $experiencia->titulo }}">
+                {{ $experiencia->titulo }}
+            </a>
+
             <div class="negocio-img-container">
                 <span class="badge-categoria">{{ $experiencia->categoria_negocio }}</span>
-                <button class="btn-favorito"><i class="far fa-heart"></i></button>
 
                 @php
                     $foto = $experiencia->foto_portada;

@@ -6,7 +6,7 @@
     "¡Éxito!": "¡Éxito!",
     "Actividad agregada exitosamente": "Actividad agregada exitosamente",
     "Producto o servicio guardado con éxito": "Producto o servicio guardado con éxito",
-    "Falta la foto en la actividad": "Falta la foto en la actividad",
+    "Falta la foto in la actividad": "Falta la foto en la actividad",
     "Guardando...": "Guardando...",
     "Error": "Error",
     "Ocurrió un error al intentar guardar la actividad.": "Ocurrió un error al intentar guardar la actividad.",
@@ -138,5 +138,15 @@
     "Distancia": "Distancia",
     "No se encontraron negocios disponibles con estos criterios.": "No se encontraron negocios disponibles con estos criterios.",
     "Resultados recuperados con éxito": "Resultados recuperados con éxito",
-    "Error buscando negocios": "Error buscando negocios"
+    "Error buscando negocios": "Error buscando negocios",
+    "¿Qué estás buscando?": "¿Qué estás buscando?",
+    "Productos": "Productos",
+    "Servicios": "Servicios",
+    "Filtrar por": "Filtrar por",
+    "Tipo": "Tipo",
+    "Todos": "Todos",
+    "Aplicar": "Aplicar",
+    "Promociones Especiales": "Promociones Especiales",
+    "Oferta": "Oferta",
+    "Explorar Todo": "Explorar Todo"
 }

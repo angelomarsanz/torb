@@ -55,6 +55,9 @@ if (buildAlojamiento) {
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js',
         'public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js',
+        'public/js/reda/vistas/experiencia/frontend/listadoProductosServicios.min.js');
 }
 
 mix.options({

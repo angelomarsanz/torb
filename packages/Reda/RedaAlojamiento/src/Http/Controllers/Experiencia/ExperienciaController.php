@@ -128,6 +128,35 @@ class ExperienciaController extends Controller
         ));
     }
 
+    /**
+     * Muestra la vista de detalle de un negocio (experiencia) para el frontend.
+     */
+    public function listadoProductosServicios(Request $request, $id)
+    {
+        $experiencia = Experiencia::with(['fotos', 'actividades', 'owner'])->findOrFail($id);
+        
+        // Obtenemos todos los productos/servicios activos
+        $actividades = $experiencia->actividades()
+            ->where('estatus_producto_servicio', 'activo')
+            ->orderBy('orden_actividad', 'asc')
+            ->get();
+        
+        // Filtramos los que están en promoción (precio_promocion > 0 en JSON)
+        $promociones = $actividades->filter(function($actividad) {
+            $complementos = json_decode($actividad->precios_monedas_complementarios, true);
+            return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
+        });
+
+        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+
+        return view('reda-alojamiento::experiencia.experiencias.frontend.listado_productos_servicios', compact(
+            'experiencia',
+            'actividades',
+            'promociones',
+            'currentCurrency'
+        ));
+    }
+
     public function create(Request $request)
     {
         if ($request->isMethod('post')) {
