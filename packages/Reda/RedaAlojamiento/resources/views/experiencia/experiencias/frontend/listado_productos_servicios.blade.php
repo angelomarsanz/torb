@@ -87,7 +87,7 @@
                         @php
                             $rutaFotoAct = asset('public/images/default-image.png');
                             if ($promo->foto_actividad) {
-                                $rutaFotoAct = asset('public/images/actividades_experiencias/' . $promo->id . '/' . $promo->foto_actividad);
+                                $rutaFotoAct = asset('public/images/actividades_experiencias/' . $promo->foto_actividad);
                             }
                         @endphp
                         <img src="{{ $rutaFotoAct }}" alt="{{ $promo->nombre_actividad }}">
@@ -120,7 +120,7 @@
                         @php
                             $rutaFotoAct = asset('public/images/default-image.png');
                             if ($actividad->foto_actividad) {
-                                $rutaFotoAct = asset('public/images/actividades_experiencias/' . $actividad->id . '/' . $actividad->foto_actividad);
+                                $rutaFotoAct = asset('public/images/actividades_experiencias/' . $actividad->foto_actividad);
                             }
                         @endphp
                         <img src="{{ $rutaFotoAct }}" alt="{{ $actividad->nombre_actividad }}">

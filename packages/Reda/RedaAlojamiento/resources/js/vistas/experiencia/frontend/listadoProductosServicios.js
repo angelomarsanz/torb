@@ -66,10 +66,10 @@
          */
         function filtrarActividades(tipo) {
             console.log('Filtrando por tipo:', tipo);
-            
+
             $('.producto-card').each(function() {
                 const tipoCard = $(this).data('tipo-actividad');
-                
+
                 if (tipo === '' || tipo === tipoCard) {
                     $(this).fadeIn(300);
                 } else {
