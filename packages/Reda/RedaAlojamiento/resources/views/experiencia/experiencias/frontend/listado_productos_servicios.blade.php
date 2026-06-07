@@ -189,47 +189,33 @@
     @if($experiencia->anfitrion)
     <section class="seccion-nosotros-negocio px-4 mb-5">
         <h2 class="text-22 font-weight-700 mb-4">{{ __('Sobre Nosotros') }}</h2>
-        
-        <div class="row align-items-start">
-            {{-- Lado Izquierdo: Imagen --}}
-            <div class="col-md-4 col-lg-3 mb-3 mb-md-0">
-                @php
-                    $fotoAnfitrion = asset('public/images/default-image.png');
-                    if (!empty($experiencia->anfitrion->foto_anfitrion)) {
-                        $fotoAnfitrion = asset('public/images/anfitriones_experiencias/' . $experiencia->anfitrion->foto_anfitrion);
-                    }
-                @endphp
-                {{-- Flexbox para móvil: imagen pequeña al lado del nombre. En desktop se apila --}}
-                <div class="d-flex d-md-block align-items-center">
-                    <div class="mr-3 mr-md-0 mb-md-3">
-                        <img src="{{ $fotoAnfitrion }}" alt="{{ $experiencia->owner->first_name }}" 
-                             class="shadow-sm" 
-                             style="border-radius: 16px; object-fit: cover; width: 70px; height: 70px;" 
-                             id="img_nosotros_detalle">
-                    </div>
-                    <div class="d-md-none">
-                        <h3 class="text-18 font-weight-700 mb-0">{{ $experiencia->owner->first_name }}</h3>
-                        <p class="text-muted mb-0">{{ __('Anfitrión en Torbian') }}</p>
-                    </div>
-                </div>
+
+        <div class="clearfix">
+            @php
+                $fotoAnfitrion = asset('public/images/default-image.png');
+                if (!empty($experiencia->anfitrion->foto_anfitrion)) {
+                    $fotoAnfitrion = asset('public/images/anfitriones_experiencias/' . $experiencia->anfitrion->foto_anfitrion);
+                }
+            @endphp
+
+            {{-- Imagen: Flotada a la izquierda en escritorio --}}
+            <div class="float-md-left mr-md-4 mb-3 text-center text-md-left">
+                <img src="{{ $fotoAnfitrion }}" alt="{{ __('Sobre Nosotros') }}"
+                     class="shadow-sm"
+                     style="border-radius: 16px; object-fit: cover; width: 100%; height: auto; aspect-ratio: 1/1;"
+                     id="img_nosotros_detalle">
             </div>
 
-            {{-- Lado Derecho: Información --}}
-            <div class="col-md-8 col-lg-9">
-                <div class="d-none d-md-block mb-3">
-                    <h3 class="text-24 font-weight-700 mb-0">{{ $experiencia->owner->first_name }}</h3>
-                    <p class="text-muted mb-0">{{ __('Anfitrión en Torbian') }}</p>
-                </div>
-                <div class="nosotros-texto text-16">
-                    {!! nl2br(e($experiencia->anfitrion->trayectoria_profesional)) !!}
-                </div>
+            {{-- Texto descriptivo: Fluye alrededor de la imagen --}}
+            <div class="nosotros-texto text-16 text-justify">
+                {!! nl2br(e($experiencia->anfitrion->trayectoria_profesional)) !!}
             </div>
         </div>
 
         <style>
             @media (min-width: 768px) {
                 #img_nosotros_detalle {
-                    width: 100% !important;
+                    width: 250px !important;
                     height: auto !important;
                     max-height: 400px;
                     aspect-ratio: 1/1;
@@ -253,8 +239,8 @@
                 @foreach($fotosOrdenadas as $index => $foto)
                     <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                         <div class="instagram-img-wrapper d-flex align-items-center justify-content-center bg-light">
-                            <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $foto->photo) }}" 
-                                 class="d-block instagram-img" 
+                            <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $foto->photo) }}"
+                                 class="d-block instagram-img"
                                  alt="{{ $experiencia->titulo }}">
                         </div>
                     </div>
