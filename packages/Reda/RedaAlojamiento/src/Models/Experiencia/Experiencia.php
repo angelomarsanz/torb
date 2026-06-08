@@ -129,4 +129,12 @@ class Experiencia extends Model
     {
         return $this->hasMany(ReservacionExperiencia::class, 'experiencia_id');
     }
+
+    /**
+     * Relación: Una experiencia tiene muchas calificaciones.
+     */
+    public function calificaciones()
+    {
+        return $this->hasMany(CalificacionExperiencia::class, 'experiencia_id');
+    }
 }

@@ -64,8 +64,8 @@ class ExperienciaController extends Controller
             // Fórmula de Haversine para filtrar por distancia
             // Nota: Esto asume que la base de datos es MySQL 5.7+ para usar JSON_EXTRACT
             $query->whereRaw("
-                (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))) 
-                * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?)) 
+                (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
+                * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
                 + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
             ", [$lat, $lng, $lat, $radio]);
         } elseif ($request->filled('ubicacion_texto')) {
@@ -121,9 +121,9 @@ class ExperienciaController extends Controller
         }
 
         return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', compact(
-            'experiencias', 
-            'destacados', 
-            'categoriasNegocios', 
+            'experiencias',
+            'destacados',
+            'categoriasNegocios',
             'currentCurrency'
         ));
     }
@@ -134,13 +134,13 @@ class ExperienciaController extends Controller
     public function listadoProductosServicios(Request $request, $id)
     {
         $experiencia = Experiencia::with(['fotos', 'actividades', 'owner', 'anfitrion', 'informaciones'])->findOrFail($id);
-        
+
         // Obtenemos todos los productos/servicios activos
         $actividades = $experiencia->actividades()
             ->where('estatus_producto_servicio', 'activo')
             ->orderBy('orden_actividad', 'asc')
             ->get();
-        
+
         // Filtramos los que están en promoción (precio_promocion > 0 en JSON)
         $promociones = $actividades->filter(function($actividad) {
             $complementos = json_decode($actividad->precios_monedas_complementarios, true);

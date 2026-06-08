@@ -18,14 +18,14 @@ Los nombres de variables deben estar en español.
 ## Archivos de migraciones
 - Solo crear los archivos de migraciones, no ejecutarlos.
 - Los nombres de tablas y columnas deben estar en español
-- Se deben crear los archivos de migraciones en la carpeta: packages/Reda/RedaAlojamiento/database/migrations. Para ello se debe ejecutar el comando en el servidor vesta de desarrollo:
-    sudo -u appvac php8.2 artisan make:migration nombre_del_nuevo_archivo_de_migracion --table=experiencias --path=packages/Reda/RedaAlojamiento/database/migrations
+- Solicitar a Gemini que cree los archivos de migraciones en la carpeta: packages/Reda/RedaAlojamiento/database/migrations en mi IDE Cloud Shell Editor.
+- Subir el archivo de migraciones al servidor Vesta de Desarollo
+- Ejecutar la migración en el servidor Vesta de Desarollo:
+    sudo -u appvac php8.2 artisan migrate
 - Los nombres de los archivos de migración deben ser en español
 - Cuando se haga una migración todas las columnas nuevas de cualquier tabla, deben aceptar valores nulos, excepto el ID de la tabla.
 - Recordad cuando se haga una migración crear o modificar el archivo modelo correspondiente en el directorio: 
     packages/Reda/RedaAlojamiento/app/Models
-- Para crear las migraciones:
-    sudo -u appvac php8.2 artisan migrate
 
 ## Estilo de Código General
 - Los comentarios deben estar en español.
