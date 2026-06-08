@@ -677,6 +677,41 @@ class ExperienciaController extends Controller
         }
     }
 
+    /**
+     * Obtiene el detalle de una actividad para el frontend (Modal).
+     */
+    public function getActividadDetalle(Request $request, $id)
+    {
+        try {
+            $actividad = ActividadExperiencia::with('currency')->findOrFail($id);
+
+            if ($request->ajax()) {
+                $html = view('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad', compact('actividad'))->render();
+
+                $respuesta = [
+                    'success' => true,
+                    'message' => 'Activity detail retrieved successfully',
+                    'mensaje_usuario' => __('Detalle de la actividad recuperado con éxito'),
+                    'respuesta' => [
+                        'html' => $html,
+                        'id' => $actividad->id
+                    ],
+                    'code' => 200
+                ];
+                return response()->json($respuesta, $respuesta['code']);
+            }
+        } catch (\Exception $e) {
+            $respuesta = [
+                'success' => false,
+                'message' => 'Error getting activity detail: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al recuperar el detalle de la actividad'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+        }
+    }
+
     public function deleteActividad($id)
     {
         try {

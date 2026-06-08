@@ -1047,8 +1047,18 @@
     }
 }
 
+.seccion-busqueda-actividades {
+    .btn-search-round {
+        width: 40px;
+        height: 40px;
+    }
+}
+
 .seccion-ubicacion-negocio {
     #mapa_detalle_negocio {
+        width: 100%;
+        height: 300px;
+        border-radius: 16px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 }
@@ -1057,6 +1067,21 @@
     .nosotros-texto {
         line-height: 1.6;
         color: #484848;
+    }
+    
+    #img_nosotros_detalle {
+        border-radius: 16px;
+        object-fit: cover;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+
+        @media (min-width: 768px) {
+            width: 250px !important;
+            height: auto !important;
+            max-height: 400px;
+            aspect-ratio: 1/1;
+        }
     }
 }
 
@@ -1084,6 +1109,15 @@
                 border-radius: 50%;
                 padding: 15px;
             }
+        }
+
+        .instagram-counter {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 12px;
+            opacity: 0.8;
+            z-index: 10;
         }
     }
 }
@@ -1131,6 +1165,7 @@
         overflow: hidden;
         border: 1px solid #ddd;
         transition: transform 0.2s;
+        cursor: pointer;
 
         &:hover {
             transform: translateY(-5px);
@@ -1182,4 +1217,97 @@
             }
         }
     }
+}
+
+.modal-negocio-rounded {
+    border-radius: 24px;
+    overflow: hidden;
+
+    .modal-content {
+        border-radius: 24px;
+    }
+
+    .btn-aplicar-filtro {
+        border-radius: 12px;
+    }
+
+    .btn-close-modal-custom {
+        width: 32px;
+        height: 32px;
+        opacity: 0.9;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+        margin-right: 15px;
+        position: absolute;
+        right: 0;
+        z-index: 10;
+    }
+}
+
+/* --- DETALLE DE ACTIVIDAD (MODAL FRONTEND) --- */
+.detalle-actividad-modal {
+    .detalle-actividad-img-container {
+        height: 100%;
+        min-height: 350px;
+        overflow: hidden;
+        position: relative;
+
+        img {
+            object-fit: cover;
+        }
+
+        .badge-oferta {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            border-radius: 8px;
+            font-size: 11px;
+        }
+    }
+
+    .detalle-actividad-titulo {
+        font-size: 24px;
+        line-height: 1.2;
+    }
+
+    .text-crossed {
+        text-decoration: line-through;
+    }
+
+    .detalle-actividad-desc {
+
+        p {
+            line-height: 1.5;
+            max-height: 200px;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #ddd;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    .btn-cerrar-modal {
+        border-radius: 12px;
+        font-size: 16px;
+    }
+
+    .modal-header-abs-right {
+        position: absolute;
+        right: 0;
+        z-index: 10;
+    }
+
+    .rounded-12 { border-radius: 12px; }
+    .x-small { font-size: 10px; }
+    .tracking-wider { letter-spacing: 0.05em; }
 }

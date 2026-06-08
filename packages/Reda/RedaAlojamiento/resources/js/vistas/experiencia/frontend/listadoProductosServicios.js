@@ -40,6 +40,41 @@
             });
         }
 
+        /**
+         * Obtiene el detalle de la actividad vía Ajax.
+         */
+        const obtenerDetalleActividad = (id) => {
+            return new Promise((resolve) => {
+                $.ajax({
+                    url: APP_URL + '/reda/experiencias/actividades/detalle/' + id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: (data) => resolve(data),
+                    error: function (x, xs, xt) {
+                        let respuestaServidor = {};
+                        try {
+                            respuestaServidor = JSON.parse(x.responseText);
+                        } catch (e) {
+                            respuestaServidor = {};
+                        }
+                        console.log('respuestaServidor', respuestaServidor);
+
+                        const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                        const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+                        
+                        let respuesta = {
+                            'success': false,
+                            'message' : window.RedaAlojamientoJson["Error al recuperar detalle"] || 'Error al recuperar detalle',
+                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                            'respuesta': respuestaServidor.respuesta || '',
+                            'code': x.status !== 0 ? x.status : 504,
+                        };
+                        resolve(respuesta);
+                    }
+                });
+            });
+        };
+
         $(function() {
             // Inicializar el mapa
             initMapDetalle();
@@ -57,6 +92,33 @@
                 $('#filtro_tipo_actividad').val(tipo); // Sincronizar con desktop
                 filtrarActividades(tipo);
                 $('#modalBusquedaActividades').modal('hide');
+            });
+
+            // --- CLICK EN PRODUCTO/SERVICIO PARA VER DETALLE ---
+            $(document).on('click', '.producto-card', async function(e) {
+                const id = $(this).data('id');
+                if (!id) return;
+
+                // Reset modal content with loader
+                $('#bodyDetalleActividad').html(`
+                    <div class="text-center p-5">
+                        <i class="fa fa-spinner fa-spin fa-3x text-success"></i>
+                    </div>
+                `);
+                
+                $('#modalDetalleActividad').modal('show');
+
+                const response = await obtenerDetalleActividad(id);
+
+                if (response.success) {
+                    $('#bodyDetalleActividad').html(response.respuesta.html);
+                } else {
+                    $('#bodyDetalleActividad').html(`
+                        <div class="alert alert-danger m-4">
+                            ${response.mensaje_usuario}
+                        </div>
+                    `);
+                }
             });
         });
 

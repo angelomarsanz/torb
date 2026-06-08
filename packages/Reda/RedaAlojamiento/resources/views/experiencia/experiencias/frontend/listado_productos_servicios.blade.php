@@ -29,7 +29,7 @@
                         <option value="servicio">{{ __('Servicios') }}</option>
                     </select>
                 </div>
-                <button class="btn btn-primary rounded-circle p-2" style="width: 40px; height: 40px;">
+                <button class="btn btn-primary rounded-circle p-2 btn-search-round">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -47,7 +47,7 @@
     <!-- Modal de Búsqueda Móvil -->
     <div class="modal fade" id="modalBusquedaActividades" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content" style="border-radius: 24px;">
+            <div class="modal-content modal-negocio-rounded">
                 <div class="modal-header border-0">
                     <h5 class="modal-title font-weight-700">{{ __('Filtrar por') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-primary btn-block btn-lg" style="border-radius: 12px;">{{ __('Aplicar') }}</button>
+                    <button type="button" class="btn btn-primary btn-block btn-lg btn-aplicar-filtro">{{ __('Aplicar') }}</button>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
                     $precioPromo = $complementos['precio_promocion'] ?? 0;
                     $currencySymbol = $promo->currency->symbol ?? $currentCurrency->symbol;
                 @endphp
-                <div class="producto-card" data-tipo-actividad="{{ $promo->tipo_producto_servicio }}">
+                <div class="producto-card" data-tipo-actividad="{{ $promo->tipo_producto_servicio }}" data-id="{{ $promo->id }}">
                     <div class="producto-img-container">
                         <span class="badge-promo">{{ __('Oferta') }}</span>
                         @php
@@ -96,8 +96,8 @@
                     <div class="producto-info">
                         <h4 class="producto-nombre">{{ $promo->nombre_actividad }}</h4>
                         <div class="producto-precio">
-                            <span class="precio-original">{{ $currencySymbol }}{{ number_format($promo->precio, 2) }}</span>
-                            <span class="precio-promo">{{ $currencySymbol }}{{ number_format($precioPromo, 2) }}</span>
+                            <span class="precio-original">{{ $currencySymbol }} {{ number_format($promo->precio, 2) }}</span>
+                            <span class="precio-promo">{{ $currencySymbol }} {{ number_format($precioPromo, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                     $complementos = json_decode($actividad->precios_monedas_complementarios, true);
                     $precioPromo = $complementos['precio_promocion'] ?? 0;
                 @endphp
-                <div class="producto-card" data-tipo-actividad="{{ $actividad->tipo_producto_servicio }}">
+                <div class="producto-card" data-tipo-actividad="{{ $actividad->tipo_producto_servicio }}" data-id="{{ $actividad->id }}">
                     <div class="producto-img-container">
                         @php
                             $rutaFotoAct = asset('public/images/default-image.png');
@@ -130,10 +130,10 @@
                         <h4 class="producto-nombre">{{ $actividad->nombre_actividad }}</h4>
                         <div class="producto-precio">
                             @if($precioPromo > 0)
-                                <span class="precio-original">{{ $currencySymbol }}{{ number_format($actividad->precio, 2) }}</span>
-                                <span class="precio-promo">{{ $currencySymbol }}{{ number_format($precioPromo, 2) }}</span>
+                                <span class="precio-original">{{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}</span>
+                                <span class="precio-promo">{{ $currencySymbol }} {{ number_format($precioPromo, 2) }}</span>
                             @else
-                                <span class="font-weight-700">{{ $currencySymbol }}{{ number_format($actividad->precio, 2) }}</span>
+                                <span class="font-weight-700">{{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}</span>
                             @endif
                         </div>
                     </div>
@@ -154,7 +154,7 @@
             @endif
             <p class="text-16 mb-0">{{ $experiencia->ubicacion['ciudad'] ?? '' }}, {{ $experiencia->ubicacion['estado'] ?? '' }}</p>
         </div>
-        <div id="mapa_detalle_negocio" style="width: 100%; height: 300px; border-radius: 16px;"></div>
+        <div id="mapa_detalle_negocio"></div>
     </section>
 
     <hr class="mx-4">
@@ -166,7 +166,7 @@
         <div class="row">
             @foreach($experiencia->horarios as $horario)
                 <div class="col-md-6 mb-3">
-                    <div class="card border-0 shadow-sm p-3" style="border-radius: 12px;">
+                    <div class="card border-0 shadow-sm p-3 rounded-12">
                         <p class="font-weight-700 mb-2">
                             @foreach($horario['dias'] as $dia)
                                 {{ __(ucfirst($dia)) }}{{ !$loop->last ? ', ' : '' }}
@@ -202,7 +202,6 @@
             <div class="float-md-left mr-md-4 mb-3 text-center text-md-left">
                 <img src="{{ $fotoAnfitrion }}" alt="{{ __('Sobre Nosotros') }}"
                      class="shadow-sm"
-                     style="border-radius: 16px; object-fit: cover; width: 100%; height: auto; aspect-ratio: 1/1;"
                      id="img_nosotros_detalle">
             </div>
 
@@ -211,17 +210,6 @@
                 {!! nl2br(e($experiencia->anfitrion->trayectoria_profesional)) !!}
             </div>
         </div>
-
-        <style>
-            @media (min-width: 768px) {
-                #img_nosotros_detalle {
-                    width: 250px !important;
-                    height: auto !important;
-                    max-height: 400px;
-                    aspect-ratio: 1/1;
-                }
-            }
-        </style>
     </section>
     <hr class="mx-4">
     @endif
@@ -256,7 +244,7 @@
                     <span class="sr-only">Next</span>
                 </a>
                 <!-- Contador de fotos -->
-                <div class="instagram-counter px-3 py-1 bg-dark text-white rounded-pill shadow-sm" style="position: absolute; bottom: 20px; right: 20px; font-size: 12px; opacity: 0.8; z-index: 10;">
+                <div class="instagram-counter px-3 py-1 bg-dark text-white rounded-pill shadow-sm">
                     <span id="current-photo">1</span> / {{ $fotosOrdenadas->count() }}
                 </div>
             @endif
@@ -278,6 +266,24 @@
 
     </div>
 </div>
+
+<!-- Modal Detalle Actividad -->
+<div class="modal fade" id="modalDetalleActividad" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-negocio-rounded">
+            <div class="modal-header border-0 pb-0 modal-header-abs-right">
+                <button type="button" class="close bg-white rounded-circle shadow-sm btn-close-modal-custom" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0" id="bodyDetalleActividad">
+                <div class="text-center p-5">
+                    <i class="fa fa-spinner fa-spin fa-3x text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('validation_script')
@@ -292,3 +298,4 @@
     <script src="{{ asset('public/js/reda/general/notificaciones.min.js?v=' . time()) }}"></script>
     <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoProductosServicios.min.js?v=' . time()) }}"></script>
 @endsection
+

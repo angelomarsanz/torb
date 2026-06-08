@@ -242,3 +242,14 @@ Para cualquier ícono personalizado .svg que se requiera crear en el plugin pack
 
 ## Paginación
 Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles
+
+## Creación de nuevas vistas
+Cuando se cree una nueva vista, se debe:
+Crear el modelo si aplica
+Crear y ejecutar la migración si aplica
+Crear el archivo blade
+Crear el archivo javascript correspondiente
+Agregar el archivo para su compilación en webpack.mix.js
+Agregar al final del archivo blade la dirección del archivo Javascript minificado
+Crear la ruta en el archivo web.php si aplica
+Crear la acción en el controlador
