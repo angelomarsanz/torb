@@ -1127,6 +1127,15 @@
     height: auto;
     min-height: 10vh;
     background-color: #f7f7f7;
+    position: sticky;
+    top: 80px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1);
+
+    @media (max-width: 991px) {
+        top: 70px;
+        padding: 10px 20px;
+    }
 
     .search-bar-actividades {
         background: #fff;
@@ -1139,6 +1148,10 @@
 
         &:hover {
             box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        }
+
+        @media (max-width: 991px) {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
         }
     }
 }

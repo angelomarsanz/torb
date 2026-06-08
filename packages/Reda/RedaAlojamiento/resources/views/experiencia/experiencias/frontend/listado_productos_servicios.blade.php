@@ -8,15 +8,6 @@
 <div id="listado_productos_servicios" class="container-fluid p-0">
     <div class="container p-0">
 
-    <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
-    <section class="seccion-info-negocio p-4">
-        <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
-        <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
-        <div class="negocio-detalle-rating">
-            <i class="fas fa-star"></i> 4.92
-        </div>
-    </section>
-
     <!-- SECCIÓN 2: BARRA DE BÚSQUEDA -->
     <section class="seccion-busqueda-actividades px-4 mb-4">
         <!-- Vista Desktop -->
@@ -37,10 +28,19 @@
 
         <!-- Vista Móvil -->
         <div class="d-lg-none">
-            <div class="search-bar-actividades d-flex align-items-center justify-content-between" data-toggle="modal" data-target="#modalBusquedaActividades">
-                <span class="text-muted"><i class="fas fa-search mr-2"></i> {{ __('Buscar') }}</span>
-                <i class="fas fa-sliders-h text-muted"></i>
+            <div class="search-bar-actividades d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#modalBusquedaActividades">
+                <span class="text-muted"><i class="fas fa-search mr-2"></i> {{ __('¿Qué estás buscando?') }}</span>
             </div>
+        </div>
+
+    </section>
+
+    <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
+    <section class="seccion-info-negocio p-4">
+        <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
+        <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
+        <div class="negocio-detalle-rating">
+            <i class="fas fa-star"></i> 4.92
         </div>
     </section>
 
