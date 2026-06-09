@@ -4,7 +4,7 @@ export const eliminarExperiencia = (idExperiencia) => {
     return new Promise((resolve) => {
         (function( $ ) {
             $.ajax({
-                url: APP_URL + '/reda/experiencias/eliminar-experiencia/' + idExperiencia, // Ajusta la ruta según tu web.php
+                url: APP_URL + '/reda/negocios/experiencias/eliminar-experiencia/' + idExperiencia, // Ajusta la ruta según tu web.php
                 type: 'DELETE',
                 data: {
                     "_token": $('meta[name="csrf-token"]').attr('content'),

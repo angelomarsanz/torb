@@ -40,42 +40,36 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaContro
 // y protege el acceso mediante el middleware 'admin' del proyecto original.
 Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']], function () {
 
-    // Subgrupo exclusivo para ExperienciaController
-    // Agrupa todas las rutas que apunten a este controlador usando la sintaxis de Laravel 8+
-    Route::controller(AdminExperienciaController::class)->group(function () {
+    // Subgrupo para Negocios (Admin)
+    Route::prefix('negocios')->as('reda.admin.negocios.')->group(function () {
+        Route::controller(AdminExperienciaController::class)->group(function () {
 
-        // Ruta para listar y gestionar las Opciones de Tipos de Negocios
-        // URL resultante: tu-dominio.com/admin/reda/opciones-tipos-de-negocios
-        Route::match(['GET', 'POST'], 'opciones-tipos-de-negocios', 'opcionesTiposDeNegocios')
-            ->name('reda.admin.opciones_tipos_de_negocios');
+            // Ruta para listar y gestionar las Opciones de Tipos de Negocios
+            // URL resultante: tu-dominio.com/admin/reda/negocios/opciones-tipos-de-negocios
+            Route::match(['GET', 'POST'], 'opciones-tipos-de-negocios', 'opcionesTiposDeNegocios')
+                ->name('opciones_tipos_de_negocios');
 
-        // Ruta para guardar una nueva categoría vía Ajax
-        Route::post('opciones-tipos-de-negocios/store', 'storeOpcionTipoNegocio')
-            ->name('reda.admin.opciones_tipos_de_negocios.store');
+            // Ruta para guardar una nueva categoría vía Ajax
+            Route::post('opciones-tipos-de-negocios/store', 'storeOpcionTipoNegocio')
+                ->name('opciones_tipos_de_negocios.store');
 
-        // Ruta para actualizar una categoría vía Ajax
-        Route::post('opciones-tipos-de-negocios/update', 'updateOpcionTipoNegocio')
-            ->name('reda.admin.opciones_tipos_de_negocios.update');
+            // Ruta para actualizar una categoría vía Ajax
+            Route::post('opciones-tipos-de-negocios/update', 'updateOpcionTipoNegocio')
+                ->name('opciones_tipos_de_negocios.update');
 
-        // Ruta para eliminar una categoría vía Ajax
-        Route::delete('opciones-tipos-de-negocios/destroy/{clave}', 'destroyOpcionTipoNegocio')
-            ->name('reda.admin.opciones_tipos_de_negocios.destroy');
+            // Ruta para eliminar una categoría vía Ajax
+            Route::delete('opciones-tipos-de-negocios/destroy/{clave}', 'destroyOpcionTipoNegocio')
+                ->name('opciones_tipos_de_negocios.destroy');
 
-        // Aquí podrás añadir fácilmente las próximas rutas para este controlador en el futuro, por ejemplo:
-        // Route::get('experiencias/listado', 'metodoListado')->name('reda.admin.experiencias.listado');
-        // Route::post('experiencias/guardar', 'metodoGuardar')->name('reda.admin.experiencias.guardar');
-
+        });
     });
-
-    // (Opcional) Si en el futuro creas otro controlador administrativo para el plugin, lo agrupas aquí abajo:
-    // Route::controller(OtroAdminController::class)->group(function () { ... });
 
 });
 
 Route::prefix('reda')->group(function () {
 
     // ----------------------------------------------------------------------
-    // 1. Rutas Sin Login Requerido
+    // 1. Rutas Sin Prefijo 'negocios' (Administrativos, Billetera, Disputas)
     // ----------------------------------------------------------------------
 
     // Administrativo
@@ -87,54 +81,76 @@ Route::prefix('reda')->group(function () {
     // Disputa
     Route::get('disputas', [DisputaController::class, 'index'])->name('reda.disputas.index');
 
-    // Experiencia - Módulos principales y sub-módulos
-    Route::get('actividades-experiencias', [ActividadExperienciaController::class, 'index'])->name('reda.actividades_experiencias.index');
-    Route::get('anfitrion-experiencias', [AnfitrionExperienciaController::class, 'index'])->name('reda.anfitriones_experiencias.index');
-    Route::get('experiencias', [ExperienciaController::class, 'index'])->name('reda.experiencias.index');
-    Route::get('listado-negocios', [ExperienciaController::class, 'listadoFrontend'])->name('reda.experiencias.listado_frontend');
-    Route::get('listado-productos-servicios/{id}', [ExperienciaController::class, 'listadoProductosServicios'])->name('reda.experiencias.listado_productos_servicios');
-    Route::get('experiencias/actividades/detalle/{id}', [ExperienciaController::class, 'getActividadDetalle'])->name('reda.experiencias.actividades.detalle');
-    Route::get('horarios-experiencias', [HorarioExperienciaController::class, 'index'])->name('reda.horarios_experiencias.index');
-    Route::get('informacion-experiencias', [InformacionExperienciaController::class, 'index'])->name('reda.informaciones_experiencias.index');
-    Route::get('reservacion-experiencias', [ReservacionExperienciaController::class, 'index'])->name('reda.reservaciones_experiencias.index');
 
     // ----------------------------------------------------------------------
-    // 2. Rutas que requieren login de usuario (Grupo original con middleware)
+    // 2. Rutas de Negocios Sin Login Requerido
+    // ----------------------------------------------------------------------
+    Route::prefix('negocios')->as('reda.negocios.')->group(function () {
+
+        // Experiencia - Módulos principales y sub-módulos
+        Route::get('actividades-experiencias', [ActividadExperienciaController::class, 'index'])->name('actividades_experiencias.index');
+        Route::get('anfitrion-experiencias', [AnfitrionExperienciaController::class, 'index'])->name('anfitriones_experiencias.index');
+        Route::get('experiencias', [ExperienciaController::class, 'index'])->name('experiencias.index');
+        Route::get('listado-negocios', [ExperienciaController::class, 'listadoFrontend'])->name('experiencias.listado_frontend');
+        Route::get('listado-productos-servicios/{id}', [ExperienciaController::class, 'listadoProductosServicios'])->name('experiencias.listado_productos_servicios');
+        Route::get('experiencias/actividades/detalle/{id}', [ExperienciaController::class, 'getActividadDetalle'])->name('experiencias.actividades.detalle');
+        Route::get('horarios-experiencias', [HorarioExperienciaController::class, 'index'])->name('horarios_experiencias.index');
+        Route::get('informacion-experiencias', [InformacionExperienciaController::class, 'index'])->name('informaciones_experiencias.index');
+        Route::get('reservacion-experiencias', [ReservacionExperienciaController::class, 'index'])->name('reservaciones_experiencias.index');
+
+    });
+
+    // ----------------------------------------------------------------------
+    // 3. Rutas que requieren login de usuario
     // ----------------------------------------------------------------------
     Route::group(['middleware' => ['web', 'reda.auth', 'locale']], function () {
-        Route::get('index-experiencias', [ExperienciaController::class, 'index'])->name('reda.experiencias.index');
 
-        Route::match(['GET', 'POST'], 'crear-experiencia', [ExperienciaController::class, 'create'])
-        ->name('reda.experiencias.create');
+        // Media (Se mantienen sin el prefijo 'negocios' en URL y nombre)
+        Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])->name('reda.upload_photo');
+        Route::post('delete-photo', [MediaController::class, 'deletePhoto'])->name('reda.delete_photo');
+        Route::post('make-default-photo', [MediaController::class, 'makeDefaultPhoto'])->name('reda.make_default_photo');
+        Route::post('crop-photo', [MediaController::class, 'cropPhoto'])->name('reda.crop_photo');
 
-        Route::match(['GET', 'POST'], 'formulario-de-pasos-experiencias/{id}/{paso}', [ExperienciaController::class, 'formularioDePasosExperiencias'])
-        ->name('reda.experiencias.pasos')
-        ->where(['paso' => 'descripcion|fotos|actividades|ubicacion|horario|anfitrion|informacion_adicional|precio']);
+        // Rutas de Negocios (Con login)
+        Route::prefix('negocios')->as('reda.negocios.')->group(function () {
+            Route::get('index-experiencias', [ExperienciaController::class, 'index'])->name('experiencias.index');
 
-        Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])
-        ->name('reda.upload_photo');
+            Route::match(['GET', 'POST'], 'crear-experiencia', [ExperienciaController::class, 'create'])
+                ->name('experiencias.create');
 
-        Route::post('delete-photo', [MediaController::class, 'deletePhoto'])
-        ->name('reda.delete_photo');
+            Route::match(['GET', 'POST'], 'formulario-de-pasos-experiencias/{id}/{paso}', [ExperienciaController::class, 'formularioDePasosExperiencias'])
+                ->name('experiencias.pasos')
+                ->where(['paso' => 'descripcion|fotos|actividades|ubicacion|horario|anfitrion|informacion_adicional|precio']);
 
-        Route::post('make-default-photo', [MediaController::class, 'makeDefaultPhoto'])
-        ->name('reda.make_default_photo');
+            Route::post('experiencias/{id}/agregar-actividad', [ExperienciaController::class, 'agregarActividad'])->name('experiencias.actividades.add');
 
-        Route::post('crop-photo', [MediaController::class, 'cropPhoto'])
-        ->name('reda.crop_photo');
+            Route::get('experiencias/actividades/get-form/{id}', [ExperienciaController::class, 'getActividadForm'])->name('experiencias.actividades.get_form');
 
-        Route::post('experiencias/{id}/agregar-actividad', [ExperienciaController::class, 'agregarActividad'])->name('reda.experiencias.actividades.add');
+            Route::post('experiencias/actividades/reordenar', [ExperienciaController::class, 'reordenarActividades'])->name('experiencias.actividades.reordenar');
+            Route::post('experiencias/actividades/actualizar-precios-lote', [ExperienciaController::class, 'actualizarPreciosLote'])->name('experiencias.actividades.actualizar_precios_lote');
+            Route::delete('experiencias/actividades/delete/{id}', [ExperienciaController::class, 'deleteActividad'])->name('experiencias.actividades.delete');
 
-        Route::get('experiencias/actividades/get-form/{id}', [ExperienciaController::class, 'getActividadForm'])->name('reda.experiencias.actividades.get_form');
+            // Rutas para Horarios (JSON en tabla experiencias)
+            Route::post('experiencias/{id}/guardar-horario', [ExperienciaController::class, 'guardarHorario'])->name('experiencias.horario.guardar');
+            Route::delete('experiencias/{id}/eliminar-horario/{index}', [ExperienciaController::class, 'eliminarHorario'])->name('experiencias.horario.eliminar');
 
-        Route::post('experiencias/actividades/reordenar', [ExperienciaController::class, 'reordenarActividades'])->name('reda.experiencias.actividades.reordenar');
-        Route::post('experiencias/actividades/actualizar-precios-lote', [ExperienciaController::class, 'actualizarPreciosLote'])->name('reda.experiencias.actividades.actualizar_precios_lote');
-        Route::delete('experiencias/actividades/delete/{id}', [ExperienciaController::class, 'deleteActividad'])->name('reda.experiencias.actividades.delete');
+            // Rutas para Calificaciones
+            Route::get('calificar/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'mostrarFormulario'])
+                ->name('experiencias.calificar');
+            Route::post('guardar-calificacion', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'guardarCalificacion'])
+                ->name('experiencias.guardar_calificacion');
 
-        // Rutas para Horarios (JSON en tabla experiencias)
-        Route::post('experiencias/{id}/guardar-horario', [ExperienciaController::class, 'guardarHorario'])->name('reda.experiencias.horario.guardar');
-        Route::delete('experiencias/{id}/eliminar-horario/{index}', [ExperienciaController::class, 'eliminarHorario'])->name('reda.experiencias.horario.eliminar');
+            // Rutas para Gestión de QR
+            Route::get('mis-calificaciones/qr', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'indexQR'])
+                ->name('experiencias.qr_index');
+            Route::get('mis-calificaciones/descargar-cartel/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'descargarCartel'])
+                ->name('experiencias.descargar_cartel');
 
-        Route::delete('experiencias/eliminar-experiencia/{id}', [ExperienciaController::class, 'destroy'])->name('reda.experiencias.destroy');
+            // Nueva Ruta: Listado de Calificaciones para el dueño
+            Route::get('mis-calificaciones/listado', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'listadoDuenio'])
+                ->name('experiencias.calificaciones_listado');
+
+            Route::delete('experiencias/eliminar-experiencia/{id}', [ExperienciaController::class, 'destroy'])->name('experiencias.destroy');
+        });
     });
 });

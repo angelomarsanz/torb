@@ -12,7 +12,7 @@ export const menuPrincipal = () => {
         if ($('#reda-menu-principal').length) return;
 
         const urlAlojamientos = APP_URL + '/';
-        const urlComercios = APP_URL + '/reda/listado-negocios';
+        const urlComercios = APP_URL + '/reda/negocios/listado-negocios';
 
         const textoAlojamientos = window.RedaAlojamientoJson["Alojamientos"] || "Alojamientos";
         const textoComercios = window.RedaAlojamientoJson["Comercios"] || "Comercios";
@@ -27,9 +27,9 @@ export const menuPrincipal = () => {
             || pathActual.includes('/properties') 
             || pathActual.includes('/property/');
             
-        const esComercios = pathActual.includes('/reda/listado-negocios') 
-            || pathActual.includes('/reda/negocio/') 
-            || pathActual.includes('/reda/experiencias');
+        const esComercios = pathActual.includes('/reda/negocios/listado-negocios') 
+            || pathActual.includes('/reda/negocios/listado-productos-servicios') 
+            || pathActual.includes('/reda/negocios/experiencias');
 
         const menuHtml = `
             <div id="reda-menu-principal" class="d-flex align-items-center reda-menu-principal" data-role="added-by-reda">

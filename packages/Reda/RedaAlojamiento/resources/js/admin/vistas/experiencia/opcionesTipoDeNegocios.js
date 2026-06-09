@@ -49,7 +49,7 @@ const destroyOpcionTipoNegocio = (clave) => {
     return new Promise((resolve) => {
         (function( $ ) {
             $.ajax({
-                url: APP_URL + '/admin/reda/opciones-tipos-de-negocios/destroy/' + clave,
+                url: APP_URL + '/admin/reda/negocios/opciones-tipos-de-negocios/destroy/' + clave,
                 type: 'DELETE',
                 data: {
                     "_token": $('meta[name="csrf-token"]').attr('content'),

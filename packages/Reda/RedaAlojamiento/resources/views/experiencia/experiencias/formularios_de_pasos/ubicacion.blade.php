@@ -12,7 +12,7 @@
                     </div>
 
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
-                        <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
+                        <form method="post" id="list_des" action="{{ route('reda.negocios.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-4 pl-sm-0 pr-4 pr-sm-0 ">
 								<div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-4 mt-sm-0 ">
@@ -92,7 +92,7 @@
                             <div class="col-md-12 p-0 mt-4 mb-5">
                                 <div class="row m-0 justify-content-between">
                                     <div class="mt-4">
-										<a href="{{ route('reda.experiencias.pasos', [$result->id, 'actividades']) }}" class="btn btn-outline-danger secondary-text-color-hover text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3">
+										<a href="{{ route('reda.negocios.experiencias.pasos', [$result->id, 'actividades']) }}" class="btn btn-outline-danger secondary-text-color-hover text-16 font-weight-700 pl-5 pr-5 pt-3 pb-3">
 											{{ __('Atrás') }}
 										</a>
 									</div>

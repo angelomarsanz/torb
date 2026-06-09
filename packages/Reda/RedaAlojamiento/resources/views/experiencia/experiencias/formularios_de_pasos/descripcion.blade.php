@@ -1,4 +1,4 @@
-﻿@extends('template')
+@extends('template')
 @section('main')
 <div class="formulario-de-pasos-experiencias" data-step="{{ $paso }}"></div>
 <div class="margin-top-85">
@@ -12,7 +12,7 @@
                     </div>
 
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
-                        <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
+                        <form method="post" id="list_des" action="{{ route('reda.negocios.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0 ">
                                 <div class="form-group col-md-12 main-panelbg pb-3 pt-3 mt-sm-0 ">

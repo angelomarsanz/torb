@@ -46,7 +46,7 @@
         const obtenerDetalleActividad = (id) => {
             return new Promise((resolve) => {
                 $.ajax({
-                    url: APP_URL + '/reda/experiencias/actividades/detalle/' + id,
+                    url: APP_URL + '/reda/negocios/experiencias/actividades/detalle/' + id,
                     type: 'GET',
                     dataType: 'json',
                     success: (data) => resolve(data),

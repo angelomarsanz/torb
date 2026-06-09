@@ -9,7 +9,7 @@ export const addPublicaExperienciaBtn = () => {
         const botonIdEscritorio = 'nav-publica-experiencia';
         const botonIdMovil = 'nav-publica-experiencia-movil';
         const textoBoton = window.RedaAlojamiento?.general?.publica_tu_negocio || "Publica tu negocio";
-        const urlCrearExperiencia = APP_URL + '/reda/crear-experiencia';
+        const urlCrearExperiencia = APP_URL + '/reda/negocios/crear-experiencia';
 
         // HTML para la versión de escritorio
         const botonHtmlEscritorio = `

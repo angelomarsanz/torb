@@ -14,7 +14,7 @@
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="font-weight-700 m-0">{{ __('reda-alojamiento::messages.general.productos_y_servicios') }}</h4>
-                            <button type="button" class="btn vbtn-outline-success font-weight-700" id="btn-add-actividad" data-add-url="{{ route('reda.experiencias.actividades.add', $result->id) }}">
+                            <button type="button" class="btn vbtn-outline-success font-weight-700" id="btn-add-actividad" data-add-url="{{ route('reda.negocios.experiencias.actividades.add', $result->id) }}">
                                 <i class="fa fa-plus-circle mr-1"></i> {{ __('reda-alojamiento::messages.general.agregar_una_nueva_actividad') }}
                             </button>
                         </div>
@@ -33,7 +33,7 @@
                             </div>
                         </div>
 
-                        <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
+                        <form method="post" id="list_des" action="{{ route('reda.negocios.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <input type="hidden" name="stay_on_step" id="stay_on_step" value="0">
 
@@ -59,7 +59,7 @@
                                                 <th width="150" class="text-center">{{ __('reda-alojamiento::messages.general.acciones') }}</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
+                                        <tbody id="actividades-sortable" data-reorder-url="{{ route('reda.negocios.experiencias.actividades.reordenar') }}">
                                             @foreach($actividades as $actividad)
                                                 <tr class="fila-actividad-{{ $actividad->id }}" data-id="{{ $actividad->id }}">
                                                     <td class="align-middle text-center">
@@ -89,8 +89,8 @@
                                                     <td class="align-middle text-center">
                                                         <div class="btn-group shadow-sm border rounded">
                                                             <button type="button" class="btn btn-sm btn-white text-info btn-modal-actividad" data-mode="view" data-id="{{ $actividad->id }}" title="Ver"><i class="fa fa-eye"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-white text-warning btn-edit-actividad" data-id="{{ $actividad->id }}" data-edit-url="{{ route('reda.experiencias.actividades.get_form', $actividad->id) }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad" data-delete-id="{{ $actividad->id }}" data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-white text-warning btn-edit-actividad" data-id="{{ $actividad->id }}" data-edit-url="{{ route('reda.negocios.experiencias.actividades.get_form', $actividad->id) }}" title="Editar"><i class="fa fa-pencil-alt"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-white text-danger btn-delete-actividad" data-delete-id="{{ $actividad->id }}" data-delete-url="{{ route('reda.negocios.experiencias.actividades.delete', $actividad->id) }}" title="Borrar"><i class="fa fa-trash"></i></button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -103,7 +103,7 @@
                                 </div>
 
                                 <!-- Vista Móvil (Cards) -->
-                                <div class="d-md-none" id="actividades-cards-container" data-reorder-url="{{ route('reda.experiencias.actividades.reordenar') }}">
+                                <div class="d-md-none" id="actividades-cards-container" data-reorder-url="{{ route('reda.negocios.experiencias.actividades.reordenar') }}">
                                     @if($actividades->count() > 0)
                                         <div class="mb-3 pl-4">
                                             <div class="custom-control custom-checkbox">
@@ -161,7 +161,7 @@
                                                                 <button type="button"
                                                                         class="btn btn-sm btn-outline-primary btn-edit-actividad p-1"
                                                                         data-id="{{ $actividad->id }}"
-                                                                        data-edit-url="{{ route('reda.experiencias.actividades.get_form', $actividad->id) }}"
+                                                                        data-edit-url="{{ route('reda.negocios.experiencias.actividades.get_form', $actividad->id) }}"
                                                                         title="{{ __('reda-alojamiento::messages.general.editar') }}">
                                                                     <i class="fa fa-edit"></i>
                                                                 </button>
@@ -169,7 +169,7 @@
                                                                 <button type="button"
                                                                         class="btn btn-sm btn-outline-danger btn-delete-actividad p-1 mt-1"
                                                                         data-delete-id="{{ $actividad->id }}"
-                                                                        data-delete-url="{{ route('reda.experiencias.actividades.delete', $actividad->id) }}"
+                                                                        data-delete-url="{{ route('reda.negocios.experiencias.actividades.delete', $actividad->id) }}"
                                                                         title="{{ __('reda-alojamiento::messages.general.eliminar') }}">
                                                                     <i class="fa fa-trash"></i>
                                                                 </button>

@@ -48,8 +48,10 @@ class ExperienciaController extends Controller
             ksort($categoriasNegocios);
         }
 
-        // 2. Construir la consulta base
-        $query = Experiencia::with(['fotos', 'owner']);
+        // 2. Construir la consulta base con conteo y promedio de calificaciones
+        $query = Experiencia::with(['fotos', 'owner'])
+            ->withCount('calificaciones')
+            ->withAvg('calificaciones', 'estrellas');
 
         // 3. Aplicar Filtros si existen (para AJAX o búsqueda directa)
         if ($request->filled('categoria')) {
@@ -133,7 +135,10 @@ class ExperienciaController extends Controller
      */
     public function listadoProductosServicios(Request $request, $id)
     {
-        $experiencia = Experiencia::with(['fotos', 'actividades', 'owner', 'anfitrion', 'informaciones'])->findOrFail($id);
+        $experiencia = Experiencia::with(['fotos', 'actividades', 'owner', 'anfitrion', 'informaciones', 'calificaciones.usuario'])
+            ->withCount('calificaciones')
+            ->withAvg('calificaciones', 'estrellas')
+            ->findOrFail($id);
 
         // Obtenemos todos los productos/servicios activos
         $actividades = $experiencia->actividades()
@@ -181,7 +186,7 @@ class ExperienciaController extends Controller
             InformacionExperiencia::create(['experiencia_id' => $experiencia->id]);
             AnfitrionExperiencia::create(['experiencia_id' => $experiencia->id, 'user_id' => Auth::id()]);
 
-            return redirect()->route('reda.experiencias.pasos', ['id' => $experiencia->id, 'paso' => 'descripcion']);
+            return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $experiencia->id, 'paso' => 'descripcion']);
         }
 
         return view('reda-alojamiento::experiencia.experiencias.create');
@@ -516,7 +521,7 @@ class ExperienciaController extends Controller
                     return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
                     ->with('success', __('Información adicional actualizada con éxito'));
                 case 'precio':
-                    return redirect()->route('reda.experiencias.index')
+                    return redirect()->route('reda.negocios.experiencias.index')
                                 ->with('success', __('Pago realizado con éxito'));
             }
         }

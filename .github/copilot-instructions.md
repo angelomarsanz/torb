@@ -253,3 +253,6 @@ Agregar el archivo para su compilación en webpack.mix.js
 Agregar al final del archivo blade la dirección del archivo Javascript minificado
 Crear la ruta en el archivo web.php si aplica
 Crear la acción en el controlador
+
+## Procesos de cambios masivos
+Cuando se requiera hacer un cambio masivo en la aplicación se deben ignorar los archivos que en su nombre contenga la palabra "copy" o "copia" u "original"

@@ -8,7 +8,7 @@
             <div class="main-panel m-4 list-background border rounded-3">
                 <h3 class="text-center mt-5 text-24 font-weight-700">{{ __('reda-alojamiento::messages.general.publica_tu_negocio') }}</h3>
                 <p class="text-center text-16 pl-4 pr-4">{{ __('reda-alojamiento::messages.general.comparte_la_informacion_de_tu_negocio_con_viajeros_de_todo_el_mundo') }}</p>               
-                <form id="list_experience" method="post" action="{{ route('reda.experiencias.create') }}" class="mt-4" accept-charset='UTF-8'>
+                <form id="list_experience" method="post" action="{{ route('reda.negocios.experiencias.create') }}" class="mt-4" accept-charset='UTF-8'>
                     {{ csrf_field() }}
                     
                     <div class="row p-4">

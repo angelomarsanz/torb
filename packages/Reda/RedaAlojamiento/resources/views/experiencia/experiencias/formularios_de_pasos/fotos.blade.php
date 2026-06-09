@@ -1,4 +1,4 @@
-﻿@extends('template')
+@extends('template')
 @section('main')
 <div class="formulario-de-pasos-experiencias" data-step="{{ $paso }}"></div>
 <div class="margin-top-85">
@@ -12,7 +12,7 @@
                     </div>
 
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
-                        <form id="img_form" enctype='multipart/form-data' method="post" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
+                        <form id="img_form" enctype='multipart/form-data' method="post" action="{{ route('reda.negocios.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8'>
                             {{ csrf_field() }}
                             <input type="hidden" id="experiencia_id" value="{{ $result->id }}">
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-0 pr-sm-0">

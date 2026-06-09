@@ -17,7 +17,7 @@
                                 <span class="text-18 pt-4 pb-4 font-weight-700">Mis Negocios</span>
 
                                 {{-- Botón para crear nuevo, similar al flujo de Airbnb --}}
-                                <a href="{{ url('reda/crear-experiencia') }}" class="btn vbg-default border">
+                                <a href="{{ url('reda/negocios/crear-experiencia') }}" class="btn vbg-default border">
                                     <i class="fa fa-plus"></i> Nuevo Negocio
                                 </a>
                             </div>
@@ -36,14 +36,14 @@
                                                     @endphp
 
                                                     @if($fotoPortada)
-                                                        <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
+                                                        <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
                                                             <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo) }}"
                                                                 class="img-fluid w-100 h-100 object-fit-cover rounded-start"
                                                                 alt="{{ $experiencia->titulo }}"
                                                                 style="min-height: 150px; object-fit: cover;">
                                                         </a>
                                                     @else
-                                                        <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
+                                                        <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
                                                             <img src="{{ asset('public/img/unnamed.png') }}"
                                                                 class="img-fluid w-100 h-100 object-fit-cover rounded-start"
                                                                 alt="Sin foto"
@@ -58,7 +58,7 @@
                                                 <div class="d-flex justify-content-between">
                                                     <span class="badge bg-orange text-white mb-2">{{ ucfirst($experiencia->categoria_negocio ?? 'General') }}</span>
                                                 </div>
-                                                <a href="{{ url('reda/formulario-de-pasos-experiencias/'.$experiencia->id.'/descripcion') }}">
+                                                <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/'.$experiencia->id.'/descripcion') }}">
                                                     <div class=\"text-muted small mb-1\">ID: {{ $experiencia->id }}</div>
                                                     <p class="text-18 font-weight-700 text-color">{{ $experiencia->titulo }}</p>
                                                 </a>
@@ -67,7 +67,7 @@
                                             {{-- Columna de Acciones --}}
                                             <div class="col-md-3 col-xl-3 border-start-lg p-4 d-flex flex-column justify-content-center">
                                                 {{-- Botón Editar --}}
-                                                <a href="{{ url('reda/formulario-de-pasos-experiencias/' . $experiencia->id . '/descripcion') }}"
+                                                <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/' . $experiencia->id . '/descripcion') }}"
                                                 class="d-flex flex-column align-items-center text-center text-decoration-none mx-3"
                                                 style="color: #222 !important;">
                                                     <i class="fa fa-edit" style="font-size: 20px !important; display: block !important; margin-bottom: 2px;"></i>

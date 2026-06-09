@@ -343,7 +343,7 @@ $(function() {
                 const actualizarPreciosLoteAjax = (datos) => {
                     return new Promise((resolve) => {
                         $.ajax({
-                            url: APP_URL + '/reda/experiencias/actividades/actualizar-precios-lote',
+                            url: APP_URL + '/reda/negocios/experiencias/actividades/actualizar-precios-lote',
                             type: 'POST',
                             data: {
                                 _token: $('input[name="_token"]').val(),
@@ -812,7 +812,7 @@ $(function() {
 
                 $('#btn-cancel-new-producto').on('click', function() {
                     if (currentNewActivityId) {
-                        const deleteUrl = APP_URL + '/reda/experiencias/actividades/delete/' + currentNewActivityId;
+                        const deleteUrl = APP_URL + '/reda/negocios/experiencias/actividades/delete/' + currentNewActivityId;
 
                         $(this).prop('disabled', true);
 
@@ -963,7 +963,7 @@ $(function() {
                 const guardarHorarioAjax = (formData) => {
                     return new Promise((resolve) => {
                         $.ajax({
-                            url: APP_URL + '/reda/experiencias/' + EXPERIENCIA_ID + '/guardar-horario',
+                            url: APP_URL + '/reda/negocios/experiencias/' + EXPERIENCIA_ID + '/guardar-horario',
                             type: 'POST',
                             data: formData,
                             processData: false,
@@ -991,7 +991,7 @@ $(function() {
                 const eliminarHorarioAjax = (index) => {
                     return new Promise((resolve) => {
                         $.ajax({
-                            url: APP_URL + '/reda/experiencias/' + EXPERIENCIA_ID + '/eliminar-horario/' + index,
+                            url: APP_URL + '/reda/negocios/experiencias/' + EXPERIENCIA_ID + '/eliminar-horario/' + index,
                             type: 'DELETE',
                             data: { _token: $('input[name="_token"]').val() },
                             success: (data) => resolve(data),

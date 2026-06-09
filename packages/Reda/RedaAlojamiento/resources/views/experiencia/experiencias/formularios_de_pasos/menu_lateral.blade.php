@@ -16,7 +16,7 @@
         @foreach($steps as $key => $label)
             <li class="{{ $paso == $key ? 'is-active' : '' }}">
                 <a class="btn text-16 font-weight-700 pl-lg-5 pr-lg-5 pt-3 pb-3 rounded-3 {{ $paso == $key ? 'vbtn-outline-success active-side' : 'btn-outline-secondary' }}"
-                href="{{ route('reda.experiencias.pasos', [$result->id, $key]) }}">
+                href="{{ route('reda.negocios.experiencias.pasos', [$result->id, $key]) }}">
                     {{ $label }}
                 </a>
             </li>

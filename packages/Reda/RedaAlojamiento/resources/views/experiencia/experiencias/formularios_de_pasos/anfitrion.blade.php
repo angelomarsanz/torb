@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="col-md-9 mt-4 mt-sm-0 pl-4 pr-4">
-                        <form method="post" id="list_des" action="{{ route('reda.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
+                        <form method="post" id="list_des" action="{{ route('reda.negocios.experiencias.pasos', [$result->id, $paso]) }}" accept-charset='UTF-8' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class="col-md-12 border mt-4 pb-5 rounded-3 pl-sm-3 pr-sm-3 pt-4">
                                 <h4 class="font-weight-700 mb-4">{{ __('Nosotros') }}</h4>

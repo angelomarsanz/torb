@@ -108,7 +108,7 @@
 <div class="modal fade" id="modal-category" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="form-category" method="POST" action="{{ route('reda.admin.opciones_tipos_de_negocios.store') }}">
+            <form id="form-category" method="POST" action="{{ route('reda.admin.negocios.opciones_tipos_de_negocios.store') }}">
                 @csrf
                 <input type="hidden" name="old_clave" id="old_clave">
                 <div class="modal-header d-flex align-items-center justify-content-between">
@@ -144,8 +144,8 @@
     {{-- Agregamos las rutas que necesitamos en JS --}}
     <script>
         window.RedaRutas = {
-            store_categoria: "{{ route('reda.admin.opciones_tipos_de_negocios.store') }}",
-            update_categoria: "{{ route('reda.admin.opciones_tipos_de_negocios.update') }}"
+            store_categoria: "{{ route('reda.admin.negocios.opciones_tipos_de_negocios.store') }}",
+            update_categoria: "{{ route('reda.admin.negocios.opciones_tipos_de_negocios.update') }}"
         };
     </script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>

@@ -7,7 +7,7 @@
             </button>
 
             <!-- Link Overlay: Cubre toda la tarjeta para la navegación -->
-            <a href="{{ route('reda.experiencias.listado_productos_servicios', ['id' => $experiencia->id]) }}" class="negocio-card-overlay-link" title="{{ $experiencia->titulo }}">
+            <a href="{{ route('reda.negocios.experiencias.listado_productos_servicios', ['id' => $experiencia->id]) }}" class="negocio-card-overlay-link" title="{{ $experiencia->titulo }}">
                 {{ $experiencia->titulo }}
             </a>
 
@@ -37,7 +37,12 @@
                     {{ $experiencia->ubicacion['ciudad'] ?? __('Ubicación no especificada') }}
                 </p>
                 <p class="negocio-rating">
-                    <i class="fas fa-star"></i> 4.92
+                    <i class="fas fa-star" style="color: #FFB400;"></i> 
+                    @if($experiencia->calificaciones_count > 0)
+                        {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} ({{ $experiencia->calificaciones_count }})
+                    @else
+                        <span class="text-muted" style="font-size: 12px;">{{ __('Sin reseñas') }}</span>
+                    @endif
                 </p>
             </div>
         </div>

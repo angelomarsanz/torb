@@ -15,7 +15,7 @@ export const menuLateralAdmin = () =>
                     // Obtenemos la URL base de forma dinámica (ej: https://pruebas.redetronic.com)
                     const baseUrl = window.location.origin;
                     // Construimos el enlace hacia la ruta del plugin que creamos
-                    const linkOpcionesNegocios = `${baseUrl}/admin/reda/opciones-tipos-de-negocios`;
+                    const linkOpcionesNegocios = `${baseUrl}/admin/reda/negocios/opciones-tipos-de-negocios`;
                     // Insertamos la estructura HTML (Añadimos un identificador único id="menu-negocios" para controlarlo mejor)
                     const nuevoMenuHtml = `
                         <li class="treeview" id="menu-negocios">

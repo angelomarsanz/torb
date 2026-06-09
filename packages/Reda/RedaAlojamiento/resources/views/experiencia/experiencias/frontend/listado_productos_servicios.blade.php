@@ -40,7 +40,13 @@
         <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
         <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
         <div class="negocio-detalle-rating">
-            <i class="fas fa-star"></i> 4.92
+            <i class="fas fa-star" style="color: #FFB400;"></i> 
+            @if($experiencia->calificaciones_count > 0)
+                <span class="font-weight-700">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span> 
+                <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
+            @else
+                <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
+            @endif
         </div>
     </section>
 
@@ -263,6 +269,55 @@
         </div>
     </section>
     @endif
+
+    <hr class="mx-4">
+
+    <!-- SECCIÓN 10: RESEÑAS -->
+    <section class="seccion-reseñas-negocio px-4 mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="text-22 font-weight-700 m-0">
+                <i class="fas fa-star" style="color: #FFB400;"></i> 
+                @if($experiencia->calificaciones_count > 0)
+                    {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
+                @else
+                    {{ __('Reseñas') }}
+                @endif
+            </h2>
+        </div>
+
+        <div class="row">
+            @forelse($experiencia->calificaciones as $calificacion)
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-none bg-transparent">
+                        <div class="card-body p-0">
+                            <div class="d-flex align-items-center mb-2">
+                                <img src="{{ $calificacion->usuario->profile_src }}" class="rounded-circle mr-3" style="width: 48px; height: 48px; object-fit: cover;">
+                                <div>
+                                    <div class="font-weight-700 text-16">{{ $calificacion->usuario->full_name }}</div>
+                                    <div class="text-muted small">{{ $calificacion->created_at->format('M Y') }}</div>
+                                </div>
+                            </div>
+                            <div class="rating-stars mb-2">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="fa fa-star {{ $i <= $calificacion->estrellas ? 'text-warning' : 'text-light' }}" style="font-size: 12px;"></i>
+                                @endfor
+                            </div>
+                            <p class="text-16 text-justify mb-0">
+                                {{ $calificacion->comentario }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="bg-light p-5 rounded-12 text-center text-muted">
+                        <i class="far fa-comment-dots fa-3x mb-3"></i>
+                        <p class="m-0 text-16">{{ __('Aún no hay reseñas de este comercio. ¡Sé el primero en calificarlo!') }}</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+    </section>
 
     </div>
 </div>
