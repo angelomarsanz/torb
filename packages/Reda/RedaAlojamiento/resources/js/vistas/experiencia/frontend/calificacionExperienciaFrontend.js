@@ -51,35 +51,45 @@
 
             // --- ENVÍO DEL FORMULARIO ---
 
+            /**
+             * Función AJAX refinada conforme a GEMINI.md
+             */
             const guardarCalificacionAjax = (formData) => {
                 return new Promise((resolve) => {
-                    $.ajax({
-                        url: $('#form-calificacion').attr('action'),
-                        type: 'POST',
-                        data: formData,
-                        dataType: 'json',
-                        success: (data) => resolve(data),
-                        error: function (x, xs, xt) {
-                            let respuestaServidor = {};
-                            try {
-                                respuestaServidor = JSON.parse(x.responseText);
-                            } catch (e) {
-                                respuestaServidor = {};
+                    (function( $ ) {
+                        $.ajax({
+                            url: $('#form-calificacion').attr('action'),
+                            type: 'POST',
+                            data: formData,
+                            dataType: 'json',
+                            success: function(data) {
+                                resolve(data);
+                            },
+                            error: function (x, xs, xt) {
+                                // 1. Intentamos obtener el JSON que el servidor envió
+                                let respuestaServidor = {};
+                                try {
+                                    respuestaServidor = JSON.parse(x.responseText);
+                                } catch (e) {
+                                    respuestaServidor = {};
+                                }
+                                console.log('respuestaServidor error', respuestaServidor);
+
+                                const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                                const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                                // 2. Construimos la respuesta estandarizada conforme a GEMINI.md
+                                let respuesta = {
+                                    'success': false,
+                                    'message' : window.RedaAlojamientoJson["Error guardando calificacion"] || 'Error guardando calificación',
+                                    'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                                    'respuesta': respuestaServidor.respuesta || '',
+                                    'code': x.status !== 0 ? x.status : 504,
+                                };
+                                resolve(respuesta);
                             }
-                            console.log('respuestaServidor', respuestaServidor);
-
-                            const mensajeErrorBase = window.RedaAlojamientoJson?.["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
-                            const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
-
-                            resolve({
-                                'success': false,
-                                'message' : 'Error guardando calificación',
-                                'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
-                                'respuesta': respuestaServidor.respuesta || '',
-                                'code': x.status !== 0 ? x.status : 504,
-                            });
-                        }
-                    });
+                        });
+                    })(jQuery);
                 });
             };
 
@@ -106,7 +116,13 @@
                 if (response.success) {
                     $('#modalExitoCalificacion').modal('show');
                 } else {
-                    alert(response.mensaje_usuario);
+                    // Mostrar error usando el mensaje para el usuario retornado
+                    if (typeof mostrarNotificacion === 'function') {
+                        mostrarNotificacion(window.RedaAlojamientoJson["Error"] || "Error", response.mensaje_usuario, 'error');
+                    } else {
+                        alert(response.mensaje_usuario);
+                    }
+                    
                     $btn.prop('disabled', false);
                     $btn.find('.fa-spinner').addClass('d-none');
                     $btn.find('.btn-text').removeClass('d-none');

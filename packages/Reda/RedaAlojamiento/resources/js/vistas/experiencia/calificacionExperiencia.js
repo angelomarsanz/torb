@@ -14,7 +14,6 @@
             $(document).on('click', '.btn-generar-qr', function(e) {
                 e.preventDefault();
                 
-                const id = $(this).data('id');
                 const urlCalificar = $(this).data('url');
                 const nombreNegocio = $(this).data('nombre');
 
@@ -38,28 +37,38 @@
                 
                 // Inicializamos QRCode.js
                 // Usamos una resolución alta (1000x1000) por si el usuario quiere imprimirlo grande
-                const qrcode = new QRCode(tempDiv, {
-                    text: url,
-                    width: 1000, 
-                    height: 1000,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
+                if (typeof QRCode !== 'undefined') {
+                    const qrcode = new QRCode(tempDiv, {
+                        text: url,
+                        width: 1000, 
+                        height: 1000,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
 
-                // QRCode.js genera un canvas o img dentro del div
-                setTimeout(() => {
-                    const canvas = tempDiv.querySelector('canvas');
-                    if (canvas) {
-                        const imgData = canvas.toDataURL("image/png");
-                        const link = document.createElement('a');
-                        link.href = imgData;
-                        link.download = `QR_Individual_${nombre.replace(/\s+/g, '_')}.png`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                    // QRCode.js genera un canvas o img dentro del div
+                    setTimeout(() => {
+                        const canvas = tempDiv.querySelector('canvas');
+                        if (canvas) {
+                            const imgData = canvas.toDataURL("image/png");
+                            const link = document.createElement('a');
+                            link.href = imgData;
+                            link.download = `QR_Individual_${nombre.replace(/\s+/g, '_')}.png`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    }, 200);
+                } else {
+                    console.error('QRCode.js no está cargado');
+                    const errorMsg = window.RedaAlojamientoJson["Error al generar QR"] || 'Error al generar QR. Intente recargar la página.';
+                    if (typeof mostrarNotificacion === 'function') {
+                        mostrarNotificacion(window.RedaAlojamientoJson["Error"] || "Error", errorMsg, 'error');
+                    } else {
+                        alert(errorMsg);
                     }
-                }, 200);
+                }
             }
         });
     }
