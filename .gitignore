@@ -39,3 +39,10 @@ public/front
 *copy*
 *original*
 chat_gemini/
+
+# Ignorar archivos comprimidos en cualquier directorio
+*.zip
+*.tar.gz
+*.tgz
+*.tar
+*.rar
