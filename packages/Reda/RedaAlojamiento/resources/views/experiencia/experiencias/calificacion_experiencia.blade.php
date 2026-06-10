@@ -2,22 +2,6 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
-    <style>
-        .qr-card-container {
-            transition: transform 0.2s;
-            border: 1px solid #ddd !important;
-        }
-        .qr-card-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
-        .rounded-4 {
-            border-radius: 1rem !important;
-        }
-        .bg-gradient-soft {
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-        }
-    </style>
 @endpush
 
 @section('main')
@@ -38,7 +22,7 @@
                                     <h1 class="text-24 font-weight-700 m-0">{{ __('Material para Calificaciones') }}</h1>
                                     <p class="text-muted m-0">{{ __('Elige cómo quieres descargar el acceso para que tus clientes califiquen tu comercio.') }}</p>
                                 </div>
-                                <div class="alert alert-info border-0 shadow-sm m-0 p-3 rounded-3" style="max-width: 400px;">
+                                <div class="alert alert-info border-0 shadow-sm m-0 p-3 rounded-3 img-max-400">
                                     <i class="fa fa-info-circle mr-2"></i>
                                     <small>{{ __('Puedes descargar el código QR individual para tus diseños propios, o generar un cartel diseñado listo para imprimir y colgar en tu negocio.') }}</small>
                                 </div>
@@ -58,7 +42,7 @@
                                                     $foto = $experiencia->fotos->first();
                                                     $rutaFoto = $foto ? asset('public/images/experiencias/'.$experiencia->id.'/'.$foto->photo) : asset('public/img/unnamed.png');
                                                 @endphp
-                                                <img src="{{ $rutaFoto }}" class="rounded-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                <img src="{{ $rutaFoto }}" class="rounded-3 img-size-50 object-fit-cover">
                                             </div>
                                             <div class="overflow-hidden">
                                                 <h3 class="text-16 font-weight-700 m-0 text-truncate">{{ $experiencia->titulo }}</h3>
@@ -67,8 +51,8 @@
                                         </div>
 
                                         {{-- Vista Previa Simbólica del QR --}}
-                                        <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center bg-gradient-soft rounded-3 p-4 mb-4" style="border: 2px dashed #ccc;">
-                                            <i class="fas fa-qrcode fa-5x text-muted mb-3" style="opacity: 0.5;"></i>
+                                        <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center bg-gradient-soft rounded-3 p-4 mb-4 border-dashed-ccc">
+                                            <i class="fas fa-qrcode fa-5x text-muted mb-3 opacity-05"></i>
                                             <p class="text-muted small text-center">{{ __('Código QR dinámico vinculado a este negocio.') }}</p>
                                         </div>
 
@@ -93,9 +77,9 @@
                                     </div>
                                 </div>
                             </div>
-                        @empty
+@empty
                             <div class="col-12 text-center py-5">
-                                <img src="{{ asset('public/img/unnamed.png') }}" class="img-fluid mb-3" style="max-width: 150px;">
+                                <img src="{{ asset('public/img/unnamed.png') }}" class="img-fluid mb-3 img-max-150">
                                 <p class="text-muted">{{ __('No tienes negocios registrados para generar material de calificación.') }}</p>
                                 <a href="{{ route('reda.negocios.experiencias.create') }}" class="btn btn-success">{{ __('Crear mi primer negocio') }}</a>
                             </div>

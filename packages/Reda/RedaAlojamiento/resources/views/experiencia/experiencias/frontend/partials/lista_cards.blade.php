@@ -36,8 +36,8 @@
                 <p class="negocio-ubicacion">
                     {{ $experiencia->ubicacion['ciudad'] ?? __('Ubicación no especificada') }}
                 </p>
-                <p class="negocio-rating">
-                    <i class="fas fa-star" style="color: #FFB400;"></i> 
+                <p class="negocio-rating star-rating">
+                    <i class="fas fa-star"></i> 
                     @if($experiencia->calificaciones_count > 0)
                         {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} ({{ $experiencia->calificaciones_count }})
                     @else

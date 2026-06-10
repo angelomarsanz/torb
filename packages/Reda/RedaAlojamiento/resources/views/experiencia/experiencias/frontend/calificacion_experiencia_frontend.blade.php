@@ -24,7 +24,7 @@
                                     $foto = $experiencia->foto_portada;
                                     $rutaFoto = $foto ? asset('public/images/experiencias/'.$experiencia->id.'/'.$foto->photo) : asset('public/img/unnamed.png');
                                 @endphp
-                                <img src="{{ $rutaFoto }}" class="rounded-3 object-fit-cover" style="width: 70px; height: 70px;" alt="{{ $experiencia->titulo }}">
+                                <img src="{{ $rutaFoto }}" class="rounded-3 object-fit-cover img-size-70" alt="{{ $experiencia->titulo }}">
                             </div>
                             <div>
                                 <span class="text-muted small text-uppercase font-weight-700">{{ $experiencia->categoria_negocio }}</span>
@@ -43,7 +43,7 @@
                                 <p class="font-weight-700 text-18 mb-3">{{ __('¿Qué puntuación le darías?') }}</p>
                                 <div class="rating-stars-container d-flex justify-content-center">
                                     @for($i = 1; $i <= 5; $i++)
-                                        <i class="far fa-star star-item cursor-pointer mx-1" data-value="{{ $i }}" style="font-size: 36px; color: #FFB400;"></i>
+                                        <i class="far fa-star star-item mx-1" data-value="{{ $i }}"></i>
                                     @endfor
                                 </div>
                                 <span id="error-estrellas" class="text-danger small d-none font-weight-700 mt-2 d-block">
@@ -98,23 +98,6 @@
     </div>
 </div>
 @endsection
-
-@push('css')
-<style>
-    .star-item:hover, .star-item.active {
-        font-weight: 900 !important; /* fas equivalent */
-    }
-    .rounded-4 {
-        border-radius: 1.5rem !important;
-    }
-    .object-fit-cover {
-        object-fit: cover;
-    }
-    .cursor-pointer {
-        cursor: pointer;
-    }
-</style>
-@endpush
 
 @section('validation_script')
     <script>

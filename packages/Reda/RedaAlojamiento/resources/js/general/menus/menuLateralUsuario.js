@@ -11,7 +11,7 @@ export const menuLateralUsuario = () =>
             // 1. Definir los bloques de opciones
             // --- Grupo Negocios ---
             const bloqueNegocios = `
-                <div class="mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase" style="letter-spacing: 1px;">
+                <div class="mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase letter-spacing-1">
                     Negocios
                 </div>
                 <a class="text-color font-weight-500 nav-item-plugin" href="${APP_URL}/reda/negocios/index-experiencias">
@@ -24,7 +24,7 @@ export const menuLateralUsuario = () =>
 
             // --- Grupo Calificaciones ---
             const bloqueCalificaciones = `
-                <div class="mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase" style="letter-spacing: 1px;">
+                <div class="mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase letter-spacing-1">
                     Calificaciones
                 </div>
                 <a class="text-color font-weight-500 nav-item-plugin" href="${APP_URL}/reda/negocios/mis-calificaciones/qr">

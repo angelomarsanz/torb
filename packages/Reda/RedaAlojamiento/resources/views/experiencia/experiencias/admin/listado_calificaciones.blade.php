@@ -2,22 +2,6 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
-    <style>
-        .star-rating .fa-star {
-            color: #FFB400;
-        }
-        .star-rating .fa-star.text-muted {
-            color: #ddd !important;
-        }
-        .comment-box {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #FF5A5F;
-        }
-        .rounded-4 {
-            border-radius: 1rem !important;
-        }
-    </style>
 @endpush
 
 @section('main')
@@ -62,7 +46,7 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center">
-                                                        <img src="{{ $calificacion->usuario->profile_src }}" class="rounded-circle mr-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                                        <img src="{{ $calificacion->usuario->profile_src }}" class="img-profile-list img-size-30 mr-2">
                                                         <span>{{ $calificacion->usuario->first_name }}</span>
                                                     </div>
                                                 </td>
@@ -100,9 +84,9 @@
                                             <div class="d-flex justify-content-between align-items-start mb-3">
                                                 <div>
                                                     <h3 class="text-16 font-weight-700 m-0">{{ $calificacion->experiencia->titulo }}</h3>
-                                                    <div class="star-rating mt-1">
+                                                    <div class="star-rating star-rating-large mt-1">
                                                         @for($i = 1; $i <= 5; $i++)
-                                                            <i class="fa fa-star {{ $i <= $calificacion->estrellas ? '' : 'text-muted' }}" style="font-size: 14px;"></i>
+                                                            <i class="fa fa-star {{ $i <= $calificacion->estrellas ? '' : 'text-muted' }}"></i>
                                                         @endfor
                                                     </div>
                                                 </div>
@@ -114,7 +98,7 @@
                                             </div>
 
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ $calificacion->usuario->profile_src }}" class="rounded-circle mr-2" style="width: 25px; height: 25px; object-fit: cover;">
+                                                <img src="{{ $calificacion->usuario->profile_src }}" class="img-profile-list img-size-25 mr-2">
                                                 <span class="text-13 font-weight-600">{{ $calificacion->usuario->full_name }}</span>
                                             </div>
                                         </div>

@@ -39,10 +39,10 @@
     <section class="seccion-info-negocio p-4">
         <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
         <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
-        <div class="negocio-detalle-rating">
-            <i class="fas fa-star" style="color: #FFB400;"></i> 
+        <div class="negocio-detalle-rating star-rating">
+            <i class="fas fa-star"></i> 
             @if($experiencia->calificaciones_count > 0)
-                <span class="font-weight-700">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span> 
+                <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span> 
                 <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
             @else
                 <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>

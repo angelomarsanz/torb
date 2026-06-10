@@ -1324,3 +1324,154 @@
     .x-small { font-size: 10px; }
     .tracking-wider { letter-spacing: 0.05em; }
 }
+
+/* --- MÓDULO DE CALIFICACIONES QR --- */
+
+/* Estrellas Interactivas y de Visualización */
+.rating-stars-container {
+    .star-item {
+        font-size: 36px;
+        color: #FFB400;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+
+        &:hover, &.active {
+            font-weight: 900 !important; /* fas equivalent */
+            transform: scale(1.1);
+        }
+    }
+}
+
+.star-rating {
+    .fa-star {
+        color: #FFB400;
+        font-size: 12px;
+
+        &.text-muted {
+            color: #ddd !important;
+        }
+
+        &.text-light {
+            color: #f1f1f1 !important;
+        }
+    }
+}
+
+.star-rating-large {
+    .fa-star {
+        color: #FFB400;
+        font-size: 14px;
+    }
+}
+
+/* Contenedores y Tarjetas */
+.qr-card-container {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #ddd !important;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+}
+
+.comment-box {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #FF5A5F;
+}
+
+.bg-gradient-soft {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+}
+
+.border-dashed-ccc {
+    border: 2px dashed #ccc !important;
+}
+
+/* Tamaños de Imagen Específicos */
+.img-size-70 { width: 70px; height: 70px; }
+.img-size-50 { width: 50px; height: 50px; }
+.img-size-48 { width: 48px; height: 48px; }
+.img-size-30 { width: 30px; height: 30px; }
+.img-size-25 { width: 25px; height: 25px; }
+
+.img-profile-list {
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.img-max-150 { max-width: 150px; }
+.img-max-400 { max-width: 400px; }
+
+/* Utilidades de Texto y Bordes */
+.rounded-4 { border-radius: 1.5rem !important; }
+.italic { font-style: italic; }
+.letter-spacing-1 { letter-spacing: 1px; }
+.font-size-13 { font-size: 13px; }
+
+/* Opacidad y Visibilidad */
+.opacity-05 { opacity: 0.5; }
+
+/* --- ESTILOS PARA EL CARTEL PDF (mPDF) --- */
+/* Nota: Se usan en la vista cartel_calificacion_pdf.blade.php */
+
+.pdf-cartel-container {
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+    text-align: center;
+}
+
+.pdf-cartel-logo-text {
+    font-size: 60px;
+    color: #FF5A5F;
+    margin: 0;
+}
+
+.pdf-cartel-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #FF5A5F;
+    margin-bottom: 10px;
+}
+
+.pdf-cartel-subtitle {
+    font-size: 24px;
+    margin-bottom: 50px;
+    color: #484848;
+}
+
+.pdf-cartel-qr-box {
+    margin: 40px auto;
+    padding: 30px;
+    border: 2px solid #eee;
+    display: inline-block;
+    background: #fff;
+    border-radius: 20px;
+}
+
+.pdf-cartel-instructions {
+    margin-top: 40px;
+    font-size: 16px;
+    color: #767676;
+}
+
+.pdf-cartel-footer {
+    margin-top: 50px;
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+}
+
+.pdf-cartel-business-name {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.pdf-cartel-category {
+    font-size: 18px;
+    color: #767676;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
