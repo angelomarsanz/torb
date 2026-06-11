@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('calificaciones_experiencias', function (Blueprint $table) {
             $table->id();
-            // Relación con la tabla de experiencias
+            // Relación con la tabla de experiencias (es BigInt porque usa $table->id())
             $table->unsignedBigInteger('experiencia_id')->nullable();
-            // Relación con el usuario que realiza la calificación
-            $table->unsignedBigInteger('user_id')->nullable();
+            // Relación con el usuario (es Integer porque la tabla users usa $table->increments())
+            $table->unsignedInteger('user_id')->nullable();
             // Puntuación (ej. de 1 a 5 estrellas)
             $table->integer('estrellas')->nullable();
             // Comentario u opinión detallada

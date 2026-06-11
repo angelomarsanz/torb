@@ -5,6 +5,10 @@
 # Pueden ser del proyecto original o de los módulos REDA.
 # Para no subir archivos, escribir la palabra "Ninguno".
 ARCHIVOS_PHP_PUNTUALES=(
+    # webpack
+    "webpack.mix.js"
+    "config/pdf.php"
+
     # --- RUTAS Y CONTROLADORES ---
     "packages/Reda/RedaAlojamiento/routes/web.php"
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"

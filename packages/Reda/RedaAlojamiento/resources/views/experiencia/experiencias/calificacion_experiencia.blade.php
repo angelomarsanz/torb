@@ -50,10 +50,13 @@
                                             </div>
                                         </div>
 
-                                        {{-- Vista Previa Simbólica del QR --}}
-                                        <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center bg-gradient-soft rounded-3 p-4 mb-4 border-dashed-ccc">
-                                            <i class="fas fa-qrcode fa-5x text-muted mb-3 opacity-05"></i>
-                                            <p class="text-muted small text-center">{{ __('Código QR dinámico vinculado a este negocio.') }}</p>
+                                        {{-- Vista Previa Real del QR --}}
+                                        <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center bg-white rounded-3 p-4 mb-4 border shadow-sm">
+                                            <div class="qrcode-preview" 
+                                                 data-url="{{ route('reda.negocios.experiencias.calificar', $experiencia->id) }}">
+                                                {{-- Aquí se generará el QR mediante JS --}}
+                                            </div>
+                                            <p class="text-muted small text-center mt-3 m-0 font-weight-600">{{ __('Código QR dinámico') }}</p>
                                         </div>
 
                                         {{-- Acciones --}}

@@ -8,6 +8,29 @@
 
         $(function() {
             /**
+             * Generar vistas previas de los códigos QR automáticamente al cargar.
+             */
+            $('.qrcode-preview').each(function() {
+                const container = $(this);
+                const url = container.data('url');
+                
+                // Limpiar por si acaso
+                container.empty();
+
+                // Generar QR para vista previa (tamaño pequeño)
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(this, {
+                        text: url,
+                        width: 150,
+                        height: 150,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.M
+                    });
+                }
+            });
+
+            /**
              * Manejo del botón para generar y descargar SOLO el código QR.
              * Esta opción permite al usuario usar el QR en sus propios diseños.
              */

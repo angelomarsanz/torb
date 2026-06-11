@@ -30,7 +30,7 @@ class CalificacionController extends Controller
     public function indexQR()
     {
         $userId = Auth::id();
-        $experiencias = Experiencia::where('host_id', $userId)
+        $experiencias = Experiencia::where('user_id', $userId)
             ->with(['fotos' => function($q) {
                 $q->where('cover_photo', 1);
             }])
@@ -48,7 +48,7 @@ class CalificacionController extends Controller
         $userId = Auth::id();
         
         // Obtenemos los IDs de los negocios del usuario
-        $negociosIds = Experiencia::where('host_id', $userId)->pluck('id');
+        $negociosIds = Experiencia::where('user_id', $userId)->pluck('id');
 
         // Obtenemos las calificaciones vinculadas a esos negocios
         $calificaciones = CalificacionExperiencia::whereIn('experiencia_id', $negociosIds)
@@ -66,7 +66,7 @@ class CalificacionController extends Controller
     {
         $experiencia = Experiencia::findOrFail($id);
 
-        if ($experiencia->host_id != Auth::id()) {
+        if ($experiencia->user_id != Auth::id()) {
             abort(403);
         }
 
