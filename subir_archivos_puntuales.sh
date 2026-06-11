@@ -40,12 +40,19 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
 
+    # --- IDIOMAS Y ESTILOS ---
+    "packages/Reda/RedaAlojamiento/resources/lang/es.json"
+    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+
     # --- ARCHIVOS JAVASCRIPT (MENÚS Y VISTAS) ---
     "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
     "packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/eliminarExperiencia.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"

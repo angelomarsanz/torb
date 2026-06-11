@@ -14,15 +14,15 @@ $(function() {
             },
             messages: {
                 titulo: {
-                    required: window.RedaAlojamiento.general.el_nombre_del_negocio_es_obligatorio,
-                    minlength: window.RedaAlojamiento.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres
+                    required: window.RedaAlojamientoJson["El nombre del negocio es obligatorio."] || "El nombre del negocio es obligatorio.",
+                    minlength: window.RedaAlojamientoJson["El nombre del negocio debe tener al menos 5 caracteres."] || "El nombre del negocio debe tener al menos 5 caracteres."
                 },
             }, 
             submitHandler: function(form)
             {
                 $("#btn_next").attr("disabled", true);
                 $(".spinner").removeClass('d-none');
-                $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
+                $("#btn_next-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
                 return true;
             },
             errorElement: 'p',

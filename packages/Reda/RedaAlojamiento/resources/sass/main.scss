@@ -1475,3 +1475,45 @@
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
+/* --- UTILIDADES DE IMAGEN --- */
+.img-min-150 { min-height: 150px; object-fit: cover; }
+
+/* --- BOTONES DE ACCIÓN EN LISTADOS (ADMIN/USER) --- */
+.btn-list-action {
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    
+    .btn-list-icon {
+        font-size: 20px !important;
+        display: block !important;
+        margin-bottom: 2px;
+    }
+    
+    .btn-list-text {
+        font-weight: 700;
+        font-size: 13px;
+        display: block;
+    }
+
+    &.btn-edit {
+        color: #222 !important;
+        &:hover { color: #000 !important; transform: scale(1.05); }
+    }
+
+    &.btn-delete {
+        color: #dc3545 !important;
+        cursor: pointer;
+        &:hover { color: #a71d2a !important; transform: scale(1.05); }
+    }
+}
+
+/* --- SELECTS COMPACTOS --- */
+.select-compact-ampm {
+    padding: 0 5px !important;
+    font-size: 12px !important;
+}
+
+/* --- ESTRELLAS DE CALIFICACIÓN (TAMAÑO FIJO) --- */
+.star-rating-12 { font-size: 12px !important; }
+

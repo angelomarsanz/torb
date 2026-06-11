@@ -276,7 +276,7 @@
     <section class="seccion-reseñas-negocio px-4 mb-5">
         <div class="d-flex align-items-center mb-4">
             <h2 class="text-22 font-weight-700 m-0">
-                <i class="fas fa-star" style="color: #FFB400;"></i> 
+                <i class="fas fa-star text-warning"></i> 
                 @if($experiencia->calificaciones_count > 0)
                     {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
                 @else
@@ -291,15 +291,15 @@
                     <div class="card border-0 shadow-none bg-transparent">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center mb-2">
-                                <img src="{{ $calificacion->usuario->profile_src }}" class="rounded-circle mr-3" style="width: 48px; height: 48px; object-fit: cover;">
+                                <img src="{{ $calificacion->usuario->profile_src }}" class="img-profile-list mr-3 img-size-48">
                                 <div>
                                     <div class="font-weight-700 text-16">{{ $calificacion->usuario->full_name }}</div>
                                     <div class="text-muted small">{{ $calificacion->created_at->format('M Y') }}</div>
                                 </div>
                             </div>
-                            <div class="rating-stars mb-2">
+                            <div class="star-rating mb-2">
                                 @for($i = 1; $i <= 5; $i++)
-                                    <i class="fa fa-star {{ $i <= $calificacion->estrellas ? 'text-warning' : 'text-light' }}" style="font-size: 12px;"></i>
+                                    <i class="fa fa-star {{ $i <= $calificacion->estrellas ? '' : 'text-light' }} star-rating-12"></i>
                                 @endfor
                             </div>
                             <p class="text-16 text-justify mb-0">

@@ -75,7 +75,7 @@
         <div class="header">
             {{-- Logo Fijo por ahora --}}
             <div class="logo-placeholder">
-                <h1 style="font-size: 60px; color: #FF5A5F; margin: 0;">Torbian</h1>
+                <h1 class="pdf-cartel-logo-text">Torbian</h1>
             </div>
         </div>
 

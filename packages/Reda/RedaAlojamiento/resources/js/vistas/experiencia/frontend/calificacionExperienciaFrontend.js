@@ -81,7 +81,7 @@
                                 // 2. Construimos la respuesta estandarizada conforme a GEMINI.md
                                 let respuesta = {
                                     'success': false,
-                                    'message' : window.RedaAlojamientoJson["Error guardando calificacion"] || 'Error guardando calificación',
+                                    'message' : window.RedaAlojamientoJson["Error guardando calificación"] || 'Error guardando calificación',
                                     'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
                                     'respuesta': respuestaServidor.respuesta || '',
                                     'code': x.status !== 0 ? x.status : 504,

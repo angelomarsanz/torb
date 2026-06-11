@@ -61,7 +61,7 @@
                                             <div class="row m-0">
                                                 <div class="col-12 p-0 mb-2">
                                                     <a href="{{ route('reda.negocios.experiencias.descargar_cartel', $experiencia->id) }}" class="btn vbtn-success w-100 font-weight-700 py-2">
-                                                        <i class="fas fa-file-pdf mr-2"></i> {{ __('Generar Cartel Impresion') }}
+                                                        <i class="fas fa-file-pdf mr-2"></i> {{ __('Generar Cartel Impresión') }}
                                                     </a>
                                                 </div>
                                                 <div class="col-12 p-0">

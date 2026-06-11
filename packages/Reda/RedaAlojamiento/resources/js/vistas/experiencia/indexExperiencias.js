@@ -12,7 +12,9 @@ import { eliminarExperiencia } from './eliminarExperiencia.js';
             const id = $(this).data('id');
             const btn = $(this);
 
-            if (confirm('¿Estás seguro de que deseas eliminar este negocio? Esta acción borrará todas las fotos, actividades y registros relacionados de forma permanente.')) {
+            const mensajeConfirmacion = window.RedaAlojamientoJson["¿Estás seguro de que deseas eliminar este negocio? Esta acción borrará todas las fotos, actividades y registros relacionados de forma permanente."] || "¿Estás seguro de que deseas eliminar este negocio? Esta acción borrará todas las fotos, actividades y registros relacionados de forma permanente.";
+
+            if (confirm(mensajeConfirmacion)) {
                 btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i>');
                 const respuestaEliminarExperiencia = await eliminarExperiencia(id);
                 if (respuestaEliminarExperiencia.success) {

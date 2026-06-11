@@ -18,7 +18,7 @@ $(function() {
 
                 if ($.isFunction($.fn.select2)) {
                     $('.select-search').select2({
-                        placeholder: window.RedaAlojamiento.general.seleccione_una_opcion,
+                        placeholder: window.RedaAlojamientoJson["Seleccione una opción"] || "Seleccione una opción",
                         width: '100%'
                     });
                 }
@@ -32,16 +32,16 @@ $(function() {
                     messages: {
                         titulo:
                         {
-                            required: window.RedaAlojamiento.general.el_nombre_del_negocio_es_obligatorio,
-                            minlength: window.RedaAlojamiento.general.el_nombre_del_negocio_debe_tener_al_menos_5_caracteres
+                            required: window.RedaAlojamientoJson["El nombre del negocio es obligatorio."] || "El nombre del negocio es obligatorio.",
+                            minlength: window.RedaAlojamientoJson["El nombre del negocio debe tener al menos 5 caracteres."] || "El nombre del negocio debe tener al menos 5 caracteres."
                         },
                         descripcion:
                         {
-                            required: window.RedaAlojamiento.general.la_descripcion_es_obligatoria,
-                            minlength: window.RedaAlojamiento.general.la_descripcion_debe_tener_al_menos_20_caracteres
+                            required: window.RedaAlojamientoJson["La descripción es obligatoria."] || "La descripción es obligatoria.",
+                            minlength: window.RedaAlojamientoJson["La descripción debe tener al menos 20 caracteres."] || "La descripción debe tener al menos 20 caracteres."
                         },
                         categoria_negocio: {
-                            required: window.RedaAlojamiento.general.la_categoria_del_negocio_es_obligatoria // Nuevo mensaje
+                            required: window.RedaAlojamientoJson["La categoría del negocio es obligatoria."] || "La categoría del negocio es obligatoria."
                         },
                     },
                     errorPlacement: function(error, element) {
@@ -55,7 +55,7 @@ $(function() {
                     submitHandler: function(form) {
                         $("#btn_next").attr("disabled", true);
                         $(".spinner").removeClass('d-none');
-                        $("#btn_next-text").text(window.RedaAlojamiento.general.guardando);
+                        $("#btn_next-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
                         return true;
                     }
                 });
@@ -66,7 +66,7 @@ $(function() {
                 $('#img_form').on('submit', function() {
                     $("#btn_next").attr("disabled", true);
                     $(".spinner").removeClass('d-none');
-                    $("#btn_next-text").text(window.RedaAlojamiento.general.continuando);
+                    $("#btn_next-text").text(window.RedaAlojamientoJson["Continuando..."] || "Continuando...");
                 });
 
                 document.addEventListener('mediaUpdated', function(e) {
@@ -139,7 +139,7 @@ $(function() {
                         // Comportamiento normal para el botón Siguiente
                         $("#btn_next, #btn-save-new-producto").attr("disabled", true);
                         $(".spinner, .spinner-save").removeClass('d-none');
-                        $("#btn_next-text, #btn-save-new-producto-text").text(window.RedaAlojamiento.general.guardando);
+                        $("#btn_next-text, #btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
                         return true;
                     }
                 });
@@ -920,7 +920,7 @@ $(function() {
                                 <div class="input-group">
                                     <input type="text" class="form-control hora-desde" name="bloques[${index}][hora_desde]" value="${horaDesde}" placeholder="00:00" required>
                                     <div class="input-group-append">
-                                        <select class="form-control ampm-desde" name="bloques[${index}][ampm_desde]" style="padding: 0 5px; font-size: 12px;">
+                                        <select class="form-control ampm-desde select-compact-ampm" name="bloques[${index}][ampm_desde]">
                                             <option value="am" ${ampmDesde === 'am' ? 'selected' : ''}>AM</option>
                                             <option value="pm" ${ampmDesde === 'pm' ? 'selected' : ''}>PM</option>
                                         </select>
@@ -932,7 +932,7 @@ $(function() {
                                 <div class="input-group">
                                     <input type="text" class="form-control hora-hasta" name="bloques[${index}][hora_hasta]" value="${horaHasta}" placeholder="00:00" required>
                                     <div class="input-group-append">
-                                        <select class="form-control ampm-hasta" name="bloques[${index}][ampm_hasta]" style="padding: 0 5px; font-size: 12px;">
+                                        <select class="form-control ampm-hasta select-compact-ampm" name="bloques[${index}][ampm_hasta]">
                                             <option value="am" ${ampmDesde === 'am' ? 'selected' : ''}>AM</option>
                                             <option value="pm" ${ampmDesde === 'pm' ? 'selected' : ''}>PM</option>
                                         </select>

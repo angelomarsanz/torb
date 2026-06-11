@@ -38,16 +38,14 @@
                                                     @if($fotoPortada)
                                                         <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
                                                             <img src="{{ asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo) }}"
-                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start"
-                                                                alt="{{ $experiencia->titulo }}"
-                                                                style="min-height: 150px; object-fit: cover;">
+                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150"
+                                                                alt="{{ $experiencia->titulo }}">
                                                         </a>
                                                     @else
                                                         <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/'.$experiencia->id.'/fotos') }}">
                                                             <img src="{{ asset('public/img/unnamed.png') }}"
-                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start"
-                                                                alt="Sin foto"
-                                                                style="min-height: 150px; object-fit: cover;">
+                                                                class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150"
+                                                                alt="Sin foto">
                                                         </a>
                                                     @endif
                                                 </div>
@@ -68,18 +66,16 @@
                                             <div class="col-md-3 col-xl-3 border-start-lg p-4 d-flex flex-column justify-content-center">
                                                 {{-- Botón Editar --}}
                                                 <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/' . $experiencia->id . '/descripcion') }}"
-                                                class="d-flex flex-column align-items-center text-center text-decoration-none mx-3"
-                                                style="color: #222 !important;">
-                                                    <i class="fa fa-edit" style="font-size: 20px !important; display: block !important; margin-bottom: 2px;"></i>
-                                                    <span class="font-weight-700" style="font-size: 13px; display: block;">Editar</span>
+                                                class="btn-list-action btn-edit mx-3">
+                                                    <i class="fa fa-edit btn-list-icon"></i>
+                                                    <span class="btn-list-text">Editar</span>
                                                 </a>
                                                 {{-- Botón Eliminar --}}
                                                 <a href="javascript:void(0)"
-                                                class="d-flex flex-column align-items-center text-center text-decoration-none mx-3 btn-eliminar-experiencia"
-                                                data-id="{{ $experiencia->id }}"
-                                                style="color: #dc3545 !important; cursor: pointer;">
-                                                    <i class="fa fa-trash" style="font-size: 20px !important; display: block !important; margin-bottom: 2px;"></i>
-                                                    <span class="font-weight-700" style="font-size: 13px; display: block;">Eliminar</span>
+                                                class="btn-list-action btn-delete mx-3 btn-eliminar-experiencia"
+                                                data-id="{{ $experiencia->id }}">
+                                                    <i class="fa fa-trash btn-list-icon"></i>
+                                                    <span class="btn-list-text">Eliminar</span>
                                                 </a>
                                             </div>
                                         </div>

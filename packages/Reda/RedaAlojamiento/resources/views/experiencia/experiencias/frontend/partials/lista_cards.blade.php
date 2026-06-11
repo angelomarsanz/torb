@@ -41,7 +41,7 @@
                     @if($experiencia->calificaciones_count > 0)
                         {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} ({{ $experiencia->calificaciones_count }})
                     @else
-                        <span class="text-muted" style="font-size: 12px;">{{ __('Sin reseñas') }}</span>
+                        <span class="text-muted font-size-13">{{ __('Sin reseñas') }}</span>
                     @endif
                 </p>
             </div>
