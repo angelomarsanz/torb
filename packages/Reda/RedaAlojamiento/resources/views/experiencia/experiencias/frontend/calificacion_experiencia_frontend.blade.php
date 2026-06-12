@@ -54,7 +54,7 @@
                             {{-- Comentario --}}
                             <div class="form-group mb-4">
                                 <label for="comentario" class="font-weight-700 text-16 mb-2">{{ __('Cuéntanos más detalles (opcional)') }}</label>
-                                <textarea name="comentario" id="comentario" class="form-control rounded-3 p-3" rows="5" 
+                                <textarea name="comentario" id="comentario" class="form-control rounded-3 p-3" rows="5"
                                     placeholder="{{ __('¿Qué fue lo que más te gustó? ¿Qué podría mejorar?') }}"></textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">{{ __('Máximo 1000 caracteres') }}</small>
@@ -104,5 +104,5 @@
         window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
     </script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/calificacionExperienciaFrontend.min.js?v=' . time()) }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/frontend/calificacionExperienciaFrontend.min.js?v=' . time()) }}"></script>
 @endsection

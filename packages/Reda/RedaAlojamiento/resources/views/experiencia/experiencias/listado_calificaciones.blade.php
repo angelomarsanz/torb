@@ -46,8 +46,18 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center">
-                                                        <img src="{{ $calificacion->usuario->profile_src }}" class="img-profile-list img-size-30 mr-2">
-                                                        <span class="text-14">{{ $calificacion->usuario->full_name }}</span>
+                                                        @php
+                                                            $fotoUsuario = $calificacion->usuario->profile_image;
+                                                            $rutaFotoUsuario = $fotoUsuario
+                                                                ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
+                                                                : asset('public/images/default-profile.png');
+
+                                                            // Seleccionar primer nombre y primer apellido de manera inteligente
+                                                            $primerNombre = explode(' ', trim($calificacion->usuario->first_name))[0];
+                                                            $primerApellido = explode(' ', trim($calificacion->usuario->last_name))[0];
+                                                        @endphp
+                                                        <img src="{{ $rutaFotoUsuario }}" class="img-profile-list img-size-30 mr-2">
+                                                        <span class="text-14">{{ $primerNombre }} {{ $primerApellido }}</span>
                                                     </div>
                                                 </td>
                                                 <td class="align-middle">
@@ -92,14 +102,24 @@
                                                 </div>
                                                 <small class="text-muted">{{ $calificacion->created_at->format('d/m/Y') }}</small>
                                             </div>
-                                            
+
                                             <div class="comment-box p-3 mb-3">
                                                 <p class="m-0 text-14 italic">"{{ $calificacion->comentario ?: __('Sin comentario') }}"</p>
                                             </div>
 
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ $calificacion->usuario->profile_src }}" class="img-profile-list img-size-25 mr-2">
-                                                <span class="text-13 font-weight-600">{{ $calificacion->usuario->full_name }}</span>
+                                                @php
+                                                    $fotoUsuario = $calificacion->usuario->profile_image;
+                                                    $rutaFotoUsuario = $fotoUsuario
+                                                        ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
+                                                        : asset('public/images/default-profile.png');
+
+                                                    // Seleccionar primer nombre y primer apellido de manera inteligente
+                                                    $primerNombre = explode(' ', trim($calificacion->usuario->first_name))[0];
+                                                    $primerApellido = explode(' ', trim($calificacion->usuario->last_name))[0];
+                                                @endphp
+                                                <img src="{{ $rutaFotoUsuario }}" class="img-profile-list img-size-25 mr-2">
+                                                <span class="text-13 font-weight-600">{{ $primerNombre }} {{ $primerApellido }}</span>
                                             </div>
                                         </div>
                                     </div>

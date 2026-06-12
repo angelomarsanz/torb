@@ -135,7 +135,7 @@ Route::prefix('reda')->group(function () {
             Route::delete('experiencias/{id}/eliminar-horario/{index}', [ExperienciaController::class, 'eliminarHorario'])->name('experiencias.horario.eliminar');
 
             // Rutas para Calificaciones
-            Route::get('calificar/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'mostrarFormulario'])
+            Route::get('calificar/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'calificacionExperienciaFrontend'])
                 ->name('experiencias.calificar');
             Route::post('guardar-calificacion', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'guardarCalificacion'])
                 ->name('experiencias.guardar_calificacion');

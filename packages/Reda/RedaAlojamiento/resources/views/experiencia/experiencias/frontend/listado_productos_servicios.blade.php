@@ -40,9 +40,9 @@
         <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
         <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
         <div class="negocio-detalle-rating star-rating">
-            <i class="fas fa-star"></i> 
+            <i class="fas fa-star"></i>
             @if($experiencia->calificaciones_count > 0)
-                <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span> 
+                <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
                 <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
             @else
                 <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
@@ -276,7 +276,7 @@
     <section class="seccion-reseñas-negocio px-4 mb-5">
         <div class="d-flex align-items-center mb-4">
             <h2 class="text-22 font-weight-700 m-0">
-                <i class="fas fa-star text-warning"></i> 
+                <i class="fas fa-star text-warning"></i>
                 @if($experiencia->calificaciones_count > 0)
                     {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
                 @else
@@ -291,9 +291,19 @@
                     <div class="card border-0 shadow-none bg-transparent">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center mb-2">
-                                <img src="{{ $calificacion->usuario->profile_src }}" class="img-profile-list mr-3 img-size-48">
+                                @php
+                                    $fotoUsuario = $calificacion->usuario->profile_image;
+                                    $rutaFotoUsuario = $fotoUsuario 
+                                        ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario) 
+                                        : asset('public/images/default-profile.png');
+                                    
+                                    // Seleccionar primer nombre y primer apellido de manera inteligente
+                                    $primerNombre = explode(' ', trim($calificacion->usuario->first_name))[0];
+                                    $primerApellido = explode(' ', trim($calificacion->usuario->last_name))[0];
+                                @endphp
+                                <img src="{{ $rutaFotoUsuario }}" class="img-profile-list mr-3 img-size-48">
                                 <div>
-                                    <div class="font-weight-700 text-16">{{ $calificacion->usuario->full_name }}</div>
+                                    <div class="font-weight-700 text-16">{{ $primerNombre }} {{ $primerApellido }}</div>
                                     <div class="text-muted small">{{ $calificacion->created_at->format('M Y') }}</div>
                                 </div>
                             </div>
@@ -353,4 +363,3 @@
     <script src="{{ asset('public/js/reda/general/notificaciones.min.js?v=' . time()) }}"></script>
     <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoProductosServicios.min.js?v=' . time()) }}"></script>
 @endsection
-

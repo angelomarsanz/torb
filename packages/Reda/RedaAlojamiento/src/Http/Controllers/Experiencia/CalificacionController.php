@@ -15,7 +15,7 @@ class CalificacionController extends Controller
     /**
      * Muestra el formulario de calificación para un comercio específico.
      */
-    public function mostrarFormulario($id)
+    public function calificacionExperienciaFrontend($id)
     {
         $experiencia = Experiencia::with(['fotos' => function($q) {
             $q->where('cover_photo', 1);
@@ -46,7 +46,7 @@ class CalificacionController extends Controller
     public function listadoDuenio()
     {
         $userId = Auth::id();
-        
+
         // Obtenemos los IDs de los negocios del usuario
         $negociosIds = Experiencia::where('user_id', $userId)->pluck('id');
 
@@ -56,7 +56,7 @@ class CalificacionController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('reda-alojamiento::experiencia.experiencias.admin.listado_calificaciones', compact('calificaciones'));
+        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact('calificaciones'));
     }
 
     /**
@@ -74,7 +74,7 @@ class CalificacionController extends Controller
         $urlCalificar = route('reda.negocios.experiencias.calificar', $id);
 
         // Diseñamos el PDF (usando la vista que crearemos)
-        $pdf = PDF::loadView('reda-alojamiento::experiencia.experiencias.admin.cartel_calificacion_pdf', [
+        $pdf = PDF::loadView('reda-alojamiento::experiencia.experiencias.cartel_calificacion_pdf', [
             'experiencia' => $experiencia,
             'urlCalificar' => $urlCalificar
         ], [], [
@@ -83,7 +83,7 @@ class CalificacionController extends Controller
         ]);
 
         $nombreArchivo = 'Cartel_Calificacion_' . str_replace(' ', '_', $experiencia->titulo) . '.pdf';
-        
+
         return $pdf->download($nombreArchivo);
     }
 

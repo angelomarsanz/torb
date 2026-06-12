@@ -7,59 +7,59 @@
 ARCHIVOS_PHP_PUNTUALES=(
     # webpack
     "webpack.mix.js"
-    "config/pdf.php"
+    #"config/pdf.php"
 
     # --- RUTAS Y CONTROLADORES ---
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/CalificacionController.php"
 
     # --- MODELOS Y MIGRACIONES ---
-    "packages/Reda/RedaAlojamiento/src/Models/Experiencia/CalificacionExperiencia.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_06_08_100000_crear_tabla_calificaciones_experiencias.php"
+    #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/CalificacionExperiencia.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_08_100000_crear_tabla_calificaciones_experiencias.php"
 
     # --- VISTAS DE ADMINISTRACIÓN ---
-    "packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
 
     # --- VISTAS DE USUARIO (DASHBOARD) ---
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/calificacion_experiencia.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/admin/cartel_calificacion_pdf.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/admin/listado_calificaciones.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/calificacion_experiencia.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
 
     # --- VISTAS DE FORMULARIO DE PASOS ---
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/menu_lateral.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/fotos.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/ubicacion.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/horario.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/anfitrion.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/informacion_adicional.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/precio.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/menu_lateral.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/fotos.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/ubicacion.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/horario.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/anfitrion.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/informacion_adicional.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/precio.blade.php"
 
     # --- VISTAS FRONTEND (COMERCIOS) ---
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_cards.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_cards.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
 
     # --- IDIOMAS Y ESTILOS ---
-    "packages/Reda/RedaAlojamiento/resources/lang/es.json"
-    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
-    "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es.json"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
 
     # --- ARCHIVOS JAVASCRIPT (MENÚS Y VISTAS) ---
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/eliminarExperiencia.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/eliminarExperiencia.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
 )
