@@ -14,17 +14,6 @@
                 <div class="sticky-top-detail pr-lg-4">
                     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
                     <section class="seccion-info-negocio p-4">
-                        @php
-                            $fotoPortada = $experiencia->foto_portada;
-                            $rutaFotoPortada = asset('public/images/default-image.png');
-                            if ($fotoPortada) {
-                                $rutaFotoPortada = asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo);
-                            }
-                        @endphp
-                        <div class="negocio-foto-portada-container mb-3">
-                            <img src="{{ $rutaFotoPortada }}" alt="{{ $experiencia->titulo }}">
-                        </div>
-
                         <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
                         
                         <div class="negocio-detalle-desc-wrapper">
