@@ -240,8 +240,17 @@ packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php
 ## Íconos personalizados .svg
 Para cualquier ícono personalizado .svg que se requiera crear en el plugin packages/Reda/RedaAlojamiento se debe crear el respectivo archivo .svg en packages/Reda/RedaAlojamiento/resources/js/general/iconos e importar en el archivo .js que lo vaya a usar
 
-## Paginación
-Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles
+## Paginación en el BACKEND
+Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles en la parte de abajo
+
+## Paginación en el frontend
+En el frontend se crearán carruseles para mostrar los elementos de una lista
+Se deben mostrar los elementos de 10 en 10
+Para la vista de escritorio el carrusel tendrá dos controles en la parte superior derecha para avanzar o retroceder en la lista
+En la vista del celular se desplazará se desplazará el carrusel desplazándose con el dedo
+En el frontend no tendrá botones de controle de paginación sino que cuando la aplicación detecte que el usuario vió el elemento de la lista y en la vista de escritorio continúe haciendo clic en los botones de desplazamiento, debe mostrar una animación de espera y enviar una llamada ajax solicitando los 10 siguientes elementos de la lista ya sea hacia atrás o hacia adelante.
+Igualmente en la vista de celular si el usuario se está desplazando en el carrusel y llega al final de los 10 elementos se muestra una animación de espera y se hace una llamada ajax para obtener los otros diez elementos ya sea que se desplace al final del lado izquierdo o al final del lado derecho.
+Cuando una vista de escritorio o celular tenga varios carruseles, la paginación automática debe ser independiente de un carrusel y de los otros. Si un usuario se está desplazando hacia adelante o hacia atrás en un carrusel y llega al final solo se hará la petición ajax para el carrusel que se está manipulando en el momento. los demás deben conservar los elementos actuales y solo se actualizarán cuando se manipulen esos otros carruseles
 
 ## Creación de nuevas vistas
 Cuando se cree una nueva vista, se debe:

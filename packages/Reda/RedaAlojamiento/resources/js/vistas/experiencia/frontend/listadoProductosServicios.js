@@ -7,6 +7,34 @@
         console.log('Script para Listado de Productos y Servicios cargado correctamente');
 
         /**
+         * Maneja el truncamiento y expansión de la descripción del negocio.
+         */
+        const manejarExpansionDescripcion = () => {
+            $('.negocio-detalle-desc-wrapper').each(function() {
+                const $wrapper = $(this);
+                const $desc = $wrapper.find('.negocio-detalle-desc');
+                const $btn = $wrapper.find('.btn-leer-mas-desc');
+
+                // Verificamos si el texto realmente se trunca
+                setTimeout(() => {
+                    const elemento = $desc[0];
+                    if (elemento && elemento.scrollHeight > elemento.offsetHeight) {
+                        $btn.show();
+                    } else {
+                        $btn.hide();
+                    }
+                }, 250);
+            });
+        };
+
+        $(document).on('click', '.btn-leer-mas-desc', function() {
+            const $btn = $(this);
+            const $desc = $btn.siblings('.negocio-detalle-desc');
+            $desc.addClass('expanded');
+            $btn.hide();
+        });
+
+        /**
          * Inicializa el mapa de Google en modo solo lectura para mostrar la ubicación del negocio.
          */
         function initMapDetalle() {
