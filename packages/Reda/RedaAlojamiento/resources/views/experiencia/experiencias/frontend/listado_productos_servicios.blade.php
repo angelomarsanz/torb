@@ -14,8 +14,6 @@
                 <div class="sticky-top-detail pr-lg-4">
                     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
                     <section class="seccion-info-negocio p-4">
-                        <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
-                        
                         @php
                             $fotoPortada = $experiencia->foto_portada;
                             $rutaFotoPortada = asset('public/images/default-image.png');
@@ -27,6 +25,8 @@
                             <img src="{{ $rutaFotoPortada }}" alt="{{ $experiencia->titulo }}">
                         </div>
 
+                        <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
+                        
                         <div class="negocio-detalle-desc-wrapper">
                             <p class="negocio-detalle-desc text-muted" id="desc_negocio_fija">{{ $experiencia->descripcion }}</p>
                             <button class="btn-leer-mas-desc" id="btn_leer_mas_fija">{{ __('Más') }}</button>
