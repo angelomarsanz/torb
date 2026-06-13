@@ -9,7 +9,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"webpack.mix.js"
     #"packages/Reda/RedaAlojamiento/resources/lang/es.json"
     #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
-    #"packages/Reda/RedaAlojamiento/routes/web.php"
+    "packages/Reda/RedaAlojamiento/routes/web.php"
 
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/CalificacionExperiencia.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_08_100000_crear_tabla_calificaciones_experiencias.php"
@@ -35,6 +35,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_cards.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_producto_servicio.blade.php"
 
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/opcionesTipoDeNegocios.js"
@@ -50,5 +51,5 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
 
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/CalificacionController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/CalificacionController.php"
 )

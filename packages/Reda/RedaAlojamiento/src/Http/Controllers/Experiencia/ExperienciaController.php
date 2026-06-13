@@ -140,17 +140,23 @@ class ExperienciaController extends Controller
             ->withAvg('calificaciones', 'estrellas')
             ->findOrFail($id);
 
-        // Obtenemos todos los productos/servicios activos
+        // Obtenemos los productos/servicios activos (Primeros 4 para pruebas)
         $actividades = $experiencia->actividades()
+            ->where('estatus_producto_servicio', 'activo')
+            ->orderBy('orden_actividad', 'asc')
+            ->limit(4)
+            ->get();
+
+        // Promociones (Primeras 4 para pruebas)
+        $todasActividades = $experiencia->actividades()
             ->where('estatus_producto_servicio', 'activo')
             ->orderBy('orden_actividad', 'asc')
             ->get();
 
-        // Filtramos los que están en promoción (precio_promocion > 0 en JSON)
-        $promociones = $actividades->filter(function($actividad) {
+        $promociones = $todasActividades->filter(function($actividad) {
             $complementos = json_decode($actividad->precios_monedas_complementarios, true);
             return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
-        });
+        })->take(4);
 
         $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
 
@@ -160,6 +166,53 @@ class ExperienciaController extends Controller
             'promociones',
             'currentCurrency'
         ));
+    }
+
+    /**
+     * Obtiene actividades paginadas vía AJAX para los carruseles.
+     */
+    public function obtenerActividadesPaginadas(Request $request, $id)
+    {
+        $offset = $request->get('offset', 0);
+        $limit = 4; // Límite de 4 para pruebas
+        $tipo = $request->get('tipo', 'todas'); // 'todas' o 'promociones'
+
+        $experiencia = Experiencia::findOrFail($id);
+
+        $query = $experiencia->actividades()
+            ->where('estatus_producto_servicio', 'activo')
+            ->orderBy('orden_actividad', 'asc');
+
+        if ($tipo === 'promociones') {
+            // Para promociones, si no podemos filtrar por SQL el JSON, tenemos que traer más y filtrar
+            // Esto es ineficiente pero consistente con el modelo actual. 
+            // Idealmente 'precio_promocion' debería ser una columna real.
+            $todas = $query->get();
+            $items = $todas->filter(function($actividad) {
+                $complementos = json_decode($actividad->precios_monedas_complementarios, true);
+                return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
+            })->slice($offset, $limit);
+        } else {
+            $items = $query->offset($offset)->limit($limit)->get();
+        }
+
+        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+        $html = '';
+
+        foreach ($items as $item) {
+            $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', [
+                'actividad' => $item,
+                'currentCurrency' => $currentCurrency,
+                'es_promo' => ($tipo === 'promociones')
+            ])->render();
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'cantidad' => $items->count(),
+            'proximo_offset' => $offset + $items->count()
+        ]);
     }
 
     public function create(Request $request)

@@ -6,6 +6,9 @@
     if ($(containerId).length) {
         console.log('Script para Listado de Productos y Servicios cargado correctamente');
 
+        // --- ESTADO DE LOS CARRUSELES ---
+        const carruselState = {};
+
         /**
          * Maneja el truncamiento y expansión de la descripción del negocio.
          */
@@ -103,9 +106,154 @@
             });
         };
 
+        // --- LÓGICA DE CARRUSELES Y PAGINACIÓN AJAX ---
+
+        /**
+         * Carga más elementos para un carrusel específico.
+         */
+        const cargarMasActividades = ($carrusel) => {
+            const id = $carrusel.attr('id');
+            const state = carruselState[id];
+
+            if (state.loading || state.noMore) return;
+
+            state.loading = true;
+            const $loader = $(`#loader_${state.tipo === 'promociones' ? 'promociones' : 'todos'}`);
+            $loader.addClass('active');
+            $carrusel.addClass('loading');
+
+            $.ajax({
+                url: APP_URL + `/reda/negocios/experiencias/actividades/paginadas/${state.idNegocio}`,
+                type: 'GET',
+                data: {
+                    offset: state.offset,
+                    tipo: state.tipo
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success && response.cantidad > 0) {
+                        $carrusel.append(response.html);
+                        state.offset = response.proximo_offset;
+                        
+                        // --- TEMPORAL PARA PRUEBAS: CAMBIO DE 10 A 4 ---
+                        if (response.cantidad < 4) {
+                            state.noMore = true;
+                        }
+                        
+                        // Actualizar botones después de cargar
+                        actualizarBotonesCarrusel($carrusel);
+                    } else {
+                        state.noMore = true;
+                    }
+                },
+                error: function() {
+                    console.error('Error al cargar más actividades');
+                },
+                complete: function() {
+                    state.loading = false;
+                    $loader.removeClass('active');
+                    $carrusel.removeClass('loading');
+                }
+            });
+        };
+
+        /**
+         * Actualiza el estado de los botones prev/next.
+         */
+        const actualizarBotonesCarrusel = ($carrusel) => {
+            const id = $carrusel.attr('id');
+            const scrollLeft = Math.ceil($carrusel.scrollLeft());
+            const scrollWidth = $carrusel[0].scrollWidth;
+            const clientWidth = $carrusel[0].clientWidth;
+
+            const $parent = $carrusel.closest('.seccion-productos');
+            const $btnPrev = $parent.find('.btn-prev');
+            const $btnNext = $parent.find('.btn-next');
+
+            // Habilitar/Deshabilitar PREV
+            $btnPrev.prop('disabled', scrollLeft <= 5);
+
+            // Determinar si hay scroll posible
+            const tieneScroll = scrollWidth > clientWidth + 10;
+            
+            // Umbral de final de scroll (tolerancia de 20px)
+            const alFinal = scrollLeft + clientWidth >= scrollWidth - 20;
+            
+            // LOGICA AJAX: Solo si el carrusel es "potencialmente paginable"
+            // --- TEMPORAL PARA PRUEBAS: CAMBIO DE 10 A 4 ---
+            const esPaginable = carruselState[id].offset >= 4;
+
+            if (alFinal && !carruselState[id].noMore && !carruselState[id].loading) {
+                if (esPaginable) {
+                    cargarMasActividades($carrusel);
+                } else {
+                    // Marcamos que no hay más para no volver a intentar
+                    carruselState[id].noMore = true;
+                }
+            }
+
+            // Habilitar/Deshabilitar NEXT
+            const puedeHacerScrollNext = tieneScroll && !alFinal;
+            const puedeCargarMas = esPaginable && !carruselState[id].noMore;
+            
+            $btnNext.prop('disabled', !puedeHacerScrollNext && !puedeCargarMas);
+            
+            // Ocultar controles si no hay nada que desplazar NI cargar (Evita botones "muertos")
+            if (!tieneScroll && !puedeCargarMas) {
+                $parent.find('.carrusel-controles-desktop').css('opacity', '0');
+                $parent.find('.carrusel-controles-desktop').css('pointer-events', 'none');
+            } else {
+                $parent.find('.carrusel-controles-desktop').css('opacity', '1');
+                $parent.find('.carrusel-controles-desktop').css('pointer-events', 'auto');
+            }
+        };
+
+        /**
+         * Inicializa el estado de un carrusel.
+         */
+        const initCarrusel = ($carrusel) => {
+            const id = $carrusel.attr('id');
+            carruselState[id] = {
+                idNegocio: $carrusel.data('id-negocio'),
+                tipo: $carrusel.data('tipo'),
+                offset: parseInt($carrusel.data('offset')) || 0,
+                loading: false,
+                noMore: false
+            };
+
+            // Listener de Scroll para Móvil y Desktop
+            $carrusel.on('scroll', function() {
+                actualizarBotonesCarrusel($(this));
+            });
+
+            // Ajuste inicial de botones
+            actualizarBotonesCarrusel($carrusel);
+        };
+
         $(function() {
             // Inicializar el mapa
             initMapDetalle();
+            
+            // Inicializar expansión de descripción
+            manejarExpansionDescripcion();
+
+            // Inicializar todos los carruseles
+            $('.container-carrusel-productos').each(function() {
+                initCarrusel($(this));
+            });
+
+            // --- CLICK EN BOTONES DE CONTROL (DESKTOP) ---
+            $(document).on('click', '.btn-carrusel-control', function() {
+                const $btn = $(this);
+                const $carrusel = $($btn.data('target'));
+                const step = $carrusel[0].clientWidth * 0.8; // Desplazamiento del 80% de la vista
+
+                if ($btn.hasClass('btn-next')) {
+                    $carrusel.scrollLeft($carrusel.scrollLeft() + step);
+                } else {
+                    $carrusel.scrollLeft($carrusel.scrollLeft() - step);
+                }
+            });
 
             // Manejo de Filtros Desktop
             $('#filtro_tipo_actividad').on('change', function() {
@@ -115,7 +263,7 @@
             });
 
             // Manejo de Filtros Móvil (Modal)
-            $('#modalBusquedaActividades .btn-primary').on('click', function() {
+            $('.btn-aplicar-filtro').on('click', function() {
                 const tipo = $('#filtro_tipo_actividad_movil').val();
                 $('#filtro_tipo_actividad').val(tipo); // Sincronizar con desktop
                 filtrarActividades(tipo);

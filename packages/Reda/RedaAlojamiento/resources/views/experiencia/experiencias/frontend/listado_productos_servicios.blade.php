@@ -85,72 +85,59 @@
 
                 <!-- SECCIÓN 3: PRODUCTOS Y SERVICIOS EN PROMOCIÓN -->
                 @if($promociones->count() > 0)
-                <section class="seccion-productos px-4 mb-4">
-                    <h2 class="text-18 font-weight-700 mb-3">{{ __('Promociones Especiales') }}</h2>
-                    <div class="container-carrusel-productos">
+                <section class="seccion-productos mb-4" id="seccion_promociones">
+                    <div class="header-seccion-carrusel">
+                        <h2 class="text-18 font-weight-700">{{ __('Promociones Especiales') }}</h2>
+                        <div class="carrusel-controles-desktop d-none d-lg-flex">
+                            <button class="btn-carrusel-control btn-prev" data-target="#carrusel_promociones" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn-carrusel-control btn-next" data-target="#carrusel_promociones">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="container-carrusel-productos" 
+                         id="carrusel_promociones" 
+                         data-tipo="promociones" 
+                         data-offset="{{ $promociones->count() }}"
+                         data-id-negocio="{{ $experiencia->id }}">
                         @foreach($promociones as $promo)
-                            @php
-                                $complementos = json_decode($promo->precios_monedas_complementarios, true);
-                                $precioPromo = $complementos['precio_promocion'] ?? 0;
-                                $currencySymbol = $promo->currency->symbol ?? $currentCurrency->symbol;
-                            @endphp
-                            <div class="producto-card" data-tipo-actividad="{{ $promo->tipo_producto_servicio }}" data-id="{{ $promo->id }}">
-                                <div class="producto-img-container">
-                                    <span class="badge-promo">{{ __('Oferta') }}</span>
-                                    @php
-                                        $rutaFotoAct = asset('public/images/default-image.png');
-                                        if ($promo->foto_actividad) {
-                                            $rutaFotoAct = asset('public/images/actividades_experiencias/' . $promo->foto_actividad);
-                                        }
-                                    @endphp
-                                    <img src="{{ $rutaFotoAct }}" alt="{{ $promo->nombre_actividad }}">
-                                </div>
-                                <div class="producto-info">
-                                    <h4 class="producto-nombre">{{ $promo->nombre_actividad }}</h4>
-                                    <div class="producto-precio">
-                                        <span class="precio-original">{{ $currencySymbol }} {{ number_format($promo->precio, 2) }}</span>
-                                        <span class="precio-promo">{{ $currencySymbol }} {{ number_format($precioPromo, 2) }}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', ['actividad' => $promo, 'es_promo' => true])
                         @endforeach
+                    </div>
+                    <div class="carrusel-loader" id="loader_promociones">
+                        <i class="fas fa-spinner fa-spin"></i>
                     </div>
                 </section>
                 @endif
 
                 <!-- SECCIÓN 4: EXPLORAR TODOS -->
-                <section class="seccion-productos px-4 mb-4">
-                    <h2 class="text-18 font-weight-700 mb-3">{{ __('Explorar Todo') }}</h2>
-                    <div class="container-carrusel-productos" id="contenedor_todos_productos">
+                <section class="seccion-productos mb-4" id="seccion_todos">
+                    <div class="header-seccion-carrusel">
+                        <h2 class="text-18 font-weight-700">{{ __('Explorar Todo') }}</h2>
+                        <div class="carrusel-controles-desktop d-none d-lg-flex">
+                            <button class="btn-carrusel-control btn-prev" data-target="#contenedor_todos_productos" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn-carrusel-control btn-next" data-target="#contenedor_todos_productos">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="container-carrusel-productos" 
+                         id="contenedor_todos_productos" 
+                         data-tipo="todas" 
+                         data-offset="{{ $actividades->count() }}"
+                         data-id-negocio="{{ $experiencia->id }}">
                         @foreach($actividades as $actividad)
-                            @php
-                                $currencySymbol = $actividad->currency->symbol ?? $currentCurrency->symbol;
-                                $complementos = json_decode($actividad->precios_monedas_complementarios, true);
-                                $precioPromo = $complementos['precio_promocion'] ?? 0;
-                            @endphp
-                            <div class="producto-card" data-tipo-actividad="{{ $actividad->tipo_producto_servicio }}" data-id="{{ $actividad->id }}">
-                                <div class="producto-img-container">
-                                    @php
-                                        $rutaFotoAct = asset('public/images/default-image.png');
-                                        if ($actividad->foto_actividad) {
-                                            $rutaFotoAct = asset('public/images/actividades_experiencias/' . $actividad->foto_actividad);
-                                        }
-                                    @endphp
-                                    <img src="{{ $rutaFotoAct }}" alt="{{ $actividad->nombre_actividad }}">
-                                </div>
-                                <div class="producto-info">
-                                    <h4 class="producto-nombre">{{ $actividad->nombre_actividad }}</h4>
-                                    <div class="producto-precio">
-                                        @if($precioPromo > 0)
-                                            <span class="precio-original">{{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}</span>
-                                            <span class="precio-promo">{{ $currencySymbol }} {{ number_format($precioPromo, 2) }}</span>
-                                        @else
-                                            <span class="font-weight-700">{{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', ['actividad' => $actividad])
                         @endforeach
+                    </div>
+                    <div class="carrusel-loader" id="loader_todos">
+                        <i class="fas fa-spinner fa-spin"></i>
                     </div>
                 </section>
 

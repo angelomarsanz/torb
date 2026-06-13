@@ -93,6 +93,7 @@ Route::prefix('reda')->group(function () {
         Route::get('experiencias', [ExperienciaController::class, 'index'])->name('experiencias.index');
         Route::get('listado-negocios', [ExperienciaController::class, 'listadoFrontend'])->name('experiencias.listado_frontend');
         Route::get('listado-productos-servicios/{id}', [ExperienciaController::class, 'listadoProductosServicios'])->name('experiencias.listado_productos_servicios');
+        Route::get('experiencias/actividades/paginadas/{id}', [ExperienciaController::class, 'obtenerActividadesPaginadas'])->name('experiencias.actividades.paginadas');
         Route::get('experiencias/actividades/detalle/{id}', [ExperienciaController::class, 'getActividadDetalle'])->name('experiencias.actividades.detalle');
         Route::get('horarios-experiencias', [HorarioExperienciaController::class, 'index'])->name('horarios_experiencias.index');
         Route::get('informacion-experiencias', [InformacionExperienciaController::class, 'index'])->name('informaciones_experiencias.index');
