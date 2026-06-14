@@ -21,10 +21,10 @@
         <h4 class="producto-nombre">{{ $actividad->nombre_actividad }}</h4>
         <div class="producto-precio">
             @if($precioPromo > 0)
-                <span class="precio-original">{{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}</span>
-                <span class="precio-promo">{{ $currencySymbol }} {{ number_format($precioPromo, 2) }}</span>
+                <span class="precio-original">{{ $currencySymbol }} {{ reda_number_format($actividad->precio, 2) }}</span>
+                <span class="precio-promo">{{ $currencySymbol }} {{ reda_number_format($precioPromo, 2) }}</span>
             @else
-                <span class="font-weight-700 text-dark">{{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}</span>
+                <span class="font-weight-700 text-dark">{{ $currencySymbol }} {{ reda_number_format($actividad->precio, 2) }}</span>
             @endif
         </div>
     </div>

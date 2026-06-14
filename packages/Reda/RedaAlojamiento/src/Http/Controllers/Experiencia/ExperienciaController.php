@@ -707,9 +707,10 @@ class ExperienciaController extends Controller
         try {
             $actividad = ActividadExperiencia::findOrFail($id);
             $currencies = Currency::where('status', 'Active')->get();
+            $readonly = $request->get('mode') === 'view';
 
             if ($request->ajax()) {
-                $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies'))->render();
+                $html = view('reda-alojamiento::experiencia.experiencias.formularios_de_pasos.partials.fila_actividad', compact('actividad', 'currencies', 'readonly'))->render();
 
                 $respuesta = [
                     'success' => true,
@@ -717,7 +718,8 @@ class ExperienciaController extends Controller
                     'mensaje_usuario' => __('Formulario de actividad recuperado con éxito'),
                     'respuesta' => [
                         'html' => $html,
-                        'id' => $actividad->id
+                        'id' => $actividad->id,
+                        'readonly' => $readonly
                     ],
                     'code' => 200
                 ];

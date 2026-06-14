@@ -15,7 +15,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="font-weight-700 m-0">{{ __('reda-alojamiento::messages.general.productos_y_servicios') }}</h4>
                             <button type="button" class="btn vbtn-outline-success font-weight-700" id="btn-add-actividad" data-add-url="{{ route('reda.negocios.experiencias.actividades.add', $result->id) }}">
-                                <i class="fa fa-plus-circle mr-1"></i> {{ __('reda-alojamiento::messages.general.agregar_una_nueva_actividad') }}
+                                <i class="fa fa-plus-circle mr-1"></i> {{ __('Agregar nuevo producto o servicio') }}
                             </button>
                         </div>
 
@@ -81,7 +81,7 @@
                                                     <td class="align-middle text-truncate" style="max-width: 250px;">{{ $actividad->nombre_actividad ?: '---' }}</td>
                                                     <td class="align-middle">
                                                         @if($actividad->precio)
-                                                            {{ $actividad->currency->code ?? '' }} {{ number_format($actividad->precio, 2) }}
+                                                            {{ $actividad->currency->code ?? '' }} {{ reda_number_format($actividad->precio, 2) }}
                                                         @else
                                                             <span class="text-muted small">---</span>
                                                         @endif
@@ -153,7 +153,7 @@
                                                                     {{ $actividad->nombre_actividad ?: '---' }}
                                                                 </h6>
                                                                 <p class="m-0 text-success font-weight-600 small">
-                                                                    {{ moneyFormat($actividad->moneda->code ?? 'USD', $actividad->precio) }}
+                                                                    {{ reda_money_format($actividad->moneda->code ?? 'USD', $actividad->precio) }}
                                                                 </p>
                                                             </div>
 
@@ -189,6 +189,13 @@
                                             <p class="m-0">No hay actividades registradas todavía.</p>
                                         </div>
                                     @endif
+                                </div>
+
+                                <!-- PAGINACIÓN -->
+                                <div class="row mt-4 mb-3">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        {{ $actividades->links('vendor.pagination.bootstrap-4') }}
+                                    </div>
                                 </div>
 
                                 <div class="col-md-12 p-0 mt-4 mb-5">

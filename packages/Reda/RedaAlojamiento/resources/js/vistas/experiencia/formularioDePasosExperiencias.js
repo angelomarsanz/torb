@@ -130,7 +130,7 @@ $(function() {
                                     // Reactivar botón
                                     $("#btn-save-new-producto").attr("disabled", false);
                                     $(".spinner-save").addClass('d-none');
-                                    $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar actividad"] || "Guardar actividad");
+                                    $("#btn-save-new-producto-text").text(window.RedaAlojamientoJson["Guardar producto o servicio"] || "Guardar producto o servicio");
                                 }
                             });
                             return false; // Evitar el envío normal
@@ -768,39 +768,54 @@ $(function() {
                     btn.prop('disabled', false).css('opacity', '1');
                 });
 
-                $(document).on('click', '.btn-edit-actividad', async function(e) {
+                $(document).on('click', '.btn-edit-actividad, .btn-modal-actividad', async function(e) {
                     e.preventDefault();
                     const btn = $(this);
                     const id = btn.data('id');
-                    const url = btn.data('edit-url');
+                    const mode = btn.data('mode') || 'edit'; // 'view' o 'edit'
+                    const url = btn.data('edit-url') || (APP_URL + '/reda/negocios/experiencias/actividades/get-form/' + id);
 
                     btn.prop('disabled', true).css('opacity', '0.5');
 
-                    const response = await obtenerFormularioActividadAjax(url);
+                    // Añadimos el parámetro mode a la URL
+                    const urlWithMode = url + (url.includes('?') ? '&' : '?') + 'mode=' + mode;
+
+                    const response = await obtenerFormularioActividadAjax(urlWithMode);
 
                     if (response.success) {
-                        isEditingActividad = true;
-                        currentNewActivityId = null;
+                        if (mode === 'view') {
+                            // Mostrar en un MODAL (para la vista "Ver")
+                            $('#actividad-modal-body').html(response.respuesta.html);
+                            $('#actividadModalLabel').text(window.RedaAlojamiento.general.detalle_del_producto_o_servicio);
+                            
+                            // Ocultamos el botón guardar del modal si es solo lectura
+                            if (response.respuesta.readonly) {
+                                $('#btn-save-actividad-modal').hide();
+                            } else {
+                                $('#btn-save-actividad-modal').show();
+                            }
 
-                        // Empujamos estado al historial para manejar el botón "Atrás" del celular
-                        history.pushState({ view: 'form-actividad' }, '');
+                            $('#actividadModal').modal('show');
+                        } else {
+                            // Mostrar en el WRAPPER (para la vista "Editar")
+                            isEditingActividad = true;
+                            currentNewActivityId = null;
 
-                        // Ocultar lista y botón add
-                        $('#productos-servicios-list-container').addClass('d-none');
-                        $('#btn-add-actividad').hide();
+                            history.pushState({ view: 'form-actividad' }, '');
 
-                        // Mostrar formulario y acciones
-                        $('#actividades-wrapper').html(response.respuesta.html);
-                        $('#new-producto-actions').removeClass('d-none');
+                            $('#productos-servicios-list-container').addClass('d-none');
+                            $('#btn-add-actividad').hide();
 
-                        aplicarReglasDinamicas();
+                            $('#actividades-wrapper').html(response.respuesta.html);
+                            $('#new-producto-actions').removeClass('d-none');
 
-                        // Scroll suave
-                        $('html, body').animate({
-                            scrollTop: $('#actividades-wrapper').offset().top - 100
-                        }, 500);
+                            aplicarReglasDinamicas();
+
+                            $('html, body').animate({
+                                scrollTop: $('#actividades-wrapper').offset().top - 100
+                            }, 500);
+                        }
                     } else {
-                        // Mostrar notificación de error
                         $('#notificacion-icono').html('<i class="fa fa-times-circle fa-4x text-danger"></i>');
                         $('#notificacion-titulo').text(window.RedaAlojamientoJson["Error"] || 'Error');
                         $('#notificacion-mensaje').text(response.mensaje_usuario);

@@ -126,6 +126,7 @@ Los peticiones ajax tendrán esta estructura:
                 })(jQuery);
             });
         }
+Siempre que se haga una petición ajax se debe mostrar una animación "Espera" hasta que responda el servidor
 
 ## Herramienta de desarrollo
 webpack.mix.js
@@ -241,7 +242,8 @@ packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php
 Para cualquier ícono personalizado .svg que se requiera crear en el plugin packages/Reda/RedaAlojamiento se debe crear el respectivo archivo .svg en packages/Reda/RedaAlojamiento/resources/js/general/iconos e importar en el archivo .js que lo vaya a usar
 
 ## Paginación en el BACKEND
-Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles en la parte de abajo
+Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles de paginación en la parte de abajo
+Cuando se haga clic o se toquen los botones de control de paginación hacia atrás o hacia adelante de debe mostrar una animación de "Espera" hasta que responda el servidor
 
 ## Paginación en el frontend
 En el frontend se crearán carruseles para mostrar los elementos de una lista

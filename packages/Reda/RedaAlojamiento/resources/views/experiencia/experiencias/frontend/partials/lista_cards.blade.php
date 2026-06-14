@@ -39,7 +39,7 @@
                 <p class="negocio-rating star-rating">
                     <i class="fas fa-star"></i> 
                     @if($experiencia->calificaciones_count > 0)
-                        {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} ({{ $experiencia->calificaciones_count }})
+                        {{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }} ({{ $experiencia->calificaciones_count }})
                     @else
                         <span class="text-muted font-size-13">{{ __('Sin reseñas') }}</span>
                     @endif

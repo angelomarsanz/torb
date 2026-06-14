@@ -1,5 +1,7 @@
 @php
     $datosComplementarios = json_decode($actividad->precios_monedas_complementarios, true) ?? [];
+    $readonly = $readonly ?? false;
+    $disabled = $readonly ? 'disabled' : '';
 @endphp
 <div class="col-12 mb-4 fila-actividad-container" id="fila-actividad-{{ $actividad->id }}">
     <div class="card shadow-sm border-0 rounded-4">
@@ -18,10 +20,10 @@
 
                         <!-- 1. Nombre -->
                         <div class="col-md-12">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }} <span class="text-danger">*</label>
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.nombre_del_producto_o_servicio') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
                             <input type="text" name="actividades[{{ $actividad->id }}][nombre_actividad]"
                                 value="{{ old('actividades.'.$actividad->id.'.nombre_actividad', $actividad->nombre_actividad) }}"
-                                class="form-control" placeholder=""
+                                class="form-control" placeholder="" {{ $disabled }}
                             >
                             @error('actividades.'.$actividad->id.'.nombre_actividad')
                                 <span class="text-danger small font-weight-700">{{ $message }}</span>
@@ -30,12 +32,12 @@
 
                         <!-- 2. Descripción -->
                         <div class="col-md-12">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.descripcion') }} <span class="text-danger">*</label>
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.descripcion') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
                             <textarea
                                 name="actividades[{{ $actividad->id }}][descripcion_actividad]"
                                 class="form-control @error('actividades.'.$actividad->id.'.descripcion_actividad') is-invalid @enderror"
                                 rows="2"
-                                placeholder="Haz una descripción del producto o servicio"
+                                placeholder="Haz una descripción del producto o servicio" {{ $disabled }}
                             >{{ old('actividades.'.$actividad->id.'.descripcion_actividad', $actividad->descripcion_actividad) }}</textarea>
                             @error('actividades.'.$actividad->id.'.descripcion_actividad')
                                 <span class="text-danger small font-weight-700">{{ $message }}</span>
@@ -44,8 +46,8 @@
 
                         <!-- 3. Tipo de producto o servicio -->
                         <div class="col-md-12">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.tipo_producto_o_servicio') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][tipo_producto_servicio]" class="form-control">
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.tipo_producto_o_servicio') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
+                            <select name="actividades[{{ $actividad->id }}][tipo_producto_servicio]" class="form-control" {{ $disabled }}>
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.tipo_producto_servicio', $actividad->tipo_producto_servicio)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>
@@ -65,12 +67,12 @@
 
                         <!-- 4. Precio y Moneda General -->
                         <div class="col-md-7">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.precio') }} <span class="text-danger">*</label>
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.precio') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0"><i class="fa fa-tag text-muted"></i></span>
                                 <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio]"
                                     value="{{ old('actividades.'.$actividad->id.'.precio', $actividad->precio) }}"
-                                    class="form-control border-start-0 validar-precio" placeholder="0.00"
+                                    class="form-control border-start-0 validar-precio" placeholder="0.00" {{ $disabled }}
                                 >
                             </div>
                             @error('actividades.'.$actividad->id.'.precio')
@@ -79,8 +81,8 @@
                         </div>
 
                         <div class="col-md-5">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control">
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
+                            <select name="actividades[{{ $actividad->id }}][currency_id]" class="form-control" {{ $disabled }}>
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.currency_id', $actividad->currency_id)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>
@@ -97,15 +99,15 @@
                             @enderror
                         </div>
 
-                        <!-- 5. Precio para pago en bolívares (Radio e Inputs) -->
+                        <!-- 5. Precio en bolívares (Radio e Inputs) -->
                         <div class="col-md-12">
-                            <label class="form-label small font-weight-700">{{ __('Precio para pago en bolívares') }}</label>
+                            <label class="form-label small font-weight-700">{{ __('Precio en bolívares') }}</label>
                             <div class="d-flex flex-wrap gap-x-4 mb-2 mt-1">
                                 <div class="form-check me-3">
                                     <input class="form-check-input radio-tipo-carga" type="radio" 
                                            name="actividades[{{ $actividad->id }}][tipo_carga_precio_local]" 
                                            id="manual-{{ $actividad->id }}" value="manual" 
-                                           style="cursor: pointer; transform: scale(1.1);"
+                                           style="cursor: pointer; transform: scale(1.1);" {{ $disabled }}
                                            {{ old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local) == 'manual' ? 'checked' : '' }}>
                                     <label class="form-check-label small font-weight-600" for="manual-{{ $actividad->id }}" 
                                            style="cursor: pointer; margin-left: 10px;">
@@ -116,7 +118,7 @@
                                     <input class="form-check-input radio-tipo-carga" type="radio" 
                                            name="actividades[{{ $actividad->id }}][tipo_carga_precio_local]" 
                                            id="automatico-{{ $actividad->id }}" value="automatico_bcv" 
-                                           style="cursor: pointer; transform: scale(1.1);"
+                                           style="cursor: pointer; transform: scale(1.1);" {{ $disabled }}
                                            {{ old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local) == 'automatico_bcv' || is_null(old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local)) ? 'checked' : '' }}>
                                     <label class="form-check-label small font-weight-600" for="automatico-{{ $actividad->id }}" 
                                            style="cursor: pointer; margin-left: 10px;">
@@ -129,18 +131,18 @@
                         <div class="col-md-12 div-precio-bolivares {{ old('actividades.'.$actividad->id.'.tipo_carga_precio_local', $actividad->tipo_carga_precio_local) == 'manual' ? '' : 'd-none' }}">
                             <div class="row g-2">
                                 <div class="col-md-7">
-                                    <label class="form-label small font-weight-700">{{ __('Precio para pago en bolívares:') }} <span class="text-danger">*</span></label>
+                                    <label class="form-label small font-weight-700">{{ __('Precio en bolívares:') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
                                     <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio_pago_bolivares]"
                                         value="{{ old('actividades.'.$actividad->id.'.precio_pago_bolivares', $datosComplementarios['precio_pago_bolivares'] ?? '') }}"
-                                        class="form-control input-precio-bolivares" placeholder="0.00"
+                                        class="form-control input-precio-bolivares" placeholder="0.00" {{ $disabled }}
                                     >
                                     @error('actividades.'.$actividad->id.'.precio_pago_bolivares')
                                         <span class="text-danger small font-weight-700">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-5">
-                                    <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} <span class="text-danger">*</span></label>
-                                    <select name="actividades[{{ $actividad->id }}][moneda_pago_bolivares]" class="form-control select-moneda-complementaria">
+                                    <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.moneda') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
+                                    <select name="actividades[{{ $actividad->id }}][moneda_pago_bolivares]" class="form-control select-moneda-complementaria" {{ $disabled }}>
                                         <option value="" {{ is_null(old('actividades.'.$actividad->id.'.moneda_pago_bolivares', $datosComplementarios['moneda_pago_bolivares'] ?? null)) ? 'selected' : '' }} disabled>
                                             {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                         </option>
@@ -166,12 +168,12 @@
                                     <label class="form-label small font-weight-700">{{ __('Precio promoción:') }}</label>
                                     <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio_promocion]"
                                         value="{{ old('actividades.'.$actividad->id.'.precio_promocion', $datosComplementarios['precio_promocion'] ?? '') }}"
-                                        class="form-control" placeholder="0.00"
+                                        class="form-control" placeholder="0.00" {{ $disabled }}
                                     >
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label small font-weight-700">{{ __('Moneda promoción') }}</label>
-                                    <select name="actividades[{{ $actividad->id }}][moneda_precio_promocion]" class="form-control">
+                                    <select name="actividades[{{ $actividad->id }}][moneda_precio_promocion]" class="form-control" {{ $disabled }}>
                                         <option value="" {{ is_null(old('actividades.'.$actividad->id.'.moneda_precio_promocion', $datosComplementarios['moneda_precio_promocion'] ?? null)) ? 'selected' : '' }}>
                                             {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                         </option>
@@ -187,8 +189,8 @@
 
                         <!-- 7. Disponibilidad -->
                         <div class="col-md-6">
-                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control">
+                            <label class="form-label small font-weight-700">{{ __('reda-alojamiento::messages.general.disponibilidad') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
+                            <select name="actividades[{{ $actividad->id }}][disponibilidad]" class="form-control" {{ $disabled }}>
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.disponibilidad', $actividad->disponibilidad)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>
@@ -208,8 +210,8 @@
 
                         <!-- 8. Estatus Producto/Servicio -->
                         <div class="col-md-6">
-                            <label class="form-label small font-weight-700">{{ __('Estatus') }} <span class="text-danger">*</span></label>
-                            <select name="actividades[{{ $actividad->id }}][estatus_producto_servicio]" class="form-control">
+                            <label class="form-label small font-weight-700">{{ __('Estatus') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
+                            <select name="actividades[{{ $actividad->id }}][estatus_producto_servicio]" class="form-control" {{ $disabled }}>
                                 <option value="" {{ is_null(old('actividades.'.$actividad->id.'.estatus_producto_servicio', $actividad->estatus_producto_servicio)) ? 'selected' : '' }} disabled>
                                     {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                 </option>
@@ -231,22 +233,26 @@
                 </div>
 
                 <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center border-start-lg ps-lg-4">
-                    <label class="form-label small font-weight-700 w-100 text-center mb-2">{{ __('reda-alojamiento::messages.general.imagen_de_la_actividad') }} <span class="text-danger">*</label>
+                    <label class="form-label small font-weight-700 w-100 text-center mb-2">{{ __('reda-alojamiento::messages.general.imagen_de_la_actividad') }} @if(!$readonly)<span class="text-danger">*</span>@endif</label>
                     <div class="actividad-foto-card-container {{ !$actividad->foto_actividad ? 'no-image' : '' }}" id="foto-container-{{ $actividad->id }}">
                         @if($actividad->foto_actividad)
                             <img src="{{ asset('public/images/actividades_experiencias/'.$actividad->foto_actividad) }}"
                                  class="img-fluid rounded-3 shadow-sm" alt="Foto">
+                            @if(!$readonly)
                             <label class="edit-photo-overlay-outline" for="file-{{ $actividad->id }}" title="Cambiar imagen">
                                 <i class="fa fa-pencil-alt"></i>
                             </label>
+                            @endif
                         @else
-                            <label class="upload-placeholder" for="file-{{ $actividad->id }}">
+                            <label class="upload-placeholder" @if(!$readonly) for="file-{{ $actividad->id }}" @endif>
                                 <i class="fa fa-image fa-2x mb-2 text-muted"></i>
                                 <span class="small text-muted">{{ __('reda-alojamiento::messages.general.subir_foto') }}</span>
                             </label>
                         @endif
+                        @if(!$readonly)
                         <input id="file-{{ $actividad->id }}" type="file" name="actividades[{{ $actividad->id }}][foto_actividad]"
                                data-id="{{ $actividad->id }}" class="upload_photos" accept="image/*" style="display:none;">
+                        @endif
                     </div>
                     @error("foto_actividad_id_" . $actividad->id)
                         <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">

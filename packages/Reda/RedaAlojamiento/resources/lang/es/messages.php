@@ -13,7 +13,7 @@ return [
         'fotos' => 'Fotos',
         'ubicacion' => 'Ubicación',
         'horario' => 'Horario',
-        'precio' => 'Pago',
+        'precio' => 'Precio',
         'informacion_adicional' => 'Información adicional',
         'anfitrion' => 'Nosotros',
         'nombre_y_descripcion' => 'Nombre y descripción',

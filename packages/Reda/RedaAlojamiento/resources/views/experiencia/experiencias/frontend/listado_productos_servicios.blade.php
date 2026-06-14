@@ -24,7 +24,7 @@
                         <div class="negocio-detalle-rating star-rating mt-3">
                             <i class="fas fa-star"></i>
                             @if($experiencia->calificaciones_count > 0)
-                                <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
+                                <span class="font-weight-700 text-dark">{{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
                                 <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
                             @else
                                 <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
@@ -74,7 +74,7 @@
                         <div class="negocio-detalle-rating star-rating mt-3">
                             <i class="fas fa-star"></i>
                             @if($experiencia->calificaciones_count > 0)
-                                <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
+                                <span class="font-weight-700 text-dark">{{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
                                 <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
                             @else
                                 <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
@@ -268,7 +268,7 @@
                         <h2 class="text-22 font-weight-700 m-0">
                             <i class="fas fa-star text-warning"></i>
                             @if($experiencia->calificaciones_count > 0)
-                                {{ number_format($experiencia->calificaciones_avg_estrellas, 1) }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
+                                {{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
                             @else
                                 {{ __('Reseñas') }}
                             @endif

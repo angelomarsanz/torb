@@ -55,15 +55,15 @@
                     @if($precioPromo > 0)
                         <div class="d-flex align-items-baseline">
                             <span class="text-success text-24 font-weight-700 mr-2">
-                                {{ $promoCurrencySymbol }} {{ number_format($precioPromo, 2) }}
+                                {{ $promoCurrencySymbol }} {{ reda_number_format($precioPromo, 2) }}
                             </span>
                             <span class="text-muted text-16 text-crossed">
-                                {{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}
+                                {{ $currencySymbol }} {{ reda_number_format($actividad->precio, 2) }}
                             </span>
                         </div>
                     @else
                         <span class="text-dark text-24 font-weight-700">
-                            {{ $currencySymbol }} {{ number_format($actividad->precio, 2) }}
+                            {{ $currencySymbol }} {{ reda_number_format($actividad->precio, 2) }}
                         </span>
                     @endif
                 </div>
@@ -93,7 +93,7 @@
                                 @endphp
                                 <p class="m-0 font-weight-700 x-small text-uppercase text-muted mb-1">{{ __('Moneda Local') }}</p>
                                 <p class="m-0 text-14 font-weight-600">
-                                    {{ $simboloBs }} {{ number_format($datosComplementarios['precio_pago_bolivares'], 2) }}
+                                    {{ $simboloBs }} {{ reda_number_format($datosComplementarios['precio_pago_bolivares'], 2) }}
                                 </p>
                             </div>
                         </div>
