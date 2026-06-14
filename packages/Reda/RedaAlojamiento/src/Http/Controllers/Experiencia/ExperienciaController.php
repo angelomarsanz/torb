@@ -140,14 +140,14 @@ class ExperienciaController extends Controller
             ->withAvg('calificaciones', 'estrellas')
             ->findOrFail($id);
 
-        // Obtenemos los productos/servicios activos (Primeros 4 para pruebas)
+        // Obtenemos los productos/servicios activos (Primeros 10 para pruebas)
         $actividades = $experiencia->actividades()
             ->where('estatus_producto_servicio', 'activo')
             ->orderBy('orden_actividad', 'asc')
-            ->limit(4)
+            ->limit(10)
             ->get();
 
-        // Promociones (Primeras 4 para pruebas)
+        // Promociones (Primeras 10 para pruebas)
         $todasActividades = $experiencia->actividades()
             ->where('estatus_producto_servicio', 'activo')
             ->orderBy('orden_actividad', 'asc')
@@ -156,7 +156,7 @@ class ExperienciaController extends Controller
         $promociones = $todasActividades->filter(function($actividad) {
             $complementos = json_decode($actividad->precios_monedas_complementarios, true);
             return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
-        })->take(4);
+        })->take(10);
 
         $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
 
@@ -174,7 +174,7 @@ class ExperienciaController extends Controller
     public function obtenerActividadesPaginadas(Request $request, $id)
     {
         $offset = $request->get('offset', 0);
-        $limit = 4; // Límite de 4 para pruebas
+        $limit = 10; // Límite de 10
         $tipo = $request->get('tipo', 'todas'); // 'todas' o 'promociones'
 
         $experiencia = Experiencia::findOrFail($id);
