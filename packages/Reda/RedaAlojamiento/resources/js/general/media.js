@@ -38,6 +38,16 @@ $(document).on('change', '.upload_photos', function() {
     let inputSelect = $(this);
 
     let actividadId = inputSelect.attr('data-id') || inputSelect.data('id');
+    
+    // Sincronizar el origen del botón del modal con el del input
+    let origen = inputSelect.attr('data-origen') || inputSelect.data('origen');
+    if (origen) {
+        $('#crop-and-upload').attr('data-origen', origen).data('origen', origen);
+    } else {
+        origen = $('#crop-and-upload').data('origen');
+    }
+
+    console.log('Origen detectado:', origen);
     console.log('ID capturado al cambiar archivo:', actividadId);
 
     if (file) {
@@ -54,13 +64,11 @@ $(document).on('change', '.upload_photos', function() {
             return false;
         }
 
-        const origen = $('#crop-and-upload').data('origen');
-
         let reader = new FileReader();
         reader.onload = function(e) {
             // Ponemos la imagen en el modal
             $('#image-to-crop').attr('src', e.target.result);
-            if (origen === 'actividades-experiencias' || origen === 'anfitrion-experiencia') {
+            if (origen === 'actividades-experiencias' || origen === 'anfitrion-experiencia' || origen === 'logo-negocio') {
                 if (actividadId == null)
                 {
                     actividadId = $(this).attr('data-id');

@@ -14,11 +14,11 @@
                     <div class="row">
                         <div class="col-md-12 p-0 mb-3">
                             <div class="list-bacground mt-4 rounded-3 p-4 border d-flex justify-content-between align-items-center">
-                                <span class="text-18 pt-4 pb-4 font-weight-700">Mis Negocios</span>
+                                <span class="text-18 pt-4 pb-4 font-weight-700">{{ __('Mis Negocios') }}</span>
 
                                 {{-- Botón para crear nuevo, similar al flujo de Airbnb --}}
                                 <a href="{{ url('reda/negocios/crear-experiencia') }}" class="btn vbg-default border">
-                                    <i class="fa fa-plus"></i> Nuevo Negocio
+                                    <i class="fa fa-plus"></i> {{ __('Nuevo Negocio') }}
                                 </a>
                             </div>
 
@@ -53,29 +53,41 @@
 
                                             {{-- Columna de Información --}}
                                             <div class="col-md-6 col-xl-6 p-4">
-                                                <div class="d-flex justify-content-between">
-                                                    <span class="badge bg-orange text-white mb-2">{{ ucfirst($experiencia->categoria_negocio ?? 'General') }}</span>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-orange text-white">{{ ucfirst($experiencia->categoria_negocio ?? 'General') }}</span>
                                                 </div>
+
                                                 <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/'.$experiencia->id.'/descripcion') }}">
-                                                    <div class=\"text-muted small mb-1\">ID: {{ $experiencia->id }}</div>
-                                                    <p class="text-18 font-weight-700 text-color">{{ $experiencia->titulo }}</p>
+                                                    <div class="text-muted small mb-1">{{ __('ID:') }} {{ $experiencia->id }}</div>
+                                                    <p class="text-18 font-weight-700 text-color mb-1">{{ $experiencia->titulo }}</p>
                                                 </a>
+
+                                                {{-- Promedio de Calificaciones --}}
+                                                <div class="star-rating d-flex align-items-center justify-content-start">
+                                                    <i class="fas fa-star text-warning mr-1"></i>
+                                                    @if($experiencia->calificaciones_count > 0)
+                                                        <span class="font-weight-700 text-dark mr-1">{{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
+                                                        <span class="text-muted small">· {{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }}</span>
+                                                    @else
+                                                        <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
+                                                    @endif
+                                                </div>
                                             </div>
 
                                             {{-- Columna de Acciones --}}
-                                            <div class="col-md-3 col-xl-3 border-start-lg p-4 d-flex flex-column justify-content-center">
+                                            <div class="col-md-3 col-xl-3 border-start-lg p-4 d-flex flex-row flex-md-column justify-content-center align-items-center">
                                                 {{-- Botón Editar --}}
                                                 <a href="{{ url('reda/negocios/formulario-de-pasos-experiencias/' . $experiencia->id . '/descripcion') }}"
-                                                class="btn-list-action btn-edit mx-3">
+                                                class="btn-list-action btn-edit mx-3 my-2 m-md-2">
                                                     <i class="fa fa-edit btn-list-icon"></i>
-                                                    <span class="btn-list-text">Editar</span>
+                                                    <span class="btn-list-text">{{ __('Editar') }}</span>
                                                 </a>
                                                 {{-- Botón Eliminar --}}
                                                 <a href="javascript:void(0)"
-                                                class="btn-list-action btn-delete mx-3 btn-eliminar-experiencia"
+                                                class="btn-list-action btn-delete mx-3 my-2 m-md-2 btn-eliminar-experiencia"
                                                 data-id="{{ $experiencia->id }}">
                                                     <i class="fa fa-trash btn-list-icon"></i>
-                                                    <span class="btn-list-text">Eliminar</span>
+                                                    <span class="btn-list-text">{{ __('Eliminar') }}</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -86,8 +98,8 @@
                             <div class="row justify-content-center w-100 p-4 mt-4">
                                 <div class="text-center w-100">
                                     <img src="{{ asset('public/img/unnamed.png') }}" class="img-fluid" alt="No encontrado">
-                                    <p class="text-center mt-3">Aún no tienes negocios registrados.</p>
-                                    <a href="{{ url('reda/create-experiencias') }}" class="btn btn-success">Crear mi primer negocio</a>
+                                    <p class="text-center mt-3">{{ __('Aún no tienes negocios registrados.') }}</p>
+                                    <a href="{{ url('reda/negocios/crear-experiencia') }}" class="btn btn-success">{{ __('Crear mi primer negocio') }}</a>
                                 </div>
                             </div>
                         @endforelse

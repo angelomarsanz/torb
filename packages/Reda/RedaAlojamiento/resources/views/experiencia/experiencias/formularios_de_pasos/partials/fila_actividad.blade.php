@@ -249,10 +249,8 @@
                                 <span class="small text-muted">{{ __('reda-alojamiento::messages.general.subir_foto') }}</span>
                             </label>
                         @endif
-                        @if(!$readonly)
                         <input id="file-{{ $actividad->id }}" type="file" name="actividades[{{ $actividad->id }}][foto_actividad]"
-                               data-id="{{ $actividad->id }}" class="upload_photos" accept="image/*" style="display:none;">
-                        @endif
+                               data-id="{{ $actividad->id }}" data-origen="actividades-experiencias" class="upload_photos" accept="image/*" style="display:none;">
                     </div>
                     @error("foto_actividad_id_" . $actividad->id)
                         <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">

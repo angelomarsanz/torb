@@ -20,16 +20,12 @@ export const menuPrincipal = () => {
         // Determinar cuál está activo basándonos en la URL actual
         const pathActual = window.location.pathname;
         
-        // Lógica simplificada para detectar secciones
-        const esAlojamientos = pathActual === '/' 
-            || pathActual === APP_URL + '/' 
-            || pathActual.includes('/search') 
-            || pathActual.includes('/properties') 
-            || pathActual.includes('/property/');
+        // El ícono "Comercios" se activa si la URL contiene "admin/reda/negocios/" o "/reda/negocios"
+        const esComercios = pathActual.includes('admin/reda/negocios/') 
+            || pathActual.includes('/reda/negocios');
             
-        const esComercios = pathActual.includes('/reda/negocios/listado-negocios') 
-            || pathActual.includes('/reda/negocios/listado-productos-servicios') 
-            || pathActual.includes('/reda/negocios/experiencias');
+        // El ícono "Alojamientos" se activa en cualquier otro caso
+        const esAlojamientos = !esComercios;
 
         const menuHtml = `
             <div id="reda-menu-principal" class="d-flex align-items-center reda-menu-principal" data-role="added-by-reda">

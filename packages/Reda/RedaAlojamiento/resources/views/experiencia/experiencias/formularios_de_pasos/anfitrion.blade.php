@@ -40,7 +40,7 @@
                                                 @if(!empty($anfitrion->foto_anfitrion))
                                                     <img src="{{ asset('public/images/anfitriones_experiencias/'.$anfitrion->foto_anfitrion) }}"
                                                          class="img-fluid rounded-3 shadow-sm" alt="Foto">
-                                                    <label class="edit-photo-overlay-outline" for="file-anfitrion" title="Cambiar imagen">
+                                                    <label class="edit-photo-overlay-outline" for="file-anfitrion" title="{{ __('Cambiar imagen') }}">
                                                         <i class="fa fa-pencil-alt"></i>
                                                     </label>
                                                 @else
@@ -50,7 +50,7 @@
                                                     </label>
                                                 @endif
                                                 <input id="file-anfitrion" type="file" name="foto_anfitrion"
-                                                       data-id="{{ $anfitrion->id ?? '' }}" class="upload_photos" accept="image/*" style="display:none;">
+                                                       data-id="{{ $anfitrion->id ?? '' }}" data-origen="anfitrion-experiencia" class="upload_photos" accept="image/*" style="display:none;">
                                             </div>
                                             @error("foto_anfitrion")
                                                 <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">
@@ -77,30 +77,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal para Recortar Imagen -->
-<div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ __('reda-alojamiento::messages.general.recortar_imagen') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="img-container">
-                    <img id="image-to-crop" src="" style="max-width: 100%;">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <input type="hidden" id="crop_photo_id" value="">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('reda-alojamiento::messages.general.cancelar') }}</button>
-                <button type="button" class="btn btn-success" id="crop-and-upload" data-origen="anfitrion-experiencia">{{ __('reda-alojamiento::messages.general.guardar_cambios') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('css')
@@ -112,6 +88,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('public/js/additional-method.min.js') }}"></script>
+    @include('reda-alojamiento::general.main_footer')
     <script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
     <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasosExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

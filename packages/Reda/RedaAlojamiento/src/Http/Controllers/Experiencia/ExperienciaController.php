@@ -26,7 +26,9 @@ class ExperienciaController extends Controller
 {
     public function index(Request $request)
     {
-        $data['experiencias'] = Experiencia::with('fotos') // <-- Agregamos las fotos aquí
+        $data['experiencias'] = Experiencia::with('fotos')
+                            ->withCount('calificaciones')
+                            ->withAvg('calificaciones', 'estrellas')
                             ->where('user_id', Auth::id())
                             ->orderBy('id', 'desc')
                             ->paginate(Session::get('row_per_page') ?? 10);
@@ -334,7 +336,8 @@ class ExperienciaController extends Controller
                         [
                             'titulo' => 'required|min:5',
                             'descripcion' => 'required|min:20',
-                            'categoria_negocio' => 'required'
+                            'categoria_negocio' => 'required',
+                            'logo_exists' => 'required'
                         ],
                         [
                             'titulo.required' => __('El nombre del negocio es obligatorio.'),
@@ -342,13 +345,20 @@ class ExperienciaController extends Controller
                             'descripcion.required' => __('La descripción es obligatoria.'),
                             'descripcion.min'      => __('La descripción debe tener al menos 20 caracteres.'),
                             'categoria_negocio.required' => __('La categoría del negocio es obligatoria.'),
+                            'logo_exists.required' => __('El logo del negocio es obligatorio.'),
                         ]);
+
+                    // Doble verificación: si el logo no está en DB, lanzamos error aunque el input diga que sí
+                    if (empty($result->ruta_imagenes)) {
+                        return back()->withErrors(['logo_exists' => __('El logo del negocio es obligatorio.')])->withInput();
+                    }
+
                     $result->titulo = $request->titulo;
                     $result->descripcion = $request->descripcion;
                     $result->categoria_negocio = $request->categoria_negocio; // Guardamos el valor
                     $result->save();
 
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'fotos']);
+                    return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'fotos']);
 
                 case 'fotos':
                     $conteoFotos = FotoExperiencia::where('experiencia_id', $id)->count();
@@ -357,7 +367,7 @@ class ExperienciaController extends Controller
                         return back()->withErrors(['foto' => __('La foto es obligatoria.')]);
                     }
 
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);
+                    return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'actividades']);
 
                 case 'actividades':
                     if ($request->has('actividades') && is_array($request->actividades)) {
@@ -459,11 +469,11 @@ class ExperienciaController extends Controller
                             ];
                             return response()->json($respuesta, $respuesta['code']);
                         }
-                        return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'actividades'])
+                        return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'actividades'])
                                     ->with('success', __('Producto o servicio guardado con éxito'));
                     }
 
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'ubicacion'])
+                    return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'ubicacion'])
                                 ->with('success', __('Productos y servicios actualizados con éxito.'));
 
                 case 'ubicacion':
@@ -506,13 +516,13 @@ class ExperienciaController extends Controller
                                 'success' => true,
                                 'message' => 'Location updated successfully',
                                 'mensaje_usuario' => __('Ubicación actualizada con éxito.'),
-                                'respuesta' => route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'horario']),
+                                'respuesta' => route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'horario']),
                                 'code' => 200
                             ];
                             return response()->json($respuesta, $respuesta['code']);
                         }
 
-                        return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'horario'])
+                        return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'horario'])
                         ->with('success', __('Ubicación actualizada con éxito.'));
 
                     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -542,7 +552,7 @@ class ExperienciaController extends Controller
                     }
 
                 case 'horario':
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
+                    return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'anfitrion'])
                     ->with('success', __('Horarios confirmados con éxito.'));
                 case 'anfitrion':
                     $request->validate(
@@ -562,7 +572,7 @@ class ExperienciaController extends Controller
                         $anfitrion->trayectoria_profesional = $request->trayectoria_profesional;
                         $anfitrion->save();
                     }
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
+                    return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'informacion_adicional'])
                     ->with('success', __('Información de Nosotros actualizada con éxito'));
                 case 'informacion_adicional':
                     $informacion = InformacionExperiencia::where('experiencia_id', $id)->first();
@@ -571,7 +581,7 @@ class ExperienciaController extends Controller
                         $informacion->save();
                     }
 
-                    return redirect()->route('reda.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
+                    return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
                     ->with('success', __('Información adicional actualizada con éxito'));
                 case 'precio':
                     return redirect()->route('reda.negocios.experiencias.index')

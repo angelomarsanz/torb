@@ -66,7 +66,7 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
 
 });
 
-Route::prefix('reda')->group(function () {
+Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
 
     // ----------------------------------------------------------------------
     // 1. Rutas Sin Prefijo 'negocios' (Administrativos, Billetera, Disputas)
@@ -104,7 +104,7 @@ Route::prefix('reda')->group(function () {
     // ----------------------------------------------------------------------
     // 3. Rutas que requieren login de usuario
     // ----------------------------------------------------------------------
-    Route::group(['middleware' => ['web', 'reda.auth', 'locale']], function () {
+    Route::group(['middleware' => ['reda.auth']], function () {
 
         // Media (Se mantienen sin el prefijo 'negocios' en URL y nombre)
         Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])->name('reda.upload_photo');

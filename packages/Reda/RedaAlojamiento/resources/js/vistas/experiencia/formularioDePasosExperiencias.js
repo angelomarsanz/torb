@@ -24,10 +24,12 @@ $(function() {
                 }
 
                 $('#list_des').validate({
+                    ignore: [],
                     rules: {
                         titulo: { required: true, minlength: 5 },
                         descripcion: { required: true, minlength: 20 },
-                        categoria_negocio: { required: true }, // Nueva regla
+                        categoria_negocio: { required: true },
+                        logo_exists: { required: true }, // Nueva regla para el logo
                     },
                     messages: {
                         titulo:
@@ -43,10 +45,14 @@ $(function() {
                         categoria_negocio: {
                             required: window.RedaAlojamientoJson["La categoría del negocio es obligatoria."] || "La categoría del negocio es obligatoria."
                         },
+                        logo_exists: {
+                            required: window.RedaAlojamientoJson["El logo del negocio es obligatorio."] || "El logo del negocio es obligatorio."
+                        }
                     },
                     errorPlacement: function(error, element) {
-                        // Manejo especial para que el error no quede oculto si usas select2
-                        if (element.hasClass('select-search') && element.next('.select2-container').length) {
+                        if (element.attr('name') === 'logo_exists') {
+                            error.insertAfter('#foto-container-logo');
+                        } else if (element.hasClass('select-search') && element.next('.select2-container').length) {
                             error.insertAfter(element.next('.select2-container'));
                         } else {
                             error.insertAfter(element);
@@ -57,6 +63,16 @@ $(function() {
                         $(".spinner").removeClass('d-none');
                         $("#btn_next-text").text(window.RedaAlojamientoJson["Guardando..."] || "Guardando...");
                         return true;
+                    }
+                });
+
+                // Escuchamos el evento de actualización de media para el logo (dentro del caso descripcion)
+                document.addEventListener('mediaUpdated', function(e) {
+                    if (e.detail.origen === 'logo-negocio') {
+                        // Marcamos que el logo existe para el validador
+                        $('#logo_exists').val('1');
+                        // Forzamos la re-validación del campo
+                        $('#list_des').validate().element('#logo_exists');
                     }
                 });
 

@@ -147,6 +147,50 @@ class MediaController extends Controller
                     ]);
                     break;
 
+                case 'logo-negocio':
+                    $experienciaId = $id;
+                    $experiencia = Experiencia::find($experienciaId);
+
+                    if (!$experiencia) {
+                        return response()->json(['success' => false, 'message' => 'Negocio no encontrado'], 404);
+                    }
+
+                    // Definir ruta y nombre de archivo
+                    $path = public_path('images/logos_negocios/' . $experienciaId);
+
+                    // Si ya existe un logo, eliminarlo físicamente
+                    if (!empty($experiencia->ruta_imagenes)) {
+                        $oldPath = public_path('images/logos_negocios/' . $experiencia->ruta_imagenes);
+                        if (File::exists($oldPath)) {
+                            File::delete($oldPath);
+                        }
+                    }
+
+                    // Crear directorio si no existe
+                    if (!File::isDirectory($path)) {
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+
+                    // Guardar nueva foto (Logo)
+                    $file = $request->file('cropped_image');
+                    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = time() . '_' . $originalName . '.' . $extension;
+                    $file->move($path, $fileName);
+
+                    // Actualizar la base de datos (columna ruta_imagenes)
+                    $experiencia->ruta_imagenes = $experienciaId.'/'.$fileName;
+                    $experiencia->save();
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Logo de negocio actualizado',
+                        'id' => $experienciaId,
+                        'path' => asset('public/images/logos_negocios/' . $experienciaId.'/'.$fileName),
+                        'file' => $experienciaId.'/'.$fileName
+                    ]);
+                    break;
+
             }
         }
         return response()->json(['success' => false, 'message' => 'No se pudo subir la foto'], 400);

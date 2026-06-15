@@ -23,7 +23,7 @@
                                 <div class="row mt-4 p-4">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger d-none" id="error-message"></div>
-                                        <input type="file" name="photo" class="upload_photos" accept="image/*" class="form-control">
+                                        <input type="file" name="photo" class="upload_photos" data-origen="fotos-experiencias" accept="image/*">
                                         <p class="text-14 mt-2 text-muted">{{ __('reda-alojamiento::messages.general.elige_imagenes_de_alta_calidad_jpg_png_gif') }}</p>
                                     </div>
                                     @error('foto')
@@ -79,29 +79,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ __('Recortar Imagen') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="img-container">
-                    <img id="image-to-crop" src="" style="max-width: 100%;">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <input type="hidden" id="crop_photo_id" value="">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" class="btn btn-success" id="crop-and-upload" data-origen="fotos-experiencias">{{ __('Guardar Cambios') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @endsection
 
 @push('css')
@@ -113,6 +90,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('public/js/additional-method.min.js') }}"></script>
+    @include('reda-alojamiento::general.main_footer')
     <script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
 	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasosExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

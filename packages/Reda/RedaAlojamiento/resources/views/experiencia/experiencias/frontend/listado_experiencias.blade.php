@@ -176,6 +176,6 @@
 
 @section('validation_script')
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
-    <script src="{{ asset('public/js/reda/general/notificaciones.min.js?v=' . time()) }}"></script>
+    @include('reda-alojamiento::general.main_footer')
     <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

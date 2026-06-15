@@ -269,3 +269,6 @@ Cuando se requiera hacer un cambio masivo en la aplicación se deben ignorar los
 
 ## Formatos numéricos PHP
 Para los formatos numéricos en php se usará packages/Reda/RedaAlojamiento/src/Helpers/helpers.php
+
+## Animación de espera en el frontend
+Se debe usar packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js para la animación de espera en el frontend ya sea en el dashboard del usuario o en cualquier vista en el frontend a la que tenga el usuario común indistintamente si ha hecho login o no

@@ -9,6 +9,7 @@
 {{-- 2. Modales de uso general --}}
 @include('reda-alojamiento::general.modal_notificaciones')
 @include('reda-alojamiento::general.modal_confirmacion')
+@include('reda-alojamiento::general.modal_crop')
 
 {{-- 3. Scripts de uso general del plugin --}}
 <script src="{{ asset('public/js/reda/general/reda-general-main.min.js') }}?v={{ time() }}"></script>

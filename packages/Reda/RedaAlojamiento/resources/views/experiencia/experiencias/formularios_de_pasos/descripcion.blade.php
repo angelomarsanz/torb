@@ -56,6 +56,36 @@
                                             </div>
                                         @enderror
                                     </div>
+
+                                    <!-- Logo del Negocio -->
+                                    <div class="col-md-12 mt-4">
+                                        <label class="form-label small font-weight-700 w-100 mb-2">{{ __('Logo del negocio') }} <span class="text-danger">*</span></label>
+                                        <div class="actividad-foto-card-container {{ !$result->ruta_imagenes ? 'no-image' : '' }}" id="foto-container-logo">
+                                            @if($result->ruta_imagenes)
+                                                <img src="{{ asset('public/images/logos_negocios/'.$result->ruta_imagenes) }}"
+                                                     class="img-fluid rounded-3 shadow-sm" alt="Logo">
+                                                <label class="edit-photo-overlay-outline" for="file-logo" title="{{ __('Cambiar logo') }}">
+                                                    <i class="fa fa-pencil-alt"></i>
+                                                </label>
+                                            @else
+                                                <label class="upload-placeholder" for="file-logo">
+                                                    <i class="fa fa-image fa-2x mb-2 text-muted"></i>
+                                                    <span class="small text-muted">{{ __('Subir logo') }}</span>
+                                                </label>
+                                            @endif
+                                            <input id="file-logo" type="file" name="logo_negocio"
+                                                   data-id="{{ $result->id }}" data-origen="logo-negocio" class="upload_photos" accept="image/*" style="display:none;">
+                                        </div>
+                                        <input type="hidden" name="logo_exists" id="logo_exists" value="{{ $result->ruta_imagenes ? '1' : '' }}">
+                                        @error('logo_exists')
+                                            <div class="text-danger mt-2" style="font-size: 13px; font-weight: 700;">
+                                                <i class="fa fa-exclamation-triangle"></i> {{ $message }}
+                                            </div>
+                                        @enderror
+                                        <p class="text-muted small mt-2 italic">
+                                            <i class="fa fa-info-circle mr-1"></i> {{ __('Este logo aparecerá en el listado y detalle de su negocio.') }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -78,6 +108,34 @@
 
 @section('validation_script')
     <script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
+    @include('reda-alojamiento::general.main_footer')
+    <script type="text/javascript" src="{{ asset('public/js/reda/general/reda-general-media.min.js?v=' . time()) }}"></script>
 	<script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/formularioDePasosExperiencias.min.js?v=' . time()) }}"></script>
+    
+    <script>
+        // Escuchamos el evento de actualización de media para el logo
+        document.addEventListener('mediaUpdated', function(e) {
+            if (e.detail.origen === 'logo-negocio') {
+                const data = e.detail.response;
+                const container = $('#foto-container-logo');
+                const negocioId = data.id;
+                const nuevaUrl = data.path;
+
+                if (nuevaUrl && container.length) {
+                    container.html(`
+                        <img src="${nuevaUrl}?v=${new Date().getTime()}" class="img-fluid rounded-3 shadow-sm" alt="Logo">
+                        <label class="edit-photo-overlay-outline" for="file-logo" title="${window.RedaAlojamientoJson['Cambiar logo'] || 'Cambiar logo'}">
+                            <i class="fa fa-pencil-alt"></i>
+                        </label>
+                        <input id="file-logo" type="file" name="logo_negocio"
+                               data-id="${negocioId}" data-origen="logo-negocio" class="upload_photos" accept="image/*" style="display:none;">
+                    `);
+                    container.removeClass('no-image');
+                }
+            }
+        });
+    </script>
 @endsection
