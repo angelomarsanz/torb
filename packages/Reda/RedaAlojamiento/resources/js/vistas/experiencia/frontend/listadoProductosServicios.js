@@ -25,7 +25,7 @@
                     } else {
                         $btn.hide();
                     }
-                }, 250);
+                }, 300);
             });
         };
 
@@ -84,7 +84,7 @@
             const id = $carrusel.attr('id');
             const state = carruselState[id];
             if (state.loading) return;
-            
+
             let nuevoOffset = state.offset;
             if (direccion === 'next') {
                 if (state.noMore) return;
@@ -109,10 +109,10 @@
                         // LIMPIEZA Y REEMPLAZO: Asegura que solo se vean 10 a la vez
                         $carrusel.empty().append(response.html);
                         $carrusel.scrollLeft(0);
-                        
+
                         state.offset = response.proximo_offset;
                         state.noMore = (direccion === 'next' && response.cantidad < 10);
-                        
+
                         // Resetear estados para forzar 2 clics de nuevo al llegar al borde
                         actualizarBotonesCarrusel($carrusel);
                     } else if (direccion === 'next') {
@@ -146,14 +146,14 @@
             const tieneScroll = scrollWidth > clientWidth + 10;
             const alFinal = scrollLeft + clientWidth >= scrollWidth - 30;
             const alInicio = scrollLeft <= 15;
-            
+
             const esPaginableAdelante = state.offset >= 10 && !state.noMore;
             const esPaginableAtras = state.offset > ($carrusel.find('.producto-card').length);
 
             // Botones habilitados si no están en el borde O si el borde es "paginable"
             $btnPrev.prop('disabled', alInicio && !esPaginableAtras);
             $btnNext.prop('disabled', alFinal && !esPaginableAdelante);
-            
+
             if (!tieneScroll && !esPaginableAdelante && !esPaginableAtras) {
                 $parent.find('.carrusel-controles-desktop').css('opacity', '0').css('pointer-events', 'none');
             } else {
@@ -194,7 +194,7 @@
                         cargarActividades($(this), 'next');
                     }
                 }
-                
+
                 // Atrás (swipe derecha)
                 if (diffX < -40 && scrollLeft <= 15 && !carruselState[id].loading) {
                     if (carruselState[id].offset > $(this).find('.producto-card').length) {
@@ -209,6 +209,10 @@
         $(function() {
             initMapDetalle();
             manejarExpansionDescripcion();
+
+            // Recalcular descripción cuando las imágenes carguen (por si afectan el layout)
+            window.addEventListener('load', manejarExpansionDescripcion);
+
             $('.container-carrusel-productos').each(function() { initCarrusel($(this)); });
 
             // Manejo de Clics en Desktop

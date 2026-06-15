@@ -13,16 +13,18 @@
             <div class="col-12 col-lg-30 d-none d-lg-block">
                 <div class="sticky-top-detail pr-lg-4">
                     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
-                    <section class="seccion-info-negocio p-4">
+                    <section class="seccion-info-negocio">
                         @if($experiencia->ruta_imagenes)
-                            <div class="negocio-detalle-logo-wrapper">
-                                <img src="{{ asset('public/images/logos_negocios/' . $experiencia->ruta_imagenes) }}" alt="Logo {{ $experiencia->titulo }}">
+                            <div class="negocio-detalle-logo-wrapper mb-4">
+                                <img src="{{ asset('public/images/logos_negocios/' . $experiencia->ruta_imagenes) }}"
+                                     alt="Logo {{ $experiencia->titulo }}"
+                                     class="img-fluid">
                             </div>
                         @endif
 
-                        <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
-                        
-                        <div class="negocio-detalle-desc-wrapper">
+                        <h1 class="negocio-detalle-titulo font-weight-700 px-2">{{ $experiencia->titulo }}</h1>
+
+                        <div class="negocio-detalle-desc-wrapper px-2">
                             <p class="negocio-detalle-desc text-muted" id="desc_negocio_fija">{{ $experiencia->descripcion }}</p>
                             <button class="btn-leer-mas-desc" id="btn_leer_mas_fija">{{ __('Más') }}</button>
                         </div>
@@ -42,7 +44,7 @@
 
             <!-- COLUMNA DERECHA: 70% DESPLAZABLE (Escritorio) / 100% (Móvil) -->
             <div class="col-12 col-lg-70">
-                
+
                 <!-- SECCIÓN 2: BARRA DE BÚSQUEDA -->
                 <section class="seccion-busqueda-actividades px-4 mb-4">
                     <!-- Vista Desktop -->
@@ -104,9 +106,9 @@
                         </div>
                     </div>
 
-                    <div class="container-carrusel-productos" 
-                         id="carrusel_promociones" 
-                         data-tipo="promociones" 
+                    <div class="container-carrusel-productos"
+                         id="carrusel_promociones"
+                         data-tipo="promociones"
                          data-offset="{{ $promociones->count() }}"
                          data-id-negocio="{{ $experiencia->id }}">
                         @foreach($promociones as $promo)
@@ -133,9 +135,9 @@
                         </div>
                     </div>
 
-                    <div class="container-carrusel-productos" 
-                         id="contenedor_todos_productos" 
-                         data-tipo="todas" 
+                    <div class="container-carrusel-productos"
+                         id="contenedor_todos_productos"
+                         data-tipo="todas"
                          data-offset="{{ $actividades->count() }}"
                          data-id-negocio="{{ $experiencia->id }}">
                         @foreach($actividades as $actividad)
@@ -151,7 +153,7 @@
 
                 <!-- SECCIÓN 5: UBICACIÓN -->
                 <section class="seccion-ubicacion-negocio px-4 mb-5">
-                    <h2 class="text-22 font-weight-700 mb-3">{{ __('¿Dónde estarás?') }}</h2>
+                    <h2 class="text-22 font-weight-700 mb-3">{{ __('¿Dónde estamos ubicados?') }}</h2>
                     <div class="mb-3">
                         <p class="text-16 mb-1 font-weight-600">{{ $experiencia->ubicacion['linea_uno_direccion'] ?? '' }}</p>
                         @if(!empty($experiencia->ubicacion['linea_dos_direccion']))
@@ -258,9 +260,8 @@
                 <!-- SECCIÓN 9: INFORMACIÓN ADICIONAL -->
                 @if($experiencia->informaciones->first())
                 <section class="seccion-informacion-adicional px-4 mb-5">
-                    <h2 class="text-22 font-weight-700 mb-3">{{ __('Cosas que debes saber') }}</h2>
+                    <h2 class="text-22 font-weight-700 mb-3">{{ __('Información Adicional') }}</h2>
                     <div class="text-16">
-                        <h4 class="font-weight-700 text-18 mb-2">{{ __('Requisitos del cliente') }}</h4>
                         <p>{!! nl2br(e($experiencia->informaciones->first()->requisitos_viajero)) !!}</p>
                     </div>
                 </section>
@@ -289,10 +290,10 @@
                                         <div class="d-flex align-items-center mb-2">
                                             @php
                                                 $fotoUsuario = $calificacion->usuario->profile_image;
-                                                $rutaFotoUsuario = $fotoUsuario 
-                                                    ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario) 
+                                                $rutaFotoUsuario = $fotoUsuario
+                                                    ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
                                                     : asset('public/images/default-profile.png');
-                                                
+
                                                 $primerNombre = explode(' ', trim($calificacion->usuario->first_name))[0];
                                                 $primerApellido = explode(' ', trim($calificacion->usuario->last_name))[0];
                                             @endphp
