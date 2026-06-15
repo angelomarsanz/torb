@@ -86,6 +86,18 @@
 										<input type="text" name="postal_code" id="postal_code" value="{{ data_get($result->ubicacion, 'codigo_postal') }}" class="form-control text-16 mt-2">
 										<span class="text-danger">{{ $errors->first('postal_code') }}</span>
 									</div>
+
+									<div class="col-md-6 mt-4 pl-5 pr-5">
+										<label>{{ __('Correo electrónico del negocio') }} <span class="text-danger">*</span></label>
+										<input type="email" name="email_negocio" id="email_negocio" value="{{ data_get($result->ubicacion, 'email_negocio') }}" class="form-control text-16 mt-2" placeholder="ejemplo@negocio.com">
+										<span class="text-danger">{{ $errors->first('email_negocio') }}</span>
+									</div>
+
+									<div class="col-md-6 mt-4 pl-5 pr-5">
+										<label>{{ __('Teléfono Whatsapp del negocio') }} <span class="text-danger">*</span></label>
+										<input type="text" name="whatsapp_negocio" id="whatsapp_negocio" value="{{ data_get($result->ubicacion, 'whatsapp_negocio') }}" class="form-control text-16 mt-2" placeholder="+584120000000">
+										<span class="text-danger">{{ $errors->first('whatsapp_negocio') }}</span>
+									</div>
 								</div>
                             </div>
 

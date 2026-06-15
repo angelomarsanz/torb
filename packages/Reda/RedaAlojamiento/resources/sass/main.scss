@@ -1738,3 +1738,12 @@
 
 /* --- ESTRELLAS DE CALIFICACIÓN (TAMAÑO FIJO) --- */
 .star-rating-12 { font-size: 12px !important; }
+
+/* Estilos para campos de contacto en el formulario de pasos */
+#list_des {
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
+    }
+    label { font-weight: 600; color: #484848; }
+}

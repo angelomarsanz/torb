@@ -820,7 +820,7 @@ $(function() {
                             // Mostrar en un MODAL (para la vista "Ver")
                             $('#actividad-modal-body').html(response.respuesta.html);
                             $('#actividadModalLabel').text(window.RedaAlojamiento.general.detalle_del_producto_o_servicio);
-                            
+
                             // Ocultamos el botón guardar del modal si es solo lectura
                             if (response.respuesta.readonly) {
                                 $('#btn-save-actividad-modal').hide();
@@ -1278,7 +1278,9 @@ $(function() {
                         city: { required: true },
                         state: { required: true },
                         country: { required: true },
-                        latitude: { required: true, min: -90, max: 90 }
+                        latitude: { required: true, min: -90, max: 90 },
+                        email_negocio: { required: true, email: true, maxlength: 255 },
+                        whatsapp_negocio: { required: true, maxlength: 255 }
                     },
                     submitHandler: function(form) {
                         $('#btn_next').attr('disabled', true);
@@ -1311,6 +1313,13 @@ $(function() {
                             required: window.RedaAlojamientoJson['Debe fijar la posición en el mapa'] || 'Debe fijar la posición en el mapa',
                             min: window.RedaAlojamientoJson['Debe fijar la posición en el mapa'] || 'Debe fijar la posición en el mapa',
                             max: window.RedaAlojamientoJson['Debe fijar la posición en el mapa'] || 'Debe fijar la posición en el mapa'
+                        },
+                        email_negocio: {
+                            required: window.RedaAlojamientoJson['Correo electrónico obligatorio'] || 'Correo electrónico obligatorio',
+                            email: window.RedaAlojamientoJson['Ingrese un correo válido'] || 'Ingrese un correo válido'
+                        },
+                        whatsapp_negocio: {
+                            required: window.RedaAlojamientoJson['WhatsApp obligatorio'] || 'WhatsApp obligatorio'
                         }
                     },
                     errorPlacement: function(error, element) {
