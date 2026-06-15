@@ -13,6 +13,12 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Cargamos los helpers personalizados del paquete
+        $helpersFile = __DIR__.'/Helpers/helpers.php';
+        if (file_exists($helpersFile)) {
+            require_once $helpersFile;
+        }
+
         // CAMBIO 3: Nueva referencia al archivo de configuración
         $this->mergeConfigFrom(
             __DIR__.'/../config/reda-alojamiento.php', 'reda-alojamiento'

@@ -153,7 +153,7 @@
                                                                     {{ $actividad->nombre_actividad ?: '---' }}
                                                                 </h6>
                                                                 <p class="m-0 text-success font-weight-600 small">
-                                                                    {{ reda_money_format($actividad->moneda->code ?? 'USD', $actividad->precio) }}
+                                                                    {{ reda_money_format($actividad->currency->code ?? 'USD', $actividad->precio) }}
                                                                 </p>
                                                             </div>
 

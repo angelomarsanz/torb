@@ -10,6 +10,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
+    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    "packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
 
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/CalificacionExperiencia.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_08_100000_crear_tabla_calificaciones_experiencias.php"
@@ -53,6 +55,4 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/CalificacionController.php"
-
-    "packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
 )

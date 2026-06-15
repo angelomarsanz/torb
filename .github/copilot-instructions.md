@@ -266,3 +266,6 @@ Crear la acción en el controlador
 
 ## Procesos de cambios masivos
 Cuando se requiera hacer un cambio masivo en la aplicación se deben ignorar los archivos que en su nombre contenga la palabra "copy" o "copia" u "original"
+
+## Formatos numéricos PHP
+Para los formatos numéricos en php se usará packages/Reda/RedaAlojamiento/src/Helpers/helpers.php
