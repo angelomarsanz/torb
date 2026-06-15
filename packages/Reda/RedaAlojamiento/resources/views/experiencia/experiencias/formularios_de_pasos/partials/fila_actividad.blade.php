@@ -103,7 +103,7 @@
                         <div class="col-md-12">
                             <label class="form-label small font-weight-700">{{ __('Precio en bolívares') }}</label>
                             <div class="d-flex flex-wrap gap-x-4 mb-2 mt-1">
-                                <div class="form-check me-3">
+                                <div class="form-check mr-5 me-5">
                                     <input class="form-check-input radio-tipo-carga" type="radio" 
                                            name="actividades[{{ $actividad->id }}][tipo_carga_precio_local]" 
                                            id="manual-{{ $actividad->id }}" value="manual" 
@@ -168,12 +168,12 @@
                                     <label class="form-label small font-weight-700">{{ __('Precio promoción:') }}</label>
                                     <input type="number" step="0.01" name="actividades[{{ $actividad->id }}][precio_promocion]"
                                         value="{{ old('actividades.'.$actividad->id.'.precio_promocion', $datosComplementarios['precio_promocion'] ?? '') }}"
-                                        class="form-control" placeholder="0.00" {{ $disabled }}
+                                        class="form-control input-precio-promocion" placeholder="0.00" {{ $disabled }}
                                     >
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label small font-weight-700">{{ __('Moneda promoción') }}</label>
-                                    <select name="actividades[{{ $actividad->id }}][moneda_precio_promocion]" class="form-control" {{ $disabled }}>
+                                    <select name="actividades[{{ $actividad->id }}][moneda_precio_promocion]" class="form-control select-moneda-promocion" {{ $disabled }}>
                                         <option value="" {{ is_null(old('actividades.'.$actividad->id.'.moneda_precio_promocion', $datosComplementarios['moneda_precio_promocion'] ?? null)) ? 'selected' : '' }}>
                                             {{ __('reda-alojamiento::messages.general.seleccione_una_opcion') }}
                                         </option>

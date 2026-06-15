@@ -607,7 +607,10 @@ $(function() {
                     $('.select-moneda-complementaria').each(function() {
                         $(this).rules('add', {
                             required: function(element) {
-                                return $(element).closest('.fila-actividad-container').find('.radio-tipo-carga:checked').val() === 'manual';
+                                const container = $(element).closest('.fila-actividad-container');
+                                const isManual = container.find('.radio-tipo-carga:checked').val() === 'manual';
+                                const hasPrice = container.find('.input-precio-bolivares').val() !== '';
+                                return isManual && hasPrice;
                             },
                             messages: {
                                 required: window.RedaAlojamientoJson["Debe seleccionar una moneda"] || "Debe seleccionar una moneda"
@@ -615,12 +618,26 @@ $(function() {
                         });
                     });
 
-                    // Moneda
+                    // Moneda Principal (Solo si hay precio)
                     $('select[name*="[currency_id]"]').each(function() {
                         $(this).rules('add', {
-                            required: true,
+                            required: function(element) {
+                                return $(element).closest('.fila-actividad-container').find('.validar-precio').val() !== '';
+                            },
                             messages: {
                                 required: window.RedaAlojamiento.general.el_tipo_de_moneda_es_obligatorio
+                            }
+                        });
+                    });
+
+                    // Moneda de Promoción (Solo si hay precio de promoción)
+                    $('.select-moneda-promocion').each(function() {
+                        $(this).rules('add', {
+                            required: function(element) {
+                                return $(element).closest('.fila-actividad-container').find('.input-precio-promocion').val() !== '';
+                            },
+                            messages: {
+                                required: window.RedaAlojamientoJson["Debe seleccionar una moneda"] || "Debe seleccionar una moneda"
                             }
                         });
                     });
