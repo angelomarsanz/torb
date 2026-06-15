@@ -1115,6 +1115,28 @@
         font-weight: 600;
         i { color: #ff385c; }
     }
+
+    .negocio-detalle-logo-wrapper {
+        width: 85px;
+        height: 85px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        padding: 4px;
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        border: 1px solid #eee;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
 }
 
 .seccion-busqueda-actividades {

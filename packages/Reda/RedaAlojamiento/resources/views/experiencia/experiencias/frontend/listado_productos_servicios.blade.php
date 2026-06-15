@@ -14,6 +14,12 @@
                 <div class="sticky-top-detail pr-lg-4">
                     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
                     <section class="seccion-info-negocio p-4">
+                        @if($experiencia->ruta_imagenes)
+                            <div class="negocio-detalle-logo-wrapper">
+                                <img src="{{ asset('public/images/logos_negocios/' . $experiencia->ruta_imagenes) }}" alt="Logo {{ $experiencia->titulo }}">
+                            </div>
+                        @endif
+
                         <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
                         
                         <div class="negocio-detalle-desc-wrapper">
