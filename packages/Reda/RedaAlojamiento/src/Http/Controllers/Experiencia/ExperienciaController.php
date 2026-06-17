@@ -204,7 +204,7 @@ class ExperienciaController extends Controller
             $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio';
             
             if ($esModal) {
-                $html .= '<div class="col-12 col-lg-6 mb-4">';
+                $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
                 $html .= view($view, [
                     'actividad' => $item,
                     'currentCurrency' => $currentCurrency,

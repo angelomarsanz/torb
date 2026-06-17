@@ -1549,16 +1549,24 @@
     }
 
     #contenedor_items_infinito {
-        padding: 40px 45px; // Aumentamos el aire superior e inferior
+        padding: 30px 45px; // Ajustado (Antes 50px)
         margin: 0; 
         width: 100%;
 
         @media (max-width: 767px) {
-            padding: 30px 25px;
+            padding: 20px 25px; // Ajustado (Antes 40px)
+        }
+
+        /* Espaciado Vertical para las columnas del modal */
+        .item-col-infinito {
+            margin-bottom: 55px !important; // REDUCIDO A LA MITAD (Antes 110px)
+            
+            @media (max-width: 767px) {
+                margin-bottom: 45px !important; // REDUCIDO A LA MITAD (Antes 90px)
+            }
         }
 
         .producto-card {
-            margin-bottom: 50px; // ESPACIO EXTRA ENTRE FILAS (Antes 35px)
             height: 100%;
 
             .producto-img-container { 
@@ -1566,7 +1574,6 @@
             }
 
             @media (max-width: 767px) {
-                margin-bottom: 40px; // También aumentamos en móvil
                 .producto-img-container { height: 210px; }
             }
         }
