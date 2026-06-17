@@ -754,8 +754,8 @@
     &::-webkit-scrollbar { display: none; } /* Chrome/Safari */
     padding-bottom: 10px;
     scroll-snap-type: x mandatory;
-    margin: 0 -15px;
-    padding: 0 15px;
+    margin: 0; // Eliminado margen negativo para evitar desborde
+    padding: 0 5px;
 }
 
 .col-item-carrusel {
@@ -1268,6 +1268,156 @@
     }
 }
 
+/* --- TARJETAS DE PRODUCTOS/SERVICIOS (COMPARTIDAS ENTRE CARRUSEL Y MODAL) --- */
+
+.producto-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: #fff;
+    width: 100%; /* Por defecto ocupa el ancho de su contenedor */
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .producto-img-container {
+        width: 100%;
+        height: 150px;
+        position: relative;
+        background: #f7f7f7;
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-promo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff385c;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    }
+
+    .producto-info {
+        padding: 12px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .producto-nombre {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #222;
+        }
+
+        .producto-precio {
+            font-size: 14px;
+            color: #222;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+
+            .precio-original {
+                text-decoration: line-through;
+                color: #717171;
+                font-size: 13px;
+            }
+
+            .precio-promo {
+                color: #ff385c;
+                font-weight: 700;
+            }
+        }
+    }
+
+    /* Estilo Especial: Card Ver Todos (Collage) */
+    &.card-ver-todos {
+        border: 1px solid #eee;
+        
+        .collage-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            
+            .collage-wrapper {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .img-collage {
+                position: absolute;
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 8px;
+                border: 2px solid #fff;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                transition: transform 0.3s ease;
+            }
+
+            .img-1 { transform: rotate(-15deg) translateX(-30px) translateY(-10px); z-index: 1; }
+            .img-2 { transform: rotate(0deg) scale(1.1); z-index: 3; }
+            .img-3 { transform: rotate(15deg) translateX(30px) translateY(10px); z-index: 2; }
+
+            .overlay-ver-todos {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(29, 191, 115, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 5;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                
+                i {
+                    font-size: 40px;
+                    color: #fff;
+                    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                }
+            }
+        }
+
+        &:hover {
+            .overlay-ver-todos { opacity: 1; }
+            .img-1 { transform: rotate(-25deg) translateX(-45px) translateY(-15px); }
+            .img-2 { transform: rotate(0deg) scale(1.2); }
+            .img-3 { transform: rotate(25deg) translateX(45px) translateY(15px); }
+        }
+    }
+}
+
 /* --- CARRUSELES CON PAGINACIÓN AJAX (FRONTEND) --- */
 
 .seccion-productos {
@@ -1340,7 +1490,7 @@
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         gap: 16px;
-        padding: 0 20px 15px 20px;
+        padding: 0 5px 15px 5px; 
         -ms-overflow-style: none;
         scrollbar-width: none;
         scroll-behavior: smooth;
@@ -1351,6 +1501,12 @@
 
         &.loading {
             opacity: 0.6;
+        }
+
+        /* En el carrusel, las tarjetas tienen un ancho fijo para permitir el scroll horizontal */
+        .producto-card {
+            flex: 0 0 200px;
+            scroll-snap-align: start;
         }
     }
 
@@ -1380,63 +1536,49 @@
             font-size: 18px;
         }
     }
+}
 
-    .producto-card {
-        flex: 0 0 200px;
-        scroll-snap-align: start;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        transition: transform 0.2s;
-        cursor: pointer;
+/* Modal Listado Infinito */
+.modal-listado-infinito {
+    .modal-body {
+        padding: 0 !important; // Eliminamos padding del body para manejarlo en el contenedor
+        &::-webkit-scrollbar { width: 6px; }
+        &::-webkit-scrollbar-track { background: #f1f1f1; }
+        &::-webkit-scrollbar-thumb { background: #28a745; border-radius: 10px; }
+        &::-webkit-scrollbar-thumb:hover { background: #218838; }
+    }
 
-        &:hover {
-            transform: translateY(-5px);
+    #contenedor_items_infinito {
+        padding: 40px 45px; // Aumentamos el aire superior e inferior
+        margin: 0; 
+        width: 100%;
+
+        @media (max-width: 767px) {
+            padding: 30px 25px;
         }
 
-        .producto-img-container {
-            height: 150px;
-            position: relative;
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
+        .producto-card {
+            margin-bottom: 50px; // ESPACIO EXTRA ENTRE FILAS (Antes 35px)
+            height: 100%;
+
+            .producto-img-container { 
+                height: 240px;
             }
-            .badge-promo {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                background: #ff385c;
-                color: #fff;
-                padding: 2px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: 700;
+
+            @media (max-width: 767px) {
+                margin-bottom: 40px; // También aumentamos en móvil
+                .producto-img-container { height: 210px; }
             }
         }
 
-        .producto-info {
-            padding: 10px;
-            .producto-nombre {
-                font-size: 14px;
-                font-weight: 600;
-                margin-bottom: 4px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            .producto-precio {
-                font-size: 13px;
-                color: #222;
-                .precio-original {
-                    text-decoration: line-through;
-                    color: #717171;
-                    margin-right: 5px;
-                }
-                .precio-promo {
-                    color: #ff385c;
-                    font-weight: 700;
-                }
+        // Ajuste para las columnas de Bootstrap dentro del modal
+        [class*="col-"] {
+            padding-left: 20px;
+            padding-right: 20px;
+
+            @media (max-width: 767px) {
+                padding-left: 10px;
+                padding-right: 10px;
             }
         }
     }

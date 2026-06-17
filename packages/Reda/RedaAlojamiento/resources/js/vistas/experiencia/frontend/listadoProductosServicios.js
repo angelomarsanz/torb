@@ -1,3 +1,5 @@
+import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js';
+
 (function( $ ) {
     "use strict";
 
@@ -5,16 +7,6 @@
 
     if ($(containerId).length) {
         console.log(window.RedaAlojamientoJson["Script para Listado de Productos y Servicios cargado correctamente"] || 'Script para Listado de Productos y Servicios cargado correctamente');
-
-        // Log de depuración para verificar la carga de información de contacto
-        if ($('.negocio-detalle-contacto').length) {
-            const hasContactInfo = $('.negocio-detalle-contacto').find('.contacto-item').length > 0;
-            if (hasContactInfo) {
-                console.log(window.RedaAlojamientoJson["Sección de contacto detectada en el perfil del negocio."] || 'Sección de contacto detectada en el perfil del negocio.');
-            } else {
-                console.warn(window.RedaAlojamientoJson["No se han cargado el correo y el teléfono Whatsapp"] || 'No se han cargado el correo y el teléfono Whatsapp');
-            }
-        }
 
         // --- ESTADO DE LOS CARRUSELES ---
         const carruselState = {};
@@ -85,66 +77,9 @@
             });
         };
 
-        // --- LÓGICA DE CARRUSELES Y PAGINACIÓN AJAX ---
+        // --- LÓGICA DE CARRUSELES (SIMPLIFICADA) ---
 
-        /**
-         * Carga actividades y REEMPLAZA el contenido actual.
-         */
-        const cargarActividades = ($carrusel, direccion = 'next') => {
-            const id = $carrusel.attr('id');
-            const state = carruselState[id];
-            if (state.loading) return;
-
-            let nuevoOffset = state.offset;
-            if (direccion === 'next') {
-                if (state.noMore) return;
-            } else {
-                const cantidadActual = $carrusel.find('.producto-card').length;
-                nuevoOffset = Math.max(0, state.offset - cantidadActual - 10);
-                if (state.offset <= 10) return;
-            }
-
-            state.loading = true;
-            const $loader = $(`#loader_${state.tipo === 'promociones' ? 'promociones' : 'todos'}`);
-            $loader.addClass('active');
-            $carrusel.addClass('loading');
-
-            $.ajax({
-                url: APP_URL + `/reda/negocios/experiencias/actividades/paginadas/${state.idNegocio}`,
-                type: 'GET',
-                data: { offset: (direccion === 'next' ? state.offset : nuevoOffset), tipo: state.tipo },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success && response.cantidad > 0) {
-                        // LIMPIEZA Y REEMPLAZO: Asegura que solo se vean 10 a la vez
-                        $carrusel.empty().append(response.html);
-                        $carrusel.scrollLeft(0);
-
-                        state.offset = response.proximo_offset;
-                        state.noMore = (direccion === 'next' && response.cantidad < 10);
-
-                        // Resetear estados para forzar 2 clics de nuevo al llegar al borde
-                        actualizarBotonesCarrusel($carrusel);
-                    } else if (direccion === 'next') {
-                        state.noMore = true;
-                    }
-                },
-                complete: function() {
-                    state.loading = false;
-                    $loader.removeClass('active');
-                    $carrusel.removeClass('loading');
-                }
-            });
-        };
-
-        /**
-         * Actualiza el estado de los botones.
-         */
         const actualizarBotonesCarrusel = ($carrusel) => {
-            const id = $carrusel.attr('id');
-            const state = carruselState[id];
-            if (!state) return;
-
             const scrollLeft = Math.ceil($carrusel.scrollLeft());
             const scrollWidth = $carrusel[0].scrollWidth;
             const clientWidth = $carrusel[0].clientWidth;
@@ -153,115 +88,58 @@
             const $btnPrev = $parent.find('.btn-prev');
             const $btnNext = $parent.find('.btn-next');
 
-            const tieneScroll = scrollWidth > clientWidth + 10;
-            const alFinal = scrollLeft + clientWidth >= scrollWidth - 30;
-            const alInicio = scrollLeft <= 15;
+            const alFinal = scrollLeft + clientWidth >= scrollWidth - 15;
+            const alInicio = scrollLeft <= 10;
 
-            const esPaginableAdelante = state.offset >= 10 && !state.noMore;
-            const esPaginableAtras = state.offset > ($carrusel.find('.producto-card').length);
-
-            // Botones habilitados si no están en el borde O si el borde es "paginable"
-            $btnPrev.prop('disabled', alInicio && !esPaginableAtras);
-            $btnNext.prop('disabled', alFinal && !esPaginableAdelante);
-
-            if (!tieneScroll && !esPaginableAdelante && !esPaginableAtras) {
-                $parent.find('.carrusel-controles-desktop').css('opacity', '0').css('pointer-events', 'none');
-            } else {
-                $parent.find('.carrusel-controles-desktop').css('opacity', '1').css('pointer-events', 'auto');
-            }
+            $btnPrev.prop('disabled', alInicio);
+            $btnNext.prop('disabled', alFinal);
         };
 
         const initCarrusel = ($carrusel) => {
-            const id = $carrusel.attr('id');
-            carruselState[id] = {
-                idNegocio: $carrusel.data('id-negocio'),
-                tipo: $carrusel.data('tipo'),
-                offset: parseInt($carrusel.data('offset')) || 0,
-                loading: false,
-                noMore: false
-            };
-
             $carrusel.on('scroll', function() {
                 actualizarBotonesCarrusel($(this));
             });
-
-            // Swipe Móvil Robusto
-            let touchStartX = 0;
-            $carrusel.on('touchstart', function(e) {
-                touchStartX = e.originalEvent.touches[0].pageX;
-            });
-
-            $carrusel.on('touchmove', function(e) {
-                const touchCurrentX = e.originalEvent.touches[0].pageX;
-                const diffX = touchStartX - touchCurrentX;
-                const scrollLeft = $(this).scrollLeft();
-                const scrollWidth = $(this)[0].scrollWidth;
-                const clientWidth = $(this)[0].clientWidth;
-
-                // Adelante (swipe izquierda)
-                if (diffX > 40 && (scrollLeft + clientWidth >= scrollWidth - 15) && !carruselState[id].loading) {
-                    if (carruselState[id].offset >= 10 && !carruselState[id].noMore) {
-                        cargarActividades($(this), 'next');
-                    }
-                }
-
-                // Atrás (swipe derecha)
-                if (diffX < -40 && scrollLeft <= 15 && !carruselState[id].loading) {
-                    if (carruselState[id].offset > $(this).find('.producto-card').length) {
-                        cargarActividades($(this), 'prev');
-                    }
-                }
-            });
-
             actualizarBotonesCarrusel($carrusel);
         };
 
         $(function() {
             initMapDetalle();
             manejarExpansionDescripcion();
-
-            // Recalcular descripción cuando las imágenes carguen (por si afectan el layout)
             window.addEventListener('load', manejarExpansionDescripcion);
 
             $('.container-carrusel-productos').each(function() { initCarrusel($(this)); });
 
-            // Manejo de Clics en Desktop
+            // Manejo de Clics en Desktop (Navegación pura, sin AJAX)
             $(document).on('click', '.btn-carrusel-control', function() {
                 const $btn = $(this);
                 const $carrusel = $($btn.data('target'));
-                const id = $carrusel.attr('id');
-                const state = carruselState[id];
-                if (!state || state.loading) return;
-
                 const scrollLeft = $carrusel.scrollLeft();
-                const scrollWidth = $carrusel[0].scrollWidth;
                 const clientWidth = $carrusel[0].clientWidth;
                 const step = clientWidth * 0.8;
 
                 if ($btn.hasClass('btn-next')) {
-                    const alFinal = scrollLeft + clientWidth >= scrollWidth - 30;
-                    const esPaginable = state.offset >= 10 && !state.noMore;
-
-                    if (alFinal && esPaginable) {
-                        cargarActividades($carrusel, 'next');
-                    } else {
-                        $carrusel.animate({ scrollLeft: scrollLeft + step }, 400);
-                    }
+                    $carrusel.animate({ scrollLeft: scrollLeft + step }, 400);
                 } else {
-                    const alInicio = scrollLeft <= 20;
-                    const esPaginableAtras = state.offset > ($carrusel.find('.producto-card').length);
-
-                    if (alInicio && esPaginableAtras) {
-                        cargarActividades($carrusel, 'prev');
-                    } else {
-                        $carrusel.animate({ scrollLeft: scrollLeft - step }, 400);
-                    }
+                    $carrusel.animate({ scrollLeft: scrollLeft - step }, 400);
                 }
+            });
+
+            // --- INTERACCIÓN CON "VER TODOS" (SCROLL INFINITO) ---
+            $(document).on('click', '.card-ver-todos', function() {
+                const $card = $(this);
+                const options = {
+                    idNegocio: $card.data('id-negocio'),
+                    tipo: $card.data('tipo'),
+                    tituloModal: $card.data('titulo-modal'),
+                    urlBase: APP_URL + `/reda/negocios/experiencias/actividades/paginadas/${$card.data('id-negocio')}`
+                };
+                
+                ListadoInfinito.iniciar(options);
             });
 
             // Filtros y Detalle
             $('#filtro_tipo_actividad').on('change', function() { filtrarActividades($(this).val()); });
-            $(document).on('click', '.producto-card', async function() {
+            $(document).on('click', '.producto-card:not(.card-ver-todos)', async function() {
                 const id = $(this).data('id');
                 if (!id) return;
                 $('#bodyDetalleActividad').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-success"></i></div>');

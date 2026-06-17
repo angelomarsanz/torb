@@ -208,14 +208,20 @@
                     <div class="container-carrusel-productos"
                          id="carrusel_promociones"
                          data-tipo="promociones"
-                         data-offset="{{ $promociones->count() }}"
                          data-id-negocio="{{ $experiencia->id }}">
                         @foreach($promociones as $promo)
                             @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', ['actividad' => $promo, 'es_promo' => true])
                         @endforeach
-                    </div>
-                    <div class="carrusel-loader" id="loader_promociones">
-                        <i class="fas fa-spinner fa-spin"></i>
+                        
+                        @if($totalPromociones > 10)
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos', [
+                                'items' => $promociones, 
+                                'tipo' => 'promociones', 
+                                'idNegocio' => $experiencia->id, 
+                                'tituloModal' => __('Promociones Especiales'),
+                                'total' => $totalPromociones
+                            ])
+                        @endif
                     </div>
                 </section>
                 @endif
@@ -237,14 +243,20 @@
                     <div class="container-carrusel-productos"
                          id="contenedor_todos_productos"
                          data-tipo="todas"
-                         data-offset="{{ $actividades->count() }}"
                          data-id-negocio="{{ $experiencia->id }}">
                         @foreach($actividades as $actividad)
                             @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', ['actividad' => $actividad])
                         @endforeach
-                    </div>
-                    <div class="carrusel-loader" id="loader_todos">
-                        <i class="fas fa-spinner fa-spin"></i>
+
+                        @if($totalActividades > 10)
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos', [
+                                'items' => $actividades, 
+                                'tipo' => 'todas', 
+                                'idNegocio' => $experiencia->id, 
+                                'tituloModal' => __('Listado Completo'),
+                                'total' => $totalActividades
+                            ])
+                        @endif
                     </div>
                 </section>
 
@@ -374,7 +386,8 @@
                         <h2 class="text-22 font-weight-700 m-0">
                             <i class="fas fa-star text-warning"></i>
                             @if($experiencia->calificaciones_count > 0)
-                                {{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
+                                @php $puntuacionFinal = (float) $experiencia->calificaciones_avg_estrellas; @endphp
+                                {{ number_format($puntuacionFinal, 1, '.', '') }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
                             @else
                                 {{ __('Reseñas') }}
                             @endif
@@ -474,6 +487,9 @@
         </div>
     </div>
 </div>
+
+@include('reda-alojamiento::general.modal_listado_infinito')
+
 @stop
 
 @section('validation_script')

@@ -29,7 +29,7 @@ if (!function_exists('reda_number_format')) {
      */
     function reda_number_format($number, $decimal)
     {
-        return number_format($number, $number == intval($number) ? 0 : $decimal, ',', '.');
+        return number_format($number, $decimal, ',', '.');
     }
 }
 
