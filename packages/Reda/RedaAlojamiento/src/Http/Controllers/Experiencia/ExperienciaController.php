@@ -187,7 +187,7 @@ class ExperienciaController extends Controller
 
         if ($tipo === 'promociones') {
             // Para promociones, si no podemos filtrar por SQL el JSON, tenemos que traer más y filtrar
-            // Esto es ineficiente pero consistente con el modelo actual. 
+            // Esto es ineficiente pero consistente con el modelo actual.
             // Idealmente 'precio_promocion' debería ser una columna real.
             $todas = $query->get();
             $items = $todas->filter(function($actividad) {
@@ -318,6 +318,8 @@ class ExperienciaController extends Controller
                         'estado'              => $datosUbicacion['estado'] ?? '',
                         'pais'                => $datosUbicacion['pais'] ?? $datosUbicacion['país'] ?? '',
                         'codigo_postal'       => $datosUbicacion['codigo_postal'] ?? $datosUbicacion['código_postal'] ?? '',
+                        'email_negocio'       => $datosUbicacion['email_negocio'] ?? '',
+                        'whatsapp_negocio'    => $datosUbicacion['whatsapp_negocio'] ?? '',
                     ];
                 }
 
@@ -486,6 +488,8 @@ class ExperienciaController extends Controller
                                 'city'                => 'required',
                                 'state'               => 'required',
                                 'latitude'            => 'required|not_in:0',
+                                'email_negocio'       => 'required|email|max:255',
+                                'whatsapp_negocio'    => 'required|max:255',
                             ],
                             [
                                 'map_search.required'     => __('Búsqueda en el mapa obligatoria'),
@@ -494,6 +498,9 @@ class ExperienciaController extends Controller
                                 'city.required'           => __('Ciudad obligatoria'),
                                 'state.required'          => __('Estado obligatorio'),
                                 'latitude.not_in'         => __('Debe fijar la posición en el mapa'),
+                                'email_negocio.required'  => __('Correo electrónico obligatorio'),
+                                'email_negocio.email'     => __('Ingrese un correo válido'),
+                                'whatsapp_negocio.required' => __('WhatsApp obligatorio'),
                             ]);
 
                         $ubicacion = [
@@ -506,6 +513,8 @@ class ExperienciaController extends Controller
                             'estado'              => $request->state,
                             'pais'                => $request->country,
                             'codigo_postal'       => $request->postal_code,
+                            'email_negocio'       => $request->email_negocio,
+                            'whatsapp_negocio'    => $request->whatsapp_negocio,
                         ];
 
                         $result->ubicacion = $ubicacion;

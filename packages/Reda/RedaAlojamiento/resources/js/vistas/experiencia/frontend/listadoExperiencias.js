@@ -91,6 +91,16 @@
                 }
             });
 
+            // 6. Efecto de barra de búsqueda flotante (Sticky Shadow)
+            $(window).on('scroll', function() {
+                const scroll = $(window).scrollTop();
+                if (scroll > 40) {
+                    $('.seccion-filtros, .seccion-filtros-movil').addClass('is-sticky');
+                } else {
+                    $('.seccion-filtros, .seccion-filtros-movil').removeClass('is-sticky');
+                }
+            });
+
             /**
              * Lógica de Exclusividad: Activar Modo Distancia
              */

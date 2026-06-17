@@ -4,7 +4,17 @@
     const containerId = '#listado_productos_servicios';
 
     if ($(containerId).length) {
-        console.log('Script para Listado de Productos y Servicios cargado correctamente');
+        console.log(window.RedaAlojamientoJson["Script para Listado de Productos y Servicios cargado correctamente"] || 'Script para Listado de Productos y Servicios cargado correctamente');
+
+        // Log de depuración para verificar la carga de información de contacto
+        if ($('.negocio-detalle-contacto').length) {
+            const hasContactInfo = $('.negocio-detalle-contacto').find('.contacto-item').length > 0;
+            if (hasContactInfo) {
+                console.log(window.RedaAlojamientoJson["Sección de contacto detectada en el perfil del negocio."] || 'Sección de contacto detectada en el perfil del negocio.');
+            } else {
+                console.warn(window.RedaAlojamientoJson["No se han cargado el correo y el teléfono Whatsapp"] || 'No se han cargado el correo y el teléfono Whatsapp');
+            }
+        }
 
         // --- ESTADO DE LOS CARRUSELES ---
         const carruselState = {};

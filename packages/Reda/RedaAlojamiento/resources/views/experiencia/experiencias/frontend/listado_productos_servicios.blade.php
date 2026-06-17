@@ -29,12 +29,59 @@
                             <button class="btn-leer-mas-desc" id="btn_leer_mas_fija">{{ __('Más') }}</button>
                         </div>
 
-                        <div class="negocio-detalle-rating star-rating mt-3">
-                            <i class="fas fa-star"></i>
-                            @if($experiencia->calificaciones_count > 0)
-                                <span class="font-weight-700 text-dark">{{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
-                                <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
+                        <!-- SECCIÓN DE CONTACTO -->
+                        @php
+                            $emailNegocio = data_get($experiencia->ubicacion, 'email_negocio');
+                            $whatsappNegocio = data_get($experiencia->ubicacion, 'whatsapp_negocio');
+                        @endphp
+                        <div class="negocio-detalle-contacto" id="contacto_negocio_desktop">
+                            <p class="titulo-contacto">{{ __('Contacto:') }}</p>
+                            @if(!empty($emailNegocio) || !empty($whatsappNegocio))
+                                @if(!empty($emailNegocio))
+                                    <div class="contacto-item">
+                                        <div class="contacto-header">
+                                            <i class="fas fa-envelope"></i>
+                                            <span class="label-contacto">{{ __('Correo:') }}</span>
+                                        </div>
+                                        <div class="contacto-valor">
+                                            <a href="mailto:{{ $emailNegocio }}">{{ $emailNegocio }}</a>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if(!empty($whatsappNegocio))
+                                    <div class="contacto-item">
+                                        <div class="contacto-header">
+                                            <i class="fab fa-whatsapp"></i>
+                                            <span class="label-contacto">{{ __('WhatsApp:') }}</span>
+                                        </div>
+                                        <div class="contacto-valor">
+                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $whatsappNegocio) }}" target="_blank">{{ $whatsappNegocio }}</a>
+                                        </div>
+                                    </div>
+                                @endif
                             @else
+                                <p class="text-muted small italic">{{ __('No se han cargado el correo y el teléfono Whatsapp') }}</p>
+                            @endif
+                        </div>
+
+                        <div class="negocio-detalle-rating star-rating mt-3">
+                            @if($experiencia->calificaciones_count > 0)
+                                @php $puntuacion = (float) $experiencia->calificaciones_avg_estrellas; @endphp
+                                <div class="mb-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($puntuacion >= $i)
+                                            <i class="fas fa-star text-warning"></i>
+                                        @elseif($puntuacion > ($i - 1) && $puntuacion < $i)
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        @else
+                                            <i class="far fa-star text-warning"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <span class="font-weight-700 text-dark">{{ number_format($puntuacion, 1, '.', '') }}</span>
+                                <span class="text-muted ml-1">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
+                            @else
+                                <i class="fas fa-star text-muted"></i>
                                 <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
                             @endif
                         </div>
@@ -74,17 +121,69 @@
                 <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO (Solo Móvil) -->
                 <div class="d-lg-none">
                     <section class="seccion-info-negocio p-4">
+                        @if($experiencia->ruta_imagenes)
+                            <div class="negocio-detalle-logo-wrapper mb-4">
+                                <img src="{{ asset('public/images/logos_negocios/' . $experiencia->ruta_imagenes) }}"
+                                     alt="Logo {{ $experiencia->titulo }}"
+                                     class="img-fluid">
+                            </div>
+                        @endif
+
                         <h1 class="negocio-detalle-titulo font-weight-700">{{ $experiencia->titulo }}</h1>
                         <div class="negocio-detalle-desc-wrapper">
                             <p class="negocio-detalle-desc text-muted">{{ $experiencia->descripcion }}</p>
                             <button class="btn-leer-mas-desc">{{ __('Más') }}</button>
                         </div>
-                        <div class="negocio-detalle-rating star-rating mt-3">
-                            <i class="fas fa-star"></i>
-                            @if($experiencia->calificaciones_count > 0)
-                                <span class="font-weight-700 text-dark">{{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
-                                <span class="text-muted ml-1">· {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}</span>
+
+                        <!-- SECCIÓN DE CONTACTO (Solo Móvil) -->
+                        <div class="negocio-detalle-contacto" id="contacto_negocio_mobile">
+                            <p class="titulo-contacto">{{ __('Contacto:') }}</p>
+                            @if(!empty($emailNegocio) || !empty($whatsappNegocio))
+                                @if(!empty($emailNegocio))
+                                    <div class="contacto-item">
+                                        <div class="contacto-header">
+                                            <i class="fas fa-envelope"></i>
+                                            <span class="label-contacto">{{ __('Correo:') }}</span>
+                                        </div>
+                                        <div class="contacto-valor">
+                                            <a href="mailto:{{ $emailNegocio }}">{{ $emailNegocio }}</a>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if(!empty($whatsappNegocio))
+                                    <div class="contacto-item">
+                                        <div class="contacto-header">
+                                            <i class="fab fa-whatsapp"></i>
+                                            <span class="label-contacto">{{ __('WhatsApp:') }}</span>
+                                        </div>
+                                        <div class="contacto-valor">
+                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $whatsappNegocio) }}" target="_blank">{{ $whatsappNegocio }}</a>
+                                        </div>
+                                    </div>
+                                @endif
                             @else
+                                <p class="text-muted small italic">{{ __('No se han cargado el correo y el teléfono Whatsapp') }}</p>
+                            @endif
+                        </div>
+
+                        <div class="negocio-detalle-rating star-rating mt-3">
+                            @if($experiencia->calificaciones_count > 0)
+                                @php $puntuacion = (float) $experiencia->calificaciones_avg_estrellas; @endphp
+                                <div class="mb-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($puntuacion >= $i)
+                                            <i class="fas fa-star text-warning"></i>
+                                        @elseif($puntuacion > ($i - 1) && $puntuacion < $i)
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        @else
+                                            <i class="far fa-star text-warning"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <span class="font-weight-700 text-dark">{{ number_format($puntuacion, 1, '.', '') }}</span>
+                                <span class="text-muted ml-1">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
+                            @else
+                                <i class="fas fa-star text-muted"></i>
                                 <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
                             @endif
                         </div>

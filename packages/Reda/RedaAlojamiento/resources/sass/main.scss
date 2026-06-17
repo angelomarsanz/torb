@@ -574,9 +574,32 @@
     }
 }
 
-.seccion-filtros {
+.seccion-filtros-movil {
+    position: sticky;
+    top: 80px; 
+    z-index: 90;
+    background: #fff;
     padding: 10px 0;
-    margin-bottom: 10px;
+    margin-bottom: 20px !important;
+    transition: box-shadow 0.3s ease;
+
+    &.is-sticky {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+}
+
+.seccion-filtros {
+    position: sticky;
+    top: 90px;
+    z-index: 90;
+    background: #fff;
+    padding: 10px 0;
+    margin-bottom: 25px;
+    transition: box-shadow 0.3s ease;
+
+    &.is-sticky {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 }
 
 .search-bar-negocios {
@@ -1218,7 +1241,7 @@
     background-color: #f7f7f7;
     position: sticky;
     top: 80px;
-    z-index: 1000;
+    z-index: 90;
     box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1);
 
     @media (max-width: 991px) {
@@ -1746,4 +1769,60 @@
         box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
     }
     label { font-weight: 600; color: #484848; }
+}
+
+/* --- SECCIÓN DE CONTACTO (DETALLE DEL NEGOCIO) --- */
+.negocio-detalle-contacto {
+    margin-top: 25px;
+    padding: 0 8px;
+
+    .titulo-contacto {
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 12px;
+        color: #222;
+    }
+
+    .contacto-item {
+        display: block; // Cambiado a block para permitir el salto de línea
+        margin-bottom: 15px; // Más espacio entre items
+        font-size: 16px;
+
+        .contacto-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px; // Espacio sutil antes del valor
+
+            i {
+                width: 24px;
+                margin-right: 12px;
+                text-align: center;
+                color: #717171;
+
+                &.fa-whatsapp {
+                    color: #25D366;
+                }
+            }
+
+            .label-contacto {
+                font-weight: 600;
+                color: #484848;
+            }
+        }
+
+        .contacto-valor {
+            padding-left: 36px; // Mantiene la alineación con el texto de la etiqueta
+
+            a {
+                color: #717171;
+                word-break: break-all;
+                transition: color 0.2s ease;
+
+                &:hover {
+                    color: #1dbf73 !important;
+                    text-decoration: underline !important;
+                }
+            }
+        }
+    }
 }
