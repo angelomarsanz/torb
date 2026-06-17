@@ -5,10 +5,8 @@
 @endpush
 
 @section('main')
-<div id="listado_productos_servicios" class="container-fluid p-0">
-    <div class="container p-0">
-
-        <div class="row m-0">
+<div id="listado_productos_servicios" class="container-fluid">
+    <div class="row m-0">
             <!-- COLUMNA IZQUIERDA: 30% FIJA (Escritorio) -->
             <div class="col-12 col-lg-30 d-none d-lg-block">
                 <div class="sticky-top-detail pr-lg-4">

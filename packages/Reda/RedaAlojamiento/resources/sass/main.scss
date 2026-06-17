@@ -1598,10 +1598,10 @@
 
 @media (max-width: 991px) {
     .seccion-productos {
-        padding: 15px 0;
+        padding: 20px 0; // Un poco más de aire vertical en móvil
 
         .header-seccion-carrusel {
-            padding: 0 15px;
+            padding: 0 24px; // Ajustado a 24px (Antes 15px) para alinear con px-4
             margin-bottom: 15px;
 
             h2 {
@@ -1615,11 +1615,16 @@
 
         .container-carrusel-productos {
             gap: 12px;
-            padding: 0 15px 10px 15px;
+            padding: 0 24px 10px 24px; // Ajustado a 24px (Antes 15px) para alinear con px-4
+            
+            // Aseguramos que el carrusel no rompa el layout del padre
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .carrusel-loader {
-            right: 15px;
+            right: 24px;
             width: 38px;
             height: 38px;
         }
