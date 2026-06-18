@@ -119,9 +119,9 @@
     
 
     <!-- SECCIÓN 2: DESTACADOS -->
-    <section class="seccion-destacados mb-5">
-        <div class="header-seccion-carrusel mb-4">
-            <h2 class="text-20 font-weight-700 m-0">{{ __('Comercios Destacados') }}</h2>
+    <section class="seccion-productos mb-4">
+        <div class="header-seccion-carrusel">
+            <h2 class="text-18 font-weight-700 m-0">{{ __('Comercios Destacados') }}</h2>
             <div class="carrusel-controles-desktop d-none d-lg-flex">
                 <button class="btn-carrusel-control btn-prev" data-target="#contenedor_destacados" disabled>
                     <i class="fas fa-chevron-left"></i>
@@ -146,9 +146,9 @@
     </section>
 
     <!-- SECCIÓN 3: LISTADO PRINCIPAL -->
-    <section class="seccion-listado mb-5">
-        <div class="header-seccion-carrusel mb-4">
-            <h2 class="text-20 font-weight-700 m-0">{{ __('Explora todos los Comercios') }}</h2>
+    <section class="seccion-productos mb-4">
+        <div class="header-seccion-carrusel">
+            <h2 class="text-18 font-weight-700 m-0">{{ __('Explora todos los Comercios') }}</h2>
             <div class="carrusel-controles-desktop d-none d-lg-flex">
                 <button class="btn-carrusel-control btn-prev" data-target="#contenedor_listado_general" disabled>
                     <i class="fas fa-chevron-left"></i>

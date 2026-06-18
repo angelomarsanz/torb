@@ -20,7 +20,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             const scrollWidth = $carrusel[0].scrollWidth;
             const clientWidth = $carrusel[0].clientWidth;
 
-            const $parent = $carrusel.closest('section');
+            const $parent = $carrusel.closest('.seccion-productos');
             const $btnPrev = $parent.find('.btn-prev');
             const $btnNext = $parent.find('.btn-next');
 

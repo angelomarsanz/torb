@@ -1362,40 +1362,54 @@
             }
         }
     }
+}
 
-    /* Estilo Especial: Card Ver Todos (Collage) */
-    &.card-ver-todos {
-        border: 1px solid #eee;
-        
-        .collage-container {
+/* --- TARJETAS ESPECIALES: VER TODOS (COLLAGE EXPLOTANDO) --- */
+
+.card-ver-todos {
+    border: 1px solid #eee !important;
+    
+    /* El contenedor de la imagen se convierte en el collage */
+    .producto-img-container, .negocio-img-container {
+        &.collage-container {
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: #f7f7f7;
+            position: relative;
+            min-height: 150px; // Altura mínima para asegurar visibilidad
             
             .collage-wrapper {
-                position: relative;
+                position: absolute;
+                top: 0;
+                left: 0;
                 width: 100%;
                 height: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                z-index: 1;
             }
 
             .img-collage {
                 position: absolute;
-                width: 80px;
-                height: 80px;
+                width: 80px !important; // Forzar tamaño para que no herede 100%
+                height: 80px !important;
+                top: 50% !important;
+                left: 50% !important;
                 object-fit: cover;
                 border-radius: 8px;
                 border: 2px solid #fff;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-                transition: transform 0.3s ease;
+                transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
             }
 
-            .img-1 { transform: rotate(-15deg) translateX(-30px) translateY(-10px); z-index: 1; }
-            .img-2 { transform: rotate(0deg) scale(1.1); z-index: 3; }
-            .img-3 { transform: rotate(15deg) translateX(30px) translateY(10px); z-index: 2; }
+            /* Posiciones iniciales (amontonadas y centradas) */
+            .img-1 { transform: translate(-50%, -50%) rotate(-15deg) translateX(-30px) translateY(-10px) !important; z-index: 1; }
+            .img-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.1) !important; z-index: 3; }
+            .img-3 { transform: translate(-50%, -50%) rotate(15deg) translateX(30px) translateY(10px) !important; z-index: 2; }
+
 
             .overlay-ver-todos {
                 position: absolute;
@@ -1403,7 +1417,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(29, 191, 115, 0.1);
+                background: rgba(29, 191, 115, 0.15);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -1418,13 +1432,17 @@
                 }
             }
         }
+    }
 
-        &:hover {
-            .overlay-ver-todos { opacity: 1; }
-            .img-1 { transform: rotate(-25deg) translateX(-45px) translateY(-15px); }
-            .img-2 { transform: rotate(0deg) scale(1.2); }
-            .img-3 { transform: rotate(25deg) translateX(45px) translateY(15px); }
+    /* Animación de Explosión al Hover (Más específica para asegurar prioridad) */
+    &:hover {
+        .negocio-img-container img.img-collage, 
+        .producto-img-container img.img-collage {
+            &.img-1 { transform: translate(-50%, -50%) rotate(-25deg) translateX(-45px) translateY(-15px) !important; }
+            &.img-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.2) !important; }
+            &.img-3 { transform: translate(-50%, -50%) rotate(25deg) translateX(45px) translateY(15px) !important; }
         }
+        .overlay-ver-todos { opacity: 1 !important; }
     }
 }
 
@@ -1514,8 +1532,8 @@
         }
 
         /* En el carrusel, las tarjetas tienen un ancho fijo para permitir el scroll horizontal */
-        .producto-card {
-            flex: 0 0 200px;
+        .producto-card, .col-item-carrusel {
+            flex: 0 0 280px;
             scroll-snap-align: start;
         }
     }

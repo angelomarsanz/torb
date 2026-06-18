@@ -18,13 +18,14 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- PLUGIN REDA ALOJAMIENTO: GENERAL ---
     #"packages/Reda/RedaAlojamiento/composer.json"
     #"packages/Reda/RedaAlojamiento/config/reda-alojamiento.php"
-    "packages/Reda/RedaAlojamiento/resources/lang/es.json"
-    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
-    "packages/Reda/RedaAlojamiento/routes/web.php"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es.json"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    #"packages/Reda/RedaAlojamiento/routes/web.php"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+
     #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-    "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
+    #"packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
     #"packages/Reda/RedaAlojamiento/src/Models/Administrativo/Administrativo.php"
@@ -89,7 +90,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_experiencias.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_negocio.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_negocio.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_ver_todos_negocios.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FUERA DE CARPETAS FRONTEND) ---
