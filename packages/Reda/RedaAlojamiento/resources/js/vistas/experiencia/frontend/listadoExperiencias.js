@@ -140,21 +140,23 @@
                 const $contenedorGeneral = $('#contenedor_listado_general');
                 const $contenedorPaginacion = $('#contenedor_paginacion');
 
-                // Estado visual de carga
-                $contenedorDestacados.css('opacity', '0.5');
-                $contenedorGeneral.css('opacity', '0.5');
+                // Estado visual de carga con transición suave
+                $contenedorDestacados.animate({ opacity: 0.4 }, 200);
+                $contenedorGeneral.animate({ opacity: 0.4 }, 200);
 
                 const respuestaBusqueda = await obtenerComercios(formData);
 
                 if (respuestaBusqueda.success) {
                     const data = respuestaBusqueda.respuesta;
-                    $contenedorDestacados.html(data.html_destacados).css('opacity', '1');
-                    $contenedorGeneral.html(data.html_general).css('opacity', '1');
+                    
+                    // Actualizar contenido y restaurar opacidad con animación
+                    $contenedorDestacados.html(data.html_destacados).animate({ opacity: 1 }, 300);
+                    $contenedorGeneral.html(data.html_general).animate({ opacity: 1 }, 300);
                     $contenedorPaginacion.html(data.html_paginacion);
                 } else {
                     console.error(respuestaBusqueda.message);
-                    $contenedorDestacados.css('opacity', '1');
-                    $contenedorGeneral.css('opacity', '1');
+                    $contenedorDestacados.animate({ opacity: 1 }, 200);
+                    $contenedorGeneral.animate({ opacity: 1 }, 200);
                 }
             }
         });

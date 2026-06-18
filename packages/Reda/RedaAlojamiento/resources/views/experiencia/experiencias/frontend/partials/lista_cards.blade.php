@@ -12,8 +12,6 @@
             </a>
 
             <div class="negocio-img-container">
-                <span class="badge-categoria">{{ $experiencia->categoria_negocio }}</span>
-
                 @php
                     $foto = $experiencia->foto_portada;
                     $nombreFoto = $foto ? $foto->photo : null;
@@ -37,11 +35,12 @@
                     {{ $experiencia->ubicacion['ciudad'] ?? __('Ubicación no especificada') }}
                 </p>
                 <p class="negocio-rating star-rating">
-                    <i class="fas fa-star"></i> 
                     @if($experiencia->calificaciones_count > 0)
-                        {{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }} ({{ $experiencia->calificaciones_count }})
+                        <i class="fas fa-star text-warning"></i> 
+                        <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1, '.', '') }}</span>
                     @else
-                        <span class="text-muted font-size-13">{{ __('Sin reseñas') }}</span>
+                        <i class="fas fa-star text-muted"></i> 
+                        <span class="text-muted small">{{ __('Sin reseñas') }}</span>
                     @endif
                 </p>
             </div>

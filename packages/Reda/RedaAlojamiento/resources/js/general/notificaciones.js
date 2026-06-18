@@ -82,6 +82,19 @@ window.RedaNotificaciones = {
                 $modal.modal('show');
             }
         })(jQuery);
+    },
+
+    /**
+     * Oculta el modal de notificación si está abierto.
+     */
+    ocultar: function() {
+        (function( $ ) {
+            "use strict";
+            const $modal = $('#modal-notificacion');
+            if ($modal.length) {
+                $modal.modal('hide');
+            }
+        })(jQuery);
     }
 };
 
@@ -89,6 +102,15 @@ window.RedaNotificaciones = {
 window.mostrarNotificacion = (titulo, mensaje, tipo, recargar) => {
     window.RedaNotificaciones.notificar(titulo, mensaje, tipo, recargar);
 };
+
+// --- GESTIÓN DE BFCACHE (PARA ELIMINAR EL MODAL AL REGRESAR ATRÁS EN MÓVILES) ---
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
+    }
+});
 
 /**
  * Muestra un modal de confirmación.

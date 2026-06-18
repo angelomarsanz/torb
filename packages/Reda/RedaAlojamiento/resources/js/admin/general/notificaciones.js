@@ -48,6 +48,19 @@ window.mostrarNotificacion = (titulo, mensaje, tipo = 'info', recargar = false) 
     })(jQuery);
 }
 
+// --- GESTIÓN DE BFCACHE (PARA ELIMINAR EL MODAL AL REGRESAR ATRÁS EN MÓVILES) ---
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        (function( $ ) {
+            "use strict";
+            const $modal = $('#modal-notificacion');
+            if ($modal.length) {
+                $modal.modal('hide');
+            }
+        })(jQuery);
+    }
+});
+
 /**
  * Muestra un modal de confirmación.
  * @param {string} mensaje - Mensaje de la pregunta.
