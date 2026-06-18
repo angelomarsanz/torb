@@ -3,6 +3,8 @@
  * Script para gestionar la interactividad de la vista de listado de comercios.
  */
 
+import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js';
+
 (function( $ ) {
     "use strict";
 
@@ -11,8 +13,65 @@
     if ($(containerId).length) {
         console.log('Script para Listado de Comercios cargado correctamente');
 
+        // --- LÓGICA DE CARRUSELES ---
+
+        const actualizarBotonesCarrusel = ($carrusel) => {
+            const scrollLeft = Math.ceil($carrusel.scrollLeft());
+            const scrollWidth = $carrusel[0].scrollWidth;
+            const clientWidth = $carrusel[0].clientWidth;
+
+            const $parent = $carrusel.closest('section');
+            const $btnPrev = $parent.find('.btn-prev');
+            const $btnNext = $parent.find('.btn-next');
+
+            const alFinal = scrollLeft + clientWidth >= scrollWidth - 15;
+            const alInicio = scrollLeft <= 10;
+
+            $btnPrev.prop('disabled', alInicio);
+            $btnNext.prop('disabled', alFinal);
+        };
+
+        const initCarrusel = ($carrusel) => {
+            $carrusel.on('scroll', function() {
+                actualizarBotonesCarrusel($(this));
+            });
+            actualizarBotonesCarrusel($carrusel);
+        };
+
         $(function() {
             let modoBusqueda = 'ninguno'; // 'distancia' o 'ubicacion'
+
+            // Inicializar carruseles
+            $('.container-carrusel-productos').each(function() {
+                initCarrusel($(this));
+            });
+
+            // Manejo de Clics en Desktop
+            $(document).on('click', '.btn-carrusel-control', function() {
+                const $btn = $(this);
+                const $carrusel = $($btn.data('target'));
+                const scrollLeft = $carrusel.scrollLeft();
+                const clientWidth = $carrusel[0].clientWidth;
+                const step = clientWidth * 0.8;
+
+                if ($btn.hasClass('btn-next')) {
+                    $carrusel.animate({ scrollLeft: scrollLeft + step }, 400);
+                } else {
+                    $carrusel.animate({ scrollLeft: scrollLeft - step }, 400);
+                }
+            });
+
+            // Interacción con "Ver todos" (Scroll Infinito)
+            $(document).on('click', '.card-ver-todos', function() {
+                const $card = $(this);
+                const options = {
+                    tipo: $card.data('tipo'),
+                    tituloModal: $card.data('titulo-modal'),
+                    urlBase: APP_URL + '/reda/negocios/listado-negocios/paginados'
+                };
+                
+                ListadoInfinito.iniciar(options);
+            });
 
             // 1. Inicializar Google Places Autocomplete para ambos inputs (Desktop y Modal)
             const inputsUbicacion = document.querySelectorAll('.filtro-ubicacion');
@@ -138,7 +197,6 @@
                 const formData = $form.serialize();
                 const $contenedorDestacados = $('#contenedor_destacados');
                 const $contenedorGeneral = $('#contenedor_listado_general');
-                const $contenedorPaginacion = $('#contenedor_paginacion');
 
                 // Estado visual de carga con transición suave
                 $contenedorDestacados.animate({ opacity: 0.4 }, 200);
@@ -152,7 +210,11 @@
                     // Actualizar contenido y restaurar opacidad con animación
                     $contenedorDestacados.html(data.html_destacados).animate({ opacity: 1 }, 300);
                     $contenedorGeneral.html(data.html_general).animate({ opacity: 1 }, 300);
-                    $contenedorPaginacion.html(data.html_paginacion);
+                    
+                    // Re-inicializar botones de carrusel tras actualización AJAX
+                    actualizarBotonesCarrusel($contenedorDestacados);
+                    actualizarBotonesCarrusel($contenedorGeneral);
+
                 } else {
                     console.error(respuestaBusqueda.message);
                     $contenedorDestacados.animate({ opacity: 1 }, 200);

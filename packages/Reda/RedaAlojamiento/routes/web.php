@@ -92,6 +92,7 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
         Route::get('anfitrion-experiencias', [AnfitrionExperienciaController::class, 'index'])->name('anfitriones_experiencias.index');
         Route::get('experiencias', [ExperienciaController::class, 'index'])->name('experiencias.index');
         Route::get('listado-negocios', [ExperienciaController::class, 'listadoFrontend'])->name('experiencias.listado_frontend');
+        Route::get('listado-negocios/paginados', [ExperienciaController::class, 'obtenerNegociosPaginados'])->name('experiencias.listado_paginado');
         Route::get('listado-productos-servicios/{id}', [ExperienciaController::class, 'listadoProductosServicios'])->name('experiencias.listado_productos_servicios');
         Route::get('experiencias/actividades/paginadas/{id}', [ExperienciaController::class, 'obtenerActividadesPaginadas'])->name('experiencias.actividades.paginadas');
         Route::get('experiencias/actividades/detalle/{id}', [ExperienciaController::class, 'getActividadDetalle'])->name('experiencias.actividades.detalle');

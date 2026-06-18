@@ -78,10 +78,12 @@ class ExperienciaController extends Controller
 
         // 4. Obtener Destacados (por ahora sin condiciones específicas, los más recientes)
         $destacadosQuery = clone $query;
-        $destacados = $destacadosQuery->orderBy('id', 'desc')->take(8)->get();
+        $destacados = $destacadosQuery->orderBy('id', 'desc')->take(10)->get();
+        $totalDestacados = $destacadosQuery->count();
 
         // 5. Obtener Listado General con Paginación
         $experiencias = $query->orderBy('id', 'desc')->paginate(10);
+        $totalExperiencias = $experiencias->total();
 
         $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
 
@@ -93,10 +95,28 @@ class ExperienciaController extends Controller
                     'currentCurrency' => $currentCurrency
                 ])->render();
 
+                if ($totalDestacados > 10) {
+                     $htmlDestacados .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
+                        'items' => $destacados,
+                        'tipo' => 'destacados',
+                        'tituloModal' => __('Comercios Destacados'),
+                        'total' => $totalDestacados
+                    ])->render();
+                }
+
                 $htmlGeneral = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
                     'experiencias' => $experiencias,
                     'currentCurrency' => $currentCurrency
                 ])->render();
+
+                if ($totalExperiencias > 10) {
+                    $htmlGeneral .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
+                        'items' => $experiencias,
+                        'tipo' => 'todos',
+                        'tituloModal' => __('Explora todos los Comercios'),
+                        'total' => $totalExperiencias
+                    ])->render();
+                }
 
                 $htmlPaginacion = $experiencias->links('vendor.pagination.bootstrap-4')->render();
 
@@ -108,7 +128,7 @@ class ExperienciaController extends Controller
                         'html_destacados' => $htmlDestacados,
                         'html_general'    => $htmlGeneral,
                         'html_paginacion' => $htmlPaginacion,
-                        'total'           => $experiencias->total()
+                        'total'           => $totalExperiencias
                     ],
                     'code' => 200
                 ];
@@ -126,10 +146,72 @@ class ExperienciaController extends Controller
 
         return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', compact(
             'experiencias',
+            'totalExperiencias',
             'destacados',
+            'totalDestacados',
             'categoriasNegocios',
             'currentCurrency'
         ));
+    }
+
+    /**
+     * Obtiene negocios paginados vía AJAX para el modal de scroll infinito.
+     */
+    public function obtenerNegociosPaginados(Request $request)
+    {
+        $offset = $request->get('offset', 0);
+        $limit = 10;
+        $tipo = $request->get('tipo', 'todos');
+        $esModal = $request->get('es_modal', false);
+
+        $query = Experiencia::with(['fotos', 'owner'])
+            ->withCount('calificaciones')
+            ->withAvg('calificaciones', 'estrellas');
+
+        // Aplicar los mismos filtros que en listadoFrontend si es necesario
+        if ($request->filled('categoria')) {
+            $query->where('categoria_negocio', $request->categoria);
+        }
+
+        if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
+            $lat = $request->latitud;
+            $lng = $request->longitud;
+            $radio = $request->radio;
+            $query->whereRaw("
+                (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
+                * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
+                + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
+            ", [$lat, $lng, $lat, $radio]);
+        } elseif ($request->filled('ubicacion_texto')) {
+            $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+        }
+
+        $items = $query->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
+        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+        $html = '';
+
+        foreach ($items as $item) {
+            if ($esModal) {
+                $html .= '<div class="col-12 col-md-6 col-lg-4 item-col-infinito mb-4">';
+                $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
+                    'experiencia' => $item,
+                    'currentCurrency' => $currentCurrency
+                ])->render();
+                $html .= '</div>';
+            } else {
+                $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
+                    'experiencia' => $item,
+                    'currentCurrency' => $currentCurrency
+                ])->render();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'cantidad' => $items->count(),
+            'proximo_offset' => $offset + $items->count()
+        ]);
     }
 
     /**

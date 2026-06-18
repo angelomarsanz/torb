@@ -535,11 +535,21 @@
 
 #listado_experiencias {
     margin-top: 90px !important;
+
+    .section-intro {
+        text-align: left;
+        padding-left: 8px; // Alineación con el primer item del carrusel
+        width: 100%;
+    }
 }
 
 @media (max-width: 767px) {
     #listado_experiencias {
         margin-top: 80px !important;
+
+        .section-intro {
+            padding-left: 15px; // Un poco más de aire en móvil
+        }
     }
 }
 

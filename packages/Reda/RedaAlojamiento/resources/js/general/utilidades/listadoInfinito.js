@@ -14,7 +14,8 @@ export const ListadoInfinito = {
         tipo: null,
         loading: false,
         noMore: false,
-        urlBase: null
+        urlBase: null,
+        extraData: {} // Para pasar filtros adicionales
     },
 
     /**
@@ -68,18 +69,21 @@ export const ListadoInfinito = {
      * Realiza la llamada Ajax.
      */
     peticionAjax() {
+        const data = {
+            offset: this.config.offset,
+            tipo: this.config.tipo,
+            es_modal: true,
+            ...this.config.extraData
+        };
+
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: this.config.urlBase,
                 type: 'GET',
-                data: {
-                    offset: this.config.offset,
-                    tipo: this.config.tipo,
-                    es_modal: true
-                },
+                data: data,
                 dataType: 'json',
                 success: (data) => resolve(data),
-                error: (err) => reject(error)
+                error: (err) => reject(err)
             });
         });
     },

@@ -8,7 +8,7 @@
 <div id="listado_experiencias" class="container-fluid container-fluid-90 mt-5 pt-4">
 
     <!-- SECCIÓN 1: FILTROS (BARRA DE BÚSQUEDA) -->
-    
+
     <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
     <div class="d-lg-none seccion-filtros-movil mb-4">
         <div class="search-trigger-movil" data-toggle="modal" data-target="#modalBusquedaComercios">
@@ -116,42 +116,66 @@
             </div>
         </div>
     </div>
+    
 
     <!-- SECCIÓN 2: DESTACADOS -->
     <section class="seccion-destacados mb-5">
-        <div class="section-intro mb-4">
-            <h2 class="text-20 font-weight-700">{{ __('Comercios Destacados') }}</h2>
-        </div>
-        <div class="container-carrusel">
-            <div class="row flex-nowrap m-0" id="contenedor_destacados">
-                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $destacados])
+        <div class="header-seccion-carrusel mb-4">
+            <h2 class="text-20 font-weight-700 m-0">{{ __('Comercios Destacados') }}</h2>
+            <div class="carrusel-controles-desktop d-none d-lg-flex">
+                <button class="btn-carrusel-control btn-prev" data-target="#contenedor_destacados" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="btn-carrusel-control btn-next" data-target="#contenedor_destacados">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
+        </div>
+        <div class="container-carrusel-productos" id="contenedor_destacados">
+            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $destacados])
+            
+            @if($totalDestacados > 10)
+                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
+                    'items' => $destacados,
+                    'tipo' => 'destacados',
+                    'tituloModal' => __('Comercios Destacados'),
+                    'total' => $totalDestacados
+                ])
+            @endif
         </div>
     </section>
 
     <!-- SECCIÓN 3: LISTADO PRINCIPAL -->
     <section class="seccion-listado mb-5">
-        <div class="section-intro mb-4">
-            <h2 class="text-20 font-weight-700">{{ __('Explora todos los Comercios') }}</h2>
-        </div>
-
-        <div class="container-carrusel">
-            <div class="row flex-nowrap m-0" id="contenedor_listado_general">
-                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $experiencias])
+        <div class="header-seccion-carrusel mb-4">
+            <h2 class="text-20 font-weight-700 m-0">{{ __('Explora todos los Comercios') }}</h2>
+            <div class="carrusel-controles-desktop d-none d-lg-flex">
+                <button class="btn-carrusel-control btn-prev" data-target="#contenedor_listado_general" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="btn-carrusel-control btn-next" data-target="#contenedor_listado_general">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
 
-        <!-- PAGINACIÓN -->
-        <div class="row mt-4 mb-5">
-            <div class="col-12 d-flex justify-content-center" id="contenedor_paginacion">
-                {{ $experiencias->links('vendor.pagination.bootstrap-4') }}
-            </div>
+        <div class="container-carrusel-productos" id="contenedor_listado_general">
+            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $experiencias])
+
+            @if($totalExperiencias > 10)
+                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
+                    'items' => $experiencias,
+                    'tipo' => 'todos',
+                    'tituloModal' => __('Explora todos los Comercios'),
+                    'total' => $totalExperiencias
+                ])
+            @endif
         </div>
     </section>
 </div>
 
 <!-- Modal Notificación (Si no está en el layout) -->
-...<div class="modal fade" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1080;">
+<div class="modal fade" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1080;">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <div class="modal-header border-0 pb-0">
@@ -172,6 +196,9 @@
         </div>
     </div>
 </div>
+
+@include('reda-alojamiento::general.modal_listado_infinito')
+
 @stop
 
 @section('validation_script')
