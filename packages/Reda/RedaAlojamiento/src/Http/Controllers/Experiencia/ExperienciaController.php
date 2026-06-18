@@ -195,7 +195,8 @@ class ExperienciaController extends Controller
                 $html .= '<div class="col-12 col-md-6 col-lg-4 item-col-infinito mb-4">';
                 $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
                     'experiencia' => $item,
-                    'currentCurrency' => $currentCurrency
+                    'currentCurrency' => $currentCurrency,
+                    'es_modal' => true
                 ])->render();
                 $html .= '</div>';
             } else {

@@ -1,4 +1,6 @@
+@if(!isset($es_modal) || !$es_modal)
 <div class="col-item-carrusel">
+@endif
     <div class="negocio-card">
         {{-- Botón Favorito --}}
         <button class="btn-favorito" type="button">
@@ -44,4 +46,6 @@
             </p>
         </div>
     </div>
+@if(!isset($es_modal) || !$es_modal)
 </div>
+@endif

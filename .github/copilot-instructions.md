@@ -272,3 +272,6 @@ Para los formatos numéricos en php se usará packages/Reda/RedaAlojamiento/src/
 
 ## Animación de espera en el frontend
 Se debe usar packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js para la animación de espera en el frontend ya sea en el dashboard del usuario o en cualquier vista en el frontend a la que tenga el usuario común indistintamente si ha hecho login o no
+
+## Subida de archivos al servidor Vesta de Desarrollo
+Los archivos se suben vía FTP al servidor Vesta de Desarrollo para sus respectivas pruebas. Para subir los archivos se usa el script: subir.sh y subir_archivos_puntuales.sh. Nunca se debe ejecutar automáticamente ./subir.sh solo se deben descomentar de la lista de archivos el archivo modificado o agregar el nuevo archivo creado a subir_archivos_puntuales.sh y se deben comentar aquellos archivos que no fueron modificados para que no se vuelvan a subir 

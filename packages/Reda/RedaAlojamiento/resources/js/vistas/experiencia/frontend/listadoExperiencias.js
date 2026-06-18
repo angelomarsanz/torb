@@ -64,10 +64,21 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // Interacción con "Ver todos" (Scroll Infinito)
             $(document).on('click', '.card-ver-todos', function() {
                 const $card = $(this);
+                
+                // Capturar filtros actuales para el listado infinito
+                const $form = $('#form_busqueda_negocios').is(':visible') ? $('#form_busqueda_negocios') : $('#form_busqueda_negocios_movil');
+                const extraData = {};
+                if ($form.length) {
+                    $form.serializeArray().forEach(item => {
+                        extraData[item.name] = item.value;
+                    });
+                }
+
                 const options = {
                     tipo: $card.data('tipo'),
                     tituloModal: $card.data('titulo-modal'),
-                    urlBase: APP_URL + '/reda/negocios/listado-negocios/paginados'
+                    urlBase: APP_URL + '/reda/negocios/listado-negocios/paginados',
+                    extraData: extraData
                 };
                 
                 ListadoInfinito.iniciar(options);
