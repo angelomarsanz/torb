@@ -1367,8 +1367,6 @@
 /* --- TARJETAS ESPECIALES: VER TODOS (COLLAGE EXPLOTANDO) --- */
 
 .card-ver-todos {
-    border: 1px solid #eee !important;
-    
     /* El contenedor de la imagen se convierte en el collage */
     .producto-img-container, .negocio-img-container {
         &.collage-container {
@@ -1378,7 +1376,6 @@
             overflow: hidden;
             background: #f7f7f7;
             position: relative;
-            min-height: 150px; // Altura mínima para asegurar visibilidad
             
             .collage-wrapper {
                 position: absolute;

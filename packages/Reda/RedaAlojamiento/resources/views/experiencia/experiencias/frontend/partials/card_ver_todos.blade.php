@@ -28,9 +28,9 @@
         </div>
     </div>
     <div class="producto-info">
-        <h4 class="producto-nombre font-weight-700">{{ __('Ver todos') }}</h4>
+        <h4 class="producto-nombre">{{ __('Ver todos') }}</h4>
         <div class="producto-precio">
-            <span class="text-muted small m-0">{{ $total }} {{ __('elementos') }}</span>
+            <span>{{ $total }} {{ __('elementos') }}</span>
         </div>
     </div>
 </div>

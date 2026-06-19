@@ -35,9 +35,13 @@
             </div>
         </div>
         <div class="negocio-info">
-            <h3 class="negocio-titulo font-weight-700">{{ __('Ver todos') }}</h3>
+            <h3 class="negocio-titulo">{{ __('Ver todos') }}</h3>
             <p class="negocio-ubicacion">
-                <span class="text-muted small m-0">{{ $total }} {{ __('comercios') }}</span>
+                {{ $total }} {{ __('comercios') }}
+            </p>
+            <p class="negocio-rating star-rating">
+                <i class="fas fa-star" style="color: transparent;"></i> 
+                <span style="color: transparent;" class="small">.</span>
             </p>
         </div>
     </div>
