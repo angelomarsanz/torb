@@ -1565,12 +1565,63 @@
 
 /* Modal Listado Infinito */
 .modal-listado-infinito {
+    .modal-content-infinito-default {
+        height: 90vh;
+        border-radius: 20px;
+    }
+
+    .modal-content-infinito-reseñas {
+        height: 80vh;
+        border-radius: 20px;
+
+        #contenedor_items_infinito {
+            padding: 25px 20px;
+
+            .item-col-infinito {
+                margin-bottom: 30px !important;
+                
+                @media (max-width: 767px) {
+                    margin-bottom: 20px !important;
+                }
+            }
+
+            /* Aseguramos que la tarjeta de reseña se adapte a su columna */
+            .reseña-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 1 1 100% !important;
+                margin-right: 0 !important;
+                height: 100%; // Para que todas las de una fila tengan igual alto si hay scroll
+            }
+        }
+    }
+
+    .btn-regresar-infinito {
+        font-size: 30px;
+        opacity: 0.8;
+        background: transparent;
+        border: none;
+        padding: 0;
+        line-height: 1;
+        color: #000;
+        
+        &:hover {
+            opacity: 1;
+        }
+    }
+
     .modal-body {
         padding: 0 !important; // Eliminamos padding del body para manejarlo en el contenedor
+        scroll-behavior: smooth;
+        
         &::-webkit-scrollbar { width: 6px; }
         &::-webkit-scrollbar-track { background: #f1f1f1; }
         &::-webkit-scrollbar-thumb { background: #28a745; border-radius: 10px; }
         &::-webkit-scrollbar-thumb:hover { background: #218838; }
+    }
+
+    #loader_infinito, #no_more_infinito {
+        display: none;
     }
 
     #contenedor_items_infinito {
@@ -1614,6 +1665,13 @@
             }
         }
     }
+}
+
+/* Estilos para el texto de detalle de reseña */
+.texto-detalle-reseña {
+    max-height: 50vh;
+    line-height: 1.6;
+    color: #484848;
 }
 
 @keyframes spin {

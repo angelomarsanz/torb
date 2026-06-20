@@ -284,7 +284,7 @@ class ExperienciaController extends Controller
             foreach ($items as $item) {
                 $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_reseña';
                 if ($esModal) {
-                    $html .= '<div class="col-12 col-lg-6 item-col-infinito mb-4">';
+                    $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
                     $html .= view($view, ['calificacion' => $item])->render();
                     $html .= '</div>';
                 } else {

@@ -504,7 +504,7 @@
                 <div class="d-flex align-items-center mb-3" id="headerDetalleReseña">
                     <!-- Se poblará vía JS -->
                 </div>
-                <div class="text-16 text-justify overflow-auto" id="textoDetalleReseña" style="max-height: 50vh; line-height: 1.6; color: #484848;">
+                <div class="text-16 text-justify overflow-auto texto-detalle-reseña" id="textoDetalleReseña">
                     <!-- Se poblará vía JS -->
                 </div>
             </div>

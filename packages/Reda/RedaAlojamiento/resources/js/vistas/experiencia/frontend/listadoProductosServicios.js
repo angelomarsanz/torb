@@ -173,12 +173,20 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // --- INTERACCIÓN CON "VER TODOS" (SCROLL INFINITO) ---
             $(document).on('click', '.card-ver-todos', function() {
                 const $card = $(this);
-                const options = {
+                const tipo = $card.data('tipo');
+                
+                let options = {
                     idNegocio: $card.data('id-negocio'),
-                    tipo: $card.data('tipo'),
+                    tipo: tipo,
                     tituloModal: $card.data('titulo-modal'),
                     urlBase: APP_URL + `/reda/negocios/experiencias/actividades/paginadas/${$card.data('id-negocio')}`
                 };
+
+                // Si son reseñas, ajustar tamaño y estilos
+                if (tipo === 'reseñas') {
+                    options.dialogClass = 'modal-lg';
+                    options.contentClass = 'modal-content-infinito-reseñas';
+                }
                 
                 ListadoInfinito.iniciar(options);
             });

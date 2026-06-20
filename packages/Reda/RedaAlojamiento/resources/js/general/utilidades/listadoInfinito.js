@@ -6,6 +6,8 @@
 export const ListadoInfinito = {
     config: {
         modalId: '#modalListadoInfinito',
+        dialogId: '#modalDialogInfinito',
+        contentId: '#modalContentInfinito',
         contenedorId: '#contenedor_items_infinito',
         loaderId: '#loader_infinito',
         noMoreId: '#no_more_infinito',
@@ -15,6 +17,8 @@ export const ListadoInfinito = {
         loading: false,
         noMore: false,
         urlBase: null,
+        dialogClass: 'modal-xl', // Clase por defecto para el tamaño
+        contentClass: 'modal-content-infinito-default', // Clase por defecto para el contenido
         extraData: {} // Para pasar filtros adicionales
     },
 
@@ -24,6 +28,10 @@ export const ListadoInfinito = {
     async iniciar(options) {
         this.config = { ...this.config, ...options, offset: 0, noMore: false, loading: false };
         
+        // Ajustar clases del modal
+        $(this.config.dialogId).removeClass('modal-sm modal-md modal-lg modal-xl').addClass(this.config.dialogClass);
+        $(this.config.contentId).attr('class', 'modal-content border-0 shadow-lg ' + this.config.contentClass);
+
         $(this.config.modalId).modal('show');
         $('#tituloModalInfinito').text(this.config.tituloModal);
         $(this.config.contenedorId).empty();
