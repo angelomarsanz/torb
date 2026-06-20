@@ -175,9 +175,9 @@
 </div>
 
 <!-- Modal Notificación (Si no está en el layout) -->
-<div class="modal fade" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1080;">
+<div class="modal fade z-1080" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <div class="modal-content rounded-15 border-0 shadow-modal">
             <div class="modal-header border-0 pb-0">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -189,7 +189,7 @@
                 <p id="notificacion-mensaje" class="text-muted f-14 mb-0"></p>
             </div>
             <div class="modal-footer border-0 pt-0 justify-content-center">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-radius: 20px; padding: 8px 30px;">
+                <button type="button" class="btn btn-primary rounded-20 py-8 px-30" data-dismiss="modal">
                     {{ __('Aceptar') }}
                 </button>
             </div>

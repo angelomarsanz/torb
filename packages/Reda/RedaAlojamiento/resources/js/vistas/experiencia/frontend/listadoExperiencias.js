@@ -11,7 +11,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
     const containerId = '#listado_experiencias';
 
     if ($(containerId).length) {
-        console.log('Script para Listado de Comercios cargado correctamente');
+        console.log(window.RedaAlojamientoJson['Script para Listado de Comercios cargado correctamente'] || 'Script para Listado de Comercios cargado correctamente');
 
         // --- LÓGICA DE CARRUSELES ---
 
@@ -209,18 +209,18 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const $contenedorDestacados = $('#contenedor_destacados');
                 const $contenedorGeneral = $('#contenedor_listado_general');
 
-                // Estado visual de carga con transición suave
-                $contenedorDestacados.animate({ opacity: 0.4 }, 200);
-                $contenedorGeneral.animate({ opacity: 0.4 }, 200);
+                // Estado visual de carga (CSS-based)
+                $contenedorDestacados.addClass('is-loading-ajax');
+                $contenedorGeneral.addClass('is-loading-ajax');
 
                 const respuestaBusqueda = await obtenerComercios(formData);
 
                 if (respuestaBusqueda.success) {
                     const data = respuestaBusqueda.respuesta;
                     
-                    // Actualizar contenido y restaurar opacidad con animación
-                    $contenedorDestacados.html(data.html_destacados).animate({ opacity: 1 }, 300);
-                    $contenedorGeneral.html(data.html_general).animate({ opacity: 1 }, 300);
+                    // Actualizar contenido y quitar estado de carga
+                    $contenedorDestacados.html(data.html_destacados).removeClass('is-loading-ajax');
+                    $contenedorGeneral.html(data.html_general).removeClass('is-loading-ajax');
                     
                     // Re-inicializar botones de carrusel tras actualización AJAX
                     actualizarBotonesCarrusel($contenedorDestacados);
@@ -228,8 +228,8 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
 
                 } else {
                     console.error(respuestaBusqueda.message);
-                    $contenedorDestacados.animate({ opacity: 1 }, 200);
-                    $contenedorGeneral.animate({ opacity: 1 }, 200);
+                    $contenedorDestacados.removeClass('is-loading-ajax');
+                    $contenedorGeneral.removeClass('is-loading-ajax');
                 }
             }
         });

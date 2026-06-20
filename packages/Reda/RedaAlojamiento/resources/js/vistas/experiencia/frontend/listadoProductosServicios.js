@@ -71,7 +71,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     dataType: 'json',
                     success: (data) => resolve(data),
                     error: function () {
-                        resolve({ success: false, mensaje_usuario: 'Error en el servidor' });
+                        resolve({ success: false, mensaje_usuario: window.RedaAlojamientoJson['Error en el servidor'] || 'Error en el servidor' });
                     }
                 });
             });
@@ -146,7 +146,10 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 $('#modalDetalleActividad').modal('show');
                 const res = await obtenerDetalleActividad(id);
                 if (res.success) $('#bodyDetalleActividad').html(res.respuesta.html);
-                else $('#bodyDetalleActividad').html(`<div class="alert alert-danger m-4">Error al cargar</div>`);
+                else {
+                    const errorHtml = `<div class="alert alert-danger m-4">${window.RedaAlojamientoJson['Error al cargar'] || 'Error al cargar'}</div>`;
+                    $('#bodyDetalleActividad').html(errorHtml);
+                }
             });
         });
 

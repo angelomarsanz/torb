@@ -1,8 +1,13 @@
 @php
     $fotosCollage = [];
     foreach($items->take(3) as $item) {
-        if ($item->foto_actividad) {
+        if (isset($item->foto_actividad)) {
             $fotosCollage[] = asset('public/images/actividades_experiencias/' . $item->foto_actividad);
+        } elseif (isset($item->usuario)) {
+            $fotoUsuario = $item->usuario->profile_image;
+            $fotosCollage[] = $fotoUsuario
+                ? asset('public/images/profile/' . $item->usuario->id . '/' . $fotoUsuario)
+                : asset('public/images/default-profile.png');
         } else {
             $fotosCollage[] = asset('public/images/default-image.png');
         }

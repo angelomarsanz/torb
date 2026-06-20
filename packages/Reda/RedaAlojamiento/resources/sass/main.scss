@@ -2018,3 +2018,51 @@
         }
     }
 }
+
+/* --- ESTILOS PARA CARRUSEL DE RESEÑAS --- */
+.reseña-card {
+    width: 320px !important;
+    flex: 0 0 320px !important;
+    padding: 15px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ebebeb !important;
+    margin-right: 15px;
+    white-space: normal;
+
+    @media (max-width: 768px) {
+        width: 280px !important;
+        flex: 0 0 280px !important;
+    }
+}
+
+/* --- UTILIDADES ADICIONALES --- */
+.line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-15 { font-size: 15px !important; }
+.text-14 { font-size: 14px !important; }
+.object-cover { object-fit: cover !important; }
+.text-transparent { color: transparent !important; }
+.z-1080 { z-index: 1080 !important; }
+.rounded-15 { border-radius: 15px !important; }
+.rounded-20 { border-radius: 20px !important; }
+.shadow-modal { box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important; }
+.px-30 { padding-left: 30px !important; padding-right: 30px !important; }
+.py-8 { padding-top: 8px !important; padding-bottom: 8px !important; }
+
+/* --- ESTADOS DE CARGA AJAX --- */
+#contenedor_destacados, 
+#contenedor_listado_general,
+.container-carrusel-productos {
+    transition: opacity 0.3s ease;
+}
+
+.is-loading-ajax {
+    opacity: 0.4 !important;
+    pointer-events: none;
+}

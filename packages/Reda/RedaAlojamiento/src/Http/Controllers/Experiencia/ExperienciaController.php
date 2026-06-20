@@ -241,6 +241,10 @@ class ExperienciaController extends Controller
         $promociones = $promocionesCompletas->take(10);
         $totalPromociones = $promocionesCompletas->count();
 
+        // Reseñas (Primeras 10 para carrusel)
+        $calificaciones = $experiencia->calificaciones->sortByDesc('created_at')->take(10);
+        $totalCalificaciones = $experiencia->calificaciones_count;
+
         $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
 
         return view('reda-alojamiento::experiencia.experiencias.frontend.listado_productos_servicios', compact(
@@ -249,6 +253,8 @@ class ExperienciaController extends Controller
             'totalActividades',
             'promociones',
             'totalPromociones',
+            'calificaciones',
+            'totalCalificaciones',
             'currentCurrency'
         ));
     }
@@ -264,50 +270,69 @@ class ExperienciaController extends Controller
         $esModal = $request->get('es_modal', false);
 
         $experiencia = Experiencia::findOrFail($id);
-
-        $query = $experiencia->actividades()
-            ->where('estatus_producto_servicio', 'activo')
-            ->orderBy('orden_actividad', 'asc');
-
-        if ($tipo === 'promociones') {
-            $todas = $query->get();
-            $itemsFiltrados = $todas->filter(function($actividad) {
-                $complementos = json_decode($actividad->precios_monedas_complementarios, true);
-                return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
-            });
-            $items = $itemsFiltrados->slice($offset, $limit);
-        } else {
-            $items = $query->offset($offset)->limit($limit)->get();
-        }
-
         $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
         $html = '';
 
-        foreach ($items as $item) {
-            $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio';
-            
-            if ($esModal) {
-                $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
-                $html .= view($view, [
-                    'actividad' => $item,
-                    'currentCurrency' => $currentCurrency,
-                    'es_promo' => ($tipo === 'promociones')
-                ])->render();
-                $html .= '</div>';
+        if ($tipo === 'reseñas') {
+            $items = $experiencia->calificaciones()
+                ->with('usuario')
+                ->orderBy('created_at', 'desc')
+                ->offset($offset)
+                ->limit($limit)
+                ->get();
+
+            foreach ($items as $item) {
+                $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_reseña';
+                if ($esModal) {
+                    $html .= '<div class="col-12 col-lg-6 item-col-infinito mb-4">';
+                    $html .= view($view, ['calificacion' => $item])->render();
+                    $html .= '</div>';
+                } else {
+                    $html .= view($view, ['calificacion' => $item])->render();
+                }
+            }
+        } else {
+            $query = $experiencia->actividades()
+                ->where('estatus_producto_servicio', 'activo')
+                ->orderBy('orden_actividad', 'asc');
+
+            if ($tipo === 'promociones') {
+                $todas = $query->get();
+                $itemsFiltrados = $todas->filter(function($actividad) {
+                    $complementos = json_decode($actividad->precios_monedas_complementarios, true);
+                    return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
+                });
+                $items = $itemsFiltrados->slice($offset, $limit);
             } else {
-                $html .= view($view, [
-                    'actividad' => $item,
-                    'currentCurrency' => $currentCurrency,
-                    'es_promo' => ($tipo === 'promociones')
-                ])->render();
+                $items = $query->offset($offset)->limit($limit)->get();
+            }
+
+            foreach ($items as $item) {
+                $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio';
+                
+                if ($esModal) {
+                    $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
+                    $html .= view($view, [
+                        'actividad' => $item,
+                        'currentCurrency' => $currentCurrency,
+                        'es_promo' => ($tipo === 'promociones')
+                    ])->render();
+                    $html .= '</div>';
+                } else {
+                    $html .= view($view, [
+                        'actividad' => $item,
+                        'currentCurrency' => $currentCurrency,
+                        'es_promo' => ($tipo === 'promociones')
+                    ])->render();
+                }
             }
         }
 
         return response()->json([
             'success' => true,
             'html' => $html,
-            'cantidad' => $items->count(),
-            'proximo_offset' => $offset + $items->count()
+            'cantidad' => (isset($items) ? $items->count() : 0),
+            'proximo_offset' => $offset + (isset($items) ? $items->count() : 0)
         ]);
     }
 

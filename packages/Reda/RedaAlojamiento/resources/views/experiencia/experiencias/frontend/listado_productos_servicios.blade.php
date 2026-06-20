@@ -378,62 +378,66 @@
 
                 <hr class="mx-4">
 
-                <!-- SECCIÓN 10: RESEÑAS (DETALLE AL FINAL) -->
-                <section class="seccion-reseñas-negocio px-4 mb-5" id="seccion_detalle_reseñas">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="text-22 font-weight-700 m-0">
-                            <i class="fas fa-star text-warning"></i>
-                            @if($experiencia->calificaciones_count > 0)
-                                @php $puntuacionFinal = (float) $experiencia->calificaciones_avg_estrellas; @endphp
-                                {{ number_format($puntuacionFinal, 1, '.', '') }} · {{ $experiencia->calificaciones_count }} {{ trans_choice('reseña|reseñas', $experiencia->calificaciones_count) }}
-                            @else
-                                {{ __('Reseñas') }}
-                            @endif
-                        </h2>
+                <!-- SECCIÓN 10: RESEÑAS (CARRUSEL) -->
+                <section class="seccion-productos mb-5" id="seccion_reseñas">
+                    <div class="header-seccion-carrusel">
+                        <div class="d-flex align-items-center">
+                            <h2 class="text-22 font-weight-700 m-0 d-flex align-items-center flex-wrap">
+                                @if($experiencia->calificaciones_count > 0)
+                                    @php $puntuacionFinal = (float) $experiencia->calificaciones_avg_estrellas; @endphp
+                                    <span class="mr-2 d-flex align-items-center">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @if($puntuacionFinal >= $i)
+                                                <i class="fas fa-star text-warning"></i>
+                                            @elseif($puntuacionFinal > ($i - 1) && $puntuacionFinal < $i)
+                                                <i class="fas fa-star-half-alt text-warning"></i>
+                                            @else
+                                                <i class="far fa-star text-warning"></i>
+                                            @endif
+                                        @endfor
+                                    </span>
+                                    <span class="mr-2">{{ number_format($puntuacionFinal, 1, '.', '') }}</span>
+                                    <span class="text-muted text-16 font-weight-normal">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
+                                @else
+                                    <i class="fas fa-star text-muted mr-2"></i>
+                                    {{ __('Reseñas') }}
+                                @endif
+                            </h2>
+                        </div>
+                        <div class="carrusel-controles-desktop d-none d-lg-flex">
+                            <button class="btn-carrusel-control btn-prev" data-target="#carrusel_reseñas" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn-carrusel-control btn-next" data-target="#carrusel_reseñas">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="row">
-                        @forelse($experiencia->calificaciones as $calificacion)
-                            <div class="col-md-6 mb-4">
-                                <div class="card border-0 shadow-none bg-transparent">
-                                    <div class="card-body p-0">
-                                        <div class="d-flex align-items-center mb-2">
-                                            @php
-                                                $fotoUsuario = $calificacion->usuario->profile_image;
-                                                $rutaFotoUsuario = $fotoUsuario
-                                                    ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
-                                                    : asset('public/images/default-profile.png');
-
-                                                $primerNombre = explode(' ', trim($calificacion->usuario->first_name))[0];
-                                                $primerApellido = explode(' ', trim($calificacion->usuario->last_name))[0];
-                                            @endphp
-                                            <img src="{{ $rutaFotoUsuario }}" class="img-profile-list mr-3 img-size-48">
-                                            <div>
-                                                <div class="font-weight-700 text-16">{{ $primerNombre }} {{ $primerApellido }}</div>
-                                                <div class="text-muted small">{{ $calificacion->created_at->format('M Y') }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="star-rating mb-2">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <i class="fa fa-star {{ $i <= $calificacion->estrellas ? '' : 'text-light' }} star-rating-12"></i>
-                                            @endfor
-                                        </div>
-                                        <p class="text-16 text-justify mb-0">
-                                            {{ $calificacion->comentario }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="container-carrusel-productos"
+                         id="carrusel_reseñas"
+                         data-tipo="reseñas"
+                         data-id-negocio="{{ $experiencia->id }}">
+                        
+                        @forelse($calificaciones as $calificacion)
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_reseña', ['calificacion' => $calificacion])
                         @empty
-                            <div class="col-12">
-                                <div class="bg-light p-5 rounded-12 text-center text-muted">
-                                    <i class="far fa-comment-dots fa-3x mb-3"></i>
-                                    <p class="m-0 text-16">{{ __('Aún no hay reseñas de este comercio.') }}</p>
-                                </div>
+                            <div class="w-100 bg-light p-5 rounded-12 text-center text-muted">
+                                <i class="far fa-comment-dots fa-3x mb-3"></i>
+                                <p class="m-0 text-16">{{ __('Aún no hay reseñas de este comercio.') }}</p>
                             </div>
                         @endforelse
-                    </div>
-                </section>
+
+                        @if($totalCalificaciones > 10)
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos', [
+                                'items' => $calificaciones, 
+                                'tipo' => 'reseñas', 
+                                'idNegocio' => $experiencia->id, 
+                                'tituloModal' => number_format($puntuacionFinal, 1, '.', '') . ' (' . $totalCalificaciones . ' ' . trans_choice('Reseña|Reseñas', $totalCalificaciones) . ')',
+                                'total' => $totalCalificaciones
+                            ])
+                        @endif
+                    </section>
 
             </div>
         </div>

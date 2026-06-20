@@ -40,9 +40,10 @@
                 {{ $total }} {{ __('comercios') }}
             </p>
             <p class="negocio-rating star-rating">
-                <i class="fas fa-star" style="color: transparent;"></i> 
-                <span style="color: transparent;" class="small">.</span>
+                <i class="fas fa-star text-transparent"></i>
+                <span class="small text-transparent">.</span>
             </p>
+
         </div>
     </div>
 </div>
