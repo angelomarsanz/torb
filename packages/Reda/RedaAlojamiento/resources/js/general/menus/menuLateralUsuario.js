@@ -193,7 +193,7 @@ export const menuLateralUsuario = () =>
                 const alojamientoHtmlMobile = `
                     <a data-toggle="collapse" href="#collapseAlojamientoMobile" role="button" data-reda-plugin class="reda-sub-menu-toggle">
                         <li class="d-flex justify-content-between align-items-center">
-                            <div><i class="fas fa-home mr-3"></i>${textoAlojamientos}</div>
+                            <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
                             <i class="fas ${isAlojamientoActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
                         </li>
                     </a>
@@ -224,13 +224,11 @@ export const menuLateralUsuario = () =>
                 linkViajesMobile.remove();
             }
 
-            // MATCH TORBIAN STRUCTURE: li > a for simple links + inner div for alignment
+            // MATCH TORBIAN STRUCTURE: li > a for simple links
             const menuInyectarMobile = `
                 <li data-reda-plugin>
                     <a href="${APP_URL}/reda/negocios/index-experiencias">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-store mr-3"></i>${textoNegocios}
-                        </div>
+                        <i class="fas fa-store mr-3"></i>${textoNegocios}
                     </a>
                 </li>
             `;
@@ -257,7 +255,7 @@ export const menuLateralUsuario = () =>
                 const nestedHtmlMobile = `
                     <a data-toggle="collapse" href="#collapseAlojamientosReviewsMobile" role="button" class="reda-sub-menu-toggle">
                         <li class="d-flex justify-content-between align-items-center">
-                            <div><i class="fas fa-home mr-3"></i>${textoAlojamientos}</div>
+                            <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
                             <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
                         </li>
                     </a>
@@ -269,7 +267,7 @@ export const menuLateralUsuario = () =>
                     </div>
                     <a data-toggle="collapse" href="#collapseNegociosReviewsMobile" role="button" class="reda-sub-menu-toggle">
                         <li class="d-flex justify-content-between align-items-center">
-                            <div><i class="fas fa-store mr-3"></i>${textoNegocios}</div>
+                            <span><i class="fas fa-store mr-3"></i>${textoNegocios}</span>
                             <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
                         </li>
                     </a>
@@ -294,11 +292,11 @@ export const menuLateralUsuario = () =>
         // --- GESTIÓN DE FLECHAS PARA SUB-MENÚS ---
         $(document).on('show.bs.collapse', '.collapse', function (e) {
             e.stopPropagation();
-            $(this).prev('.reda-sub-menu-toggle').find('.reda-sub-menu-arrow').removeClass('fa-angle-right').addClass('fa-angle-down');
+            $(this).prev('.reda-sub-menu-toggle, [data-reda-plugin]').find('.reda-sub-menu-arrow').removeClass('fa-angle-right').addClass('fa-angle-down');
         });
         $(document).on('hide.bs.collapse', '.collapse', function (e) {
             e.stopPropagation();
-            $(this).prev('.reda-sub-menu-toggle').find('.reda-sub-menu-arrow').removeClass('fa-angle-down').addClass('fa-angle-right');
+            $(this).prev('.reda-sub-menu-toggle, [data-reda-plugin]').find('.reda-sub-menu-arrow').removeClass('fa-angle-down').addClass('fa-angle-right');
         });
 
         // 3. GESTIÓN DEL DASHBOARD (TARJETAS RESUMEN)

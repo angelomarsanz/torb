@@ -2252,10 +2252,6 @@
     align-items: center;
     text-decoration: none !important;
     padding: 10px 0;
-
-    @media (max-width: 991px) {
-        padding: 0 !important; // En móvil, el padding lo maneja el selector base .mobile-side a
-    }
 }
 
 .reda-sub-menu-arrow {
@@ -2300,24 +2296,23 @@
         a {
             border: none !important;
             padding: 5px 0 !important;
+            color: #1dbf73 !important;
         }
     }
 
-    /* Forzar color y alineación en items inyectados para visual parity total */
-    [data-reda-plugin] {
-        list-style: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
+    /* Mimetizar color Torbian y alinear texto verticalmente */
+    [data-reda-plugin], .reda-sub-menu-toggle {
+        list-style: none;
         
-        a {
+        a, li {
             color: #1dbf73 !important;
-            display: block !important; // Volvemos a block para que el padding nativo funcione bien
         }
 
+        /* Ancho fijo de icono para alinear el comienzo del texto en todas las opciones */
         i.mr-3 {
             width: 25px !important;
             text-align: center !important;
-            margin-right: 12px !important; // Ajuste fino para mimetizar Torbian
+            display: inline-block !important;
         }
     }
 }
