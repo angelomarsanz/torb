@@ -3,6 +3,11 @@ export const menuLateralUsuario = () =>
     (function( $ ) {
         "use strict";
 
+        // 0. VERIFICACIÓN DE LOGIN Y DUPLICADOS
+        // Si no existe el link de logout, el usuario no ha iniciado sesión
+        const isLoggedIn = $('a[href*="/logout"]').length > 0;
+        if (!isLoggedIn) return;
+
         const textoNegocios = window.RedaAlojamientoJson["Negocios"] || "Negocios";
         const textoCalificaciones = window.RedaAlojamientoJson["Calificaciones"] || "Calificaciones";
         const textoQrCalificaciones = window.RedaAlojamientoJson["QR calificaciones"] || "QR calificaciones";
@@ -27,7 +32,7 @@ export const menuLateralUsuario = () =>
         const containerSidebar = '.list-group-flush';
         const sidebarPresent = $(containerSidebar).length;
 
-        if (sidebarPresent) {
+        if (sidebarPresent && !$(containerSidebar).find('.nav-item-plugin').length) {
             console.log('Script para "Menú Lateral Usuario" cargado (Escritorio).');
 
             // Definir los bloques de opciones para el sidebar
@@ -41,7 +46,7 @@ export const menuLateralUsuario = () =>
             `;
 
             const bloqueCalificacionesSidebar = `
-                <div class="mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase letter-spacing-1">
+                <div class="nav-item-plugin mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase letter-spacing-1">
                     ${textoCalificaciones}
                 </div>
                 <a class="text-color font-weight-500 nav-item-plugin" href="${APP_URL}/reda/negocios/mis-calificaciones/qr">
@@ -72,7 +77,7 @@ export const menuLateralUsuario = () =>
 
         // 2. GESTIÓN DEL MENÚ MÓVIL (MODAL IZQUIERDO)
         const containerMobile = '.mobile-side';
-        if ($(containerMobile).length) {
+        if ($(containerMobile).length && !$(containerMobile).find('.nav-item-plugin-mobile').length) {
             console.log('Script para "Menú Lateral Usuario" cargado (Móvil).');
 
             const menuInyectarMobile = `
