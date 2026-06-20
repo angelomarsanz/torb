@@ -8,8 +8,11 @@ export const menuLateralUsuario = () =>
         const isLoggedIn = $('a[href*="/logout"]').length > 0;
         if (!isLoggedIn) return;
 
+        // Traducciones
         const textoNegocios = window.RedaAlojamientoJson["Negocios"] || "Negocios";
-        const textoCalificaciones = window.RedaAlojamientoJson["Calificaciones"] || "Calificaciones";
+        const textoAlojamientos = window.RedaAlojamientoJson["Alojamientos"] || "Alojamientos";
+        const textoCalificacionesObtenidas = window.RedaAlojamientoJson["Calificaciones obtenidas"] || "Calificaciones obtenidas";
+        const textoCalificacionesRealizadas = window.RedaAlojamientoJson["Calificaciones realizadas"] || "Calificaciones realizadas";
         const textoQrCalificaciones = window.RedaAlojamientoJson["QR calificaciones"] || "QR calificaciones";
         const textoListadoCalificaciones = window.RedaAlojamientoJson["Listado de calificaciones"] || "Listado de calificaciones";
 
@@ -21,7 +24,6 @@ export const menuLateralUsuario = () =>
         };
 
         // --- GESTIÓN DE CLICKS (ANIMACIÓN DE CARGA PARA DASHBOARD) ---
-        // Los links del dashboard pueden no tener el prefijo /reda/negocios en algunos casos o ser específicos
         $(document).on('click', '#card-negocios-dashboard a', function(e) {
             if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
                 mostrarEsperar();
@@ -35,7 +37,6 @@ export const menuLateralUsuario = () =>
         if (sidebarPresent && !$(containerSidebar).find('.nav-item-plugin').length) {
             console.log('Script para "Menú Lateral Usuario" cargado (Escritorio).');
 
-            // Definir los bloques de opciones para el sidebar
             const bloqueNegociosSidebar = `
                 <a class="text-color font-weight-500 mt-1 nav-item-plugin" href="${APP_URL}/reda/negocios/index-experiencias">
                     <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4">
@@ -45,33 +46,66 @@ export const menuLateralUsuario = () =>
                 </a>
             `;
 
-            const bloqueCalificacionesSidebar = `
-                <div class="nav-item-plugin mt-4 mb-2 pl-25 text-muted font-weight-700 text-12 text-uppercase letter-spacing-1">
-                    ${textoCalificaciones}
-                </div>
-                <a class="text-color font-weight-500 nav-item-plugin" href="${APP_URL}/reda/negocios/mis-calificaciones/qr">
-                    <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 pt-3 pb-3">
-                        <i class="fas fa-qrcode mr-3 text-18 align-middle"></i>
-                        ${textoQrCalificaciones}
-                    </li>
-                </a>
-                <a class="text-color font-weight-500 nav-item-plugin" href="${APP_URL}/reda/negocios/mis-calificaciones/listado">
-                    <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 pt-3 pb-3">
-                        <i class="fas fa-star mr-3 text-18 align-middle"></i>
-                        ${textoListadoCalificaciones}
-                    </li>
-                </a>
-            `;
-
-            const menuInyectarSidebar = bloqueNegociosSidebar + bloqueCalificacionesSidebar;
-
-            // Localizar la opción "Listings" (Alojamientos) SOLO en el sidebar
             const opcionReferenciaSidebar = $(containerSidebar).find('a[href*="/properties"]');
-
             if (opcionReferenciaSidebar.length) {
-                opcionReferenciaSidebar.after(menuInyectarSidebar);
+                opcionReferenciaSidebar.after(bloqueNegociosSidebar);
             } else {
-                $(containerSidebar).prepend(menuInyectarSidebar);
+                $(containerSidebar).prepend(bloqueNegociosSidebar);
+            }
+
+            // --- REESTRUCTURACIÓN DE RESEÑAS (ESCRITORIO) ---
+            const reviewsCollapseSidebar = $('#collapseReviews');
+            if (reviewsCollapseSidebar.length) {
+                const ul = reviewsCollapseSidebar.find('ul').first();
+                ul.empty();
+                
+                const path = window.location.pathname;
+                const isAlojamientosActive = path.includes('/users/reviews') || path.includes('/users/reviews_by_you');
+                const isNegociosActive = path.includes('/reda/negocios/mis-calificaciones');
+
+                const nestedHtml = `
+                    <li class="nav-item-plugin">
+                        <a data-toggle="collapse" href="#collapseAlojamientos" class="reda-sub-menu-toggle text-color">
+                            <span class="pl-25">${textoAlojamientos}</span>
+                            <i class="fas ${isAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
+                        </a>
+                        <div class="collapse ${isAlojamientosActive ? 'show' : ''}" id="collapseAlojamientos">
+                            <ul class="reda-sub-menu-list">
+                                <a href="${APP_URL}/users/reviews">
+                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews') ? 'reda-active-option' : ''}">
+                                        ${textoCalificacionesObtenidas}
+                                    </li>
+                                </a>
+                                <a href="${APP_URL}/users/reviews_by_you">
+                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">
+                                        ${textoCalificacionesRealizadas}
+                                    </li>
+                                </a>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item-plugin">
+                        <a data-toggle="collapse" href="#collapseNegocios" class="reda-sub-menu-toggle text-color">
+                            <span class="pl-25">${textoNegocios}</span>
+                            <i class="fas ${isNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
+                        </a>
+                        <div class="collapse ${isNegociosActive ? 'show' : ''}" id="collapseNegocios">
+                            <ul class="reda-sub-menu-list">
+                                <a href="${APP_URL}/reda/negocios/mis-calificaciones/qr">
+                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}">
+                                        <i class="fas fa-qrcode mr-2"></i> ${textoQrCalificaciones}
+                                    </li>
+                                </a>
+                                <a href="${APP_URL}/reda/negocios/mis-calificaciones/listado">
+                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}">
+                                        <i class="fas fa-star mr-2"></i> ${textoListadoCalificaciones}
+                                    </li>
+                                </a>
+                            </ul>
+                        </div>
+                    </li>
+                `;
+                ul.append(nestedHtml);
             }
         }
 
@@ -86,28 +120,64 @@ export const menuLateralUsuario = () =>
                         <i class="fas fa-store mr-3"></i>${textoNegocios}
                     </a>
                 </li>
-                <li class="nav-item-plugin-mobile">
-                    <a href="${APP_URL}/reda/negocios/mis-calificaciones/qr">
-                        <i class="fas fa-qrcode mr-3"></i>${textoQrCalificaciones}
-                    </a>
-                </li>
-                <li class="nav-item-plugin-mobile">
-                    <a href="${APP_URL}/reda/negocios/mis-calificaciones/listado">
-                        <i class="fas fa-star mr-3"></i>${textoListadoCalificaciones}
-                    </a>
-                </li>
             `;
 
-            // Buscamos la opción "Listings" en el menú móvil
             const opcionReferenciaMobile = $(containerMobile).find('a[href*="/properties"]').parent('li');
-
             if (opcionReferenciaMobile.length) {
                 opcionReferenciaMobile.after(menuInyectarMobile);
             } else {
-                // Si no encontramos la referencia, lo ponemos después del Dashboard (primer li)
                 $(containerMobile).find('li:first').after(menuInyectarMobile);
             }
+
+            // --- REESTRUCTURACIÓN DE RESEÑAS (MÓVIL) ---
+            const reviewsCollapseMobile = $('#collapseExample');
+            if (reviewsCollapseMobile.length) {
+                const ul = reviewsCollapseMobile.find('ul').first();
+                ul.empty();
+                
+                const path = window.location.pathname;
+                const isAlojamientosActive = path.includes('/users/reviews') || path.includes('/users/reviews_by_you');
+                const isNegociosActive = path.includes('/reda/negocios/mis-calificaciones');
+
+                const nestedHtmlMobile = `
+                    <li class="nav-item-plugin-mobile">
+                        <a data-toggle="collapse" href="#collapseAlojamientosMobile" class="reda-sub-menu-toggle">
+                            <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
+                            <i class="fas ${isAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
+                        </a>
+                        <div class="collapse ${isAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosMobile">
+                            <ul class="reda-sub-menu-list">
+                                <li><a href="${APP_URL}/users/reviews" class="${path.includes('/users/reviews') ? 'reda-active-option' : ''}">${textoCalificacionesObtenidas}</a></li>
+                                <li><a href="${APP_URL}/users/reviews_by_you" class="${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">${textoCalificacionesRealizadas}</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item-plugin-mobile">
+                        <a data-toggle="collapse" href="#collapseNegociosMobile" class="reda-sub-menu-toggle">
+                            <span><i class="fas fa-store mr-3"></i>${textoNegocios}</span>
+                            <i class="fas ${isNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
+                        </a>
+                        <div class="collapse ${isNegociosActive ? 'show' : ''}" id="collapseNegociosMobile">
+                            <ul class="reda-sub-menu-list">
+                                <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/qr" class="${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}"><i class="fas fa-qrcode mr-3"></i>${textoQrCalificaciones}</a></li>
+                                <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/listado" class="${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}"><i class="fas fa-star mr-3"></i>${textoListadoCalificaciones}</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                `;
+                ul.append(nestedHtmlMobile);
+            }
         }
+
+        // --- GESTIÓN DE FLECHAS PARA SUB-MENÚS ---
+        $(document).on('show.bs.collapse', '.collapse', function (e) {
+            e.stopPropagation();
+            $(this).prev('.reda-sub-menu-toggle').find('.reda-sub-menu-arrow').removeClass('fa-angle-right').addClass('fa-angle-down');
+        });
+        $(document).on('hide.bs.collapse', '.collapse', function (e) {
+            e.stopPropagation();
+            $(this).prev('.reda-sub-menu-toggle').find('.reda-sub-menu-arrow').removeClass('fa-angle-down').addClass('fa-angle-right');
+        });
 
         // 3. GESTIÓN DEL DASHBOARD (TARJETAS RESUMEN)
         const isDashboard = window.location.pathname.includes('/dashboard');
@@ -143,4 +213,3 @@ export const menuLateralUsuario = () =>
     })(jQuery);
 }
 menuLateralUsuario();
-

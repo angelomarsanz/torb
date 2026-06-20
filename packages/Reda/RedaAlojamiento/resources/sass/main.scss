@@ -2252,3 +2252,77 @@
     }
 }
 
+
+/* --- ESTRUCTURA DE SUB-MENÚS REDA (MENÚ LATERAL) --- */
+.reda-sub-menu-toggle {
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none !important;
+    padding: 10px 0;
+}
+
+.reda-sub-menu-arrow {
+    transition: transform 0.3s ease;
+    font-size: 14px;
+}
+
+.reda-sub-menu-list {
+    padding-left: 20px !important;
+    border-left: 1px solid #eee;
+    margin-left: 10px;
+    margin-bottom: 10px;
+
+    .list-group-item {
+        padding: 8px 15px !important;
+        font-size: 14px !important;
+        background: transparent !important;
+    }
+    
+    a {
+        text-decoration: none !important;
+    }
+}
+
+.reda-active-option {
+    color: #1dbf73 !important;
+    font-weight: 700 !important;
+}
+
+/* Ajustes específicos para el modal móvil */
+.mobile-side {
+    .reda-sub-menu-list {
+        padding-left: 35px !important;
+        border-left: none;
+        margin-left: 0;
+        
+        li {
+            padding: 12px 0 !important;
+        }
+    }
+}
+
+/* Clase para items de plugin en el menú móvil */
+.nav-item-plugin-mobile {
+    list-style: none;
+    display: block;
+    width: 100%;
+    
+    a {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px !important;
+        color: #222 !important;
+        font-weight: 500;
+        text-decoration: none !important;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    i.mr-3 {
+        width: 25px;
+        text-align: center;
+    }
+}
