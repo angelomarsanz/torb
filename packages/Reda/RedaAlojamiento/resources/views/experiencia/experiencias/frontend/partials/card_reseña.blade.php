@@ -26,9 +26,12 @@
                 </span>
                 <span class="font-weight-700 text-12">{{ number_format($calificacion->estrellas, 1, '.', '') }}</span>
             </div>
-            <p class="text-14 text-justify mb-0 line-clamp-4">
-                {{ $calificacion->comentario }}
-            </p>
+            <div class="reseña-comentario-wrapper">
+                <p class="text-14 text-justify mb-0 reseña-comentario">
+                    {{ $calificacion->comentario }}
+                </p>
+                <button class="btn-leer-mas-reseña">{{ __('Más') }}</button>
+            </div>
         </div>
     </div>
 </div>

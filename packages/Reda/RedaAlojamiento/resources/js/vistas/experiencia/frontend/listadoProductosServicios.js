@@ -39,6 +39,48 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
         });
 
         /**
+         * Maneja el truncamiento inicial de las reseñas para mostrar el botón "Más".
+         */
+        const manejarTruncamientoReseñas = () => {
+            $('.reseña-comentario-wrapper').each(function() {
+                const $wrapper = $(this);
+                const $comentario = $wrapper.find('.reseña-comentario');
+                const $btn = $wrapper.find('.btn-leer-mas-reseña');
+
+                setTimeout(() => {
+                    const elemento = $comentario[0];
+                    if (elemento && elemento.scrollHeight > elemento.offsetHeight) {
+                        $btn.show();
+                    } else {
+                        $btn.hide();
+                    }
+                }, 300);
+            });
+        };
+
+        /**
+         * Abre el modal con el comentario completo de la reseña.
+         */
+        $(document).on('click', '.btn-leer-mas-reseña', function(e) {
+            e.stopPropagation();
+            const $btn = $(this);
+            const $card = $btn.closest('.reseña-card');
+            const $header = $card.find('.d-flex.align-items-center').first().clone();
+            const $stars = $card.find('.star-rating').clone();
+            const comentarioCompleto = $card.find('.reseña-comentario').text().trim();
+
+            // Limpiar y poblar modal
+            const $modalHeader = $('#headerDetalleReseña');
+            $modalHeader.empty().append($header);
+            $modalHeader.find('.img-profile-list').removeClass('mr-3').addClass('mr-3'); // Asegurar margen
+            $modalHeader.append('<div class="ml-auto"></div>').find('.ml-auto').append($stars);
+            
+            $('#textoDetalleReseña').html(comentarioCompleto.replace(/\n/g, '<br>'));
+            
+            $('#modalDetalleReseña').modal('show');
+        });
+
+        /**
          * Inicializa el mapa de Google.
          */
         function initMapDetalle() {
@@ -105,7 +147,11 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
         $(function() {
             initMapDetalle();
             manejarExpansionDescripcion();
-            window.addEventListener('load', manejarExpansionDescripcion);
+            manejarTruncamientoReseñas();
+            window.addEventListener('load', () => {
+                manejarExpansionDescripcion();
+                manejarTruncamientoReseñas();
+            });
 
             $('.container-carrusel-productos').each(function() { initCarrusel($(this)); });
 
@@ -139,7 +185,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
 
             // Filtros y Detalle
             $('#filtro_tipo_actividad').on('change', function() { filtrarActividades($(this).val()); });
-            $(document).on('click', '.producto-card:not(.card-ver-todos)', async function() {
+            $(document).on('click', '.producto-card:not(.card-ver-todos):not(.reseña-card)', async function() {
                 const id = $(this).data('id');
                 if (!id) return;
                 $('#bodyDetalleActividad').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-success"></i></div>');

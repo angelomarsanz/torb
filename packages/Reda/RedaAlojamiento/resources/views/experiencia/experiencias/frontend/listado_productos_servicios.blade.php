@@ -428,7 +428,7 @@
                             </div>
                         @endforelse
 
-                        @if($totalCalificaciones > 10)
+                        @if($totalCalificaciones > 0)
                             @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos', [
                                 'items' => $calificaciones, 
                                 'tipo' => 'reseñas', 
@@ -485,6 +485,31 @@
                 <div class="text-center p-5">
                     <i class="fa fa-spinner fa-spin fa-3x text-success"></i>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalle Reseña (Comentario Completo) -->
+<div class="modal fade" id="modalDetalleReseña" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-negocio-rounded shadow-lg border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title font-weight-700 text-20">{{ __('Reseña Completa') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-3" id="headerDetalleReseña">
+                    <!-- Se poblará vía JS -->
+                </div>
+                <div class="text-16 text-justify overflow-auto" id="textoDetalleReseña" style="max-height: 50vh; line-height: 1.6; color: #484848;">
+                    <!-- Se poblará vía JS -->
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-dark btn-block rounded-pill font-weight-700" data-dismiss="modal">{{ __('Cerrar') }}</button>
             </div>
         </div>
     </div>

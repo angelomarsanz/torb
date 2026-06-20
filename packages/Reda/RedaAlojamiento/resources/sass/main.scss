@@ -1389,7 +1389,7 @@
                 z-index: 1;
             }
 
-            .img-collage {
+            img.img-collage {
                 position: absolute;
                 width: 80px !important; // Forzar tamaño para que no herede 100%
                 height: 80px !important;
@@ -2034,6 +2034,34 @@
         width: 280px !important;
         flex: 0 0 280px !important;
     }
+
+    .reseña-comentario-wrapper {
+        position: relative;
+
+        .reseña-comentario {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            max-height: 2.85em; /* Ajuste preciso para 2 líneas sin corte */
+            margin-bottom: 0;
+        }
+
+        .btn-leer-mas-reseña {
+            display: none; // Controlado por JS
+            color: #1dbf73;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: underline;
+            background: transparent;
+            border: none;
+            padding: 0;
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+    }
 }
 
 /* --- UTILIDADES ADICIONALES --- */
@@ -2066,3 +2094,102 @@
     opacity: 0.4 !important;
     pointer-events: none;
 }
+
+/* --- COLLAGE DE ESTRELLAS PARA RESEÑAS --- */
+.collage-stars {
+    background: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 80px; // Reducido para dejar espacio al texto alineado
+    margin-top: 10px;
+    margin-bottom: 5px;
+
+    .img-collage {
+        color: #ffc107 !important;
+        font-size: 34px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+
+        /* Borde plateado nítido */
+        text-shadow: 
+            -1.5px -1.5px 0 #d0d0d0,  
+             1.5px -1.5px 0 #d0d0d0,
+            -1.5px  1.5px 0 #d0d0d0,
+             1.5px  1.5px 0 #d0d0d0,
+             0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Posiciones iniciales más separadas para que se vean como estrellas individuales */
+    .star-1 { transform: translate(-50%, -50%) rotate(-25deg) translateX(-45px) translateY(-5px) !important; z-index: 1; }
+    .star-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.2) translateY(-15px) !important; z-index: 3; }
+    .star-3 { transform: translate(-50%, -50%) rotate(25deg) translateX(45px) translateY(5px) !important; z-index: 2; }
+}
+
+.card-ver-todos:hover {
+    .collage-stars {
+        .star-1 { transform: translate(-50%, -50%) rotate(-45deg) translateX(-65px) translateY(-15px) !important; }
+        .star-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.5) translateY(-25px) !important; }
+        .star-3 { transform: translate(-50%, -50%) rotate(45deg) translateX(65px) translateY(15px) !important; }
+    }
+}
+
+/* Ajuste específico para que el card de "Ver todas" no rompa el carrusel de reseñas */
+#carrusel_reseñas {
+    .card-ver-todos {
+        width: 320px !important;
+        flex: 0 0 320px !important;
+        margin-right: 15px;
+        border: 1px solid #ebebeb !important;
+        height: auto;
+        min-height: 100%;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        padding: 15px; // Misma que reseña-card
+
+        .producto-img-container {
+            border: none;
+            background: transparent;
+            height: 80px; // Altura fija para el collage de estrellas
+            margin-bottom: 10px;
+        }
+
+        .producto-info {
+            padding: 0;
+            text-align: center;
+            /* Alineación con comentarios: 
+               La reseña-card tiene header (55px) + stars (20px) = 75px aprox de "tope".
+               El collage (80px) + margen (10px) ya nos sitúa el texto justo donde empiezan los comentarios.
+            */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+
+            .producto-nombre {
+                font-size: 18px;
+                font-weight: 700;
+                color: #1dbf73;
+                margin-bottom: 2px;
+            }
+
+            .producto-precio {
+                justify-content: center;
+                color: #717171;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            width: 280px !important;
+            flex: 0 0 280px !important;
+        }
+    }
+}
+
