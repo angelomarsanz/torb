@@ -2173,7 +2173,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 
         /* Borde plateado nítido */
         text-shadow: 
@@ -2184,17 +2184,18 @@
              0 4px 8px rgba(0,0,0,0.1);
     }
 
-    /* Posiciones iniciales más separadas para que se vean como estrellas individuales */
-    .star-1 { transform: translate(-50%, -50%) rotate(-25deg) translateX(-45px) translateY(-5px) !important; z-index: 1; }
-    .star-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.2) translateY(-15px) !important; z-index: 3; }
-    .star-3 { transform: translate(-50%, -50%) rotate(25deg) translateX(45px) translateY(5px) !important; z-index: 2; }
+    /* Posiciones iniciales dispersas pero contenidas */
+    .star-1 { transform: translate(-50%, -50%) rotate(-20deg) translateX(-35px) translateY(5px) !important; z-index: 1; opacity: 0.8; }
+    .star-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.1) translateY(-10px) !important; z-index: 3; }
+    .star-3 { transform: translate(-50%, -50%) rotate(20deg) translateX(35px) translateY(5px) !important; z-index: 2; opacity: 0.8; }
 }
 
-.card-ver-todos:hover {
+.card-ver-todos:hover, .card-ver-todos:active {
     .collage-stars {
-        .star-1 { transform: translate(-50%, -50%) rotate(-45deg) translateX(-65px) translateY(-15px) !important; }
-        .star-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.5) translateY(-25px) !important; }
-        .star-3 { transform: translate(-50%, -50%) rotate(45deg) translateX(65px) translateY(15px) !important; }
+        /* Animación de Fusión: Las estrellas 1 y 3 se recogen detrás de la 2 */
+        .star-1 { transform: translate(-50%, -50%) rotate(0deg) translateX(0) translateY(-10px) scale(0.5) !important; opacity: 0; }
+        .star-2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.5) translateY(-10px) !important; color: #ffca2c !important; }
+        .star-3 { transform: translate(-50%, -50%) rotate(0deg) translateX(0) translateY(-10px) scale(0.5) !important; opacity: 0; }
     }
 }
 
