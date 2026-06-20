@@ -489,21 +489,12 @@
     display: block;
     width: 100%;
     text-decoration: none !important;
-
-    li {
-        display: flex;
-        align-items: center;
-    }
 }
 
 /* Responsividad para la línea divisoria en PC */
 @media (min-width: 992px) {
     .border-start-lg {
         border-left: 1px solid #eee !important;
-    }
-    // Si en PC quieres asegurar el padding original:
-    .nav-item-plugin li {
-        padding-left: 25px !important;
     }
 }
 
@@ -516,17 +507,16 @@
     }
     .nav-item-plugin {
         margin-left: 0 !important;
-        padding: 0 !important; // Eliminamos el padding de 10px que detectamos en la inspección
+        padding: 0 !important;
         display: block !important;
         width: 100% !important;
 
         li {
-            /* Forzamos que el LI interno ignore herencias extrañas */
             margin-left: 0 !important;
-            padding-left: 25px !important; // Alineación igual a Dashboard/Inbox
+            padding-left: 25px !important;
             padding-top: 15px !important;
             padding-bottom: 15px !important;
-            border-top: none !important; // Quitamos bordes que vimos en la inspección
+            border-top: none !important;
             background-color: transparent !important;
         }
     }
@@ -2262,6 +2252,10 @@
     align-items: center;
     text-decoration: none !important;
     padding: 10px 0;
+
+    @media (max-width: 991px) {
+        padding: 0 !important; // En móvil, el padding lo maneja el selector base .mobile-side a
+    }
 }
 
 .reda-sub-menu-arrow {
@@ -2300,29 +2294,30 @@
         
         li {
             padding: 12px 0 !important;
+            list-style: none;
+        }
+
+        a {
+            border: none !important;
+            padding: 5px 0 !important;
         }
     }
-}
 
-/* Clase para items de plugin en el menú móvil */
-.nav-item-plugin-mobile {
-    list-style: none;
-    display: block;
-    width: 100%;
-    
-    a {
-        display: flex !important;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15px 20px !important;
-        color: #222 !important;
-        font-weight: 500;
-        text-decoration: none !important;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    
-    i.mr-3 {
-        width: 25px;
-        text-align: center;
+    /* Forzar color y alineación en items inyectados para visual parity total */
+    [data-reda-plugin] {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        
+        a {
+            color: #1dbf73 !important;
+            display: block !important; // Volvemos a block para que el padding nativo funcione bien
+        }
+
+        i.mr-3 {
+            width: 25px !important;
+            text-align: center !important;
+            margin-right: 12px !important; // Ajuste fino para mimetizar Torbian
+        }
     }
 }

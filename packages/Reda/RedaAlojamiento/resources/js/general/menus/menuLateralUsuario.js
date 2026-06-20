@@ -37,7 +37,7 @@ export const menuLateralUsuario = () =>
         const containerSidebar = '.list-group-flush';
         const sidebarPresent = $(containerSidebar).length;
 
-        if (sidebarPresent && !$(containerSidebar).find('.nav-item-plugin').length) {
+        if (sidebarPresent && !$(containerSidebar).find('[data-reda-plugin]').length) {
             console.log('Script para "Menú Lateral Usuario" cargado (Escritorio).');
 
             const path = window.location.pathname;
@@ -51,35 +51,35 @@ export const menuLateralUsuario = () =>
                 const isAlojamientoActive = path.includes('/properties') || path.includes('/my-bookings') || path.includes('/trips/active');
 
                 const alojamientoHtml = `
-                    <div class="nav-item-plugin">
-                        <a data-toggle="collapse" href="#collapseAlojamientoMain" class="reda-sub-menu-toggle text-color mt-1" role="button">
-                            <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4 w-100 d-flex justify-content-between align-items-center mb-0">
+                    <a data-toggle="collapse" href="#collapseAlojamientoMain" class="text-color font-weight-500 mt-1" role="button" data-reda-plugin>
+                        <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4 mb-0">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <i class="fas fa-home mr-3 text-18 align-middle"></i>
                                     ${textoAlojamientos}
                                 </div>
                                 <i class="fas ${isAlojamientoActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
-                            </li>
-                        </a>
-                        <div class="collapse ${isAlojamientoActive ? 'show' : ''}" id="collapseAlojamientoMain">
-                            <ul class="reda-sub-menu-list">
-                                <a href="${APP_URL}/properties">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/properties') ? 'reda-active-option' : ''}">
-                                        <i class="far fa-list-alt mr-2 text-14"></i> ${textoMisListados}
-                                    </li>
-                                </a>
-                                <a href="${APP_URL}/my-bookings">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/my-bookings') ? 'reda-active-option' : ''}">
-                                        <i class="fa fa-bookmark mr-2 text-14"></i> ${textoReservaciones}
-                                    </li>
-                                </a>
-                                <a href="${APP_URL}/trips/active">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/trips/active') ? 'reda-active-option' : ''}">
-                                        <i class="fa fa-suitcase mr-2 text-14"></i> ${textoMisViajes}
-                                    </li>
-                                </a>
-                            </ul>
-                        </div>
+                            </div>
+                        </li>
+                    </a>
+                    <div class="collapse ${isAlojamientoActive ? 'show' : ''}" id="collapseAlojamientoMain">
+                        <ul class="reda-sub-menu-list">
+                            <a href="${APP_URL}/properties">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/properties') ? 'reda-active-option' : ''}">
+                                    <i class="far fa-list-alt mr-2 text-14"></i> ${textoMisListados}
+                                </li>
+                            </a>
+                            <a href="${APP_URL}/my-bookings">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/my-bookings') ? 'reda-active-option' : ''}">
+                                    <i class="fa fa-bookmark mr-2 text-14"></i> ${textoReservaciones}
+                                </li>
+                            </a>
+                            <a href="${APP_URL}/trips/active">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/trips/active') ? 'reda-active-option' : ''}">
+                                    <i class="fa fa-suitcase mr-2 text-14"></i> ${textoMisViajes}
+                                </li>
+                            </a>
+                        </ul>
                     </div>
                 `;
 
@@ -90,7 +90,7 @@ export const menuLateralUsuario = () =>
             }
 
             const bloqueNegociosSidebar = `
-                <a class="text-color font-weight-500 mt-1 nav-item-plugin" href="${APP_URL}/reda/negocios/index-experiencias">
+                <a class="text-color font-weight-500 mt-1" href="${APP_URL}/reda/negocios/index-experiencias" data-reda-plugin>
                     <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4">
                         <i class="fas fa-store mr-3 text-18 align-middle"></i>
                         ${textoNegocios}
@@ -99,7 +99,7 @@ export const menuLateralUsuario = () =>
             `;
 
             // Insertamos Negocios después de nuestro nuevo menú de Alojamiento
-            const nuevoMenuAlojamiento = $('#collapseAlojamientoMain').closest('.nav-item-plugin');
+            const nuevoMenuAlojamiento = $('#collapseAlojamientoMain');
             if (nuevoMenuAlojamiento.length) {
                 nuevoMenuAlojamiento.after(bloqueNegociosSidebar);
             } else {
@@ -118,46 +118,50 @@ export const menuLateralUsuario = () =>
                 const isReviewsNegociosActive = path.includes('/reda/negocios/mis-calificaciones');
 
                 const nestedHtml = `
-                    <li class="nav-item-plugin">
-                        <a data-toggle="collapse" href="#collapseAlojamientosReviews" class="reda-sub-menu-toggle text-color">
-                            <span class="pl-25">${textoAlojamientos}</span>
-                            <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
-                        </a>
-                        <div class="collapse ${isReviewsAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosReviews">
-                            <ul class="reda-sub-menu-list">
-                                <a href="${APP_URL}/users/reviews">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews') ? 'reda-active-option' : ''}">
-                                        ${textoCalificacionesObtenidas}
-                                    </li>
-                                </a>
-                                <a href="${APP_URL}/users/reviews_by_you">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">
-                                        ${textoCalificacionesRealizadas}
-                                    </li>
-                                </a>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item-plugin">
-                        <a data-toggle="collapse" href="#collapseNegociosReviews" class="reda-sub-menu-toggle text-color">
-                            <span class="pl-25">${textoNegocios}</span>
-                            <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
-                        </a>
-                        <div class="collapse ${isReviewsNegociosActive ? 'show' : ''}" id="collapseNegociosReviews">
-                            <ul class="reda-sub-menu-list">
-                                <a href="${APP_URL}/reda/negocios/mis-calificaciones/qr">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}">
-                                        <i class="fas fa-qrcode mr-2"></i> ${textoQrCalificaciones}
-                                    </li>
-                                </a>
-                                <a href="${APP_URL}/reda/negocios/mis-calificaciones/listado">
-                                    <li class="list-group-item vbg-default-hover border-0 ${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}">
-                                        <i class="fas fa-star mr-2"></i> ${textoListadoCalificaciones}
-                                    </li>
-                                </a>
-                            </ul>
-                        </div>
-                    </li>
+                    <a data-toggle="collapse" href="#collapseAlojamientosReviews" class="reda-sub-menu-toggle text-color" role="button">
+                        <li class="list-group-item vbg-default-hover border-0 pl-25">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div><i class="fas fa-home mr-3 text-18"></i>${textoAlojamientos}</div>
+                                <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
+                            </div>
+                        </li>
+                    </a>
+                    <div class="collapse ${isReviewsAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosReviews">
+                        <ul class="reda-sub-menu-list">
+                            <a href="${APP_URL}/users/reviews">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews') ? 'reda-active-option' : ''}">
+                                    ${textoCalificacionesObtenidas}
+                                </li>
+                            </a>
+                            <a href="${APP_URL}/users/reviews_by_you">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">
+                                    ${textoCalificacionesRealizadas}
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                    <a data-toggle="collapse" href="#collapseNegociosReviews" class="reda-sub-menu-toggle text-color" role="button">
+                        <li class="list-group-item vbg-default-hover border-0 pl-25">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div><i class="fas fa-store mr-3 text-18"></i>${textoNegocios}</div>
+                                <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
+                            </div>
+                        </li>
+                    </a>
+                    <div class="collapse ${isReviewsNegociosActive ? 'show' : ''}" id="collapseNegociosReviews">
+                        <ul class="reda-sub-menu-list">
+                            <a href="${APP_URL}/reda/negocios/mis-calificaciones/qr">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}">
+                                    <i class="fas fa-qrcode mr-2"></i> ${textoQrCalificaciones}
+                                </li>
+                            </a>
+                            <a href="${APP_URL}/reda/negocios/mis-calificaciones/listado">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}">
+                                    <i class="fas fa-star mr-2"></i> ${textoListadoCalificaciones}
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
                 `;
                 ul.append(nestedHtml);
 
@@ -172,7 +176,7 @@ export const menuLateralUsuario = () =>
 
         // 2. GESTIÓN DEL MENÚ MÓVIL (MODAL IZQUIERDO)
         const containerMobile = '.mobile-side';
-        if ($(containerMobile).length && !$(containerMobile).find('.nav-item-plugin-mobile').length) {
+        if ($(containerMobile).length && !$(containerMobile).find('[data-reda-plugin]').length) {
             console.log('Script para "Menú Lateral Usuario" cargado (Móvil).');
 
             const path = window.location.pathname;
@@ -185,32 +189,33 @@ export const menuLateralUsuario = () =>
             if (linkPropiedadesMobile.length && linkReservacionesMobile.length && linkViajesMobile.length && !$('#collapseAlojamientoMobile').length) {
                 const isAlojamientoActive = path.includes('/properties') || path.includes('/my-bookings') || path.includes('/trips/active');
 
+                // MATCH TORBIAN STRUCTURE: a > li for collapsible
                 const alojamientoHtmlMobile = `
-                    <li class="nav-item-plugin-mobile">
-                        <a data-toggle="collapse" href="#collapseAlojamientoMobile" class="reda-sub-menu-toggle">
-                            <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
+                    <a data-toggle="collapse" href="#collapseAlojamientoMobile" role="button" data-reda-plugin class="reda-sub-menu-toggle">
+                        <li class="d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-home mr-3"></i>${textoAlojamientos}</div>
                             <i class="fas ${isAlojamientoActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
-                        </a>
-                        <div class="collapse ${isAlojamientoActive ? 'show' : ''}" id="collapseAlojamientoMobile">
-                            <ul class="reda-sub-menu-list">
-                                <li>
-                                    <a href="${APP_URL}/properties" class="${path.includes('/properties') ? 'reda-active-option' : ''}">
-                                        <i class="far fa-list-alt mr-3"></i>${textoMisListados}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="${APP_URL}/my-bookings" class="${path.includes('/my-bookings') ? 'reda-active-option' : ''}">
-                                        <i class="fa fa-bookmark mr-3"></i>${textoReservaciones}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="${APP_URL}/trips/active" class="${path.includes('/trips/active') ? 'reda-active-option' : ''}">
-                                        <i class="fa fa-suitcase mr-3"></i>${textoMisViajes}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                        </li>
+                    </a>
+                    <div class="collapse ${isAlojamientoActive ? 'show' : ''}" id="collapseAlojamientoMobile">
+                        <ul class="reda-sub-menu-list">
+                            <li>
+                                <a href="${APP_URL}/properties" class="${path.includes('/properties') ? 'reda-active-option' : ''}">
+                                    <i class="far fa-list-alt mr-3"></i>${textoMisListados}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${APP_URL}/my-bookings" class="${path.includes('/my-bookings') ? 'reda-active-option' : ''}">
+                                    <i class="fa fa-bookmark mr-3"></i>${textoReservaciones}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${APP_URL}/trips/active" class="${path.includes('/trips/active') ? 'reda-active-option' : ''}">
+                                    <i class="fa fa-suitcase mr-3"></i>${textoMisViajes}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 `;
 
                 linkPropiedadesMobile.before(alojamientoHtmlMobile);
@@ -219,16 +224,19 @@ export const menuLateralUsuario = () =>
                 linkViajesMobile.remove();
             }
 
+            // MATCH TORBIAN STRUCTURE: li > a for simple links + inner div for alignment
             const menuInyectarMobile = `
-                <li class="nav-item-plugin-mobile">
+                <li data-reda-plugin>
                     <a href="${APP_URL}/reda/negocios/index-experiencias">
-                        <i class="fas fa-store mr-3"></i>${textoNegocios}
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-store mr-3"></i>${textoNegocios}
+                        </div>
                     </a>
                 </li>
             `;
 
             // Insertamos Negocios después de nuestro nuevo menú de Alojamiento móvil
-            const nuevoMenuAlojamientoMobile = $('#collapseAlojamientoMobile').closest('.nav-item-plugin-mobile');
+            const nuevoMenuAlojamientoMobile = $('#collapseAlojamientoMobile');
             if (nuevoMenuAlojamientoMobile.length) {
                 nuevoMenuAlojamientoMobile.after(menuInyectarMobile);
             } else {
@@ -247,30 +255,30 @@ export const menuLateralUsuario = () =>
                 const isReviewsNegociosActive = path.includes('/reda/negocios/mis-calificaciones');
 
                 const nestedHtmlMobile = `
-                    <li class="nav-item-plugin-mobile">
-                        <a data-toggle="collapse" href="#collapseAlojamientosReviewsMobile" class="reda-sub-menu-toggle">
-                            <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
+                    <a data-toggle="collapse" href="#collapseAlojamientosReviewsMobile" role="button" class="reda-sub-menu-toggle">
+                        <li class="d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-home mr-3"></i>${textoAlojamientos}</div>
                             <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
-                        </a>
-                        <div class="collapse ${isReviewsAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosReviewsMobile">
-                            <ul class="reda-sub-menu-list">
-                                <li><a href="${APP_URL}/users/reviews" class="${path.includes('/users/reviews') ? 'reda-active-option' : ''}">${textoCalificacionesObtenidas}</a></li>
-                                <li><a href="${APP_URL}/users/reviews_by_you" class="${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">${textoCalificacionesRealizadas}</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item-plugin-mobile">
-                        <a data-toggle="collapse" href="#collapseNegociosReviewsMobile" class="reda-sub-menu-toggle">
-                            <span><i class="fas fa-store mr-3"></i>${textoNegocios}</span>
+                        </li>
+                    </a>
+                    <div class="collapse ${isReviewsAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosReviewsMobile">
+                        <ul class="reda-sub-menu-list">
+                            <li><a href="${APP_URL}/users/reviews" class="${path.includes('/users/reviews') ? 'reda-active-option' : ''}">${textoCalificacionesObtenidas}</a></li>
+                            <li><a href="${APP_URL}/users/reviews_by_you" class="${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">${textoCalificacionesRealizadas}</a></li>
+                        </ul>
+                    </div>
+                    <a data-toggle="collapse" href="#collapseNegociosReviewsMobile" role="button" class="reda-sub-menu-toggle">
+                        <li class="d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-store mr-3"></i>${textoNegocios}</div>
                             <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
-                        </a>
-                        <div class="collapse ${isReviewsNegociosActive ? 'show' : ''}" id="collapseNegociosReviewsMobile">
-                            <ul class="reda-sub-menu-list">
-                                <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/qr" class="${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}"><i class="fas fa-qrcode mr-3"></i>${textoQrCalificaciones}</a></li>
-                                <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/listado" class="${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}"><i class="fas fa-star mr-3"></i>${textoListadoCalificaciones}</a></li>
-                            </ul>
-                        </div>
-                    </li>
+                        </li>
+                    </a>
+                    <div class="collapse ${isReviewsNegociosActive ? 'show' : ''}" id="collapseNegociosReviewsMobile">
+                        <ul class="reda-sub-menu-list">
+                            <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/qr" class="${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}"><i class="fas fa-qrcode mr-3"></i>${textoQrCalificaciones}</a></li>
+                            <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/listado" class="${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}"><i class="fas fa-star mr-3"></i>${textoListadoCalificaciones}</a></li>
+                        </ul>
+                    </div>
                 `;
                 ul.append(nestedHtmlMobile);
 
