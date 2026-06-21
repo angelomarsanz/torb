@@ -122,6 +122,8 @@ export const menuLateralUsuario = () =>
                 // Mark the main review icon/header if any child is active
                 if (isAnyReviewActive) {
                     reviewsToggleSidebar.addClass('reda-active-option');
+                    reviewsCollapseSidebar.addClass('show');
+                    reviewsToggleSidebar.find('.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
                 }
 
                 const nestedHtml = `
