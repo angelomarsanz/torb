@@ -89,7 +89,7 @@ export const menuLateralUsuario = () =>
                 linkViajes.remove();
             }
 
-            const isNegociosActive = path.includes('/reda/negocios');
+            const isNegociosActive = path.includes('/reda/negocios') && !path.includes('/reda/negocios/mis-calificaciones');
             const bloqueNegociosSidebar = `
                 <a class="text-color font-weight-500 mt-1 ${isNegociosActive ? 'reda-active-option' : ''}" href="${APP_URL}/reda/negocios/index-experiencias" data-reda-plugin>
                     <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4">
@@ -136,7 +136,7 @@ export const menuLateralUsuario = () =>
                     <div class="collapse ${isReviewsAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosReviews">
                         <ul class="reda-sub-menu-list">
                             <a href="${APP_URL}/users/reviews">
-                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews') ? 'reda-active-option' : ''}">
+                                <li class="list-group-item vbg-default-hover border-0 ${path.includes('/users/reviews') && !path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">
                                     ${textoCalificacionesObtenidas}
                                 </li>
                             </a>
