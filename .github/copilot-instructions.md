@@ -247,11 +247,11 @@ Cuando se haga clic o se toquen los botones de control de paginación hacia atr�
 
 ## Paginación en el frontend
 En el frontend se crearán carruseles para mostrar los elementos de una lista
-Se deben mostrar los elementos de 10 en 10
+Se deben mostrar los primeros 10 elementos de la lista
 Para la vista de escritorio el carrusel tendrá dos controles en la parte superior derecha para avanzar o retroceder en la lista
 En la vista del celular se desplazará se desplazará el carrusel desplazándose con el dedo
-En el frontend no tendrá botones de controles de paginación en la vista de celular y tampoco en la de escritorio, sino que cuando la aplicación detecte que el usuario ya vió el último o el primer elemento de la lista e intente seguir desplazándose con el dedo hacia adelante o hacia atrás y en la vista de escritorio continúe haciendo clic en los botones de desplazamiento hacia adelante o hacia atrás y ya no haya más que elementos mostrar en la lista, debe entonces mostrar una animación de espera y enviar una llamada ajax solicitando los 10 siguientes elementos de la lista ya sea hacia atrás o hacia adelante.
-Cuando una vista de escritorio o celular tenga varios carruseles, la paginación automática de un carrusel debe ser independiente de los otros carruseles. Si un usuario se está desplazando hacia adelante o hacia atrás en un determinado carrusel y llega al final o al principio y no hay más qué elementos de la lista mostrar, entonces se hará la petición ajax para el carrusel que se está manipulando en el momento y se actualizará únicamente ese carrusel, los demás deben conservar los elementos actuales y solo se actualizarán esos otros carruseles cuando se estén manipulando.
+En el frontend no tendrá botones de controles de paginación en la vista de celular y tampoco en la de escritorio, sino que después de mostrar los primeros 10 elementos de la lista o si son menos de 10 los que existan, se creará un último elemento con una collage de fotos explotado con algunas de las imágenes de la lista. Y abajo dirá "Ver todos" o "Ver todas" según el caso. Al hacer clic o tocar en Ver todos se abrirá un modal que mostrará los primeros 10 elementos de la lista. Al paginear en el modal y llegar al final de la lista se mostrará una animación y se enviará una petición ajax para traer los siguientes 10 elementos los cuales se agregarán al final de la lista y así cada vez que se llegue al final de lista. Osea se irá creando un listado infinito.
+Cuando una vista de escritorio o celular tenga varios carruseles, deben ser independientes uno de otro. Lo que se esté manipulando en un carrusel no tiene que afectar los otros carruseles
 
 ## Creación de nuevas vistas
 Cuando se cree una nueva vista, se debe:

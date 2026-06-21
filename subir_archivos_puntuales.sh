@@ -18,7 +18,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- PLUGIN REDA ALOJAMIENTO: GENERAL ---
     #"packages/Reda/RedaAlojamiento/composer.json"
     #"packages/Reda/RedaAlojamiento/config/reda-alojamiento.php"
-    "packages/Reda/RedaAlojamiento/resources/lang/es.json"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es.json"
     #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     #"packages/Reda/RedaAlojamiento/routes/web.php"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
@@ -121,6 +121,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
+    "packages/Reda/RedaAlojamiento/resources/js/general/main.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/utilidades/listadoInfinito.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"

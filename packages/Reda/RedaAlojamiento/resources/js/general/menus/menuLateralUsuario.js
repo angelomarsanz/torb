@@ -187,30 +187,28 @@ export const menuLateralUsuario = () =>
             const linkViajesMobile = $(containerMobile).find('a[href*="/trips/active"]').parent('li');
 
             if (linkPropiedadesMobile.length && linkReservacionesMobile.length && linkViajesMobile.length && !$('#collapseAlojamientoMobile').length) {
-                const isAlojamientoActive = path.includes('/properties') || path.includes('/my-bookings') || path.includes('/trips/active');
-
                 // MATCH TORBIAN STRUCTURE: a > li for collapsible
                 const alojamientoHtmlMobile = `
                     <a data-toggle="collapse" href="#collapseAlojamientoMobile" role="button" data-reda-plugin class="reda-sub-menu-toggle">
                         <li class="d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
-                            <i class="fas ${isAlojamientoActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
+                            <i class="fas fa-angle-right reda-sub-menu-arrow pr-3"></i>
                         </li>
                     </a>
-                    <div class="collapse ${isAlojamientoActive ? 'show' : ''}" id="collapseAlojamientoMobile">
+                    <div class="collapse" id="collapseAlojamientoMobile">
                         <ul class="reda-sub-menu-list">
                             <li>
-                                <a href="${APP_URL}/properties" class="${path.includes('/properties') ? 'reda-active-option' : ''}">
+                                <a href="${APP_URL}/properties">
                                     <i class="far fa-list-alt mr-3"></i>${textoMisListados}
                                 </a>
                             </li>
                             <li>
-                                <a href="${APP_URL}/my-bookings" class="${path.includes('/my-bookings') ? 'reda-active-option' : ''}">
+                                <a href="${APP_URL}/my-bookings">
                                     <i class="fa fa-bookmark mr-3"></i>${textoReservaciones}
                                 </a>
                             </li>
                             <li>
-                                <a href="${APP_URL}/trips/active" class="${path.includes('/trips/active') ? 'reda-active-option' : ''}">
+                                <a href="${APP_URL}/trips/active">
                                     <i class="fa fa-suitcase mr-3"></i>${textoMisViajes}
                                 </a>
                             </li>
@@ -249,32 +247,29 @@ export const menuLateralUsuario = () =>
                 const ul = reviewsCollapseMobile.find('ul').first();
                 ul.empty();
                 
-                const isReviewsAlojamientosActive = path.includes('/users/reviews') || path.includes('/users/reviews_by_you');
-                const isReviewsNegociosActive = path.includes('/reda/negocios/mis-calificaciones');
-
                 const nestedHtmlMobile = `
                     <a data-toggle="collapse" href="#collapseAlojamientosReviewsMobile" role="button" class="reda-sub-menu-toggle">
                         <li class="d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-home mr-3"></i>${textoAlojamientos}</span>
-                            <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
+                            <i class="fas fa-angle-right reda-sub-menu-arrow pr-3"></i>
                         </li>
                     </a>
-                    <div class="collapse ${isReviewsAlojamientosActive ? 'show' : ''}" id="collapseAlojamientosReviewsMobile">
+                    <div class="collapse" id="collapseAlojamientosReviewsMobile">
                         <ul class="reda-sub-menu-list">
-                            <li><a href="${APP_URL}/users/reviews" class="${path.includes('/users/reviews') ? 'reda-active-option' : ''}">${textoCalificacionesObtenidas}</a></li>
-                            <li><a href="${APP_URL}/users/reviews_by_you" class="${path.includes('/users/reviews_by_you') ? 'reda-active-option' : ''}">${textoCalificacionesRealizadas}</a></li>
+                            <li><a href="${APP_URL}/users/reviews">${textoCalificacionesObtenidas}</a></li>
+                            <li><a href="${APP_URL}/users/reviews_by_you">${textoCalificacionesRealizadas}</a></li>
                         </ul>
                     </div>
                     <a data-toggle="collapse" href="#collapseNegociosReviewsMobile" role="button" class="reda-sub-menu-toggle">
                         <li class="d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-store mr-3"></i>${textoNegocios}</span>
-                            <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-3"></i>
+                            <i class="fas fa-angle-right reda-sub-menu-arrow pr-3"></i>
                         </li>
                     </a>
-                    <div class="collapse ${isReviewsNegociosActive ? 'show' : ''}" id="collapseNegociosReviewsMobile">
+                    <div class="collapse" id="collapseNegociosReviewsMobile">
                         <ul class="reda-sub-menu-list">
-                            <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/qr" class="${path.includes('/mis-calificaciones/qr') ? 'reda-active-option' : ''}"><i class="fas fa-qrcode mr-3"></i>${textoQrCalificaciones}</a></li>
-                            <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/listado" class="${path.includes('/mis-calificaciones/listado') ? 'reda-active-option' : ''}"><i class="fas fa-star mr-3"></i>${textoListadoCalificaciones}</a></li>
+                            <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/qr"><i class="fas fa-qrcode mr-3"></i>${textoQrCalificaciones}</a></li>
+                            <li><a href="${APP_URL}/reda/negocios/mis-calificaciones/listado"><i class="fas fa-star mr-3"></i>${textoListadoCalificaciones}</a></li>
                         </ul>
                     </div>
                 `;
@@ -329,6 +324,43 @@ export const menuLateralUsuario = () =>
                 dashboardRow.append(cardNegociosHtml);
             }
         }
+
+        // --- GESTIÓN MANUAL DE ESTADO ACTIVO (MÓVIL) ---
+        // Deshabilitado por requerimiento: Se busca que el menú inicie "frío" (todo verde normal y colapsado)
+        /*
+        const gestionarActivoMovil = () => {
+            const path = window.location.pathname;
+            $('.mobile-side a').each(function() {
+                const href = $(this).attr('href');
+                if (!href || href === '#' || href === 'javascript:void(0)') return;
+
+                // Normalizar href para comparación (quitar dominio si existe)
+                const urlObj = new URL(href, window.location.origin);
+                const linkPath = urlObj.pathname;
+
+                // Coincidencia exacta o parcial (para rutas con parámetros)
+                const isMatch = (path === linkPath) || (path.startsWith(linkPath) && linkPath !== '/');
+
+                if (isMatch) {
+                    $(this).addClass('active reda-active-option');
+                    $(this).closest('li').addClass('active reda-active-option');
+                    
+                    // Si está dentro de un colapsable, abrirlo y marcar el padre
+                    const parentCollapse = $(this).closest('.collapse');
+                    if (parentCollapse.length) {
+                        parentCollapse.addClass('show');
+                        const toggle = parentCollapse.prev('.reda-sub-menu-toggle, [data-toggle="collapse"]');
+                        toggle.addClass('active reda-active-option');
+                        toggle.find('.reda-sub-menu-arrow').removeClass('fa-angle-right').addClass('fa-angle-down');
+                    }
+                }
+            });
+        };
+
+        // Ejecutar al cargar y cuando se abre el modal por si acaso
+        gestionarActivoMovil();
+        $(document).on('shown.bs.modal', '#left_modal', gestionarActivoMovil);
+        */
 
     })(jQuery);
 }

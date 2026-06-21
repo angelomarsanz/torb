@@ -989,30 +989,41 @@
     }
 }
 
-/* Ajustes para móviles: No colapsar */
+/* Ajustes para móviles */
 @media (max-width: 991px) {
     .navbar .container-fluid {
-        flex-wrap: nowrap !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
     }
 
     .navbar-brand {
         margin-right: 5px !important;
+        flex: 0 0 auto;
         img {
-            max-width: 100px;
+            max-width: 90px;
         }
     }
 
     .reda-menu-principal {
-        margin-left: 10px;
+        display: flex !important;
+        visibility: visible !important;
+        margin-left: 5px;
         gap: 8px;
-        margin-right: 5px;
+        margin-right: auto;
+        flex: 1 1 auto;
+        justify-content: center;
     }
 
     .reda-menu-item {
-        padding: 2px 5px;
+        padding: 2px 4px;
         .reda-menu-icon svg {
-            width: 18px;
-            height: 18px;
+            width: 18px !important;
+            height: 18px !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         .reda-menu-text {
             font-size: 9px;
@@ -2283,6 +2294,41 @@
 
 /* Ajustes específicos para el modal móvil */
 .mobile-side {
+    // Estilos base para el contenido del modal lateral
+    & a, & li, & span {
+        color: #1dbf73 !important;
+        text-decoration: none !important;
+        font-weight: normal !important;
+    }
+
+    // Iconos en el modal: FA Solid requiere 900 para ser visible
+    & i {
+        color: #1dbf73 !important;
+        font-weight: 900 !important;
+        display: inline-block !important;
+        width: 25px !important;
+        text-align: center !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    // Estado activo (si se llegara a usar en el futuro): Negrita extrema
+    .active, 
+    .active-sidebar, 
+    .reda-active-option,
+    .active a,
+    .active i,
+    .active span,
+    .active-sidebar a,
+    .active-sidebar i,
+    .active-sidebar span,
+    .reda-active-option a,
+    .reda-active-option i,
+    .reda-active-option span {
+        font-weight: 900 !important;
+    }
+
+    /* Sub-menús inyectados */
     .reda-sub-menu-list {
         padding-left: 35px !important;
         border-left: none;
@@ -2296,23 +2342,30 @@
         a {
             border: none !important;
             padding: 5px 0 !important;
-            color: #1dbf73 !important;
         }
     }
 
-    /* Mimetizar color Torbian y alinear texto verticalmente */
+    /* Alineación para elementos REDA */
     [data-reda-plugin], .reda-sub-menu-toggle {
         list-style: none;
-        
-        a, li {
-            color: #1dbf73 !important;
-        }
+    }
+}
 
-        /* Ancho fijo de icono para alinear el comienzo del texto en todas las opciones */
-        i.mr-3 {
-            width: 25px !important;
-            text-align: center !important;
-            display: inline-block !important;
+/* --- FORZAR VISIBILIDAD DE ICONOS EN NAVBAR (RESTURACIÓN) --- */
+#reda-menu-principal, .reda-menu-principal {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    
+    .reda-menu-item {
+        display: flex !important;
+        
+        .reda-menu-icon {
+            display: block !important;
+            svg {
+                display: block !important;
+                visibility: visible !important;
+            }
         }
     }
 }
