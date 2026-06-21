@@ -51,7 +51,7 @@ export const menuLateralUsuario = () =>
                 const isAlojamientoActive = path.includes('/properties') || path.includes('/my-bookings') || path.includes('/trips/active');
 
                 const alojamientoHtml = `
-                    <a data-toggle="collapse" href="#collapseAlojamientoMain" class="text-color font-weight-500 mt-1" role="button" data-reda-plugin>
+                    <a data-toggle="collapse" href="#collapseAlojamientoMain" class="text-color font-weight-500 mt-1 ${isAlojamientoActive ? 'reda-active-option' : ''}" role="button" data-reda-plugin>
                         <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4 mb-0">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
@@ -89,8 +89,9 @@ export const menuLateralUsuario = () =>
                 linkViajes.remove();
             }
 
+            const isNegociosActive = path.includes('/reda/negocios');
             const bloqueNegociosSidebar = `
-                <a class="text-color font-weight-500 mt-1" href="${APP_URL}/reda/negocios/index-experiencias" data-reda-plugin>
+                <a class="text-color font-weight-500 mt-1 ${isNegociosActive ? 'reda-active-option' : ''}" href="${APP_URL}/reda/negocios/index-experiencias" data-reda-plugin>
                     <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4">
                         <i class="fas fa-store mr-3 text-18 align-middle"></i>
                         ${textoNegocios}
@@ -116,13 +117,19 @@ export const menuLateralUsuario = () =>
                 
                 const isReviewsAlojamientosActive = path.includes('/users/reviews') || path.includes('/users/reviews_by_you');
                 const isReviewsNegociosActive = path.includes('/reda/negocios/mis-calificaciones');
+                const isAnyReviewActive = isReviewsAlojamientosActive || isReviewsNegociosActive;
+
+                // Mark the main review icon/header if any child is active
+                if (isAnyReviewActive) {
+                    reviewsToggleSidebar.addClass('reda-active-option');
+                }
 
                 const nestedHtml = `
-                    <a data-toggle="collapse" href="#collapseAlojamientosReviews" class="reda-sub-menu-toggle text-color" role="button">
-                        <li class="list-group-item vbg-default-hover border-0 pl-25">
-                            <div class="d-flex justify-content-between align-items-center w-100">
-                                <div><i class="fas fa-home mr-3 text-18"></i>${textoAlojamientos}</div>
-                                <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
+                    <a data-toggle="collapse" href="#collapseAlojamientosReviews" class="reda-sub-menu-toggle text-color ${isReviewsAlojamientosActive ? 'reda-active-option' : ''}" role="button">
+                        <li class="list-group-item vbg-default-hover border-0 pl-25 text-14 py-3">
+                            <div class="d-flex justify-content-between align-items-center w-100 flex-nowrap">
+                                <div><i class="fas fa-home mr-3 text-16"></i>${textoAlojamientos}</div>
+                                <i class="fas ${isReviewsAlojamientosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-5 ml-3"></i>
                             </div>
                         </li>
                     </a>
@@ -140,11 +147,11 @@ export const menuLateralUsuario = () =>
                             </a>
                         </ul>
                     </div>
-                    <a data-toggle="collapse" href="#collapseNegociosReviews" class="reda-sub-menu-toggle text-color" role="button">
-                        <li class="list-group-item vbg-default-hover border-0 pl-25">
-                            <div class="d-flex justify-content-between align-items-center w-100">
-                                <div><i class="fas fa-store mr-3 text-18"></i>${textoNegocios}</div>
-                                <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
+                    <a data-toggle="collapse" href="#collapseNegociosReviews" class="reda-sub-menu-toggle text-color ${isReviewsNegociosActive ? 'reda-active-option' : ''}" role="button">
+                        <li class="list-group-item vbg-default-hover border-0 pl-25 text-14 py-3">
+                            <div class="d-flex justify-content-between align-items-center w-100 flex-nowrap">
+                                <div><i class="fas fa-store mr-3 text-16"></i>${textoNegocios}</div>
+                                <i class="fas ${isReviewsNegociosActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-5 ml-3"></i>
                             </div>
                         </li>
                     </a>
