@@ -62,13 +62,13 @@
                                                         }
                                                     @endphp
                                                     
-                                                    @if($logo)
-                                                        <img src="{{ $logo }}" class="img-negocio-detalle shadow-sm mr-3" alt="{{ $experiencia->titulo }}">
-                                                    @else
-                                                        <div class="img-negocio-detalle d-flex align-items-center justify-content-center bg-light border mr-3">
+                                                    <div class="negocio-media-detalle-container mr-3">
+                                                        @if($logo)
+                                                            <img src="{{ $logo }}" class="img-negocio-detalle" alt="{{ $experiencia->titulo }}">
+                                                        @else
                                                             <i class="fas fa-store text-muted opacity-05"></i>
-                                                        </div>
-                                                    @endif
+                                                        @endif
+                                                    </div>
 
                                                     <div>
                                                         <h3 class="text-18 font-weight-700 m-0">{{ $experiencia->titulo }}</h3>
@@ -107,7 +107,7 @@
                                                         ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
                                                         : asset('public/images/default-profile.png');
                                                 @endphp
-                                                <img src="{{ $rutaFotoUsuario }}" class="img-profile-list img-size-40 shadow-sm">
+                                                <img src="{{ $rutaFotoUsuario }}" class="img-profile-list shadow-sm">
                                             </div>
                                         </div>
                                     </div>

@@ -57,13 +57,13 @@
                                             @endphp
                                             <tr>
                                                 <td class="text-center">
-                                                    @if($logo)
-                                                        <img src="{{ $logo }}" class="img-negocio-resumen shadow-sm" alt="{{ $negocio->titulo }}">
-                                                    @else
-                                                        <div class="img-negocio-resumen d-flex align-items-center justify-content-center bg-light border">
+                                                    <div class="negocio-media-resumen-container mx-auto">
+                                                        @if($logo)
+                                                            <img src="{{ $logo }}" class="img-negocio-resumen" alt="{{ $negocio->titulo }}">
+                                                        @else
                                                             <i class="fas fa-store fa-2x text-muted opacity-05"></i>
-                                                        </div>
-                                                    @endif
+                                                        @endif
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <div class="text-18 font-weight-700">{{ $negocio->titulo }}</div>
@@ -120,13 +120,13 @@
                                         <div class="card-body p-3">
                                             <div class="d-flex align-items-center">
                                                 <div class="mr-3">
-                                                    @if($logo)
-                                                        <img src="{{ $logo }}" class="img-negocio-mobile shadow-sm" alt="{{ $negocio->titulo }}">
-                                                    @else
-                                                        <div class="img-negocio-mobile d-flex align-items-center justify-content-center bg-light border">
+                                                    <div class="negocio-media-mobile-container">
+                                                        @if($logo)
+                                                            <img src="{{ $logo }}" class="img-negocio-mobile" alt="{{ $negocio->titulo }}">
+                                                        @else
                                                             <i class="fas fa-store fa-lg text-muted opacity-05"></i>
-                                                        </div>
-                                                    @endif
+                                                        @endif
+                                                    </div>
                                                 </div>
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <h3 class="text-16 font-weight-700 m-0 text-truncate">{{ $negocio->titulo }}</h3>

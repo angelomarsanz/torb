@@ -1889,6 +1889,7 @@
 .img-size-70 { width: 70px; height: 70px; }
 .img-size-50 { width: 50px; height: 50px; }
 .img-size-48 { width: 48px; height: 48px; }
+.img-size-40 { width: 40px; height: 40px; }
 
 /* Contenedor simétrico para logo o portada de negocio */
 .negocio-media-container {
@@ -2497,25 +2498,64 @@
 }
 
 /* --- RESUMEN Y DETALLE DE CALIFICACIONES --- */
-.img-negocio-resumen {
-    width: 80px;
+.negocio-media-resumen-container {
     height: 80px;
-    object-fit: cover;
-    border-radius: 12px;
+    min-width: 80px;
+    max-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    overflow: visible;
+}
+
+.img-negocio-resumen {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.negocio-media-mobile-container {
+    height: 60px;
+    min-width: 60px;
+    max-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    overflow: visible;
 }
 
 .img-negocio-mobile {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 10px;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.negocio-media-detalle-container {
+    height: 50px;
+    min-width: 50px;
+    max-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    overflow: visible;
 }
 
 .img-negocio-detalle {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 8px;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
 }
 
 .card-negocio {
@@ -2523,6 +2563,14 @@
     &:hover {
         transform: translateY(-2px);
     }
+}
+
+.img-profile-list {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    flex-shrink: 0; /* Evita que se deforme en flexbox */
 }
 
 .comment-box-review {
