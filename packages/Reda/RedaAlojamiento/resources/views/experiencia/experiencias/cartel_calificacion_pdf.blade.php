@@ -93,13 +93,7 @@
             background-color: #DDDDDD;
             margin: 0 auto 40px auto;
         }
-        .pdf-cartel-business-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #eee;
-        }
+        
         .pdf-cartel-business-name {
             font-size: 36px;
             font-weight: 800;
@@ -113,33 +107,47 @@
             letter-spacing: 3px;
             font-weight: 600;
         }
-    </style>
-</head>
-<body class="pdf-cartel-body">
-    @php
-        // Lógica para el logo del negocio o imagen destacada
+        .pdf-cartel-business-logo {
+            max-height: 80px;
+            width: auto;
+            margin-bottom: 15px;
+            /* Se elimina el border sólido para respetar la forma geométrica */
+        }
+        .pdf-icon-placeholder {
+            font-size: 40px;
+            color: #717171;
+            margin-bottom: 15px;
+        }
+        </style>
+        </head>
+        <body class="pdf-cartel-body">
+        @php
+        // Lógica para el logo del negocio o imagen destacada siguiendo PRIORIDAD ESTRICTA
         $rutaImagenNegocio = null;
         
-        // 1. Intentar con el logo específico del negocio
+        // Prioridad 1: Logo del comercio (ruta_imagenes)
         if (!empty($experiencia->ruta_imagenes)) {
             $pathLogo = public_path('images/logos_negocios/' . $experiencia->ruta_imagenes);
             if (file_exists($pathLogo)) {
                 $rutaImagenNegocio = $pathLogo;
             }
         }
-        
-        // 2. Si no hay logo, intentar con la primera foto (destacada)
-        if (!$rutaImagenNegocio && $experiencia->fotos && $experiencia->fotos->count() > 0) {
-            $foto = $experiencia->fotos->first();
-            $pathFoto = public_path('images/experiencias/' . $experiencia->id . '/' . $foto->photo);
-            if (file_exists($pathFoto)) {
-                $rutaImagenNegocio = $pathFoto;
+
+        // Prioridad 2 y 3: Foto de portada (Destacada > Primera) usando el accesor del modelo
+        if (!$rutaImagenNegocio) {
+            $fotoPortada = $experiencia->foto_portada;
+            if ($fotoPortada) {
+                $pathFoto = public_path('images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo);
+                if (file_exists($pathFoto)) {
+                    $rutaImagenNegocio = $pathFoto;
+                }
             }
         }
-        
+
         // Ruta del logo de Torbian
         $pathLogoTorbian = public_path('front/images/logos/1755989952_logo.png');
-    @endphp
+        @endphp
+
 
     <div class="pdf-cartel-container">
         <div class="pdf-cartel-header">
@@ -169,6 +177,9 @@
             
             @if($rutaImagenNegocio)
                 <img src="{{ $rutaImagenNegocio }}" class="pdf-cartel-business-logo">
+            @else
+                {{-- Prioridad 4: Ícono genérico si no hay imagen --}}
+                <div class="pdf-icon-placeholder">🛒</div>
             @endif
 
             <div class="pdf-cartel-business-name">{{ $experiencia->titulo }}</div>

@@ -31,7 +31,7 @@
             });
 
             /**
-             * Manejo del botón para generar y descargar SOLO el código QR.
+             * Manejo del botón para generar y descargar el código QR individual.
              * Esta opción permite al usuario usar el QR en sus propios diseños.
              */
             $(document).on('click', '.btn-generar-qr', function(e) {
@@ -50,7 +50,7 @@
             });
 
             /**
-             * Manejo del botón para descargar el cartel (PDF).
+             * Manejo del botón para descargar el cartel (PDF) con código QR.
              * Como el listener global de notificaciones.js ahora ignora enlaces con 'no-esperar',
              * manejamos manualmente la visibilidad aquí para evitar que el modal quede bloqueado
              * permanentemente debido a que las descargas no disparan eventos de navegación.
@@ -102,7 +102,7 @@
                             const imgData = canvas.toDataURL("image/png");
                             const link = document.createElement('a');
                             link.href = imgData;
-                            link.download = `QR_Individual_${nombre.replace(/\s+/g, '_')}.png`;
+                            link.download = `QR_${nombre.replace(/\s+/g, '_')}.png`;
                             document.body.appendChild(link);
                             link.click();
                             document.body.removeChild(link);

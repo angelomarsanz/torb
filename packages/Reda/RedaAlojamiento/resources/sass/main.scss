@@ -1889,6 +1889,28 @@
 .img-size-70 { width: 70px; height: 70px; }
 .img-size-50 { width: 50px; height: 50px; }
 .img-size-48 { width: 48px; height: 48px; }
+
+/* Contenedor simétrico para logo o portada de negocio */
+.negocio-media-container {
+    height: 60px;
+    min-width: 60px;
+    max-width: 120px; /* Permite logos rectangulares más anchos */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent; /* Fondo transparente para respetar la forma geométrica */
+    overflow: visible;
+}
+
+.img-negocio-logo, .img-negocio-portada {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain; /* CRUCIAL: no trunca ni corta la imagen */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); /* Sombra que sigue la forma de la imagen */
+}
+
 .img-size-30 { width: 30px; height: 30px; }
 .img-size-25 { width: 25px; height: 25px; }
 
@@ -2433,5 +2455,38 @@
                 visibility: visible !important;
             }
         }
+    }
+}
+
+/* --- MATERIAL PARA CALIFICACIONES (BOTONES QR) --- */
+.btn-reda-qr {
+    background-color: transparent;
+    border: 1px solid #222; /* Línea suave negra */
+    color: #28a745; /* Texto verde mantenido */
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 12px;
+    padding: 12px 20px;
+    text-decoration: none !important;
+    cursor: pointer;
+
+    i {
+        font-size: 18px;
+    }
+
+    &:hover {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: #fff !important;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(40, 167, 69, 0.2);
+    }
+
+    &:active {
+        transform: scale(0.97);
     }
 }

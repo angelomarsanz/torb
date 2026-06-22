@@ -2,6 +2,8 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
+    {{-- Incluimos el CSS general del plugin para los estilos personalizados del botón --}}
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/css/reda/reda-general-main.min.css?v=' . time()) }}" />
 @endpush
 
 @section('main')
@@ -37,13 +39,36 @@
                                     <div class="card-body p-4 d-flex flex-column">
                                         {{-- Info del Negocio --}}
                                         <div class="d-flex align-items-center mb-4">
-                                            <div class="mr-3">
-                                                @php
-                                                    $foto = $experiencia->fotos->first();
-                                                    $rutaFoto = $foto ? asset('public/images/experiencias/'.$experiencia->id.'/'.$foto->photo) : asset('public/img/unnamed.png');
-                                                @endphp
-                                                <img src="{{ $rutaFoto }}" class="rounded-3 img-size-50 object-fit-cover">
+                                            @php
+                                                $logo = $experiencia->ruta_imagenes;
+                                                $fotoPortada = $experiencia->foto_portada; // Accesor que ya prioriza Destacada > Primera
+                                                
+                                                $rutaImagen = null;
+                                                $esLogo = false;
+
+                                                // Prioridad 1: Logo del comercio
+                                                if ($logo) {
+                                                    $rutaImagen = asset('public/images/logos_negocios/'.$logo);
+                                                    $esLogo = true;
+                                                } 
+                                                // Prioridad 2 y 3: Foto Destacada o en su defecto la Primera foto
+                                                elseif ($fotoPortada) {
+                                                    $rutaImagen = asset('public/images/experiencias/'.$experiencia->id.'/'.$fotoPortada->photo);
+                                                    $esLogo = false;
+                                                }
+                                            @endphp
+
+                                            <div class="negocio-media-container mr-3">
+                                                @if($rutaImagen)
+                                                    <img src="{{ $rutaImagen }}" 
+                                                         class="{{ $esLogo ? 'img-negocio-logo' : 'img-negocio-portada' }}"
+                                                         alt="{{ $experiencia->titulo }}">
+                                                @else
+                                                    {{-- Prioridad 4: Ícono por defecto si no hay ninguna imagen --}}
+                                                    <i class="fas fa-store text-muted" style="font-size: 24px;"></i>
+                                                @endif
                                             </div>
+
                                             <div class="overflow-hidden">
                                                 <h3 class="text-16 font-weight-700 m-0 text-truncate">{{ $experiencia->titulo }}</h3>
                                                 <span class="badge bg-light text-dark border small">{{ $experiencia->categoria_negocio }}</span>
@@ -62,18 +87,18 @@
                                         {{-- Acciones --}}
                                         <div class="mt-auto">
                                             <div class="row m-0">
-                                                <div class="col-12 p-0 mb-2">
-                                                    <a href="{{ route('reda.negocios.experiencias.descargar_cartel', $experiencia->id) }}" class="btn vbtn-success w-100 font-weight-700 py-2 no-esperar btn-descargar-cartel">
-                                                        <i class="fas fa-file-pdf mr-2"></i> {{ __('Generar Cartel Impresión') }}
-                                                    </a>
-                                                </div>
-                                                <div class="col-12 p-0">
-                                                    <button class="btn btn-outline-dark w-100 font-weight-700 btn-generar-qr py-2" 
+                                                <div class="col-12 p-0 mb-3">
+                                                    <button class="btn btn-reda-qr w-100 btn-generar-qr shadow-sm" 
                                                             data-id="{{ $experiencia->id }}"
                                                             data-url="{{ route('reda.negocios.experiencias.calificar', $experiencia->id) }}"
                                                             data-nombre="{{ $experiencia->titulo }}">
-                                                        <i class="fas fa-image mr-2"></i> {{ __('Descargar Solo QR') }}
+                                                        <i class="fas fa-download"></i> {{ __('Descargar QR') }}
                                                     </button>
+                                                </div>
+                                                <div class="col-12 p-0">
+                                                    <a href="{{ route('reda.negocios.experiencias.descargar_cartel', $experiencia->id) }}" class="btn btn-reda-qr w-100 no-esperar btn-descargar-cartel shadow-sm">
+                                                        <i class="fas fa-print"></i> {{ __('Generar cartel con código QR') }}
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
