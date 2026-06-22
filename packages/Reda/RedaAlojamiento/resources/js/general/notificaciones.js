@@ -103,10 +103,24 @@ window.mostrarNotificacion = (titulo, mensaje, tipo, recargar) => {
     window.RedaNotificaciones.notificar(titulo, mensaje, tipo, recargar);
 };
 
-// --- GESTIÓN DE BFCACHE (PARA ELIMINAR EL MODAL AL REGRESAR ATRÁS EN MÓVILES) ---
+// --- GESTIÓN DE BFCACHE Y FOCO (PARA ELIMINAR EL MODAL AL REGRESAR ATRÁS O REENFOCAR) ---
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
+    }
+});
+
+/**
+ * Cuando el usuario regresa a la ventana (por ejemplo después de ver un PDF en móvil)
+ * ocultamos el modal de espera si está bloqueando la pantalla.
+ */
+window.addEventListener('focus', function() {
+    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+        const $modal = jQuery('#modal-notificacion');
+        // Solo si es el modal de espera (el que no tiene footer/botones)
+        if ($modal.length && $modal.find('.modal-footer').hasClass('d-none') && $modal.is(':visible')) {
             window.RedaNotificaciones.ocultar();
         }
     }
@@ -146,8 +160,8 @@ window.mostrarConfirmacion = (mensaje, callback, titulo = '', textoBoton = '') =
 // --- GESTIÓN DE CLICKS GLOBAL PARA EL PLUGIN (ANIMACIÓN DE CARGA) ---
 $(function() {
     $(document).on('click', 'a[href*="/reda/negocios"]', function(e) {
-        // Solo si es un link interno y no se está abriendo en pestaña nueva
-        if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+        // Solo si es un link interno, no se abre en pestaña nueva y no tiene la clase 'no-esperar'
+        if (this.href && !this.target && !e.ctrlKey && !e.metaKey && !$(this).hasClass('no-esperar')) {
              // Evitamos disparar si es el mismo ID de página (anclas #)
              if (!this.href.includes(window.location.pathname + '#')) {
                 window.RedaNotificaciones.esperar();

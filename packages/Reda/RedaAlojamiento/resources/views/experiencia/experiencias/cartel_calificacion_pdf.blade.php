@@ -4,98 +4,175 @@
     <meta charset="UTF-8">
     <title>Cartel de Calificación - {{ $experiencia->titulo }}</title>
     <style>
+        /* Estilos específicos para mPDF */
+        @page {
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             color: #222;
+            background-color: #fff;
         }
-        .page-container {
+        .pdf-cartel-container {
             width: 100%;
             height: 100%;
-            padding: 40px;
+            padding: 60px 40px;
             box-sizing: border-box;
             text-align: center;
+            position: relative;
         }
-        .header {
+        
+        /* Cabecera con Logo de Torbian (Destacado) */
+        .pdf-cartel-header {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .pdf-cartel-logo-torbian {
+            width: 220px;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Contenido Principal */
+        .pdf-cartel-content {
             margin-top: 20px;
         }
-        .logo {
-            width: 150px;
-            margin-bottom: 20px;
+        .pdf-cartel-title {
+            font-size: 56px;
+            font-weight: 900;
+            color: #FF385C; /* Color Torbian Red */
+            margin-bottom: 15px;
+            letter-spacing: -2px;
         }
-        .title {
-            font-size: 48px;
-            font-weight: bold;
-            color: #FF5A5F; /* Color Airbnb aproximado */
-            margin-bottom: 10px;
-        }
-        .subtitle {
+        .pdf-cartel-subtitle {
             font-size: 24px;
-            margin-bottom: 50px;
-            color: #484848;
+            margin-bottom: 60px;
+            color: #717171;
+            font-weight: 400;
         }
-        .qr-container {
-            margin: 40px auto;
-            padding: 30px;
-            border: 2px solid #eee;
-            display: inline-block;
+
+        /* Contenedor QR con diseño limpio */
+        .pdf-cartel-qr-wrapper {
+            margin: 0 auto;
+            padding: 40px;
             background: #fff;
-            border-radius: 20px;
+            border-radius: 40px;
+            border: 1px solid #DDDDDD;
+            display: inline-block;
         }
-        .qr-image {
-            width: 350px;
-            height: 350px;
-        }
-        .footer {
+
+        .pdf-cartel-instructions {
             margin-top: 50px;
-            border-top: 1px solid #eee;
-            padding-top: 30px;
-        }
-        .business-name {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .category {
             font-size: 18px;
-            color: #767676;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: #222;
+            font-weight: 600;
         }
-        .instructions {
-            margin-top: 40px;
+        .pdf-cartel-sub-instructions {
+            font-size: 14px;
+            color: #717171;
+            margin-top: 5px;
+        }
+
+        /* Pie de página con Logo del Negocio */
+        .pdf-cartel-footer {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 0 40px;
+        }
+        .pdf-cartel-footer-divider {
+            width: 80%;
+            height: 1px;
+            background-color: #DDDDDD;
+            margin: 0 auto 40px auto;
+        }
+        .pdf-cartel-business-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        .pdf-cartel-business-name {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #222;
+        }
+        .pdf-cartel-category {
             font-size: 16px;
-            color: #767676;
+            color: #717171;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
         }
     </style>
 </head>
-<body>
-    <div class="page-container">
-        <div class="header">
-            {{-- Logo Fijo por ahora --}}
-            <div class="logo-placeholder">
-                <h1 class="pdf-cartel-logo-text">Torbian</h1>
-            </div>
+<body class="pdf-cartel-body">
+    @php
+        // Lógica para el logo del negocio o imagen destacada
+        $rutaImagenNegocio = null;
+        
+        // 1. Intentar con el logo específico del negocio
+        if (!empty($experiencia->ruta_imagenes)) {
+            $pathLogo = public_path('images/logos_negocios/' . $experiencia->ruta_imagenes);
+            if (file_exists($pathLogo)) {
+                $rutaImagenNegocio = $pathLogo;
+            }
+        }
+        
+        // 2. Si no hay logo, intentar con la primera foto (destacada)
+        if (!$rutaImagenNegocio && $experiencia->fotos && $experiencia->fotos->count() > 0) {
+            $foto = $experiencia->fotos->first();
+            $pathFoto = public_path('images/experiencias/' . $experiencia->id . '/' . $foto->photo);
+            if (file_exists($pathFoto)) {
+                $rutaImagenNegocio = $pathFoto;
+            }
+        }
+        
+        // Ruta del logo de Torbian
+        $pathLogoTorbian = public_path('front/images/logos/1755989952_logo.png');
+    @endphp
+
+    <div class="pdf-cartel-container">
+        <div class="pdf-cartel-header">
+            @if(file_exists($pathLogoTorbian))
+                <img src="{{ $pathLogoTorbian }}" class="pdf-cartel-logo-torbian">
+            @endif
         </div>
 
-        <div class="content">
-            <div class="title">¡Danos tu opinión!</div>
-            <div class="subtitle">Escanea el código para calificarnos</div>
+        <div class="pdf-cartel-content">
+            <div class="pdf-cartel-title">{{ __('¡Danos tu opinión!') }}</div>
+            <div class="pdf-cartel-subtitle">{{ __('Escanea el código para calificarnos') }}</div>
 
-            <div class="qr-container">
-                {{-- Usamos el helper de mPDF para generar QR directamente en el PDF --}}
+            <div class="pdf-cartel-qr-wrapper">
                 <barcode code="{{ $urlCalificar }}" type="QR" size="2.5" error="H" />
             </div>
 
-            <div class="instructions">
-                Abre la cámara de tu celular y apunta al código QR
+            <div class="pdf-cartel-instructions">
+                {{ __('Abre la cámara de tu celular') }}
+            </div>
+            <div class="pdf-cartel-sub-instructions">
+                {{ __('y apunta directamente al código QR') }}
             </div>
         </div>
 
-        <div class="footer">
-            <div class="business-name">{{ $experiencia->titulo }}</div>
-            <div class="category">{{ $experiencia->categoria_negocio }}</div>
+        <div class="pdf-cartel-footer">
+            <div class="pdf-cartel-footer-divider"></div>
+            
+            @if($rutaImagenNegocio)
+                <img src="{{ $rutaImagenNegocio }}" class="pdf-cartel-business-logo">
+            @endif
+
+            <div class="pdf-cartel-business-name">{{ $experiencia->titulo }}</div>
+            <div class="pdf-cartel-category">{{ $experiencia->categoria_negocio }}</div>
         </div>
     </div>
 </body>

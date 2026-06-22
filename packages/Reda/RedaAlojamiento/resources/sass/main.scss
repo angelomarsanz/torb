@@ -1912,64 +1912,130 @@
 /* --- ESTILOS PARA EL CARTEL PDF (mPDF) --- */
 /* Nota: Se usan en la vista cartel_calificacion_pdf.blade.php */
 
+.pdf-cartel-page {
+    @page { margin: 0; padding: 0; }
+}
+
+.pdf-cartel-body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #222;
+    background-color: #fff;
+}
+
 .pdf-cartel-container {
     width: 100%;
     height: 100%;
-    padding: 40px;
+    padding: 60px 40px;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+}
+
+.pdf-cartel-header {
+    margin-bottom: 40px;
     text-align: center;
 }
 
+.pdf-cartel-logo-torbian {
+    width: 60px;
+    height: auto;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .pdf-cartel-logo-text {
-    font-size: 60px;
-    color: #FF5A5F;
+    font-size: 28px;
+    font-weight: 800;
+    color: #222;
+    letter-spacing: -1px;
     margin: 0;
+    text-transform: lowercase;
+}
+
+.pdf-cartel-content {
+    margin-top: 20px;
 }
 
 .pdf-cartel-title {
-    font-size: 48px;
-    font-weight: bold;
-    color: #FF5A5F;
-    margin-bottom: 10px;
+    font-size: 56px;
+    font-weight: 900;
+    color: #FF385C; /* Color Torbian Red */
+    margin-bottom: 15px;
+    letter-spacing: -2px;
 }
 
 .pdf-cartel-subtitle {
     font-size: 24px;
-    margin-bottom: 50px;
-    color: #484848;
+    margin-bottom: 60px;
+    color: #717171;
+    font-weight: 400;
 }
 
-.pdf-cartel-qr-box {
-    margin: 40px auto;
-    padding: 30px;
-    border: 2px solid #eee;
-    display: inline-block;
+.pdf-cartel-qr-wrapper {
+    margin: 0 auto;
+    padding: 40px;
     background: #fff;
-    border-radius: 20px;
+    border-radius: 40px;
+    border: 1px solid #DDDDDD;
+    display: inline-block;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 .pdf-cartel-instructions {
-    margin-top: 40px;
-    font-size: 16px;
-    color: #767676;
+    margin-top: 50px;
+    font-size: 18px;
+    color: #222;
+    font-weight: 600;
+}
+
+.pdf-cartel-sub-instructions {
+    font-size: 14px;
+    color: #717171;
+    margin-top: 5px;
 }
 
 .pdf-cartel-footer {
-    margin-top: 50px;
-    border-top: 1px solid #eee;
-    padding-top: 30px;
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 0 40px;
+}
+
+.pdf-cartel-footer-divider {
+    width: 80%;
+    height: 1px;
+    background-color: #DDDDDD;
+    margin: 0 auto 40px auto;
+}
+
+.pdf-cartel-business-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 1px solid #eee;
 }
 
 .pdf-cartel-business-name {
-    font-size: 32px;
-    font-weight: bold;
+    font-size: 36px;
+    font-weight: 800;
     margin-bottom: 5px;
+    color: #222;
 }
 
 .pdf-cartel-category {
-    font-size: 18px;
-    color: #767676;
+    font-size: 16px;
+    color: #717171;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    font-weight: 600;
 }
 
 /* --- UTILIDADES DE IMAGEN --- */

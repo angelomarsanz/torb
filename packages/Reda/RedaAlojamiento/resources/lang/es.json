@@ -296,5 +296,10 @@
     "Error al cargar": "Error al cargar",
     "Negocio": "Negocio",
     "El logo del negocio es obligatorio.": "El logo del negocio es obligatorio.",
-    "Pago realizado con éxito": "Pago realizado con éxito"
+    "Pago realizado con éxito": "Pago realizado con éxito",
+    "Código QR dinámico": "Código QR dinámico",
+    "¡Danos tu opinión!": "¡Danos tu opinión!",
+    "Escanea el código para calificarnos": "Escanea el código para calificarnos",
+    "Abre la cámara de tu celular": "Abre la cámara de tu celular",
+    "y apunta directamente al código QR": "y apunta directamente al código QR"
 }

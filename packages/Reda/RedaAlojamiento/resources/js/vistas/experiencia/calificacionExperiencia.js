@@ -50,6 +50,31 @@
             });
 
             /**
+             * Manejo del botón para descargar el cartel (PDF).
+             * Como el listener global de notificaciones.js ahora ignora enlaces con 'no-esperar',
+             * manejamos manualmente la visibilidad aquí para evitar que el modal quede bloqueado
+             * permanentemente debido a que las descargas no disparan eventos de navegación.
+             */
+            $(document).on('click', '.btn-descargar-cartel', function() {
+                // Mostramos el modal de espera global
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                    window.RedaNotificaciones.esperar();
+                }
+
+                /**
+                 * Lo ocultamos después de un tiempo prudencial (ej. 6 segundos).
+                 * Esto asegura que el usuario recupere el control incluso si la descarga 
+                 * se inicia y la página nunca se recarga. El listener de 'focus' en 
+                 * notificaciones.js también ayudará si el usuario regresa de ver el PDF.
+                 */
+                setTimeout(() => {
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                        window.RedaNotificaciones.ocultar();
+                    }
+                }, 6000);
+            });
+
+            /**
              * Función para generar el QR en el cliente y disparar la descarga.
              * @param {string} url - URL que contendrá el QR.
              * @param {string} nombre - Nombre del negocio para el archivo.
