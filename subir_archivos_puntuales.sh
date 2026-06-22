@@ -121,7 +121,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/horario.blade.php"
 
     # --- Archivos Javascript admin ---
-    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
     "packages/Reda/RedaAlojamiento/resources/js/admin/general/soporteTecnico.js"
 
     # --- Archivos Javascript en la carpeta frontend ---

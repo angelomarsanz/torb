@@ -55,9 +55,10 @@ export const menuLateralAdmin = () =>
                 const $messagesMenuItem = $('.sidebar-menu a[href*="admin/messages"]').closest('li');
 
                 if ($messagesMenuItem.length) {
+                    const linkSoporte = `${baseUrl}/admin/reda/general/soporte-tecnico`;
                     const soporteMenuHtml = `
                         <li id="menu-soporte">
-                            <a href="#">
+                            <a href="${linkSoporte}">
                                 <i class="fa fa-life-ring"></i> <span>${window.RedaAlojamiento.general.soporte_tecnico || 'Soporte técnico'}</span>
                             </a>
                         </li>
