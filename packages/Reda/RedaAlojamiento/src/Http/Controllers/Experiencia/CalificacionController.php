@@ -43,22 +43,43 @@ class CalificacionController extends Controller
     }
 
     /**
-     * Muestra todas las calificaciones recibidas por los negocios del usuario.
+     * Muestra el resumen de calificaciones por cada negocio del usuario.
      */
     public function listadoDuenio()
     {
         $userId = Auth::id();
 
-        // Obtenemos los IDs de los negocios del usuario
-        $negociosIds = Experiencia::where('user_id', $userId)->pluck('id');
+        // Obtenemos los negocios del usuario con el promedio de estrellas y cantidad de calificaciones
+        $negocios = Experiencia::where('user_id', $userId)
+            ->withCount('calificaciones')
+            ->withAvg('calificaciones', 'estrellas')
+            ->with(['fotos'])
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
-        // Obtenemos las calificaciones vinculadas a esos negocios
-        $calificaciones = CalificacionExperiencia::whereIn('experiencia_id', $negociosIds)
-            ->with(['experiencia', 'usuario'])
+        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact('negocios'));
+    }
+
+    /**
+     * Muestra el detalle de calificaciones para un negocio específico.
+     */
+    public function detalleCalificacionesDuenio($id)
+    {
+        $experiencia = Experiencia::withAvg('calificaciones', 'estrellas')
+            ->withCount('calificaciones')
+            ->with(['fotos'])
+            ->findOrFail($id);
+
+        if ($experiencia->user_id != Auth::id()) {
+            abort(403);
+        }
+
+        $calificaciones = CalificacionExperiencia::where('experiencia_id', $id)
+            ->with(['usuario'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact('calificaciones'));
+        return view('reda-alojamiento::experiencia.experiencias.detalle_calificaciones', compact('experiencia', 'calificaciones'));
     }
 
     /**

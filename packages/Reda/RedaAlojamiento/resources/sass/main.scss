@@ -2495,3 +2495,38 @@
         transform: scale(0.97);
     }
 }
+
+/* --- RESUMEN Y DETALLE DE CALIFICACIONES --- */
+.img-negocio-resumen {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.img-negocio-mobile {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.img-negocio-detalle {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.card-negocio {
+    transition: transform 0.2s;
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+.comment-box-review {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #28a745;
+}

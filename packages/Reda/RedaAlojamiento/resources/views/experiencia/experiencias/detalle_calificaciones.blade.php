@@ -1,0 +1,137 @@
+@extends('template')
+
+@push('css')
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
+@endpush
+
+@section('main')
+<div class="margin-top-85">
+    <div class="row m-0">
+        {{-- Incluimos el sidebar original --}}
+        @include('users.sidebar')
+
+        <div class="col-lg-10">
+            <div class="main-panel">
+                <div class="container-fluid min-height">
+                    <div class="row">
+                        <div class="col-md-12 p-0 mb-3">
+                            <div class="mt-4 d-flex align-items-center justify-content-between flex-wrap">
+                                <div class="d-flex align-items-center mb-2">
+                                    <a href="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" class="btn btn-outline-secondary rounded-circle mr-3">
+                                        <i class="fa fa-arrow-left"></i>
+                                    </a>
+                                    <div>
+                                        <h1 class="text-24 font-weight-700 m-0">{{ __('Reseñas de :negocio', ['negocio' => $experiencia->titulo]) }}</h1>
+                                        <div class="d-flex align-items-center mt-1">
+                                            <div class="star-rating mr-2">
+                                                @php $promedio = round($experiencia->calificaciones_avg_estrellas ?? 0, 1); @endphp
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="fa fa-star {{ $i <= $promedio ? '' : 'text-light' }} text-14"></i>
+                                                @endfor
+                                            </div>
+                                            <span class="font-weight-700 text-16">{{ number_format($promedio, 1) }} ({{ $experiencia->calificaciones_count }} {{ trans_choice(__('Reseña|Reseñas'), $experiencia->calificaciones_count) }})</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12 p-0">
+                            {{-- Contenedor de Reseñas --}}
+                            <div class="list-container">
+                                @forelse($calificaciones as $calificacion)
+                                    <div class="card mb-4 border rounded-4 shadow-sm overflow-hidden">
+                                        <div class="card-body p-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    @php
+                                                        $logo = null;
+                                                        if ($experiencia->ruta_imagenes) {
+                                                            $logo = asset('public/images/logos_negocios/' . $experiencia->ruta_imagenes);
+                                                        } else {
+                                                            $fotoPortada = $experiencia->fotos->where('cover_photo', 1)->first();
+                                                            if (!$fotoPortada) {
+                                                                $fotoPortada = $experiencia->fotos->first();
+                                                            }
+
+                                                            if ($fotoPortada) {
+                                                                $logo = asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo);
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    
+                                                    @if($logo)
+                                                        <img src="{{ $logo }}" class="img-negocio-detalle shadow-sm mr-3" alt="{{ $experiencia->titulo }}">
+                                                    @else
+                                                        <div class="img-negocio-detalle d-flex align-items-center justify-content-center bg-light border mr-3">
+                                                            <i class="fas fa-store text-muted opacity-05"></i>
+                                                        </div>
+                                                    @endif
+
+                                                    <div>
+                                                        <h3 class="text-18 font-weight-700 m-0">{{ $experiencia->titulo }}</h3>
+                                                        <div class="star-rating mt-1">
+                                                            @for($i = 1; $i <= 5; $i++)
+                                                                <i class="fa fa-star {{ $i <= $calificacion->estrellas ? '' : 'text-light' }} text-14"></i>
+                                                            @endfor
+                                                            <span class="ml-1 font-weight-700 text-14">{{ number_format($calificacion->estrellas, 1) }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-muted small font-weight-600">
+                                                        {{ $calificacion->created_at->format('d/m/Y') }}
+                                                    </div>
+                                                    <div class="text-muted text-12">
+                                                        {{ $calificacion->created_at->format('H:i') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="comment-box-review p-4 mb-3">
+                                                <p class="m-0 text-16 italic text-dark font-weight-500">
+                                                    "{{ $calificacion->comentario ?: __('Sin comentario') }}"
+                                                </p>
+                                            </div>
+
+                                            <div class="d-flex align-items-center justify-content-end">
+                                                <div class="text-right mr-3">
+                                                    <div class="text-14 font-weight-700">{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}</div>
+                                                    <small class="text-muted">{{ __('Cliente') }}</small>
+                                                </div>
+                                                @php
+                                                    $fotoUsuario = $calificacion->usuario->profile_image;
+                                                    $rutaFotoUsuario = $fotoUsuario
+                                                        ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
+                                                        : asset('public/images/default-profile.png');
+                                                @endphp
+                                                <img src="{{ $rutaFotoUsuario }}" class="img-profile-list img-size-40 shadow-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-5 text-muted border rounded-4 bg-white shadow-sm">
+                                        <i class="fas fa-star-half-alt fa-4x mb-3 opacity-05 text-success"></i>
+                                        <h3 class="text-20 font-weight-700">{{ __('Sin reseñas todavía') }}</h3>
+                                        <p>{{ __('Este negocio aún no ha recibido calificaciones de los clientes.') }}</p>
+                                        <a href="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" class="btn btn-success mt-3 pl-4 pr-4">
+                                            {{ __('Volver al listado') }}
+                                        </a>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Paginación --}}
+                    <div class="row justify-content-between pb-3 mt-4 mb-5">
+                        {{ $calificaciones->appends(request()->except('page'))->links('paginate') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@stop
