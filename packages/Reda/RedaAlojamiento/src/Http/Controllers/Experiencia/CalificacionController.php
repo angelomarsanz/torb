@@ -21,7 +21,9 @@ class CalificacionController extends Controller
             $q->where('cover_photo', 1);
         }])->findOrFail($id);
 
-        return view('reda-alojamiento::experiencia.experiencias.frontend.calificacion_experiencia_frontend', compact('experiencia'));
+        $esDuenio = (Auth::id() == $experiencia->user_id);
+
+        return view('reda-alojamiento::experiencia.experiencias.frontend.calificacion_experiencia_frontend', compact('experiencia', 'esDuenio'));
     }
 
     /**
@@ -98,6 +100,19 @@ class CalificacionController extends Controller
                 'estrellas'      => 'required|integer|min:1|max:5',
                 'comentario'     => 'nullable|string|max:1000',
             ]);
+
+            $experiencia = Experiencia::findOrFail($datosValidados['experiencia_id']);
+
+            // SEGURIDAD: El dueño no puede calificar su propio negocio
+            if ($experiencia->user_id == Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Owner cannot rate their own business',
+                    'mensaje_usuario' => __('Usted no puede calificar su propio negocio'),
+                    'respuesta' => '',
+                    'code' => 403
+                ], 403);
+            }
 
             // Verificar si el usuario ya calificó este negocio (opcional, pero recomendado)
             $yaCalifico = CalificacionExperiencia::where('experiencia_id', $datosValidados['experiencia_id'])

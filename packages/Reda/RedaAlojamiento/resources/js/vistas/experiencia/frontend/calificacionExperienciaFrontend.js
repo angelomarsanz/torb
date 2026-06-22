@@ -11,6 +11,20 @@
 
         $(function() {
             /**
+             * Verificación de seguridad: El dueño no puede calificar su propio negocio.
+             */
+            const esDuenio = $(containerId).data('es-duenio') === true;
+            if (esDuenio) {
+                if (typeof mostrarNotificacion === 'function') {
+                    mostrarNotificacion(
+                        window.RedaAlojamientoJson["Atención"] || "Atención",
+                        window.RedaAlojamientoJson["Usted no puede calificar su propio negocio"] || "Usted no puede calificar su propio negocio",
+                        'warning'
+                    );
+                }
+            }
+
+            /**
              * Estado local para las estrellas seleccionadas por el usuario.
              */
             let selectedStars = 0;
