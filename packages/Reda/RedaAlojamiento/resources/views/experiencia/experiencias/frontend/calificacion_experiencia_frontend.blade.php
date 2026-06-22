@@ -19,15 +19,38 @@
                     <div class="card-body p-4">
                         {{-- Resumen del Comercio --}}
                         <div class="d-flex align-items-center mb-4 pb-4 border-bottom">
-                            <div class="mr-3">
-                                @php
-                                    $foto = $experiencia->foto_portada;
-                                    $rutaFoto = $foto ? asset('public/images/experiencias/'.$experiencia->id.'/'.$foto->photo) : asset('public/img/unnamed.png');
-                                @endphp
-                                <img src="{{ $rutaFoto }}" class="rounded-3 object-fit-cover img-size-70" alt="{{ $experiencia->titulo }}">
+                            @php
+                                $logo = $experiencia->ruta_imagenes;
+                                $fotoPortada = $experiencia->foto_portada; // Accesor que ya prioriza Destacada > Primera
+                                
+                                $rutaImagen = null;
+                                $esLogo = false;
+
+                                // Prioridad 1: Logo del comercio
+                                if ($logo) {
+                                    $rutaImagen = asset('public/images/logos_negocios/'.$logo);
+                                    $esLogo = true;
+                                } 
+                                // Prioridad 2 y 3: Foto Destacada o en su defecto la Primera foto
+                                elseif ($fotoPortada) {
+                                    $rutaImagen = asset('public/images/experiencias/'.$experiencia->id.'/'.$fotoPortada->photo);
+                                    $esLogo = false;
+                                }
+                            @endphp
+
+                            <div class="negocio-media-container mr-3">
+                                @if($rutaImagen)
+                                    <img src="{{ $rutaImagen }}" 
+                                         class="{{ $esLogo ? 'img-negocio-logo' : 'img-negocio-portada' }}"
+                                         alt="{{ $experiencia->titulo }}">
+                                @else
+                                    {{-- Prioridad 4: Ícono por defecto si no hay ninguna imagen --}}
+                                    <i class="fas fa-store text-muted icon-negocio-default"></i>
+                                @endif
                             </div>
+
                             <div>
-                                <span class="text-muted small text-uppercase font-weight-700">{{ $experiencia->categoria_negocio }}</span>
+                                <span class="text-muted small text-uppercase font-weight-700 tracking-wider">{{ $experiencia->categoria_negocio }}</span>
                                 <h3 class="text-18 font-weight-700 m-0">{{ $experiencia->titulo }}</h3>
                             </div>
                         </div>
@@ -102,6 +125,7 @@
 @section('validation_script')
     <script>
         window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
+        window.RedaAlojamientoJson = @json(__('reda-alojamiento::es'));
     </script>
     <script type="text/javascript" src="{{ asset('public/js/jquery.validate.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/frontend/calificacionExperienciaFrontend.min.js?v=' . time()) }}"></script>

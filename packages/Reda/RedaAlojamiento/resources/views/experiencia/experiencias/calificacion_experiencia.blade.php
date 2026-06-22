@@ -65,7 +65,7 @@
                                                          alt="{{ $experiencia->titulo }}">
                                                 @else
                                                     {{-- Prioridad 4: Ícono por defecto si no hay ninguna imagen --}}
-                                                    <i class="fas fa-store text-muted" style="font-size: 24px;"></i>
+                                                    <i class="fas fa-store text-muted icon-negocio-default"></i>
                                                 @endif
                                             </div>
 

@@ -1,25 +1,38 @@
 (function( $ ) {
     "use strict";
 
+    /**
+     * Identificador del contenedor principal de la vista de calificación frontend.
+     */
     const containerId = '#calificacion_experiencia_frontend';
 
     if ($(containerId).length) {
         console.log('Script para Calificación de Experiencia Frontend cargado correctamente');
 
         $(function() {
+            /**
+             * Estado local para las estrellas seleccionadas por el usuario.
+             */
             let selectedStars = 0;
 
-            // --- LÓGICA DE ESTRELLAS ---
+            // --- GESTIÓN INTERACTIVA DE ESTRELLAS DE CALIFICACIÓN ---
 
-            // Hover efecto
+            /**
+             * Efecto visual al pasar el mouse sobre las estrellas (hover).
+             * Resalta temporalmente hasta la estrella señalada.
+             */
             $('.star-item').on('mouseenter', function() {
                 const val = $(this).data('value');
                 pintarEstrellas(val);
             }).on('mouseleave', function() {
+                // Restaura el estado a la calificación fijada previamente
                 pintarEstrellas(selectedStars);
             });
 
-            // Click para fijar valor
+            /**
+             * Acción al hacer clic en una estrella para fijar la calificación.
+             * Actualiza el input oculto y limpia mensajes de error previos.
+             */
             $('.star-item').on('click', function() {
                 selectedStars = $(this).data('value');
                 $('#input-estrellas').val(selectedStars);
@@ -27,6 +40,10 @@
                 pintarEstrellas(selectedStars);
             });
 
+            /**
+             * Función auxiliar para actualizar el estilo visual de las estrellas.
+             * @param {number} num - Cantidad de estrellas a resaltar.
+             */
             function pintarEstrellas(num) {
                 $('.star-item').each(function() {
                     const val = $(this).data('value');
@@ -38,7 +55,12 @@
                 });
             }
 
-            // --- CONTADOR DE CARACTERES ---
+            // --- CONTADOR DE CARACTERES PARA EL COMENTARIO ---
+
+            /**
+             * Actualiza dinámicamente el contador de caracteres del textarea.
+             * Aplica color de error si se excede el límite de 1000.
+             */
             $('#comentario').on('input', function() {
                 const count = $(this).val().length;
                 $('#char-count').text(`${count} / 1000`);
@@ -49,10 +71,13 @@
                 }
             });
 
-            // --- ENVÍO DEL FORMULARIO ---
+            // --- PROCESAMIENTO DEL ENVÍO DE CALIFICACIÓN (AJAX) ---
 
             /**
-             * Función AJAX refinada conforme a GEMINI.md
+             * Ejecuta la petición AJAX para guardar la calificación en el servidor.
+             * Sigue la estructura de respuesta estandarizada del plugin REDA.
+             * @param {string} formData - Datos serializados del formulario.
+             * @returns {Promise} - Resolución con la respuesta del servidor.
              */
             const guardarCalificacionAjax = (formData) => {
                 return new Promise((resolve) => {
@@ -66,19 +91,19 @@
                                 resolve(data);
                             },
                             error: function (x, xs, xt) {
-                                // 1. Intentamos obtener el JSON que el servidor envió
+                                // 1. Intentamos obtener el JSON de error enviado por el servidor (ej: 400 o 500)
                                 let respuestaServidor = {};
                                 try {
                                     respuestaServidor = JSON.parse(x.responseText);
                                 } catch (e) {
                                     respuestaServidor = {};
                                 }
-                                console.log('respuestaServidor error', respuestaServidor);
+                                console.log('Error detallado del servidor:', respuestaServidor);
 
                                 const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                                 const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
 
-                                // 2. Construimos la respuesta estandarizada conforme a GEMINI.md
+                                // 2. Construimos un objeto de respuesta amigable siguiendo GEMINI.md
                                 let respuesta = {
                                     'success': false,
                                     'message' : window.RedaAlojamientoJson["Error guardando calificación"] || 'Error guardando calificación',
@@ -93,10 +118,14 @@
                 });
             };
 
+            /**
+             * Manejador del evento submit del formulario de calificación.
+             * Valida que se haya seleccionado al menos una estrella antes de enviar.
+             */
             $('#form-calificacion').on('submit', async function(e) {
                 e.preventDefault();
 
-                // Validación manual de estrellas
+                // Validación de seguridad: debe existir una puntuación mayor a cero
                 if (selectedStars === 0) {
                     $('#error-estrellas').removeClass('d-none');
                     $('html, body').animate({
@@ -105,6 +134,7 @@
                     return;
                 }
 
+                // UI: Feedback de carga (spinner y deshabilitar botón)
                 const $btn = $('#btn-enviar-calificacion');
                 $btn.prop('disabled', true);
                 $btn.find('.fa-spinner').removeClass('d-none');
@@ -114,15 +144,17 @@
                 const response = await guardarCalificacionAjax(formData);
 
                 if (response.success) {
+                    // Muestra modal de agradecimiento si todo salió bien
                     $('#modalExitoCalificacion').modal('show');
                 } else {
-                    // Mostrar error usando el mensaje para el usuario retornado
+                    // Muestra el error mediante el sistema de notificaciones del plugin
                     if (typeof mostrarNotificacion === 'function') {
                         mostrarNotificacion(window.RedaAlojamientoJson["Error"] || "Error", response.mensaje_usuario, 'error');
                     } else {
                         alert(response.mensaje_usuario);
                     }
                     
+                    // Restaura el botón para permitir un nuevo intento
                     $btn.prop('disabled', false);
                     $btn.find('.fa-spinner').addClass('d-none');
                     $btn.find('.btn-text').removeClass('d-none');

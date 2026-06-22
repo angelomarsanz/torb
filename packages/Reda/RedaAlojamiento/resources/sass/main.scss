@@ -1914,6 +1914,11 @@
 .img-size-30 { width: 30px; height: 30px; }
 .img-size-25 { width: 25px; height: 25px; }
 
+/* Ícono por defecto para negocios (cuando no hay imagen) */
+.icon-negocio-default {
+    font-size: 24px;
+}
+
 .img-profile-list {
     object-fit: cover;
     border-radius: 50%;

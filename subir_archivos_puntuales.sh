@@ -87,7 +87,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_notificaciones.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FRONTEND - CARPETAS FRONTEND) ---
-    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_experiencias.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_negocio.blade.php"
@@ -106,7 +106,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/billetera_huesped/billeteras_huespedes/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/index.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/calificacion_experiencia.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
+    #packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
@@ -119,6 +119,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- Archivos Javascript en la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
