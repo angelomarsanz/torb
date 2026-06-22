@@ -64,6 +64,14 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
         });
     });
 
+    // Subgrupo para General (Admin)
+    Route::prefix('general')->as('reda.admin.general.')->group(function () {
+        Route::controller(\Reda\RedaAlojamiento\Http\Controllers\Admin\General\SoporteTecnicoController::class)->group(function () {
+            // Ruta para el index de Soporte Técnico
+            Route::get('soporte-tecnico', 'index')->name('soporte_tecnico.index');
+        });
+    });
+
 });
 
 Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {

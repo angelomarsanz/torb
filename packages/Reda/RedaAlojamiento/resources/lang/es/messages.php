@@ -132,6 +132,8 @@ return [
         'estas_seguro_de_eliminar_esta_categoria' => '¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.',
 
         'categoria_eliminada_con_exito' => 'Categoría eliminada con éxito.',
-        'error_al_eliminar_la_categoria' => 'Ocurrió un error al intentar eliminar la categoría.'
+        'error_al_eliminar_la_categoria' => 'Ocurrió un error al intentar eliminar la categoría.',
+        'soporte_tecnico' => 'Soporte técnico',
+        'alojamientos' => 'Alojamientos'
     ]
 ];

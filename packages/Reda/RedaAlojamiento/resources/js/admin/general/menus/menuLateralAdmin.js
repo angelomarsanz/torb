@@ -8,15 +8,13 @@ export const menuLateralAdmin = () =>
             console.log('Script para "Menú Lateral Admin" cargado correctamente.');
 
             $(function() {
-                // Ubicamos el botón de Properties
+                const baseUrl = window.location.origin;
+
+                // 1. Inyección de Menú "Negocios" (Después de Properties)
                 const $propertiesMenuItem = $('.sidebar-menu a[href*="admin/properties"]').closest('li');
 
                 if ($propertiesMenuItem.length) {
-                    // Obtenemos la URL base de forma dinámica (ej: https://pruebas.redetronic.com)
-                    const baseUrl = window.location.origin;
-                    // Construimos el enlace hacia la ruta del plugin que creamos
                     const linkOpcionesNegocios = `${baseUrl}/admin/reda/negocios/opciones-tipos-de-negocios`;
-                    // Insertamos la estructura HTML (Añadimos un identificador único id="menu-negocios" para controlarlo mejor)
                     const nuevoMenuHtml = `
                         <li class="treeview" id="menu-negocios">
                             <a href="#" class="negocios-toggle">
@@ -33,9 +31,7 @@ export const menuLateralAdmin = () =>
                     $propertiesMenuItem.after(nuevoMenuHtml);
                     console.log('Opción "Negocios" inyectada.');
 
-                    // 3. Control absoluto del Click bloqueando scripts externos
                     $('#menu-negocios > .negocios-toggle').on('click', function(e) {
-                        // DETENER TODO: Evita que el JS original de la plantilla interfiera y cierre el menú
                         e.preventDefault();
                         e.stopImmediatePropagation(); 
 
@@ -43,7 +39,6 @@ export const menuLateralAdmin = () =>
                         const $subMenu = $liPadre.find('.treeview-menu');
                         const $flecha = $(this).find('.pull-right');
 
-                        // Alternar la animación de despliegue de forma aislada
                         if ($subMenu.is(':visible')) {
                             $subMenu.slideUp('fast');
                             $liPadre.removeClass('active menu-open');
@@ -51,13 +46,24 @@ export const menuLateralAdmin = () =>
                         } else {
                             $subMenu.slideDown('fast');
                             $liPadre.addClass('active menu-open');
-                            // Cambiamos la flecha hacia abajo para dar el efecto visual correcto si el tema lo soporta
                             $flecha.removeClass('fa-angle-left').addClass('fa-angle-down');
                         }
                     });
+                }
 
-                } else {
-                    console.warn('No se encontró la opción "Properties" en el menú lateral.');
+                // 2. Inyección de Opción "Soporte Técnico" (Después de Messages)
+                const $messagesMenuItem = $('.sidebar-menu a[href*="admin/messages"]').closest('li');
+
+                if ($messagesMenuItem.length) {
+                    const soporteMenuHtml = `
+                        <li id="menu-soporte">
+                            <a href="#">
+                                <i class="fa fa-life-ring"></i> <span>${window.RedaAlojamiento.general.soporte_tecnico || 'Soporte técnico'}</span>
+                            </a>
+                        </li>
+                    `;
+                    $messagesMenuItem.after(soporteMenuHtml);
+                    console.log('Opción "Soporte Técnico" inyectada.');
                 }
             });
         }
