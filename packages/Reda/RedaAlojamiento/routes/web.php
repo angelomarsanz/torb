@@ -69,6 +69,8 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
         Route::controller(\Reda\RedaAlojamiento\Http\Controllers\Admin\General\SoporteTecnicoController::class)->group(function () {
             // Ruta para el index de Soporte Técnico
             Route::get('soporte-tecnico', 'index')->name('soporte_tecnico.index');
+            // Ruta para ver el detalle de un ticket
+            Route::get('soporte-tecnico/ver/{id}', 'show')->name('soporte_tecnico.show');
         });
     });
 

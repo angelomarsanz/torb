@@ -18,4 +18,16 @@ class SoporteTecnicoController extends Controller
         $tickets = SoporteTecnico::with('user')->orderBy('created_at', 'desc')->get();
         return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets'));
     }
+
+    /**
+     * Display the details of a technical support ticket.
+     *
+     * @param int $id
+     * @return \Illuminate\View\View
+     */
+    public function show($id)
+    {
+        $ticket = SoporteTecnico::with('user')->findOrFail($id);
+        return view('reda-alojamiento::admin.general.soporte_tecnico.show', compact('ticket'));
+    }
 }

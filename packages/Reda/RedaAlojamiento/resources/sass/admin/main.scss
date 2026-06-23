@@ -1,4 +1,42 @@
-/* Estilos para el admin usando Bootstrap  v5.2.3 */ 
-.alguna-clase {
-    color: red;
+/* Estilos para el admin usando Bootstrap  v5.2.3 */
+
+/* Estilos para el módulo de Soporte Técnico */
+.soporte-tecnico {
+    &-header-row {
+        background-color: #f4f4f4;
+    }
+    &-no-results-td {
+        padding: 20px;
+    }
+    &-card {
+        border-radius: 10px;
+        border: 1px solid #eee;
+        margin-bottom: 15px;
+        background: #fff;
+
+        &-show {
+            background: #fafafa;
+            margin-bottom: 0;
+        }
+    }
+    &-ticket-id {
+        font-weight: bold;
+    }
+    &-label-small {
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+    &-empty-icon {
+        opacity: 0.3;
+    }
+    &-well-custom {
+        background-color: #fff !important;
+        min-height: 100px;
+    }
+
+    /* Anchos específicos para columnas de tabla */
+    &-w-5 { width: 5%; }
+    &-w-10 { width: 10%; }
+    &-w-15 { width: 15%; }
+    &-w-25 { width: 25%; }
 }

@@ -275,5 +275,19 @@
     "Este negocio aún no ha recibido calificaciones de los clientes.": "Este negocio aún no ha recibido calificaciones de los clientes.",
     "Volver al listado": "Volver al listado",
     "Soporte técnico": "Soporte técnico",
-    "Negocios": "Negocios"
+    "Negocios": "Negocios",
+    "Detalle del Ticket #": "Detalle del Ticket #",
+    "Mensaje / Descripción": "Mensaje / Descripción",
+    "Sin descripción disponible.": "Sin descripción disponible.",
+    "Acciones del Ticket": "Acciones del Ticket",
+    "Gestione el estado de este ticket.": "Gestione el estado de este ticket.",
+    "Funcionalidad de respuesta en desarrollo.": "Funcionalidad de respuesta en desarrollo.",
+    "Módulo de Soporte Técnico (Admin) cargado correctamente": "Módulo de Soporte Técnico (Admin) cargado correctamente",
+    "Vista de detalle de ticket cargada": "Vista de detalle de ticket cargada",
+    "Listado de Tickets": "Listado de Tickets",
+    "ID": "ID",
+    "Tema": "Tema",
+    "Prioridad": "Prioridad",
+    "Ver Detalle": "Ver Detalle",
+    "No se encontraron tickets de soporte.": "No se encontraron tickets de soporte."
 }
