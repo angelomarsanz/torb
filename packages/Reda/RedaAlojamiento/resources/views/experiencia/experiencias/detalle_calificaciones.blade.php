@@ -96,18 +96,28 @@
                                                 </p>
                                             </div>
 
-                                            <div class="d-flex align-items-center justify-content-end">
-                                                <div class="text-right mr-3">
-                                                    <div class="text-14 font-weight-700">{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}</div>
-                                                    <small class="text-muted">{{ __('Cliente') }}</small>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-reportar-reseña" 
+                                                        data-id="{{ $calificacion->id }}" 
+                                                        data-negocio="{{ $experiencia->titulo }}"
+                                                        data-usuario="{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}">
+                                                        <i class="fas fa-flag mr-1"></i> {{ __('Reportar') }}
+                                                    </button>
                                                 </div>
-                                                @php
-                                                    $fotoUsuario = $calificacion->usuario->profile_image;
-                                                    $rutaFotoUsuario = $fotoUsuario
-                                                        ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
-                                                        : asset('public/images/default-profile.png');
-                                                @endphp
-                                                <img src="{{ $rutaFotoUsuario }}" class="img-profile-list shadow-sm">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="text-right mr-3">
+                                                        <div class="text-14 font-weight-700">{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}</div>
+                                                        <small class="text-muted">{{ __('Cliente') }}</small>
+                                                    </div>
+                                                    @php
+                                                        $fotoUsuario = $calificacion->usuario->profile_image;
+                                                        $rutaFotoUsuario = $fotoUsuario
+                                                            ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
+                                                            : asset('public/images/default-profile.png');
+                                                    @endphp
+                                                    <img src="{{ $rutaFotoUsuario }}" class="img-profile-list shadow-sm">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -134,4 +144,54 @@
         </div>
     </div>
 </div>
+
+{{-- Modal para Reportar Reseña --}}
+<div class="modal fade" id="modalReportarReseña" tabindex="-1" role="dialog" aria-labelledby="modalReportarReseñaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-danger text-white rounded-top-4">
+                <h5 class="modal-title font-weight-700" id="modalReportarReseñaLabel">
+                    <i class="fas fa-flag mr-2"></i> {{ __('Reportar Reseña') }}
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formReportarReseña">
+                @csrf
+                <input type="hidden" name="calificacion_id" id="reporte_calificacion_id">
+                <input type="hidden" name="tema" id="reporte_tema">
+                <input type="hidden" name="link_error" id="reporte_link_error">
+                
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label for="prioridad" class="form-label font-weight-700 text-14">{{ __('Prioridad') }}</label>
+                        <select name="prioridad" id="prioridad" class="form-control rounded-3" required>
+                            <option value="Baja">{{ __('Baja') }}</option>
+                            <option value="Media" selected>{{ __('Media') }}</option>
+                            <option value="Alta">{{ __('Alta') }}</option>
+                            <option value="Urgente">{{ __('Urgente') }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-0">
+                        <label for="mensaje" class="form-label font-weight-700 text-14">{{ __('Mensaje') }}</label>
+                        <textarea name="mensaje" id="mensaje" class="form-control rounded-3" rows="4" placeholder="{{ __('Escribe los detalles de tu reporte aquí...') }}" required></textarea>
+                        <small class="text-muted text-12">{{ __('Mínimo 10 caracteres') }}</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill font-weight-700" data-dismiss="modal">{{ __('Cancelar') }}</button>
+                    <button type="submit" class="btn btn-danger px-4 rounded-pill font-weight-700 shadow-sm" id="btnEnviarReporte">
+                        {{ __('Enviar Reporte') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @stop
+
+@push('scripts')
+    <script type="text/javascript" src="{{ asset('public/js/reda/general/notificaciones.min.js?v=' . time()) }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/experiencia/detalleCalificaciones.min.js?v=' . time()) }}"></script>
+@endpush

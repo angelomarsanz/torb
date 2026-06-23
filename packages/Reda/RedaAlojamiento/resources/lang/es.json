@@ -289,5 +289,17 @@
     "Tema": "Tema",
     "Prioridad": "Prioridad",
     "Ver Detalle": "Ver Detalle",
-    "No se encontraron tickets de soporte.": "No se encontraron tickets de soporte."
+    "No se encontraron tickets de soporte.": "No se encontraron tickets de soporte.",
+    "Reportar": "Reportar",
+    "Reportar Reseña": "Reportar Reseña",
+    "Mensaje": "Mensaje",
+    "Prioridad": "Prioridad",
+    "Baja": "Baja",
+    "Media": "Media",
+    "Alta": "Alta",
+    "Urgente": "Urgente",
+    "Enviar Reporte": "Enviar Reporte",
+    "Ticket de soporte creado con éxito": "Ticket de soporte creado con éxito",
+    "Error al crear el ticket de soporte": "Error al crear el ticket de soporte",
+    "Escribe los detalles de tu reporte aquí...": "Escribe los detalles de tu reporte aquí..."
 }

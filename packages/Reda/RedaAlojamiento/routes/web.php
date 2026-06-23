@@ -125,6 +125,10 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
 
         // Rutas de Negocios (Con login)
         Route::prefix('negocios')->as('reda.negocios.')->group(function () {
+            // Soporte Técnico
+            Route::post('soporte-tecnico/store', [\Reda\RedaAlojamiento\Http\Controllers\General\SoporteTecnicoController::class, 'store'])
+                ->name('soporte_tecnico.store');
+
             Route::get('index-experiencias', [ExperienciaController::class, 'index'])->name('experiencias.index');
 
             Route::match(['GET', 'POST'], 'crear-experiencia', [ExperienciaController::class, 'create'])

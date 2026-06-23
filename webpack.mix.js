@@ -65,9 +65,12 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js',
         'public/js/reda/vistas/experiencia/calificacionExperiencia.min.js');
 
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js',
-        'public/js/reda/vistas/experiencia/frontend/calificacionExperienciaFrontend.min.js');
-}
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js', 'public/js/reda/vistas/experiencia/frontend/calificacionExperienciaFrontend.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js',
+        'public/js/reda/vistas/experiencia/detalleCalificaciones.min.js');
+    }
+
 
 mix.options({
     manifest: false,
