@@ -20,18 +20,35 @@ class SoporteTecnicoController extends Controller
     {
         try {
             $datosValidados = $request->validate([
-                'mensaje'   => 'required|string|min:10',
-                'prioridad' => 'required|string|in:Baja,Media,Alta,Urgente',
-                'tema'      => 'required|string',
-                'link_error'=> 'nullable|string',
+                'mensaje'      => 'required|string|min:10',
+                'prioridad'    => 'required|string|in:Baja,Media,Alta,Urgente',
+                'tema'         => 'required|string',
+                'link_error'   => 'nullable|string',
+                'vista_origen' => 'nullable|string',
             ]);
+
+            // Manejo de link_error para añadir vista_origen si existe
+            $linkError = $datosValidados['link_error'];
+            $vistaOrigen = $datosValidados['vista_origen'] ?? '';
+
+            if ($vistaOrigen) {
+                $linkErrorArray = [];
+                if ($linkError) {
+                    $decoded = json_decode($linkError, true);
+                    if (is_array($decoded)) {
+                        $linkErrorArray = $decoded;
+                    }
+                }
+                $linkErrorArray['vista_origen'] = $vistaOrigen;
+                $linkError = json_encode($linkErrorArray);
+            }
 
             $ticket = SoporteTecnico::create([
                 'user_id'         => Auth::id(),
                 'tema'            => $datosValidados['tema'],
                 'mensaje_usuario' => $datosValidados['mensaje'],
                 'prioridad'       => $datosValidados['prioridad'],
-                'link_error'      => $datosValidados['link_error'],
+                'link_error'      => $linkError,
                 'estatus'         => 'Abierto', // Estatus inicial por defecto
                 'visto_por_admin' => false,
                 'visto_por_usuario' => true,

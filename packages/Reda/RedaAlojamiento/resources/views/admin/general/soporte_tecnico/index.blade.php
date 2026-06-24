@@ -35,33 +35,50 @@
                                 <tbody>
                                     @if($tickets->count() > 0)
                                         @foreach($tickets as $ticket)
-                                            <tr>
-                                                <td class="text-center">{{ $ticket->id }}</td>
+                                            <tr class="align-middle">
+                                                <td class="text-center fw-bold">{{ $ticket->id }}</td>
                                                 <td>
                                                     @if($ticket->user)
-                                                        {{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="symbol symbol-30px symbol-circle me-2">
+                                                                <span class="symbol-label bg-light-primary text-primary fw-bold">{{ substr($ticket->user->first_name, 0, 1) }}</span>
+                                                            </div>
+                                                            <span>{{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}</span>
+                                                        </div>
                                                     @else
                                                         {{ __('N/A') }}
                                                     @endif
                                                 </td>
-                                                <td>{{ $ticket->tema }}</td>
+                                                <td>
+                                                    {{ $ticket->tema }}
+                                                    @if($ticket->link_error)
+                                                        <i class="fa fa-info-circle text-info ms-1 cursor-pointer btn-info-tecnica" 
+                                                           data-toggle="popover" 
+                                                           data-content='<ul class="list-unstyled mb-0 f-12">@foreach($ticket->link_error as $k => $v)<li><strong>{{ ucfirst(str_replace("_", " ", $k)) }}:</strong> {{ is_array($v) ? json_encode($v) : $v }}</li>@endforeach</ul>'
+                                                           data-html="true"
+                                                           data-trigger="hover"
+                                                           title="{{ __('Detalles Técnicos') }}"></i>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center">
                                                     @php
                                                         $prioridadClass = [
-                                                            'Alta' => 'label-danger',
-                                                            'Media' => 'label-warning',
-                                                            'Baja' => 'label-info'
-                                                        ][$ticket->prioridad] ?? 'label-default';
+                                                            'Alta' => 'text-danger',
+                                                            'Media' => 'text-warning',
+                                                            'Baja' => 'text-info'
+                                                        ][$ticket->prioridad] ?? 'text-secondary';
                                                     @endphp
-                                                    <span class="label {{ $prioridadClass }}">{{ $ticket->prioridad ?? 'N/A' }}</span>
+                                                    <span class="{{ $prioridadClass }} fw-bold">
+                                                        <i class="fa fa-circle fs-9 me-1"></i>{{ $ticket->prioridad ?? 'N/A' }}
+                                                    </span>
                                                 </td>
                                                 <td class="text-center">
-                                                    <span class="label label-primary">{{ $ticket->estatus ?? 'Abierto' }}</span>
+                                                    <span class="text-primary fw-bold">{{ $ticket->estatus ?? 'Abierto' }}</span>
                                                 </td>
-                                                <td class="text-center">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
+                                                <td class="text-center text-muted">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
                                                 <td class="text-center">
-                                                    <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="btn btn-xs btn-primary btn-flat" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
-                                                        <i class="fa fa-eye"></i>
+                                                    <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="text-primary hover-primary" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
+                                                        <i class="fa fa-eye fs-5"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -84,13 +101,13 @@
                                     <div class="card mb-3 shadow-sm border-light soporte-tecnico-card">
                                         <div class="card-body p-3">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span class="text-blue soporte-tecnico-ticket-id">#{{ $ticket->id }}</span>
-                                                <span class="label label-primary">{{ $ticket->estatus ?? 'Abierto' }}</span>
+                                                <span class="text-primary fw-bold soporte-tecnico-ticket-id">#{{ $ticket->id }}</span>
+                                                <span class="text-primary fw-bold">{{ $ticket->estatus ?? 'Abierto' }}</span>
                                             </div>
 
                                             <div class="mb-2">
                                                 <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Usuario') }}</small>
-                                                <span class="f-14">
+                                                <span class="f-14 fw-bold">
                                                     @if($ticket->user)
                                                         {{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}
                                                     @else
@@ -109,15 +126,17 @@
                                                     <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Prioridad') }}</small>
                                                     @php
                                                         $prioridadClass = [
-                                                            'Alta' => 'label-danger',
-                                                            'Media' => 'label-warning',
-                                                            'Baja' => 'label-info'
-                                                        ][$ticket->prioridad] ?? 'label-default';
+                                                            'Alta' => 'text-danger',
+                                                            'Media' => 'text-warning',
+                                                            'Baja' => 'text-info'
+                                                        ][$ticket->prioridad] ?? 'text-secondary';
                                                     @endphp
-                                                    <span class="label {{ $prioridadClass }}">{{ $ticket->prioridad ?? 'N/A' }}</span>
+                                                    <span class="{{ $prioridadClass }} fw-bold">
+                                                        <i class="fa fa-circle fs-9 me-1"></i>{{ $ticket->prioridad ?? 'N/A' }}
+                                                    </span>
                                                 </div>
-                                                <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="btn btn-sm btn-primary btn-flat" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
-                                                    <i class="fa fa-eye"></i>
+                                                <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="text-primary" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
+                                                    <i class="fa fa-eye fs-4"></i>
                                                 </a>
                                             </div>
                                         </div>
@@ -139,5 +158,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/reda/admin/general/soporte_tecnico/indexSoporteTecnico.min.js') }}"></script>
+    <script src="{{ asset('public/js/reda/admin/general/soporte_tecnico/indexSoporteTecnico.min.js?v=' . time()) }}"></script>
 @endpush

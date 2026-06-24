@@ -40,3 +40,58 @@
     &-w-15 { width: 15%; }
     &-w-25 { width: 25%; }
 }
+
+/* Utilidades adicionales para el admin */
+.fs-7 { font-size: 0.95rem !important; }
+.fs-8 { font-size: 0.85rem !important; }
+.fs-9 { font-size: 0.75rem !important; }
+
+/* Símbolos y Avatares */
+.symbol {
+    display: inline-block;
+    flex-shrink: 0;
+    position: relative;
+    border-radius: 0.475rem;
+
+    &.symbol-circle {
+        border-radius: 50%;
+        .symbol-label {
+            border-radius: 50%;
+        }
+    }
+
+    &.symbol-30px {
+        width: 30px;
+        height: 30px;
+    }
+
+    .symbol-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: #3f4254;
+        background-color: #f5f8fa;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+}
+
+/* Colores de fondo claros (Light Backgrounds) */
+.bg-light-primary {
+    background-color: #f1faff !important;
+}
+.bg-light-success {
+    background-color: #e8fff3 !important;
+}
+.bg-light-info {
+    background-color: #f8f5ff !important;
+}
+.bg-light-warning {
+    background-color: #fff8dd !important;
+}
+.bg-light-danger {
+    background-color: #fff5f8 !important;
+}

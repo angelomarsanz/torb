@@ -44,6 +44,7 @@ class SoporteTecnico extends Model
         'fecha_prometido_para' => 'datetime',
         'visto_por_admin'      => 'boolean',
         'visto_por_usuario'    => 'boolean',
+        'link_error'           => 'array',
     ];
 
     /**

@@ -88,6 +88,8 @@ export const guardarTicketSoporte = (formData) => {
             // Animación de espera (Directriz GEMINI.md)
             window.RedaNotificaciones.esperar();
 
+            // Al serializar el formulario, se incluye automáticamente el campo 'vista_origen' 
+            // que agregamos como hidden input en la vista Blade.
             const formData = $(this).serialize();
             
             // Ejecutamos la función llamada (Promesa)

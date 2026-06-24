@@ -301,5 +301,20 @@
     "Enviar Reporte": "Enviar Reporte",
     "Ticket de soporte creado con éxito": "Ticket de soporte creado con éxito",
     "Error al crear el ticket de soporte": "Error al crear el ticket de soporte",
-    "Escribe los detalles de tu reporte aquí...": "Escribe los detalles de tu reporte aquí..."
+    "Escribe los detalles de tu reporte aquí...": "Escribe los detalles de tu reporte aquí...",
+    "N/A": "N/A",
+    "Abierto": "Abierto",
+    "Detalles Técnicos del Reporte": "Detalles Técnicos del Reporte",
+    "Usuario que reseñó": "Usuario que reseñó",
+    "Calificación": "Calificación",
+    "Vista Origen": "Vista Origen",
+    "Detalles Técnicos": "Detalles Técnicos",
+    "ID de Reseña": "ID de Reseña",
+    "Gestión de Calificaciones": "Gestión de Calificaciones",
+    "Este ticket fue reportado desde el detalle de una calificación. Aquí puede realizar acciones directas sobre la reseña reportada.": "Este ticket fue reportado desde el detalle de una calificación. Aquí puede realizar acciones directas sobre la reseña reportada.",
+    "Eliminar Reseña": "Eliminar Reseña",
+    "Cargando opciones de gestión...": "Cargando opciones de gestión...",
+    "Gestión de Ticket de Soporte": "Gestión de Ticket de Soporte",
+    "No hay una vista de gestión específica para este origen.": "No hay una vista de gestión específica para este origen.",
+    "Origen": "Origen"
 }

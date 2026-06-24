@@ -9,7 +9,7 @@
 
     <section class="content">
         <div class="row" id="show_soporte_tecnico">
-            <div class="col-md-8 col-xs-12">
+            <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title">{{ $ticket->tema }}</h3>
@@ -19,28 +19,43 @@
                         <div class="row d-none d-md-flex mb-4">
                             <div class="col-md-3">
                                 <strong><i class="fa fa-user margin-r-5"></i> {{ __('Usuario') }}</strong>
-                                <p class="text-muted">{{ $ticket->user->name ?? 'N/A' }}</p>
+                                <div class="d-flex align-items-center mt-1">
+                                    @if($ticket->user)
+                                        <div class="symbol symbol-30px symbol-circle me-2">
+                                            <span class="symbol-label bg-light-primary text-primary fw-bold">{{ substr(trim($ticket->user->first_name), 0, 1) }}</span>
+                                        </div>
+                                        <span class="text-muted">
+                                            {{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">{{ __('N/A') }}</span>
+                                    @endif
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <strong><i class="fa fa-calendar margin-r-5"></i> {{ __('Fecha') }}</strong>
-                                <p class="text-muted">{{ $ticket->created_at->format('d/m/Y H:i') }}</p>
+                                <p class="text-muted mt-1">{{ $ticket->created_at->format('d/m/Y H:i') }}</p>
                             </div>
                             <div class="col-md-3">
                                 <strong><i class="fa fa-warning margin-r-5"></i> {{ __('Prioridad') }}</strong>
-                                <p>
+                                <div class="mt-1">
                                     @php
                                         $prioridadClass = [
-                                            'Alta' => 'label-danger',
-                                            'Media' => 'label-warning',
-                                            'Baja' => 'label-info'
-                                        ][$ticket->prioridad] ?? 'label-default';
+                                            'Alta' => 'text-danger',
+                                            'Media' => 'text-warning',
+                                            'Baja' => 'text-info'
+                                        ][$ticket->prioridad] ?? 'text-secondary';
                                     @endphp
-                                    <span class="label {{ $prioridadClass }}">{{ $ticket->prioridad ?? 'N/A' }}</span>
-                                </p>
+                                    <span class="{{ $prioridadClass }} fw-bold">
+                                        <i class="fa fa-circle fs-9 me-1"></i>{{ $ticket->prioridad ?? 'N/A' }}
+                                    </span>
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <strong><i class="fa fa-check-circle margin-r-5"></i> {{ __('Estatus') }}</strong>
-                                <p><span class="label label-primary">{{ $ticket->estatus ?? 'Abierto' }}</span></p>
+                                <div class="mt-1">
+                                    <span class="text-primary fw-bold">{{ $ticket->estatus ?? 'Abierto' }}</span>
+                                </div>
                             </div>
                         </div>
 
@@ -48,21 +63,37 @@
                         <div class="d-md-none mb-4">
                             <div class="card p-3 shadow-sm soporte-tecnico-card soporte-tecnico-card-show">
                                 <div class="row">
+                                    <div class="col-12 mb-3 d-flex align-items-center">
+                                        @if($ticket->user)
+                                            <div class="symbol symbol-30px symbol-circle me-2">
+                                                <span class="symbol-label bg-light-primary text-primary fw-bold">{{ substr(trim($ticket->user->first_name), 0, 1) }}</span>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Usuario') }}</small>
+                                                <span class="f-14 fw-bold">
+                                                    {{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}
+                                                </span>
+                                            </div>
+                                        @else
+                                            <div>
+                                                <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Usuario') }}</small>
+                                                <span class="f-14">{{ __('N/A') }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
                                     <div class="col-6 mb-2">
-                                        <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Usuario') }}</small>
-                                        <span class="f-14">{{ $ticket->user->name ?? 'N/A' }}</span>
+                                        <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Estatus') }}</small>
+                                        <span class="text-primary fw-bold">{{ $ticket->estatus ?? 'Abierto' }}</span>
                                     </div>
                                     <div class="col-6 mb-2 text-right">
-                                        <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Estatus') }}</small>
-                                        <span class="label label-primary">{{ $ticket->estatus ?? 'Abierto' }}</span>
-                                    </div>
-                                    <div class="col-6">
                                         <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Prioridad') }}</small>
-                                        <span class="label {{ $prioridadClass }}">{{ $ticket->prioridad ?? 'N/A' }}</span>
+                                        <span class="{{ $prioridadClass }} fw-bold">
+                                            <i class="fa fa-circle fs-9 me-1"></i>{{ $ticket->prioridad ?? 'N/A' }}
+                                        </span>
                                     </div>
-                                    <div class="col-6 text-right">
+                                    <div class="col-12">
                                         <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Fecha') }}</small>
-                                        <span class="f-12 text-muted">{{ $ticket->created_at->format('d/m/Y') }}</span>
+                                        <span class="f-12 text-muted">{{ $ticket->created_at->format('d/m/Y H:i') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -70,10 +101,21 @@
 
                         <hr>
 
-                        <strong><i class="fa fa-file-text-o margin-r-5"></i> {{ __('Mensaje / Descripción') }}</strong>
-                        <div class="well well-sm mt-2 soporte-tecnico-well-custom">
-                            {!! nl2br(e($ticket->mensaje ?? $ticket->descripcion ?? __('Sin descripción disponible.'))) !!}
+                        <div class="mb-2">
+                            <strong><i class="fa fa-file-text-o margin-r-5"></i> {{ __('Mensaje') }}</strong>
                         </div>
+                        <div class="well well-sm soporte-tecnico-well-custom">
+                            {!! nl2br(e($ticket->mensaje_usuario ?? __('Sin descripción disponible.'))) !!}
+                        </div>
+
+                        @if(isset($ticket->link_error) && !empty($ticket->link_error))
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary btn-flat btn-lg px-5" id="btn_gestionar_ticket" 
+                                        data-link-error="{{ json_encode($ticket->link_error) }}">
+                                    <i class="fa fa-gears me-2"></i> {{ __('Gestionar ticket') }}
+                                </button>
+                            </div>
+                        @endif
                     </div>
                     <div class="box-footer">
                         <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-default btn-flat">
@@ -82,26 +124,34 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="col-md-4 col-xs-12">
-                <div class="box box-info">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">{{ __('Acciones del Ticket') }}</h3>
+    <!-- Modal Dinámico para Gestión de Tickets -->
+    <div class="modal fade" id="modal_gestionar_ticket" tabindex="-1" role="dialog" aria-labelledby="modalGestionarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalGestionarLabel">{{ __('Gestión de Ticket de Soporte') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="contenido_modal_gestionar">
+                    <!-- El contenido se cargará dinámicamente con JavaScript -->
+                    <div class="text-center p-5">
+                        <i class="fa fa-spinner fa-spin fa-2x text-muted"></i>
+                        <p class="mt-2 text-muted">{{ __('Cargando opciones de gestión...') }}</p>
                     </div>
-                    <div class="box-body">
-                        <p class="text-muted">{{ __('Gestione el estado de este ticket.') }}</p>
-                        {{-- Aquí se podrían agregar formularios para cambiar estatus o responder --}}
-                        <div class="alert alert-info f-12">
-                            <i class="fa fa-info-circle"></i> {{ __('Funcionalidad de respuesta en desarrollo.') }}
-                        </div>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-flat" data-bs-dismiss="modal">{{ __('Cerrar') }}</button>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </div>
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/reda/admin/general/soporte_tecnico/showSoporteTecnico.min.js') }}"></script>
+    <script src="{{ asset('public/js/reda/admin/general/soporte_tecnico/showSoporteTecnico.min.js?v=' . time()) }}"></script>
 @endpush
+

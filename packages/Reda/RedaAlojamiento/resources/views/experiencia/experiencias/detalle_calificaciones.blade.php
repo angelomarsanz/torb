@@ -61,7 +61,7 @@
                                                             }
                                                         }
                                                     @endphp
-                                                    
+
                                                     <div class="negocio-media-detalle-container mr-3">
                                                         @if($logo)
                                                             <img src="{{ $logo }}" class="img-negocio-detalle" alt="{{ $experiencia->titulo }}">
@@ -98,8 +98,8 @@
 
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div>
-                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-reportar-reseña" 
-                                                        data-id="{{ $calificacion->id }}" 
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-reportar-reseña"
+                                                        data-id="{{ $calificacion->id }}"
                                                         data-negocio="{{ $experiencia->titulo }}"
                                                         data-usuario="{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}"
                                                         data-calificacion="{{ $calificacion->estrellas }}"
@@ -164,7 +164,8 @@
                 <input type="hidden" name="calificacion_id" id="reporte_calificacion_id">
                 <input type="hidden" name="tema" id="reporte_tema">
                 <input type="hidden" name="link_error" id="reporte_link_error">
-                
+                <input type="hidden" name="vista_origen" value="/reda/negocios/mis-calificaciones/detalle/{id}">
+
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label for="prioridad" class="form-label font-weight-700 text-14">{{ __('Prioridad') }}</label>
