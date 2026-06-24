@@ -101,7 +101,9 @@
                                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-reportar-reseña" 
                                                         data-id="{{ $calificacion->id }}" 
                                                         data-negocio="{{ $experiencia->titulo }}"
-                                                        data-usuario="{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}">
+                                                        data-usuario="{{ $calificacion->usuario->first_name }} {{ $calificacion->usuario->last_name }}"
+                                                        data-calificacion="{{ $calificacion->estrellas }}"
+                                                        data-comentario="{{ $calificacion->comentario }}">
                                                         <i class="fas fa-flag mr-1"></i> {{ __('Reportar') }}
                                                     </button>
                                                 </div>

@@ -37,7 +37,13 @@
                                         @foreach($tickets as $ticket)
                                             <tr>
                                                 <td class="text-center">{{ $ticket->id }}</td>
-                                                <td>{{ $ticket->user->name ?? 'N/A' }}</td>
+                                                <td>
+                                                    @if($ticket->user)
+                                                        {{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}
+                                                    @else
+                                                        {{ __('N/A') }}
+                                                    @endif
+                                                </td>
                                                 <td>{{ $ticket->tema }}</td>
                                                 <td class="text-center">
                                                     @php
@@ -55,7 +61,7 @@
                                                 <td class="text-center">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
                                                 <td class="text-center">
                                                     <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="btn btn-xs btn-primary btn-flat" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
-                                                        <i class="fa fa-eye"></i> {{ __('Ver Detalle') }}
+                                                        <i class="fa fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -84,7 +90,13 @@
 
                                             <div class="mb-2">
                                                 <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Usuario') }}</small>
-                                                <span class="f-14">{{ $ticket->user->name ?? 'N/A' }}</span>
+                                                <span class="f-14">
+                                                    @if($ticket->user)
+                                                        {{ explode(' ', trim($ticket->user->first_name))[0] }} {{ explode(' ', trim($ticket->user->last_name))[0] }}
+                                                    @else
+                                                        {{ __('N/A') }}
+                                                    @endif
+                                                </span>
                                             </div>
 
                                             <div class="mb-2">
@@ -104,8 +116,8 @@
                                                     @endphp
                                                     <span class="label {{ $prioridadClass }}">{{ $ticket->prioridad ?? 'N/A' }}</span>
                                                 </div>
-                                                <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="btn btn-sm btn-primary btn-flat">
-                                                    <i class="fa fa-eye"></i> {{ __('Ver Detalle') }}
+                                                <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="btn btn-sm btn-primary btn-flat" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
+                                                    <i class="fa fa-eye"></i>
                                                 </a>
                                             </div>
                                         </div>

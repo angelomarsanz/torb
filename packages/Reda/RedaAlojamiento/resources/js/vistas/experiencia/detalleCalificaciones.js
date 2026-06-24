@@ -57,11 +57,21 @@ export const guardarTicketSoporte = (formData) => {
             const calificacionId = $(this).data('id');
             const negocio = $(this).data('negocio');
             const usuario = $(this).data('usuario');
+            const calificacion = $(this).data('calificacion');
+            const comentario = $(this).data('comentario');
             
             // Llenar campos ocultos del modal
             $('#reporte_calificacion_id').val(calificacionId);
-            $('#reporte_tema').val(`Reporte de reseña #${calificacionId} - Negocio: ${negocio} - Cliente: ${usuario}`);
-            $('#reporte_link_error').val(window.location.href);
+            $('#reporte_tema').val("Negocios");
+            
+            const linkErrorObj = {
+                id_de_la_reseña: calificacionId,
+                nombre_usuario_que_hizo_la_reseña: usuario,
+                calificacion_reseña: calificacion,
+                comentario_reseña: comentario
+            };
+            
+            $('#reporte_link_error').val(JSON.stringify(linkErrorObj));
             
             // Limpiar textarea y resetear prioridad
             $('#mensaje').val('');
