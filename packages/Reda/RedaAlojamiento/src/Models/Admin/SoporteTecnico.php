@@ -49,7 +49,7 @@ class SoporteTecnico extends Model
     ];
 
     /**
-     * Accessor para link_error que maneja posibles dobles codificaciones JSON.
+     * Accessor para link_error que maneja posibles múltiples codificaciones JSON de forma recursiva.
      */
     protected function linkError(): Attribute
     {
@@ -57,18 +57,27 @@ class SoporteTecnico extends Model
             get: function ($value) {
                 if (is_null($value)) return [];
                 
-                // Si ya es un array (gracias al cast), lo devolvemos
-                if (is_array($value)) return $value;
-
-                // Si es un string, intentamos decodificarlo (caso de doble codificación)
-                if (is_string($value)) {
-                    $decoded = json_decode($value, true);
-                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                        return $decoded;
+                $datos = $value;
+                
+                // Decodificación recursiva: mientras sea un string, intentamos decodificarlo
+                // Esto maneja casos de doble o triple codificación JSON heredada
+                while (is_string($datos) && !empty($datos)) {
+                    $intento = json_decode($datos, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $datos = $intento;
+                    } else {
+                        // Si falla la decodificación, dejamos de intentar
+                        break;
                     }
                 }
 
-                return $value;
+                // Si al final es un array, lo devolvemos
+                if (is_array($datos)) {
+                    return $datos;
+                }
+
+                // Si quedó como un string no JSON, lo envolvemos en un array bajo la clave 'mensaje'
+                return ['url' => $datos];
             },
         );
     }

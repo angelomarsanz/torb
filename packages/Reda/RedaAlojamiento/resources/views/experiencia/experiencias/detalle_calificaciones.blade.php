@@ -164,7 +164,7 @@
                 <input type="hidden" name="calificacion_id" id="reporte_calificacion_id">
                 <input type="hidden" name="tema" id="reporte_tema">
                 <input type="hidden" name="link_error" id="reporte_link_error">
-                <input type="hidden" name="vista_origen" value="/reda/negocios/mis-calificaciones/detalle/{id}">
+                <input type="hidden" name="vista_origen" value="Reportar calificación">
 
                 <div class="modal-body p-4">
                     <div class="mb-3">

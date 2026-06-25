@@ -15,7 +15,7 @@
      */
     const obtenerValorSeguro = (obj, posiblesClaves) => {
         if (!obj || typeof obj !== 'object') return null;
-        
+
         // 1. Intento de coincidencia exacta
         for (const clave of posiblesClaves) {
             if (obj[clave] !== undefined) return obj[clave];
@@ -40,32 +40,53 @@
                 }
             }
         }
-        
+
         return null;
     };
 
     /**
      * Genera el contenido dinámico del modal basado en el origen del ticket
-     * @param {Object} linkError - Datos del JSON guardado en link_error
+     * @param {Object|string} linkError - Datos del JSON guardado en link_error
      */
     const cargarContenidoGestionar = (linkError) => {
         const containerModal = $('#contenido_modal_gestionar');
-        const vistaOrigen = linkError?.vista_origen || '';
+        
+        // --- DECODIFICACIÓN ROBUSTA (Doble/Triple JSON) ---
+        let datosSoporte = linkError;
+        
+        // Decodificación recursiva: mientras sea un string, intentamos parsearlo.
+        // Esto es necesario para registros antiguos con doble/triple escape de barras y comillas.
+        let niveles = 0;
+        while (typeof datosSoporte === 'string' && niveles < 5) {
+            try {
+                let parseado = JSON.parse(datosSoporte);
+                // Si el parseo funcionó y el resultado es distinto a la entrada, continuamos
+                if (parseado === datosSoporte) break;
+                datosSoporte = parseado;
+                niveles++;
+            } catch (e) {
+                // Si ya no es un JSON válido, salimos del bucle
+                break;
+            }
+        }
 
-        console.log('Cargando contenido para origen:', vistaOrigen);
-        console.log('Datos de linkError:', linkError);
+        // Normalizamos la vista de origen para manejar identificadores descriptivos
+        let vistaOrigen = datosSoporte?.vista_origen || '';
+
+        console.log('Datos procesados tras decodificación recursiva:', datosSoporte);
+        console.log('Identificador de origen final:', vistaOrigen);
 
         let htmlContenido = '';
 
         switch (vistaOrigen) {
-            case '/reda/negocios/mis-calificaciones/detalle/{id}':
-                console.log('caso vista calificaciones');
+            case 'Reportar calificación':
+                console.log('Renderizando panel de Gestión de Calificaciones');
                 
                 // Extracción robusta de datos
-                const idReseña = obtenerValorSeguro(linkError, ['id_reseña', 'id_de_la_reseña', 'id_de_la_rese\u00f1a']) || 'N/A';
-                const usuarioReseña = obtenerValorSeguro(linkError, ['nombre_usuario_que_hizo_la_reseña', 'nombre_usuario', 'usuario_reseña']) || 'N/A';
-                const calificacion = obtenerValorSeguro(linkError, ['calificacion_reseña', 'calificacion', 'puntos']) || 0;
-                const comentario = obtenerValorSeguro(linkError, ['comentario_reseña', 'comentario', 'mensaje']) || '';
+                const idReseña = obtenerValorSeguro(datosSoporte, ['id_reseña', 'id_de_la_reseña', 'id_de_la_rese\u00f1a']) || 'N/A';
+                const usuarioReseña = obtenerValorSeguro(datosSoporte, ['nombre_usuario_que_hizo_la_reseña', 'nombre_usuario', 'usuario_reseña']) || 'N/A';
+                const calificacion = obtenerValorSeguro(datosSoporte, ['calificacion_reseña', 'calificacion', 'puntos']) || 0;
+                const comentario = obtenerValorSeguro(datosSoporte, ['comentario_reseña', 'comentario', 'mensaje']) || '';
 
                 htmlContenido = `
                     <div class="alert alert-custom bg-light-primary border-primary border-dashed p-4">
@@ -99,7 +120,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <button class="btn btn-danger btn-flat btn-sm btn-accion-directa" data-accion="eliminar">
+                            <button class="btn btn-danger btn-flat btn-sm btn-accion-directa" data-accion="eliminar" data-id="${idReseña}">
                                 <i class="fa fa-trash me-1"></i> ${window.RedaAlojamientoJson["Eliminar Reseña"] || "Eliminar Reseña"}
                             </button>
                         </div>
