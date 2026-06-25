@@ -54,7 +54,7 @@
                                                     @if($ticket->link_error)
                                                         <i class="fa fa-info-circle text-info ms-1 cursor-pointer btn-info-tecnica" 
                                                            data-toggle="popover" 
-                                                           data-content='<ul class="list-unstyled mb-0 f-12">@foreach($ticket->link_error as $k => $v)<li><strong>{{ ucfirst(str_replace("_", " ", $k)) }}:</strong> {{ is_array($v) ? json_encode($v) : $v }}</li>@endforeach</ul>'
+                                                           data-content='<ul class="list-unstyled mb-0 f-12">@if(is_array($ticket->link_error) || is_object($ticket->link_error))@foreach($ticket->link_error as $k => $v)<li><strong>{{ ucfirst(str_replace("_", " ", $k)) }}:</strong> {{ is_array($v) ? json_encode($v) : $v }}</li>@endforeach @else <li>{{ $ticket->link_error }}</li> @endif</ul>'
                                                            data-html="true"
                                                            data-trigger="hover"
                                                            title="{{ __('Detalles Técnicos') }}"></i>

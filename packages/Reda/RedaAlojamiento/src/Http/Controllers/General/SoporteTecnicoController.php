@@ -30,17 +30,20 @@ class SoporteTecnicoController extends Controller
             // Manejo de link_error para añadir vista_origen si existe
             $linkError = $datosValidados['link_error'];
             $vistaOrigen = $datosValidados['vista_origen'] ?? '';
+            $linkErrorArray = [];
+
+            if ($linkError) {
+                $decoded = json_decode($linkError, true);
+                if (is_array($decoded)) {
+                    $linkErrorArray = $decoded;
+                } else {
+                    // Si no es JSON (es una URL simple o texto), lo guardamos en una clave 'url'
+                    $linkErrorArray['url'] = $linkError;
+                }
+            }
 
             if ($vistaOrigen) {
-                $linkErrorArray = [];
-                if ($linkError) {
-                    $decoded = json_decode($linkError, true);
-                    if (is_array($decoded)) {
-                        $linkErrorArray = $decoded;
-                    }
-                }
                 $linkErrorArray['vista_origen'] = $vistaOrigen;
-                $linkError = json_encode($linkErrorArray);
             }
 
             $ticket = SoporteTecnico::create([
@@ -48,7 +51,7 @@ class SoporteTecnicoController extends Controller
                 'tema'            => $datosValidados['tema'],
                 'mensaje_usuario' => $datosValidados['mensaje'],
                 'prioridad'       => $datosValidados['prioridad'],
-                'link_error'      => $linkError,
+                'link_error'      => !empty($linkErrorArray) ? $linkErrorArray : null,
                 'estatus'         => 'Abierto', // Estatus inicial por defecto
                 'visto_por_admin' => false,
                 'visto_por_usuario' => true,

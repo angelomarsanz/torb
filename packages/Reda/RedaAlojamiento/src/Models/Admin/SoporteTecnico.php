@@ -4,6 +4,7 @@ namespace Reda\RedaAlojamiento\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class SoporteTecnico extends Model
 {
@@ -46,6 +47,31 @@ class SoporteTecnico extends Model
         'visto_por_usuario'    => 'boolean',
         'link_error'           => 'array',
     ];
+
+    /**
+     * Accessor para link_error que maneja posibles dobles codificaciones JSON.
+     */
+    protected function linkError(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (is_null($value)) return [];
+                
+                // Si ya es un array (gracias al cast), lo devolvemos
+                if (is_array($value)) return $value;
+
+                // Si es un string, intentamos decodificarlo (caso de doble codificación)
+                if (is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        return $decoded;
+                    }
+                }
+
+                return $value;
+            },
+        );
+    }
 
     /**
      * Relación con el usuario que creó la solicitud.
