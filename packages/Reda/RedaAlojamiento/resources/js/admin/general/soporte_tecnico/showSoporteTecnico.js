@@ -349,6 +349,16 @@
             }
         });
 
+        // Evento para mostrar animación de espera al volver al listado
+        $(document).on('click', '.btn-volver-listado', function(e) {
+            // Solo si es un link con href válido y no se abre en pestaña nueva
+            if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                    window.RedaNotificaciones.esperar();
+                }
+            }
+        });
+
         // Log de carga exitosa
         console.log(window.RedaAlojamientoJson["Vista de detalle de ticket cargada"] || "Vista de detalle de ticket cargada.");
     };

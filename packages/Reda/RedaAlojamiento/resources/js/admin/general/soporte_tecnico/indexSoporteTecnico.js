@@ -28,6 +28,16 @@
             });
         }
 
+        // Evento para mostrar animación de espera al ver detalle de ticket
+        $(document).on('click', '.btn-ver-ticket', function(e) {
+            // Solo si es un link con href válido y no se abre en pestaña nueva
+            if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                    window.RedaNotificaciones.esperar();
+                }
+            }
+        });
+
         // Log de carga exitosa
         console.log(window.RedaAlojamientoJson["Módulo de Soporte Técnico (Admin) cargado correctamente"] || "Módulo de Soporte Técnico (Admin) cargado correctamente.");
     };

@@ -58,13 +58,22 @@ export const menuLateralAdmin = () =>
                     const linkSoporte = `${baseUrl}/admin/reda/general/soporte-tecnico`;
                     const soporteMenuHtml = `
                         <li id="menu-soporte">
-                            <a href="${linkSoporte}">
+                            <a href="${linkSoporte}" class="btn-menu-soporte">
                                 <i class="fa fa-life-ring"></i> <span>${window.RedaAlojamiento.general.soporte_tecnico || 'Soporte técnico'}</span>
                             </a>
                         </li>
                     `;
                     $messagesMenuItem.after(soporteMenuHtml);
                     console.log('Opción "Soporte Técnico" inyectada.');
+
+                    // Animación de espera al hacer clic en Soporte Técnico
+                    $(document).on('click', '.btn-menu-soporte', function(e) {
+                        if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+                            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                                window.RedaNotificaciones.esperar();
+                            }
+                        }
+                    });
                 }
             });
         }

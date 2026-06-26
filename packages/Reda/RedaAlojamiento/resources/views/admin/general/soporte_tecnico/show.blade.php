@@ -121,7 +121,7 @@
                         @endif
                     </div>
                     <div class="box-footer">
-                        <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-default btn-flat">
+                        <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-default btn-flat btn-volver-listado">
                             <i class="fa fa-arrow-left"></i> {{ __('Volver al listado') }}
                         </a>
                     </div>

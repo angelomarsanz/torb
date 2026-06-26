@@ -77,7 +77,7 @@
                                                 </td>
                                                 <td class="text-center text-muted">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
                                                 <td class="text-center">
-                                                    <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="text-primary hover-primary" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
+                                                    <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="text-primary hover-primary btn-ver-ticket" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
                                                         <i class="fa fa-eye fs-5"></i>
                                                     </a>
                                                 </td>
@@ -135,7 +135,7 @@
                                                         <i class="fa fa-circle fs-9 me-1"></i>{{ $ticket->prioridad ?? 'N/A' }}
                                                     </span>
                                                 </div>
-                                                <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="text-primary" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
+                                                <a href="{{ route('reda.admin.general.soporte_tecnico.show', $ticket->id) }}" class="text-primary btn-ver-ticket" data-toggle="tooltip" title="{{ __('Ver Detalle') }}">
                                                     <i class="fa fa-eye fs-4"></i>
                                                 </a>
                                             </div>
