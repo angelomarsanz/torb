@@ -72,7 +72,11 @@ window.RedaNotificaciones = {
             $mensaje.html(mensaje);
 
             $modal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                if (recargar) location.reload();
+                if (typeof recargar === 'string') {
+                    window.location.href = recargar;
+                } else if (recargar === true) {
+                    location.reload();
+                }
             });
 
             // Si ya estaba abierto, solo actualizamos contenido, si no, lo mostramos

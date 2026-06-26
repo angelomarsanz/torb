@@ -6,6 +6,7 @@
      * Maneja la inicialización de componentes de la interfaz de usuario para el detalle del ticket.
      */
     const containerId = '#show_soporte_tecnico';
+    const indexUrl = APP_URL + '/admin/reda/general/soporte-tecnico';
 
     /**
      * Obtiene un valor de un objeto buscando por claves similares (útil para problemas de encoding con 'ñ')
@@ -312,7 +313,7 @@
                             window.RedaAlojamientoJson["Reseña eliminada"] || "Reseña eliminada",
                             resultado.mensaje_usuario,
                             'exito',
-                            true // recargar
+                            indexUrl // Redireccionar al índice tras éxito
                         );
                     } else {
                         window.RedaNotificaciones.notificar(
@@ -321,7 +322,7 @@
                             'error'
                         );
                     }
-                }, window.RedaAlojamientoJson["Confirmar eliminación"] || "Confirmar eliminación");
+                }, window.RedaAlojamientoJson["Confirmar eliminación"] || "Confirmar eliminación", window.RedaAlojamientoJson["Eliminar"] || "Eliminar");
             } else if (accion === 'mantener') {
                 const mensajeConfirmacion = window.RedaAlojamientoJson["¿Desea cerrar este ticket manteniendo la reseña intacta?"] || "¿Desea cerrar este ticket manteniendo la reseña intacta?";
                 
@@ -335,7 +336,7 @@
                             window.RedaAlojamientoJson["Ticket Cerrado"] || "Ticket Cerrado",
                             resultado.mensaje_usuario,
                             'exito',
-                            true // recargar
+                            indexUrl // Redireccionar al índice tras éxito
                         );
                     } else {
                         window.RedaNotificaciones.notificar(
@@ -344,7 +345,7 @@
                             'error'
                         );
                     }
-                }, window.RedaAlojamientoJson["Mantener reseña"] || "Mantener reseña");
+                }, window.RedaAlojamientoJson["Mantener reseña"] || "Mantener reseña", window.RedaAlojamientoJson["Mantener"] || "Mantener");
             }
         });
 
