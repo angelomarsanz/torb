@@ -47,9 +47,10 @@
     /**
      * Elimina una reseña vía AJAX
      * @param {number|string} idReseña - ID de la reseña a eliminar
+     * @param {number|string} ticketId - ID del ticket relacionado
      * @returns {Promise}
      */
-    const eliminarReseña = (idReseña) => {
+    const eliminarReseña = (idReseña, ticketId) => {
         const urlEliminar = APP_URL + '/admin/reda/general/eliminar-calificacion/' + idReseña;
         console.log('Intentando eliminar reseña en URL:', urlEliminar);
 
@@ -60,6 +61,7 @@
                     type: 'DELETE',
                     data: {
                         "_token": $('meta[name="csrf-token"]').attr('content'),
+                        "ticket_id": ticketId // Enviamos el ID del ticket para cerrarlo automáticamente
                     },
                     success: function(data) {
                         console.log('Respuesta de eliminación:', data);
@@ -92,15 +94,68 @@
     };
 
     /**
+     * Cierra un ticket manualmente vía AJAX
+     * @param {number|string} ticketId - ID del ticket
+     * @param {string} resultado - Resultado de la gestión (ej: 'Mantenida')
+     * @returns {Promise}
+     */
+    const cerrarTicketAjax = (ticketId, resultado) => {
+        const urlCerrar = APP_URL + '/admin/reda/general/soporte-tecnico/cerrar/' + ticketId;
+        return new Promise((resolve) => {
+            (function( $ ) {
+                $.ajax({
+                    url: urlCerrar,
+                    type: 'POST',
+                    data: {
+                        "_token": $('meta[name="csrf-token"]').attr('content'),
+                        "resultado": resultado
+                    },
+                    success: function(data) {
+                        resolve(data);
+                    },
+                    error: function (x, xs, xt) {
+                        let respuestaServidor = {};
+                        try {
+                            respuestaServidor = JSON.parse(x.responseText);
+                        } catch (e) {
+                            respuestaServidor = {};
+                        }
+                        let respuesta = {
+                            'success': false,
+                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? (window.RedaAlojamientoJson["Error al cerrar el ticket"] || 'Error al cerrar el ticket'),
+                        };
+                        resolve(respuesta);
+                    }
+                });
+            })(jQuery);
+        });
+    };
+
+    /**
      * Genera el contenido dinámico del modal basado en el origen del ticket
      * @param {Object|string} linkError - Datos del JSON guardado en link_error
+     * @param {Object} metadatosTicket - Datos adicionales (ticket_id, recurso_existe, estatus)
      */
-    const cargarContenidoGestionar = (linkError) => {
+    const cargarContenidoGestionar = (linkError, metadatosTicket) => {
         const containerModal = $('#contenido_modal_gestionar');
         const containerAcciones = $('#acciones_dinamicas_modal');
 
         // Limpiar acciones previas
         containerAcciones.empty();
+
+        // Si el ticket ya está cerrado o el recurso no existe, mostramos mensaje informativo
+        if (metadatosTicket.estatus === 'Cerrado' || metadatosTicket.recursoExiste === '0') {
+            const mensajeBase = window.RedaAlojamientoJson["Este ticket ya ha sido procesado o el recurso vinculado (ej: la reseña) ya no existe en la base de datos."] || "Este ticket ya ha sido procesado o el recurso vinculado (ej: la reseña) ya no existe en la base de datos.";
+            
+            containerModal.html(`
+                <div class="text-center p-5">
+                    <i class="fa fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4 class="fw-bold">${window.RedaAlojamientoJson["Ticket ya gestionado"] || "Ticket ya gestionado"}</h4>
+                    <p class="text-muted">${mensajeBase}</p>
+                </div>
+            `);
+            return;
+        }
 
         // --- DECODIFICACIÓN ROBUSTA (Doble/Triple JSON) ---
         let datosSoporte = linkError;
@@ -172,10 +227,10 @@
 
                 // Inyectar acciones en el footer
                 containerAcciones.html(`
-                    <button class="btn btn-danger btn-flat btn-sm btn-accion-directa me-2" data-accion="eliminar" data-id="${idReseña}">
+                    <button class="btn btn-danger btn-flat btn-sm btn-accion-directa me-2" data-accion="eliminar" data-id="${idReseña}" data-ticket-id="${metadatosTicket.ticketId}">
                         <i class="fa fa-trash me-1"></i> ${window.RedaAlojamientoJson["Eliminar Reseña"] || "Eliminar Reseña"}
                     </button>
-                    <button class="btn btn-success btn-flat btn-sm btn-accion-directa" data-accion="mantener" data-id="${idReseña}">
+                    <button class="btn btn-success btn-flat btn-sm btn-accion-directa" data-accion="mantener" data-id="${idReseña}" data-ticket-id="${metadatosTicket.ticketId}">
                         <i class="fa fa-check me-1"></i> ${window.RedaAlojamientoJson["Mantener la reseña"] || "Mantener la reseña"}
                     </button>
                 `);
@@ -212,6 +267,11 @@
             console.log('Click en gestionar ticket');
 
             const linkError = $(this).data('link-error');
+            const metadatosTicket = {
+                ticketId: $(this).data('ticket-id'),
+                recursoExiste: $(this).data('recurso-existe').toString(),
+                estatus: $(this).data('estatus')
+            };
 
             // Reiniciar contenido del modal y botones de acción
             $('#contenido_modal_gestionar').html(`
@@ -227,7 +287,7 @@
 
             // Cargar contenido basado en los datos
             setTimeout(() => {
-                cargarContenidoGestionar(linkError);
+                cargarContenidoGestionar(linkError, metadatosTicket);
             }, 300);
         });
 
@@ -237,6 +297,7 @@
             const $btn = $(this);
             const accion = $btn.data('accion');
             const id = $btn.data('id');
+            const ticketId = $btn.data('ticket-id');
 
             if (accion === 'eliminar') {
                 const mensajeConfirmacion = window.RedaAlojamientoJson["¿Está seguro de que desea eliminar esta reseña? Esta acción no se puede deshacer."] || "¿Está seguro de que desea eliminar esta reseña? Esta acción no se puede deshacer.";
@@ -244,7 +305,7 @@
                 window.mostrarConfirmacion(mensajeConfirmacion, async () => {
                     window.RedaNotificaciones.esperar();
                     
-                    const resultado = await eliminarReseña(id);
+                    const resultado = await eliminarReseña(id, ticketId);
                     
                     if (resultado.success) {
                         window.RedaNotificaciones.notificar(
@@ -262,8 +323,28 @@
                     }
                 }, window.RedaAlojamientoJson["Confirmar eliminación"] || "Confirmar eliminación");
             } else if (accion === 'mantener') {
-                // Simplemente cerramos el modal por ahora
-                $('#modal_gestionar_ticket').modal('hide');
+                const mensajeConfirmacion = window.RedaAlojamientoJson["¿Desea cerrar este ticket manteniendo la reseña intacta?"] || "¿Desea cerrar este ticket manteniendo la reseña intacta?";
+                
+                window.mostrarConfirmacion(mensajeConfirmacion, async () => {
+                    window.RedaNotificaciones.esperar();
+                    
+                    const resultado = await cerrarTicketAjax(ticketId, 'Reseña mantenida');
+                    
+                    if (resultado.success) {
+                        window.RedaNotificaciones.notificar(
+                            window.RedaAlojamientoJson["Ticket Cerrado"] || "Ticket Cerrado",
+                            resultado.mensaje_usuario,
+                            'exito',
+                            true // recargar
+                        );
+                    } else {
+                        window.RedaNotificaciones.notificar(
+                            window.RedaAlojamientoJson["Error"] || "Error",
+                            resultado.mensaje_usuario,
+                            'error'
+                        );
+                    }
+                }, window.RedaAlojamientoJson["Mantener reseña"] || "Mantener reseña");
             }
         });
 

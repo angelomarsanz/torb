@@ -71,6 +71,8 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
             Route::get('soporte-tecnico', 'index')->name('soporte_tecnico.index');
             // Ruta para ver el detalle de un ticket
             Route::get('soporte-tecnico/ver/{id}', 'show')->name('soporte_tecnico.show');
+            // Ruta para cerrar un ticket manualmente (ej: Mantener reseña)
+            Route::post('soporte-tecnico/cerrar/{id}', 'cerrarTicket')->name('soporte_tecnico.cerrar');
         });
 
         // Ruta para eliminar una calificación desde el admin

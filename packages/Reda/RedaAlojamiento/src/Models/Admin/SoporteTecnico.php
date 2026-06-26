@@ -27,6 +27,7 @@ class SoporteTecnico extends Model
         'link_error',
         'asignado_a',
         'estatus',
+        'resultado_gestion',
         'fecha_cambio_estatus',
         'fecha_prometido_para',
         'mensaje_soporte_tecnico',
@@ -88,5 +89,31 @@ class SoporteTecnico extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Verifica si el recurso vinculado en link_error aún existe en la base de datos.
+     * Esto ayuda a determinar si el ticket ya fue gestionado (ej: reseña eliminada).
+     */
+    public function verificarExistenciaRecurso()
+    {
+        $datos = $this->link_error;
+        if (empty($datos) || !is_array($datos)) return true;
+
+        $vistaOrigen = $datos['vista_origen'] ?? '';
+
+        switch ($vistaOrigen) {
+            case 'Reportar calificación':
+                // Buscamos el ID en las posibles claves (ñ/n)
+                $id = $datos['id_reseña'] ?? $datos['id_de_la_reseña'] ?? $datos['id_de_la_rese\u00f1a'] ?? null;
+                if ($id) {
+                    return \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::where('id', $id)->exists();
+                }
+                break;
+            
+            // Aquí se pueden agregar otros casos a futuro (ej: 'Reportar negocio', 'Reportar mensaje', etc.)
+        }
+
+        return true; // Por defecto asumimos que existe si no sabemos cómo verificarlo
     }
 }

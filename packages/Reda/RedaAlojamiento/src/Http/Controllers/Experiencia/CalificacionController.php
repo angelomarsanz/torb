@@ -182,11 +182,24 @@ class CalificacionController extends Controller
      * Elimina una calificación/reseña.
      * Esta acción suele ser ejecutada por un administrador desde el módulo de soporte.
      */
-    public function destroy($id)
+    public function destroy(Request $peticion, $id)
     {
         try {
             $calificacion = CalificacionExperiencia::findOrFail($id);
             $calificacion->delete();
+
+            // Si viene un ticket_id en la petición, cerramos el ticket de soporte automáticamente
+            if ($peticion->has('ticket_id')) {
+                $ticket = \Reda\RedaAlojamiento\Models\Admin\SoporteTecnico::find($peticion->ticket_id);
+                if ($ticket) {
+                    $ticket->update([
+                        'estatus' => 'Cerrado',
+                        'resultado_gestion' => 'Reseña eliminada',
+                        'fecha_cambio_estatus' => now(),
+                        'mensaje_soporte_tecnico' => $ticket->mensaje_soporte_tecnico . "\n\n" . __('Acción automática: Reseña eliminada por el administrador.')
+                    ]);
+                }
+            }
 
             $respuesta = [
                 'success' => true,

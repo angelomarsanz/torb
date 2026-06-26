@@ -111,7 +111,10 @@
                         @if(isset($ticket->link_error) && !empty($ticket->link_error))
                             <div class="text-center mt-4">
                                 <button type="button" class="btn btn-primary btn-flat btn-lg px-5" id="btn_gestionar_ticket"
-                                        data-link-error="{{ json_encode($ticket->link_error) }}">
+                                        data-link-error="{{ json_encode($ticket->link_error) }}"
+                                        data-ticket-id="{{ $ticket->id }}"
+                                        data-recurso-existe="{{ $ticket->recurso_existe ? '1' : '0' }}"
+                                        data-estatus="{{ $ticket->estatus }}">
                                     <i class="fa fa-gears me-2"></i> {{ __('Gestionar ticket') }}
                                 </button>
                             </div>
