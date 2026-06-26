@@ -108,11 +108,6 @@
                             {!! nl2br(e($ticket->mensaje_usuario ?? __('Sin descripción disponible.'))) !!}
                         </div>
 
-                        <div class="alert alert-info mt-3 f-12">
-                            <strong>Debug link_error:</strong>
-                            <pre>@php var_dump($ticket->link_error); @endphp</pre>
-                        </div>
-
                         @if(isset($ticket->link_error) && !empty($ticket->link_error))
                             <div class="text-center mt-4">
                                 <button type="button" class="btn btn-primary btn-flat btn-lg px-5" id="btn_gestionar_ticket"

@@ -50,10 +50,11 @@
      */
     const cargarContenidoGestionar = (linkError) => {
         const containerModal = $('#contenido_modal_gestionar');
-        
+
         // --- DECODIFICACIÓN ROBUSTA (Doble/Triple JSON) ---
         let datosSoporte = linkError;
-        
+        console.log('datosSoporte original:', datosSoporte);
+
         // Decodificación recursiva: mientras sea un string, intentamos parsearlo.
         // Esto es necesario para registros antiguos con doble/triple escape de barras y comillas.
         let niveles = 0;
@@ -81,7 +82,7 @@
         switch (vistaOrigen) {
             case 'Reportar calificación':
                 console.log('Renderizando panel de Gestión de Calificaciones');
-                
+
                 // Extracción robusta de datos
                 const idReseña = obtenerValorSeguro(datosSoporte, ['id_reseña', 'id_de_la_reseña', 'id_de_la_rese\u00f1a']) || 'N/A';
                 const usuarioReseña = obtenerValorSeguro(datosSoporte, ['nombre_usuario_que_hizo_la_reseña', 'nombre_usuario', 'usuario_reseña']) || 'N/A';
@@ -97,7 +98,7 @@
                             <table class="table table-sm table-borderless align-middle">
                                 <tr>
                                     <td class="fw-bold w-250px">${window.RedaAlojamientoJson["ID de Reseña"] || "ID de Reseña"}:</td>
-                                    <td><span class="badge badge-light-primary">${idReseña}</span></td>
+                                    <td>${idReseña}</td>
                                 </tr>
                                 <tr>
                                     <td class="fw-bold">${window.RedaAlojamientoJson["Usuario que reseñó"] || "Usuario que reseñó"}:</td>
