@@ -1,56 +1,89 @@
 /**
- * Muestra un modal de notificación moderno.
- * @param {string} titulo - Título del modal.
- * @param {string} mensaje - Mensaje a mostrar (soporta <br>).
- * @param {string} tipo - 'exito', 'error', 'info'.
- * @param {boolean} recargar - Si es true, recarga la página al cerrar el modal.
+ * Objeto global para gestionar notificaciones y animaciones de carga del plugin Reda (Versión Admin - Bootstrap 5).
  */
-window.mostrarNotificacion = (titulo, mensaje, tipo = 'info', recargar = false) => {
-    (function( $ ) {
-        "use strict";
-        const $modal = $('#modal-notificacion');
-        if (!$modal.length) {
-            console.error('No se encontró el modal de notificación (#modal-notificacion) en el DOM.');
-            return;
-        }
+window.RedaNotificaciones = {
 
-        const $titulo = $('#notificacion-titulo');
-        const $mensaje = $('#notificacion-mensaje');
-        const $icono = $('#notificacion-icono');
+    /**
+     * Muestra una animación de espera (spinner) bloqueando la interacción.
+     */
+    esperar: function() {
+        (function( $ ) {
+            "use strict";
+            const $modal = $('#modal-notificacion');
+            if (!$modal.length) return;
 
-        // Configuración de iconos y colores según el tipo
-        let iconoHtml = '';
-        switch (tipo) {
-            case 'exito':
-                iconoHtml = '<i class="fa fa-check-circle fa-4x text-success"></i>';
-                $titulo.text(titulo || window.RedaAlojamiento.general.exito);
-                break;
-            case 'error':
-                iconoHtml = '<i class="fa fa-times-circle fa-4x text-danger"></i>';
-                $titulo.text(titulo || window.RedaAlojamiento.general.error);
-                break;
-            default:
-                iconoHtml = '<i class="fa fa-info-circle fa-4x text-primary"></i>';
-                $titulo.text(titulo || window.RedaAlojamiento.general.notificacion);
-        }
+            const $titulo = $('#notificacion-titulo');
+            const $mensaje = $('#notificacion-mensaje');
+            const $icono = $('#notificacion-icono');
+            const $footer = $modal.find('.modal-footer');
 
-        $icono.html(iconoHtml);
-        $mensaje.html(mensaje);
+            // Configuración para estado de carga
+            $icono.html('<i class="fa fa-spinner fa-spin fa-4x text-success"></i>');
+            $titulo.text(window.RedaAlojamientoJson["Por favor espere"] || "Por favor espere");
+            $mensaje.text(window.RedaAlojamientoJson["Estamos procesando su solicitud..."] || "Estamos procesando su solicitud...");
+            
+            // Ocultamos el botón de aceptar y el botón de cerrar para que sea un bloqueo real
+            $footer.addClass('d-none');
+            $modal.find('.btn-close').addClass('d-none');
 
-        // Manejo de la recarga al cerrar
-        $modal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-            if (recargar) {
-                location.reload();
+            // Evitar que se cierre al hacer clic fuera o presionar ESC
+            // En Bootstrap 5 con jQuery bridge:
+            $modal.modal({
+                backdrop: 'static',
+                keyboard: false
+            }).modal('show');
+        })(jQuery);
+    },
+
+    /**
+     * Muestra un modal de notificación (Éxito, Error, Info).
+     */
+    notificar: function(titulo, mensaje, tipo = 'info', recargar = false) {
+        (function( $ ) {
+            "use strict";
+            const $modal = $('#modal-notificacion');
+            if (!$modal.length) return;
+
+            const $titulo = $('#notificacion-titulo');
+            const $mensaje = $('#notificacion-mensaje');
+            const $icono = $('#notificacion-icono');
+            const $footer = $modal.find('.modal-footer');
+
+            // Restauramos controles ocultos por 'esperar'
+            $footer.removeClass('d-none');
+            $modal.find('.btn-close').removeClass('d-none');
+
+            let iconoHtml = '';
+            switch (tipo) {
+                case 'exito':
+                    iconoHtml = '<i class="fa fa-check-circle fa-4x text-success"></i>';
+                    $titulo.text(titulo || (window.RedaAlojamiento?.general?.exito || "¡Éxito!"));
+                    break;
+                case 'error':
+                    iconoHtml = '<i class="fa fa-times-circle fa-4x text-danger"></i>';
+                    $titulo.text(titulo || (window.RedaAlojamiento?.general?.error || "Error"));
+                    break;
+                default:
+                    iconoHtml = '<i class="fa fa-info-circle fa-4x text-primary"></i>';
+                    $titulo.text(titulo || (window.RedaAlojamiento?.general?.notificacion || "Notificación"));
             }
-        });
 
-        $modal.modal('show');
-    })(jQuery);
-}
+            $icono.html(iconoHtml);
+            $mensaje.html(mensaje);
 
-// --- GESTIÓN DE BFCACHE (PARA ELIMINAR EL MODAL AL REGRESAR ATRÁS EN MÓVILES) ---
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted) {
+            $modal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                if (recargar) location.reload();
+            });
+
+            // Si ya estaba abierto, solo actualizamos contenido, si no, lo mostramos
+            $modal.modal('show');
+        })(jQuery);
+    },
+
+    /**
+     * Oculta el modal de notificación si está abierto.
+     */
+    ocultar: function() {
         (function( $ ) {
             "use strict";
             const $modal = $('#modal-notificacion');
@@ -58,6 +91,20 @@ window.addEventListener('pageshow', function(event) {
                 $modal.modal('hide');
             }
         })(jQuery);
+    }
+};
+
+/**
+ * Muestra un modal de notificación moderno (Mantiene compatibilidad con funciones antiguas).
+ */
+window.mostrarNotificacion = (titulo, mensaje, tipo = 'info', recargar = false) => {
+    window.RedaNotificaciones.notificar(titulo, mensaje, tipo, recargar);
+}
+
+// --- GESTIÓN DE BFCACHE (PARA ELIMINAR EL MODAL AL REGRESAR ATRÁS EN MÓVILES) ---
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        window.RedaNotificaciones.ocultar();
     }
 });
 

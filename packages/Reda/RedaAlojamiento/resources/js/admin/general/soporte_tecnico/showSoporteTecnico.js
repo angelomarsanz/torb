@@ -45,6 +45,53 @@
     };
 
     /**
+     * Elimina una reseña vía AJAX
+     * @param {number|string} idReseña - ID de la reseña a eliminar
+     * @returns {Promise}
+     */
+    const eliminarReseña = (idReseña) => {
+        const urlEliminar = APP_URL + '/admin/reda/general/eliminar-calificacion/' + idReseña;
+        console.log('Intentando eliminar reseña en URL:', urlEliminar);
+
+        return new Promise((resolve) => {
+            (function( $ ) {
+                $.ajax({
+                    url: urlEliminar,
+                    type: 'DELETE',
+                    data: {
+                        "_token": $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(data) {
+                        console.log('Respuesta de eliminación:', data);
+                        resolve(data);
+                    },
+                    error: function (x, xs, xt) {
+                        console.error('Error en AJAX de eliminación:', x);
+                        let respuestaServidor = {};
+                        try {
+                            respuestaServidor = JSON.parse(x.responseText);
+                        } catch (e) {
+                            respuestaServidor = {};
+                        }
+                        
+                        const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                        const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                        let respuesta = {
+                            'success': false,
+                            'message' : window.RedaAlojamientoJson["Error eliminando reseña"] || 'Error eliminando reseña',
+                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                            'respuesta': respuestaServidor.respuesta || '',
+                            'code': x.status !== 0 ? x.status : 504,
+                        };
+                        resolve(respuesta);
+                    }
+                });
+            })(jQuery);
+        });
+    };
+
+    /**
      * Genera el contenido dinámico del modal basado en el origen del ticket
      * @param {Object|string} linkError - Datos del JSON guardado en link_error
      */
@@ -182,6 +229,42 @@
             setTimeout(() => {
                 cargarContenidoGestionar(linkError);
             }, 300);
+        });
+
+        // Evento para acciones directas (Eliminar/Mantener)
+        $(document).on('click', '.btn-accion-directa', function(e) {
+            e.preventDefault();
+            const $btn = $(this);
+            const accion = $btn.data('accion');
+            const id = $btn.data('id');
+
+            if (accion === 'eliminar') {
+                const mensajeConfirmacion = window.RedaAlojamientoJson["¿Está seguro de que desea eliminar esta reseña? Esta acción no se puede deshacer."] || "¿Está seguro de que desea eliminar esta reseña? Esta acción no se puede deshacer.";
+                
+                window.mostrarConfirmacion(mensajeConfirmacion, async () => {
+                    window.RedaNotificaciones.esperar();
+                    
+                    const resultado = await eliminarReseña(id);
+                    
+                    if (resultado.success) {
+                        window.RedaNotificaciones.notificar(
+                            window.RedaAlojamientoJson["Reseña eliminada"] || "Reseña eliminada",
+                            resultado.mensaje_usuario,
+                            'exito',
+                            true // recargar
+                        );
+                    } else {
+                        window.RedaNotificaciones.notificar(
+                            window.RedaAlojamientoJson["Error"] || "Error",
+                            resultado.mensaje_usuario,
+                            'error'
+                        );
+                    }
+                }, window.RedaAlojamientoJson["Confirmar eliminación"] || "Confirmar eliminación");
+            } else if (accion === 'mantener') {
+                // Simplemente cerramos el modal por ahora
+                $('#modal_gestionar_ticket').modal('hide');
+            }
         });
 
         // Log de carga exitosa

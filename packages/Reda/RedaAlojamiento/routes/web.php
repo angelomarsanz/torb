@@ -72,6 +72,10 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
             // Ruta para ver el detalle de un ticket
             Route::get('soporte-tecnico/ver/{id}', 'show')->name('soporte_tecnico.show');
         });
+
+        // Ruta para eliminar una calificación desde el admin
+        Route::delete('eliminar-calificacion/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'destroy'])
+            ->name('soporte_tecnico.eliminar_calificacion');
     });
 
 });

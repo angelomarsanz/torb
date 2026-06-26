@@ -177,4 +177,35 @@ class CalificacionController extends Controller
 
         return response()->json($respuesta, $respuesta['code']);
     }
+
+    /**
+     * Elimina una calificación/reseña.
+     * Esta acción suele ser ejecutada por un administrador desde el módulo de soporte.
+     */
+    public function destroy($id)
+    {
+        try {
+            $calificacion = CalificacionExperiencia::findOrFail($id);
+            $calificacion->delete();
+
+            $respuesta = [
+                'success' => true,
+                'message' => 'Calificación eliminada',
+                'mensaje_usuario' => __('Reseña eliminada con éxito'),
+                'respuesta' => '',
+                'code' => 200
+            ];
+        } catch (\Exception $e) {
+            Log::error("Error eliminando calificación: " . $e->getMessage());
+            $respuesta = [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Error al intentar eliminar la reseña'),
+                'respuesta' => '',
+                'code' => 400
+            ];
+        }
+
+        return response()->json($respuesta, $respuesta['code']);
+    }
 }
