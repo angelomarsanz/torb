@@ -15,15 +15,18 @@ export const menuLateralAdmin = () =>
 
                 if ($propertiesMenuItem.length) {
                     const linkOpcionesNegocios = `${baseUrl}/admin/reda/negocios/opciones-tipos-de-negocios`;
+                    const labelNegocios = window.RedaAlojamientoJson["Negocios"] || "Negocios";
+                    const labelTiposNegocios = window.RedaAlojamientoJson["Tipos de negocios"] || "Tipos de negocios";
+
                     const nuevoMenuHtml = `
                         <li class="treeview" id="menu-negocios">
                             <a href="#" class="negocios-toggle">
-                                <i class="fa fa-briefcase"></i> <span>${window.RedaAlojamiento.general.negocios}</span>
+                                <i class="fa fa-briefcase"></i> <span>${labelNegocios}</span>
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu reda-admin-menu-hidden">
                                 <li>
-                                    <a href="${linkOpcionesNegocios}"><span>${window.RedaAlojamiento.general.tipos_de_negocios}</span></a>
+                                    <a href="${linkOpcionesNegocios}"><span>${labelTiposNegocios}</span></a>
                                 </li>
                             </ul>
                         </li>
@@ -56,10 +59,12 @@ export const menuLateralAdmin = () =>
 
                 if ($messagesMenuItem.length) {
                     const linkSoporte = `${baseUrl}/admin/reda/general/soporte-tecnico`;
+                    const labelSoporte = window.RedaAlojamientoJson["Soporte técnico"] || "Soporte técnico";
+
                     const soporteMenuHtml = `
                         <li id="menu-soporte">
                             <a href="${linkSoporte}" class="btn-menu-soporte">
-                                <i class="fa fa-life-ring"></i> <span>${window.RedaAlojamiento.general.soporte_tecnico || 'Soporte técnico'}</span>
+                                <i class="fa fa-life-ring"></i> <span>${labelSoporte}</span>
                             </a>
                         </li>
                     `;

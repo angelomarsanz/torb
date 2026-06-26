@@ -38,6 +38,16 @@
             }
         });
 
+        // Animación de espera al hacer clic en los controles de paginación
+        $(document).on('click', '.pagination a', function(e) {
+            // Solo si es un link con href válido
+            if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                    window.RedaNotificaciones.esperar();
+                }
+            }
+        });
+
         // Log de carga exitosa
         console.log(window.RedaAlojamientoJson["Módulo de Soporte Técnico (Admin) cargado correctamente"] || "Módulo de Soporte Técnico (Admin) cargado correctamente.");
     };

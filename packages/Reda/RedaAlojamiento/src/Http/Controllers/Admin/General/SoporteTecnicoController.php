@@ -16,7 +16,7 @@ class SoporteTecnicoController extends Controller
      */
     public function index()
     {
-        $tickets = SoporteTecnico::with('user')->orderBy('created_at', 'desc')->get();
+        $tickets = SoporteTecnico::with('user')->orderBy('created_at', 'desc')->paginate(10);
         return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets'));
     }
 

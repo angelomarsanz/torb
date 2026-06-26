@@ -41,6 +41,47 @@
     &-w-25 { width: 25%; }
 }
 
+/* Estilos para la paginación personalizada */
+.reda-pagination-container {
+    .pagination {
+        .page-item {
+            .page-link {
+                color: #333;
+                border-radius: 5px;
+                margin: 0 2px;
+                padding: 5px 10px;
+                font-size: 13px;
+                box-shadow: none !important;
+                
+                &:hover {
+                    background-color: #f1faff;
+                    color: #00a1ff;
+                    border-color: #00a1ff;
+                }
+
+                i {
+                    font-size: 10px; /* Tamaño controlado para los íconos */
+                }
+            }
+
+            &.active {
+                .page-link {
+                    background-color: #00a1ff !important;
+                    border-color: #00a1ff !important;
+                    color: #fff !important;
+                }
+            }
+
+            &.disabled {
+                .page-link {
+                    color: #ccc;
+                    background-color: #f9f9f9;
+                }
+            }
+        }
+    }
+}
+
 /* Utilidades adicionales para el admin */
 .f-10 { font-size: 10px !important; }
 .f-12 { font-size: 12px !important; }
@@ -75,8 +116,7 @@
 
 /* Símbolos y Avatares */
 .symbol {
-...
-
+    display: inline-block;
     flex-shrink: 0;
     position: relative;
     border-radius: 0.475rem;

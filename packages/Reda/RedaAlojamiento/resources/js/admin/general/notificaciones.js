@@ -57,15 +57,15 @@ window.RedaNotificaciones = {
             switch (tipo) {
                 case 'exito':
                     iconoHtml = '<i class="fa fa-check-circle fa-4x text-success"></i>';
-                    $titulo.text(titulo || (window.RedaAlojamiento?.general?.exito || "¡Éxito!"));
+                    $titulo.text(titulo || (window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!"));
                     break;
                 case 'error':
                     iconoHtml = '<i class="fa fa-times-circle fa-4x text-danger"></i>';
-                    $titulo.text(titulo || (window.RedaAlojamiento?.general?.error || "Error"));
+                    $titulo.text(titulo || (window.RedaAlojamientoJson["Error"] || "Error"));
                     break;
                 default:
                     iconoHtml = '<i class="fa fa-info-circle fa-4x text-primary"></i>';
-                    $titulo.text(titulo || (window.RedaAlojamiento?.general?.notificacion || "Notificación"));
+                    $titulo.text(titulo || (window.RedaAlojamientoJson["Notificación"] || "Notificación"));
             }
 
             $icono.html(iconoHtml);

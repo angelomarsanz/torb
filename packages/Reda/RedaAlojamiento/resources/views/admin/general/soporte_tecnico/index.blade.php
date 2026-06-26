@@ -154,6 +154,13 @@
                                 </div>
                             @endif
                         </div>
+
+                        <!-- Controles de Paginación -->
+                        <div class="row justify-content-between pb-3 mt-4 mb-2">
+                            <div class="col-sm-12 col-md-12 d-flex justify-content-center">
+                                {{ $tickets->appends(request()->except('page'))->links('reda-alojamiento::admin.general.paginacion') }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

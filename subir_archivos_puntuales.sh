@@ -26,7 +26,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
 
     #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
-    #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+    "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
@@ -93,6 +93,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_notificaciones.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/index.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/show.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/admin/general/paginacion.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FRONTEND - CARPETAS FRONTEND) ---
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
