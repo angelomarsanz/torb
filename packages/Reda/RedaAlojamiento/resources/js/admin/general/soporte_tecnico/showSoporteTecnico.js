@@ -50,31 +50,32 @@
      */
     const cargarContenidoGestionar = (linkError) => {
         const containerModal = $('#contenido_modal_gestionar');
+        const containerAcciones = $('#acciones_dinamicas_modal');
+
+        // Limpiar acciones previas
+        containerAcciones.empty();
 
         // --- DECODIFICACIÓN ROBUSTA (Doble/Triple JSON) ---
         let datosSoporte = linkError;
         console.log('datosSoporte original:', datosSoporte);
 
         // Decodificación recursiva: mientras sea un string, intentamos parsearlo.
-        // Esto es necesario para registros antiguos con doble/triple escape de barras y comillas.
         let niveles = 0;
         while (typeof datosSoporte === 'string' && niveles < 5) {
             try {
                 let parseado = JSON.parse(datosSoporte);
-                // Si el parseo funcionó y el resultado es distinto a la entrada, continuamos
                 if (parseado === datosSoporte) break;
                 datosSoporte = parseado;
                 niveles++;
             } catch (e) {
-                // Si ya no es un JSON válido, salimos del bucle
                 break;
             }
         }
 
-        // Normalizamos la vista de origen para manejar identificadores descriptivos
+        // Normalizamos la vista de origen
         let vistaOrigen = datosSoporte?.vista_origen || '';
 
-        console.log('Datos procesados tras decodificación recursiva:', datosSoporte);
+        console.log('Datos procesados:', datosSoporte);
         console.log('Identificador de origen final:', vistaOrigen);
 
         let htmlContenido = '';
@@ -90,12 +91,12 @@
                 const comentario = obtenerValorSeguro(datosSoporte, ['comentario_reseña', 'comentario', 'mensaje']) || '';
 
                 htmlContenido = `
-                    <div class="alert alert-custom bg-light-primary border-primary border-dashed p-4">
+                    <div class="alert alert-custom bg-light-primary border-primary border-dashed p-4 mb-0">
                         <h4 class="text-primary"><i class="fa fa-star me-2"></i>${window.RedaAlojamientoJson["Gestión de Calificaciones"] || "Gestión de Calificaciones"}</h4>
                         <p class="mb-3">${window.RedaAlojamientoJson["Este ticket fue reportado desde el detalle de una calificación. Aquí puede realizar acciones directas sobre la reseña reportada."] || "Este ticket fue reportado desde el detalle de una calificación. Aquí puede realizar acciones directas sobre la reseña reportada."}</p>
 
                         <div class="table-responsive">
-                            <table class="table table-sm table-borderless align-middle">
+                            <table class="table table-sm table-borderless align-middle mb-0">
                                 <tr>
                                     <td class="fw-bold w-250px">${window.RedaAlojamientoJson["ID de Reseña"] || "ID de Reseña"}:</td>
                                     <td>${idReseña}</td>
@@ -119,14 +120,18 @@
                                 </tr>
                             </table>
                         </div>
-
-                        <div class="mt-4">
-                            <button class="btn btn-danger btn-flat btn-sm btn-accion-directa" data-accion="eliminar" data-id="${idReseña}">
-                                <i class="fa fa-trash me-1"></i> ${window.RedaAlojamientoJson["Eliminar Reseña"] || "Eliminar Reseña"}
-                            </button>
-                        </div>
                     </div>
                 `;
+
+                // Inyectar acciones en el footer
+                containerAcciones.html(`
+                    <button class="btn btn-danger btn-flat btn-sm btn-accion-directa me-2" data-accion="eliminar" data-id="${idReseña}">
+                        <i class="fa fa-trash me-1"></i> ${window.RedaAlojamientoJson["Eliminar Reseña"] || "Eliminar Reseña"}
+                    </button>
+                    <button class="btn btn-success btn-flat btn-sm btn-accion-directa" data-accion="mantener" data-id="${idReseña}">
+                        <i class="fa fa-check me-1"></i> ${window.RedaAlojamientoJson["Mantener la reseña"] || "Mantener la reseña"}
+                    </button>
+                `);
                 break;
 
             default:
@@ -160,15 +165,15 @@
             console.log('Click en gestionar ticket');
 
             const linkError = $(this).data('link-error');
-            console.log('linkError obtenido del data-attribute:', linkError);
 
-            // Reiniciar contenido del modal con spinner
+            // Reiniciar contenido del modal y botones de acción
             $('#contenido_modal_gestionar').html(`
                 <div class="text-center p-5">
                     <i class="fa fa-spinner fa-spin fa-2x text-muted"></i>
                     <p class="mt-2 text-muted">${window.RedaAlojamientoJson["Cargando opciones de gestión..."] || "Cargando opciones de gestión..."}</p>
                 </div>
             `);
+            $('#acciones_dinamicas_modal').empty();
 
             // Mostrar modal
             $('#modal_gestionar_ticket').modal('show');

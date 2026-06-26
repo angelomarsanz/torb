@@ -142,7 +142,10 @@
                         <p class="mt-2 text-muted">{{ __('Cargando opciones de gestión...') }}</p>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer d-flex justify-content-between">
+                    <div id="acciones_dinamicas_modal">
+                        <!-- Los botones de acción específicos se cargarán aquí desde JS -->
+                    </div>
                     <button type="button" class="btn btn-secondary btn-flat" data-bs-dismiss="modal">{{ __('Cerrar') }}</button>
                 </div>
             </div>
