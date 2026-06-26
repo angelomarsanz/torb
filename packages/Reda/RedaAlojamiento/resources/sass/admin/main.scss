@@ -42,13 +42,41 @@
 }
 
 /* Utilidades adicionales para el admin */
+.f-10 { font-size: 10px !important; }
+.f-12 { font-size: 12px !important; }
+.f-14 { font-size: 14px !important; }
+.f-15 { font-size: 15px !important; }
+.f-16 { font-size: 16px !important; }
+.f-18 { font-size: 18px !important; }
+.f-20 { font-size: 20px !important; }
+.f-24 { font-size: 24px !important; }
+
+.fw-500 { font-weight: 500 !important; }
+.fw-600 { font-weight: 600 !important; }
+.fw-700 { font-weight: 700 !important; }
+
 .fs-7 { font-size: 0.95rem !important; }
 .fs-8 { font-size: 0.85rem !important; }
 .fs-9 { font-size: 0.75rem !important; }
 
+.italic { font-style: italic !important; }
+
+.opacity-05 { opacity: 0.5 !important; }
+
+.rounded-4 { border-radius: 1rem !important; }
+
+.w-250px { width: 250px !important; }
+
+.border-dashed { border-style: dashed !important; }
+
+.mt-85 { margin-top: 85px !important; }
+
+.reda-admin-menu-hidden { display: none; }
+
 /* Símbolos y Avatares */
 .symbol {
-    display: inline-block;
+...
+
     flex-shrink: 0;
     position: relative;
     border-radius: 0.475rem;

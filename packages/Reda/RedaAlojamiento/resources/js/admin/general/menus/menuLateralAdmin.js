@@ -21,7 +21,7 @@ export const menuLateralAdmin = () =>
                                 <i class="fa fa-briefcase"></i> <span>${window.RedaAlojamiento.general.negocios}</span>
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
-                            <ul class="treeview-menu" style="display: none;">
+                            <ul class="treeview-menu reda-admin-menu-hidden">
                                 <li>
                                     <a href="${linkOpcionesNegocios}"><span>${window.RedaAlojamiento.general.tipos_de_negocios}</span></a>
                                 </li>

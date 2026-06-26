@@ -178,8 +178,8 @@
                     </div>
                     <div class="mb-0">
                         <label for="mensaje" class="form-label font-weight-700 text-14">{{ __('Mensaje') }}</label>
-                        <textarea name="mensaje" id="mensaje" class="form-control rounded-3" rows="4" placeholder="{{ __('Escribe los detalles de tu reporte aquí...') }}" required></textarea>
-                        <small class="text-muted text-12">{{ __('Mínimo 10 caracteres') }}</small>
+                        <textarea name="mensaje" id="mensaje" class="form-control rounded-3" rows="4" placeholder="{{ __('Escribe los detalles de tu reporte aquí...') }}"></textarea>
+                        <small id="mensaje_error" class="text-muted text-12">{{ __('Mínimo 10 caracteres') }}</small>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">

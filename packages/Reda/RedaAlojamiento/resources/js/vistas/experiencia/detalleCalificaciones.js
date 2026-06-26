@@ -28,6 +28,12 @@ export const guardarTicketSoporte = (formData) => {
                     }
                     console.log('respuestaServidor', respuestaServidor);
 
+                    // Si hay errores de validación específicos (ej: mensaje corto), los extraemos
+                    let detalleValidacion = '';
+                    if (respuestaServidor.errors && respuestaServidor.errors.mensaje) {
+                        detalleValidacion = `<br /><span class="text-danger">${respuestaServidor.errors.mensaje[0]}</span>`;
+                    }
+
                     const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                     const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
 
@@ -35,7 +41,7 @@ export const guardarTicketSoporte = (formData) => {
                     let respuesta = {
                         'success': false,
                         'message' : window.RedaAlojamientoJson["Error al crear el ticket de soporte"] || 'Error al crear el ticket de soporte',
-                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}${detalleValidacion}`,
                         'respuesta': respuestaServidor.respuesta || '',
                         'code': x.status !== 0 ? x.status : 504,
                     };
@@ -73,17 +79,38 @@ export const guardarTicketSoporte = (formData) => {
             
             $('#reporte_link_error').val(JSON.stringify(linkErrorObj));
             
-            // Limpiar textarea y resetear prioridad
-            $('#mensaje').val('');
+            // Limpiar textarea, resetear prioridad y limpiar errores
+            $('#mensaje').val('').removeClass('border-danger');
+            $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
             $('#prioridad').val('Media');
             
             // Mostrar modal
             $('#modalReportarReseña').modal('show');
         });
 
+        // Limpiar error visual mientras el usuario escribe
+        $('#mensaje').on('input', function() {
+            const length = $(this).val().trim().length;
+            if (length >= 10) {
+                $(this).removeClass('border-danger');
+                $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
+            }
+        });
+
         // Manejar el envío del formulario
         $('#formReportarReseña').on('submit', async function(e) {
             e.preventDefault();
+
+            const $mensaje = $('#mensaje');
+            const $errorLabel = $('#mensaje_error');
+            const textoMensaje = $mensaje.val().trim();
+
+            // Validación del lado del cliente para respuesta inmediata
+            if (textoMensaje.length < 10) {
+                $mensaje.addClass('border-danger').focus();
+                $errorLabel.removeClass('text-muted').addClass('text-danger');
+                return false;
+            }
             
             // Animación de espera (Directriz GEMINI.md)
             window.RedaNotificaciones.esperar();

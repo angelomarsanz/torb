@@ -121,6 +121,11 @@
                                                 <strong class="f-15">{{ $ticket->tema }}</strong>
                                             </div>
 
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Fecha') }}</small>
+                                                <span class="f-12 text-muted">{{ $ticket->created_at->format('d/m/Y H:i') }}</span>
+                                            </div>
+
                                             <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
                                                 <div>
                                                     <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Prioridad') }}</small>
