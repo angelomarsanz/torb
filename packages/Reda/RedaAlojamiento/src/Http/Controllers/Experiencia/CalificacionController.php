@@ -86,7 +86,7 @@ class CalificacionController extends Controller
     /**
      * Muestra el detalle de calificaciones para un negocio específico.
      */
-    public function detalleCalificacionesDuenio($id)
+    public function detalleCalificacionesDuenio(Request $peticion, $id)
     {
         $experiencia = Experiencia::withAvg('calificaciones', 'estrellas')
             ->withCount('calificaciones')
@@ -97,12 +97,21 @@ class CalificacionController extends Controller
             abort(403);
         }
 
+        $busqueda = $peticion->search;
+
         $calificaciones = CalificacionExperiencia::where('experiencia_id', $id)
+            ->when($busqueda, function ($query) use ($busqueda) {
+                return $query->where('comentario', 'like', '%' . $busqueda . '%')
+                    ->orWhereHas('usuario', function ($q) use ($busqueda) {
+                        $q->where('first_name', 'like', '%' . $busqueda . '%')
+                          ->orWhere('last_name', 'like', '%' . $busqueda . '%');
+                    });
+            })
             ->with(['usuario'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('reda-alojamiento::experiencia.experiencias.detalle_calificaciones', compact('experiencia', 'calificaciones'));
+        return view('reda-alojamiento::experiencia.experiencias.detalle_calificaciones', compact('experiencia', 'calificaciones', 'busqueda'));
     }
 
     /**

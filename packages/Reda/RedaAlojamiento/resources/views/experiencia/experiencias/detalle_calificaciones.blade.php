@@ -5,6 +5,8 @@
 @endpush
 
 @section('main')
+<div id="detalle_calificaciones_duenio"></div>
+
 <div class="margin-top-85">
     <div class="row m-0">
         {{-- Incluimos el sidebar original --}}
@@ -15,7 +17,7 @@
                 <div class="container-fluid min-height">
                     <div class="row">
                         <div class="col-md-12 p-0 mb-3">
-                            <div class="mt-4 d-flex align-items-center justify-content-between flex-wrap">
+                            <div class="mt-4 d-flex align-items-center justify-content-between flex-wrap bg-white p-4 rounded-4 shadow-sm border">
                                 <div class="d-flex align-items-center mb-2">
                                     <a href="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" class="btn btn-outline-secondary rounded-circle mr-3">
                                         <i class="fa fa-arrow-left"></i>
@@ -32,6 +34,18 @@
                                             <span class="font-weight-700 text-16">{{ number_format($promedio, 1) }} ({{ $experiencia->calificaciones_count }} {{ trans_choice(__('Reseña|Reseñas'), $experiencia->calificaciones_count) }})</span>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="mb-2" style="width: 100%; max-width: 350px;">
+                                    <form action="{{ route('reda.negocios.experiencias.detalle_calificaciones', $experiencia->id) }}" method="GET" id="form-busqueda-reseñas">
+                                        <div class="input-group">
+                                            <input type="text" name="search" id="input-busqueda-reseñas" class="form-control rounded-pill-left border-right-0" placeholder="{{ __('Buscar en reseñas...') }}" value="{{ $busqueda ?? '' }}" autocomplete="off">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-success rounded-pill-right" type="submit">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -81,6 +95,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="text-right">
+                                                    <div class="badge badge-dark rounded-pill px-3 py-2 mb-2 shadow-sm text-14 font-weight-700">
+                                                        ID #{{ $calificacion->id }}
+                                                    </div>
                                                     <div class="text-muted small font-weight-600">
                                                         {{ $calificacion->created_at->format('d/m/Y') }}
                                                     </div>
@@ -127,9 +144,9 @@
                                     <div class="text-center py-5 text-muted border rounded-4 bg-white shadow-sm">
                                         <i class="fas fa-star-half-alt fa-4x mb-3 opacity-05 text-success"></i>
                                         <h3 class="text-20 font-weight-700">{{ __('Sin reseñas todavía') }}</h3>
-                                        <p>{{ __('Este negocio aún no ha recibido calificaciones de los clientes.') }}</p>
-                                        <a href="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" class="btn btn-success mt-3 pl-4 pr-4">
-                                            {{ __('Volver al listado') }}
+                                        <p>{{ __('No se encontraron reseñas que coincidan con tu búsqueda.') }}</p>
+                                        <a href="{{ route('reda.negocios.experiencias.detalle_calificaciones', $experiencia->id) }}" class="btn btn-success mt-3 pl-4 pr-4">
+                                            {{ __('Ver todas las reseñas') }}
                                         </a>
                                     </div>
                                 @endforelse
@@ -139,7 +156,7 @@
 
                     {{-- Paginación --}}
                     <div class="row justify-content-between pb-3 mt-4 mb-5">
-                        {{ $calificaciones->appends(request()->except('page'))->links('paginate') }}
+                        {{ $calificaciones->appends(request()->except('page'))->links('reda-alojamiento::general.paginacion') }}
                     </div>
                 </div>
             </div>

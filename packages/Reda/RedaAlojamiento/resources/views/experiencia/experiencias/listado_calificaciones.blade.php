@@ -179,7 +179,7 @@
 
                     {{-- Paginación --}}
                     <div class="row justify-content-between pb-3 mt-4 mb-5">
-                        {{ $negocios->appends(request()->except('page'))->links('paginate') }}
+                        {{ $negocios->appends(request()->except('page'))->links('reda-alojamiento::general.paginacion') }}
                     </div>
                 </div>
             </div>

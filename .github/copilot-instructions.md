@@ -245,6 +245,8 @@ Para cualquier ícono personalizado .svg que se requiera crear en el plugin pack
 Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles de paginación en la parte de abajo
 Cuando se haga clic o se toquen los botones de control de paginación hacia atrás o hacia adelante de debe mostrar una animación de "Espera" hasta que responda el servidor
 Para los controldes de paginación "admin" en el backend se creó: packages/Reda/RedaAlojamiento/resources/views/admin/general/paginacion.blade.php
+Para los controles de paginación en el dashboard del usuario se creó: packages/Reda/RedaAlojamiento/resources/views/general/paginacion.blade.php
+En todas las vistas de índice, listados se deben mostrar los controles de paginación indistintamente si existen más de 10 elementos en ese listado. Si por ejemplo en un listado hasta ahora hay guardado en la base 5 elementos que está por debajo del 10 estandar, igual se muestren los controles de paginación pero deshabilitado porque realmente no hay nada que paginear
 
 ## Paginación en el frontend
 En el frontend se crearán carruseles para mostrar los elementos de una lista

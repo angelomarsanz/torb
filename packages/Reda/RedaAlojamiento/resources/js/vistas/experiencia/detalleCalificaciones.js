@@ -55,90 +55,104 @@ export const guardarTicketSoporte = (formData) => {
 (function($) {
     "use strict";
 
-    $(function() {
-        // --- Función llamadora ---
-        
-        // Al hacer clic en el botón Reportar
-        $(document).on('click', '.btn-reportar-reseña', function() {
-            const calificacionId = $(this).data('id');
-            const negocio = $(this).data('negocio');
-            const usuario = $(this).data('usuario');
-            const calificacion = $(this).data('calificacion');
-            const comentario = $(this).data('comentario');
-            
-            // Llenar campos ocultos del modal
-            $('#reporte_calificacion_id').val(calificacionId);
-            $('#reporte_tema').val("Negocios");
-            
-            const linkErrorObj = {
-                id_de_la_reseña: calificacionId,
-                nombre_usuario_que_hizo_la_reseña: usuario,
-                calificacion_reseña: calificacion,
-                comentario_reseña: comentario
-            };
-            
-            $('#reporte_link_error').val(JSON.stringify(linkErrorObj));
-            
-            // Limpiar textarea, resetear prioridad y limpiar errores
-            $('#mensaje').val('').removeClass('border-danger');
-            $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
-            $('#prioridad').val('Media');
-            
-            // Mostrar modal
-            $('#modalReportarReseña').modal('show');
-        });
+    const containerId = '#detalle_calificaciones_duenio';
+    if ($(containerId).length) {
+        $(function() {
+            // --- Animación de espera para la búsqueda ---
+            $('#form-busqueda-reseñas').on('submit', function() {
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                    window.RedaNotificaciones.esperar();
+                }
+            });
 
-        // Limpiar error visual mientras el usuario escribe
-        $('#mensaje').on('input', function() {
-            const length = $(this).val().trim().length;
-            if (length >= 10) {
-                $(this).removeClass('border-danger');
+            // --- Gestión de Reportar Reseña ---
+            
+            // Al hacer clic en el botón Reportar
+            $(document).on('click', '.btn-reportar-reseña', function() {
+                const calificacionId = $(this).data('id');
+                const negocio = $(this).data('negocio');
+                const usuario = $(this).data('usuario');
+                const calificacion = $(this).data('calificacion');
+                const comentario = $(this).data('comentario');
+                
+                // Llenar campos ocultos del modal
+                $('#reporte_calificacion_id').val(calificacionId);
+                $('#reporte_tema').val("Negocios");
+                
+                // Actualizar título del modal con el ID
+                const tituloBase = window.RedaAlojamientoJson["Reportar Reseña"] || "Reportar Reseña";
+                $('#modalReportarReseñaLabel').html(`<i class="fas fa-flag mr-2"></i> ${tituloBase} #${calificacionId}`);
+
+                const linkErrorObj = {
+                    id_de_la_reseña: calificacionId,
+                    nombre_usuario_que_hizo_la_reseña: usuario,
+                    calificacion_reseña: calificacion,
+                    comentario_reseña: comentario
+                };
+                
+                $('#reporte_link_error').val(JSON.stringify(linkErrorObj));
+                
+                // Limpiar textarea, resetear prioridad y limpiar errores
+                $('#mensaje').val('').removeClass('border-danger');
                 $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
-            }
+                $('#prioridad').val('Media');
+                
+                // Mostrar modal
+                $('#modalReportarReseña').modal('show');
+            });
+
+            // Limpiar error visual mientras el usuario escribe
+            $('#mensaje').on('input', function() {
+                const length = $(this).val().trim().length;
+                if (length >= 10) {
+                    $(this).removeClass('border-danger');
+                    $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
+                }
+            });
+
+            // Manejar el envío del formulario de reporte
+            $('#formReportarReseña').on('submit', async function(e) {
+                e.preventDefault();
+
+                const $mensaje = $('#mensaje');
+                const $errorLabel = $('#mensaje_error');
+                const textoMensaje = $mensaje.val().trim();
+
+                // Validación del lado del cliente para respuesta inmediata
+                if (textoMensaje.length < 10) {
+                    $mensaje.addClass('border-danger').focus();
+                    $errorLabel.removeClass('text-muted').addClass('text-danger');
+                    return false;
+                }
+                
+                // Animación de espera (Directriz GEMINI.md)
+                window.RedaNotificaciones.esperar();
+
+                // Al serializar el formulario, se incluye automáticamente el campo 'vista_origen' 
+                // que agregamos como hidden input en la vista Blade.
+                const formData = $(this).serialize();
+                
+                // Ejecutamos la función llamada (Promesa)
+                const respuesta = await guardarTicketSoporte(formData);
+
+                if (respuesta.success) {
+                    $('#modalReportarReseña').modal('hide');
+                    // Mostramos notificación de éxito
+                    window.RedaNotificaciones.notificar(
+                        window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!",
+                        respuesta.mensaje_usuario,
+                        'exito'
+                    );
+                } else {
+                    // Mostramos notificación de error
+                    window.RedaNotificaciones.notificar(
+                        window.RedaAlojamientoJson["Error"] || "Error",
+                        respuesta.mensaje_usuario,
+                        'error'
+                    );
+                }
+            });
         });
-
-        // Manejar el envío del formulario
-        $('#formReportarReseña').on('submit', async function(e) {
-            e.preventDefault();
-
-            const $mensaje = $('#mensaje');
-            const $errorLabel = $('#mensaje_error');
-            const textoMensaje = $mensaje.val().trim();
-
-            // Validación del lado del cliente para respuesta inmediata
-            if (textoMensaje.length < 10) {
-                $mensaje.addClass('border-danger').focus();
-                $errorLabel.removeClass('text-muted').addClass('text-danger');
-                return false;
-            }
-            
-            // Animación de espera (Directriz GEMINI.md)
-            window.RedaNotificaciones.esperar();
-
-            // Al serializar el formulario, se incluye automáticamente el campo 'vista_origen' 
-            // que agregamos como hidden input en la vista Blade.
-            const formData = $(this).serialize();
-            
-            // Ejecutamos la función llamada (Promesa)
-            const respuesta = await guardarTicketSoporte(formData);
-
-            if (respuesta.success) {
-                $('#modalReportarReseña').modal('hide');
-                // Mostramos notificación de éxito
-                window.RedaNotificaciones.notificar(
-                    window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!",
-                    respuesta.mensaje_usuario,
-                    'exito'
-                );
-            } else {
-                // Mostramos notificación de error
-                window.RedaNotificaciones.notificar(
-                    window.RedaAlojamientoJson["Error"] || "Error",
-                    respuesta.mensaje_usuario,
-                    'error'
-                );
-            }
-        });
-    });
+    }
 
 })(jQuery);
