@@ -178,14 +178,12 @@
 {{-- Modal de Búsqueda --}}
 <div class="modal fade" id="modal_busqueda_soporte" tabindex="-1" role="dialog" aria-labelledby="modalBusquedaLabel">
     <div class="modal-dialog" role="document">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white">
+        <div class="modal-content border-0 shadow-lg rounded-0">
+            <div class="modal-header bg-primary text-white rounded-0">
                 <h4 class="modal-title fw-bold" id="modalBusquedaLabel">
-                    <i class="fa fa-search me-2"></i> {{ __('Búsqueda Inteligente de Tickets') }}
+                    <i class="fa fa-search me-2"></i> {{ __('Búsqueda de tickets') }}
                 </h4>
-                <button type="button" class="close text-white opacity-100" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="form_busqueda_soporte" action="{{ route('reda.admin.general.soporte_tecnico.index') }}" method="GET">
                 <div class="modal-body p-4">
@@ -257,12 +255,17 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light p-3">
-                    <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-default btn-flat pull-left">
-                        <i class="fa fa-refresh me-1"></i> {{ __('Limpiar filtros') }}
-                    </a>
-                    <button type="submit" class="btn btn-primary btn-flat fw-bold">
-                        <i class="fa fa-search me-1"></i> {{ __('Buscar ahora') }}
+                    <button type="button" class="btn btn-default btn-flat pull-left" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1"></i> {{ __('Cancelar') }}
                     </button>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-warning btn-flat">
+                            <i class="fa fa-refresh me-1"></i> {{ __('Limpiar filtros') }}
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-flat fw-bold">
+                            <i class="fa fa-search me-1"></i> {{ __('Buscar ahora') }}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
