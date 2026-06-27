@@ -172,6 +172,9 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
             Route::get('mis-calificaciones/listado', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'listadoDuenio'])
                 ->name('experiencias.calificaciones_listado');
 
+            Route::get('mis-calificaciones/get-nombres-comercios', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'getNombresComercios'])
+                ->name('experiencias.get_nombres_comercios');
+
             Route::get('mis-calificaciones/detalle/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'detalleCalificacionesDuenio'])
                 ->name('experiencias.detalle_calificaciones');
 

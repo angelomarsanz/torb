@@ -69,6 +69,9 @@ if (buildAlojamiento) {
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js',
         'public/js/reda/vistas/experiencia/detalleCalificaciones.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js',
+        'public/js/reda/vistas/experiencia/listadoCalificaciones.min.js');
     }
 
 

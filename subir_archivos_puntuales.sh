@@ -10,7 +10,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"config/app.php"
     #"config/pdf.php"
     #"package.json"
-    #"webpack.mix.js"
+    "webpack.mix.js"
     #"resources/views/admin/common/head.blade.php"
     #"resources/views/admin/common/foot.blade.php"
     #"resources/views/common/head.blade.php"
@@ -20,14 +20,14 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- PLUGIN REDA ALOJAMIENTO: GENERAL ---
     #"packages/Reda/RedaAlojamiento/composer.json"
     #"packages/Reda/RedaAlojamiento/config/reda-alojamiento.php"
-    "packages/Reda/RedaAlojamiento/resources/lang/es.json"
-    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es.json"
+    #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
 
     #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
-    "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-    "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
+    #"packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+    #"packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
 
@@ -42,7 +42,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/HorarioExperiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/InformacionExperiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/ReservacionExperiencia.php"
-    "packages/Reda/RedaAlojamiento/src/Models/Admin/SoporteTecnico.php"
+    #"packages/Reda/RedaAlojamiento/src/Models/Admin/SoporteTecnico.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: MIGRACIONES ---
     #"packages/Reda/RedaAlojamiento/database/migrations/2025_10_26_225134_create_actividades_experiencias_table.php"
@@ -92,9 +92,9 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_head.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_confirmacion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_notificaciones.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/index.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/show.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/admin/general/paginacion.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/index.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/show.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/paginacion.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FRONTEND - CARPETAS FRONTEND) ---
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
@@ -116,11 +116,11 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/billetera_huesped/billeteras_huespedes/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/calificacion_experiencia.blade.php"
-    #packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/detalle_calificaciones.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/detalle_calificaciones.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/anfitrion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
@@ -128,10 +128,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/horario.blade.php"
 
     # --- Archivos Javascript admin ---
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/indexSoporteTecnico.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/showSoporteTecnico.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/indexSoporteTecnico.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/showSoporteTecnico.js"
 
     # --- Archivos Javascript en la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"
@@ -147,11 +147,12 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/General/SoporteTecnicoController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/General/SoporteTecnicoController.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Administrativo/AdministrativoController.php"
@@ -161,5 +162,5 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Middleware/CheckPluginAuth.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/SoporteTecnicoController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/SoporteTecnicoController.php"
 )

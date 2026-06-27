@@ -17,9 +17,24 @@
                 <div class="container-fluid min-height">
                     <div class="row">
                         <div class="col-md-12 p-0 mb-3">
-                            <div class="list-bacground mt-4 rounded-3 p-4 border shadow-sm">
-                                <h1 class="text-24 font-weight-700 m-0">{{ __('Calificaciones por Negocio') }}</h1>
-                                <p class="text-muted m-0">{{ __('Resumen de la reputación de cada uno de tus comercios.') }}</p>
+                            <div class="list-bacground mt-4 rounded-3 p-4 border shadow-sm d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                                <div>
+                                    <h1 class="text-24 font-weight-700 m-0">{{ __('Calificaciones por Negocio') }}</h1>
+                                    <p class="text-muted m-0">{{ __('Resumen de la reputación de cada uno de tus comercios.') }}</p>
+                                </div>
+                                <div class="mt-3 mt-md-0" style="width: 100%; max-width: 400px;">
+                                    <form action="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" method="GET" id="form-busqueda-comercios">
+                                        <div class="input-group">
+                                            <input type="text" name="search" id="input-busqueda-comercios" class="form-control" placeholder="{{ __('Buscar comercio') }}" value="{{ $busqueda ?? '' }}" list="lista-nombres-comercios" autocomplete="off">
+                                            <datalist id="lista-nombres-comercios"></datalist>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-success" type="submit">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -172,3 +187,7 @@
     </div>
 </div>
 @stop
+
+@push('scripts')
+    <script src="{{ asset('public/js/reda/vistas/experiencia/listadoCalificaciones.min.js?v=' . time()) }}"></script>
+@endpush

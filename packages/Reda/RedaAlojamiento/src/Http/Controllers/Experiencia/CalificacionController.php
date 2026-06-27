@@ -45,19 +45,42 @@ class CalificacionController extends Controller
     /**
      * Muestra el resumen de calificaciones por cada negocio del usuario.
      */
-    public function listadoDuenio()
+    public function listadoDuenio(Request $peticion)
     {
         $userId = Auth::id();
+        $busqueda = $peticion->search;
 
         // Obtenemos los negocios del usuario con el promedio de estrellas y cantidad de calificaciones
         $negocios = Experiencia::where('user_id', $userId)
+            ->when($busqueda, function ($query) use ($busqueda) {
+                return $query->where('titulo', 'like', '%' . $busqueda . '%');
+            })
             ->withCount('calificaciones')
             ->withAvg('calificaciones', 'estrellas')
             ->with(['fotos'])
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact('negocios'));
+        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact('negocios', 'busqueda'));
+    }
+
+    /**
+     * Obtiene los nombres de todos los comercios del usuario activo.
+     */
+    public function getNombresComercios()
+    {
+        $userId = Auth::id();
+        $nombres = Experiencia::where('user_id', $userId)
+            ->pluck('titulo')
+            ->toArray();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Nombres de comercios obtenidos',
+            'mensaje_usuario' => '',
+            'respuesta' => $nombres,
+            'code' => 200
+        ], 200);
     }
 
     /**
