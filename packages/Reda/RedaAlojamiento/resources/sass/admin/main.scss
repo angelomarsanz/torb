@@ -39,6 +39,18 @@
     &-w-10 { width: 10%; }
     &-w-15 { width: 15%; }
     &-w-25 { width: 25%; }
+
+    /* Estilos para la búsqueda */
+    &-search-wrapper {
+        width: 150px;
+    }
+    &-select-tema {
+        width: 100% !important;
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
 }
 
 /* Estilos para la paginación personalizada */

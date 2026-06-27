@@ -244,6 +244,7 @@ Para cualquier ícono personalizado .svg que se requiera crear en el plugin pack
 ## Paginación en el BACKEND
 Siempre que se cree una lista debe usarse la paginación de 10 en 10 en el controlador y en la vista con sus respectivos controles de paginación en la parte de abajo
 Cuando se haga clic o se toquen los botones de control de paginación hacia atrás o hacia adelante de debe mostrar una animación de "Espera" hasta que responda el servidor
+Para los controldes de paginación "admin" en el backend se creó: packages/Reda/RedaAlojamiento/resources/views/admin/general/paginacion.blade.php
 
 ## Paginación en el frontend
 En el frontend se crearán carruseles para mostrar los elementos de una lista
@@ -275,3 +276,4 @@ Se debe usar packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.j
 
 ## Subida de archivos al servidor Vesta de Desarrollo
 Los archivos se suben vía FTP al servidor Vesta de Desarrollo para sus respectivas pruebas. Para subir los archivos se usa el script: subir.sh y subir_archivos_puntuales.sh. Nunca se debe ejecutar automáticamente ./subir.sh solo se deben descomentar de la lista de archivos el archivo modificado o agregar el nuevo archivo creado a subir_archivos_puntuales.sh y se deben comentar aquellos archivos que no fueron modificados para que no se vuelvan a subir 
+En el archivo subir_archivos_puntuales.sh están casi todos los archivo del plugin y del proyecto principal que se han modificado y/o creado. *No eliminar* los archivos que no se subirán el servidor, solo comentar porque se quiere tener esa lista con la información de todos los archivos. SOLO COMENTAR entonces

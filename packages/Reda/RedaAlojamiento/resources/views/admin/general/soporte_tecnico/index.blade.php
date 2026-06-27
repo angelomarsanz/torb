@@ -13,8 +13,14 @@
                 <div class="box" id="index_soporte_tecnico">
                     <div class="box-header with-border d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <h3 class="box-title">{{ __('Listado de Tickets') }}</h3>
-                        <div class="box-tools position-static">
-                            {{-- Aquí podrías agregar un botón para crear nuevo ticket si fuera necesario --}}
+                        <div class="box-tools position-static d-flex align-items-center gap-2">
+                            {{-- Barra de búsqueda que abre el modal --}}
+                            <div class="input-group input-group-sm soporte-tecnico-search-wrapper">
+                                <input type="text" class="form-control pull-right btn-abrir-busqueda cursor-pointer" placeholder="{{ __('Buscar...') }}" readonly>
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-abrir-busqueda"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="box-body">
@@ -168,6 +174,100 @@
     </section>
 </div>
 @endsection
+
+{{-- Modal de Búsqueda --}}
+<div class="modal fade" id="modal_busqueda_soporte" tabindex="-1" role="dialog" aria-labelledby="modalBusquedaLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h4 class="modal-title fw-bold" id="modalBusquedaLabel">
+                    <i class="fa fa-search me-2"></i> {{ __('Búsqueda Inteligente de Tickets') }}
+                </h4>
+                <button type="button" class="close text-white opacity-100" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="form_busqueda_soporte" action="{{ route('reda.admin.general.soporte_tecnico.index') }}" method="GET">
+                <div class="modal-body p-4">
+                    <!-- Búsqueda Puntual -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark mb-2">{{ __('Búsqueda rápida') }}</label>
+                        <div class="input-group mb-3 shadow-sm">
+                            <span class="input-group-addon bg-white border-end-0"><i class="fa fa-keyboard-o text-muted"></i></span>
+                            <input type="text" id="input_puntual" class="form-control border-start-0" placeholder="{{ __('ID del ticket o nombre del usuario...') }}">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="id">
+                                <i class="fa fa-hashtag me-1"></i> {{ __('Por ID del ticket') }}
+                            </button>
+                            <button type="button" class="btn btn-info btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="nombre">
+                                <i class="fa fa-user me-1"></i> {{ __('Por nombre del usuario') }}
+                            </button>
+                        </div>
+                        {{-- Campos ocultos que se enviarán al servidor --}}
+                        <input type="hidden" name="id" id="search_id">
+                        <input type="hidden" name="nombre_usuario" id="search_nombre">
+                    </div>
+
+                    <div class="separator separator-dashed border-gray-300 my-4"></div>
+
+                    <!-- Filtros Avanzados -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark mb-2">{{ __('Filtrar por Tema') }}</label>
+                        <select name="tema" class="form-control select2 shadow-sm soporte-tecnico-select-tema">
+                            <option value="">{{ __('Todos los temas') }}</option>
+                            @if(isset($temas))
+                                @foreach($temas as $tema)
+                                    <option value="{{ $tema }}" {{ request('tema') == $tema ? 'selected' : '' }}>{{ $tema }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Prioridad') }}</label>
+                            <select name="prioridad" class="form-control shadow-sm">
+                                <option value="">{{ __('Todas') }}</option>
+                                <option value="Baja" {{ request('prioridad') == 'Baja' ? 'selected' : '' }}>{{ __('Baja') }}</option>
+                                <option value="Media" {{ request('prioridad') == 'Media' ? 'selected' : '' }}>{{ __('Media') }}</option>
+                                <option value="Alta" {{ request('prioridad') == 'Alta' ? 'selected' : '' }}>{{ __('Alta') }}</option>
+                                <option value="Urgente" {{ request('prioridad') == 'Urgente' ? 'selected' : '' }}>{{ __('Urgente') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Estatus') }}</label>
+                            <select name="estatus" class="form-control shadow-sm">
+                                <option value="">{{ __('Todos') }}</option>
+                                <option value="Abierto" {{ request('estatus') == 'Abierto' ? 'selected' : '' }}>{{ __('Abierto') }}</option>
+                                <option value="Cerrado" {{ request('estatus') == 'Cerrado' ? 'selected' : '' }}>{{ __('Cerrado') }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Desde') }}</label>
+                            <input type="date" name="fecha_inicio" class="form-control shadow-sm" value="{{ request('fecha_inicio') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Hasta') }}</label>
+                            <input type="date" name="fecha_fin" class="form-control shadow-sm" value="{{ request('fecha_fin') }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light p-3">
+                    <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-default btn-flat pull-left">
+                        <i class="fa fa-refresh me-1"></i> {{ __('Limpiar filtros') }}
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-flat fw-bold">
+                        <i class="fa fa-search me-1"></i> {{ __('Buscar ahora') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @push('scripts')
     <script src="{{ asset('public/js/reda/admin/general/soporte_tecnico/indexSoporteTecnico.min.js?v=' . time()) }}"></script>

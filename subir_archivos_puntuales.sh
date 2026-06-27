@@ -30,6 +30,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
+
     #"packages/Reda/RedaAlojamiento/src/Models/Administrativo/Administrativo.php"
     #"packages/Reda/RedaAlojamiento/src/Models/BilleteraHuesped/BilleteraHuesped.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Disputa/Disputa.php"
@@ -83,7 +84,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_08_100000_crear_tabla_calificaciones_experiencias.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_22_000000_create_soportes_tecnicos_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_24_100000_cambiar_link_error_a_text_en_soportes_tecnicos.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_06_26_150000_agregar_resultado_gestion_a_soportes_tecnicos.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_26_150000_agregar_resultado_gestion_a_soportes_tecnicos.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"

@@ -28,6 +28,48 @@
             });
         }
 
+        // Abrir modal de búsqueda
+        $(document).on('click', '.btn-abrir-busqueda', function(e) {
+            e.preventDefault();
+            $('#modal_busqueda_soporte').modal('show');
+        });
+
+        // Búsqueda puntual (ID o Nombre)
+        $(document).on('click', '.btn-buscar-puntual', function(e) {
+            e.preventDefault();
+            const valor = $('#input_puntual').val().trim();
+            const tipo = $(this).data('tipo');
+
+            if (!valor) {
+                $('#input_puntual').focus();
+                return;
+            }
+
+            // Limpiar campos de búsqueda avanzados para que sea una búsqueda puntual real
+            $('#form_busqueda_soporte').find('select, input[type="date"]').val('');
+            $('#search_id').val('');
+            $('#search_nombre').val('');
+
+            if (tipo === 'id') {
+                $('#search_id').val(valor);
+            } else {
+                $('#search_nombre').val(valor);
+            }
+
+            // Mostrar animación e iniciar búsqueda (submit del form)
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                window.RedaNotificaciones.esperar();
+            }
+            $('#form_busqueda_soporte').submit();
+        });
+
+        // Animación de espera al enviar el formulario de búsqueda general
+        $(document).on('submit', '#form_busqueda_soporte', function() {
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                window.RedaNotificaciones.esperar();
+            }
+        });
+
         // Evento para mostrar animación de espera al ver detalle de ticket
         $(document).on('click', '.btn-ver-ticket', function(e) {
             // Solo si es un link con href válido y no se abre en pestaña nueva
