@@ -98,7 +98,7 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FRONTEND - CARPETAS FRONTEND) ---
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/calificacion_experiencia_frontend.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_experiencias.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_experiencias.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_negocio.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_ver_todos_negocios.blade.php"
@@ -120,8 +120,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/detalle_calificaciones.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/detalle_calificaciones.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/anfitrion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
@@ -136,7 +136,7 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- Archivos Javascript en la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
@@ -148,8 +148,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
@@ -159,8 +159,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Administrativo/AdministrativoController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/BilleteraHuesped/BilleteraHuespedController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Disputa/DisputaController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/CalificacionController.php"
-    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/CalificacionController.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/ExperienciaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/MediaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Middleware/CheckPluginAuth.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/SoporteTecnicoController.php"

@@ -2584,3 +2584,8 @@
     border-radius: 12px;
     border-left: 4px solid #28a745;
 }
+
+/* Corrección para que el autocompletado de Google Places sea visible en modales */
+.pac-container {
+    z-index: 2000 !important;
+}
