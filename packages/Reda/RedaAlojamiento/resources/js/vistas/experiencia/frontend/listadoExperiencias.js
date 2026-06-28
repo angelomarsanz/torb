@@ -51,6 +51,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 $('#input_nombre_comercio').autocomplete({
                     source: window.nombresComercios,
                     minLength: 1,
+                    appendTo: "#modalBusquedaComercios", // Asegura que se vea sobre el modal
                     select: function(event, ui) {
                         // Al seleccionar, podemos disparar la búsqueda automáticamente
                         setTimeout(() => {
@@ -159,10 +160,10 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // 6. Efecto de barra de búsqueda flotante (Sticky Shadow)
             $(window).on('scroll', function() {
                 const scroll = $(window).scrollTop();
-                if (scroll > 40) {
-                    $('.seccion-filtros-desktop, .seccion-filtros-movil').addClass('is-sticky');
+                if (scroll > 10) {
+                    $('#search_sticky_bar').addClass('is-sticky');
                 } else {
-                    $('.seccion-filtros-desktop, .seccion-filtros-movil').removeClass('is-sticky');
+                    $('#search_sticky_bar').removeClass('is-sticky');
                 }
             });
 

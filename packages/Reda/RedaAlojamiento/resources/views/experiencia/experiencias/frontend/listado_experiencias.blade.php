@@ -5,42 +5,78 @@
     <style>
         .cursor-pointer { cursor: pointer; }
         .font-weight-600 { font-weight: 600; }
-        .search-trigger-desktop:hover { transform: scale(1.02); transition: all 0.2s ease-in-out; }
-        .ui-autocomplete { z-index: 2147483647 !important; } /* Para que aparezca sobre el modal */
+        .search-trigger-desktop:hover { transform: scale(1.01); transition: all 0.2s ease-in-out; }
+        .ui-autocomplete { z-index: 2147483647 !important; } /* Máximo nivel para sobrepasar el modal */
+        
+        /* Ajuste para la barra sticky */
+        .search-sticky-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+            transition: box-shadow 0.3s ease;
+        }
+        .search-sticky-wrapper.is-sticky {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        /* Ajuste de márgenes para que el contenido no quede oculto bajo la barra sticky */
+        #listado_experiencias {
+            padding-top: 20px !important;
+        }
+
+        @media (max-width: 991px) {
+            .search-trigger-movil {
+                padding: 12px 20px;
+                border: 1px solid #ddd;
+                border-radius: 30px;
+                background: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
     </style>
 @endpush
 
 @section('main')
-<div id="listado_experiencias" class="container-fluid container-fluid-90 mt-5 pt-4">
 
-    <!-- SECCIÓN 1: FILTROS (BARRA DE BÚSQUEDA) -->
-
-    <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
-    <div class="d-lg-none seccion-filtros-movil mb-4">
-        <div class="search-trigger-movil" data-toggle="modal" data-target="#modalBusquedaComercios">
-            <i class="fas fa-search"></i>
-            <span>{{ __('¿Qué estás buscando?') }}</span>
+<!-- BARRA DE BÚSQUEDA FLOTANTE (STICKY) -->
+<div class="search-sticky-wrapper py-3 border-bottom" id="search_sticky_bar">
+    <div class="container-fluid container-fluid-90">
+        <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
+        <div class="d-lg-none seccion-filtros-movil">
+            <div class="search-trigger-movil cursor-pointer shadow-sm" data-toggle="modal" data-target="#modalBusquedaComercios">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-search text-primary mr-3"></i>
+                    <span class="text-muted font-weight-600">{{ __('¿Qué estás buscando?') }}</span>
+                </div>
+                <i class="fas fa-sliders-h text-muted"></i>
+            </div>
         </div>
-    </div>
 
-    <!-- Trigger de Búsqueda Desktop (Solo visible en >= 992px) -->
-    <section class="seccion-filtros-desktop d-none d-lg-block mb-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-xl-5">
-                <div class="search-trigger-desktop cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
-                    <div class="d-flex align-items-center justify-content-between px-4 py-3 bg-white border rounded-pill shadow-sm">
-                        <span class="text-muted font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
-                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                            <i class="fas fa-search text-white text-14"></i>
+        <!-- Trigger de Búsqueda Desktop (Solo visible en >= 992px) -->
+        <div class="d-none d-lg-block seccion-filtros-desktop">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-xl-5">
+                    <div class="search-trigger-desktop cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
+                        <div class="d-flex align-items-center justify-content-between px-4 py-2 bg-white border rounded-pill shadow-sm">
+                            <span class="text-muted font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                <i class="fas fa-search text-white text-14"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- Modal de Búsqueda (Unificado para Móvil y Desktop) -->
-    <div class="modal fade modal-busqueda-movil" id="modalBusquedaComercios" role="dialog" aria-hidden="true">
+<div id="listado_experiencias" class="container-fluid container-fluid-90">
+
+    <!-- Modal de Búsqueda Unificado -->
+    <div class="modal fade modal-busqueda-movil" id="modalBusquedaComercios" role="dialog" aria-hidden="true" style="z-index: 1060;">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content rounded-20 shadow-lg border-0">
                 <div class="modal-header border-0 pb-0">
@@ -51,7 +87,7 @@
                 </div>
                 <div class="modal-body p-4">
                     <form id="form_busqueda_negocios_modal" class="form-busqueda-comercios">
-                        <!-- NUEVO: Buscar por Comercio -->
+                        <!-- Buscar por Comercio (CON AUTOCOMPLETADO) -->
                         <div class="filtro-item mb-4">
                             <label class="font-weight-700 mb-2">{{ __('Buscar comercio') }}</label>
                             <div class="input-group">
@@ -62,7 +98,7 @@
                             </div>
                         </div>
 
-                        <!-- NUEVO: Buscar por Producto o Servicio (Por ahora solo visual) -->
+                        <!-- Buscar por Producto o Servicio (Visual) -->
                         <div class="filtro-item mb-4">
                             <label class="font-weight-700 mb-2">{{ __('Buscar producto o servicio') }}</label>
                             <div class="input-group">
@@ -105,7 +141,7 @@
                         </div>
 
                         <div class="modal-footer-search mt-5">
-                            <button type="submit" class="btn btn-primary btn-block btn-lg rounded-pill btn-ejecutar-busqueda-movil shadow-sm">
+                            <button type="submit" class="btn btn-primary btn-block btn-lg rounded-pill shadow-sm">
                                 <i class="fas fa-search mr-2"></i> {{ __('Buscar') }}
                             </button>
                             <button type="button" class="btn btn-link btn-block text-muted" data-dismiss="modal">
@@ -174,6 +210,24 @@
         </div>
     </section>
 </div>
+
+@include('reda-alojamiento::general.modal_listado_infinito')
+
+@stop
+
+@section('validation_script')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    
+    <script>
+        window.nombresComercios = @json($nombresComercios);
+        console.log('Comercios cargados para autocomplete:', window.nombresComercios);
+    </script>
+
+    @include('reda-alojamiento::general.main_footer')
+    <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js?v=' . time()) }}"></script>
+@endsection
 
 <!-- Modal Notificación (Si no está en el layout) -->
 <div class="modal fade z-1080" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true">
