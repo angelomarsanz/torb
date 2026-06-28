@@ -56,6 +56,10 @@ class ExperienciaController extends Controller
             ->withAvg('calificaciones', 'estrellas');
 
         // 3. Aplicar Filtros si existen (para AJAX o búsqueda directa)
+        if ($request->filled('nombre_comercio')) {
+            $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
+        }
+
         if ($request->filled('categoria')) {
             $query->where('categoria_negocio', $request->categoria);
         }
@@ -76,7 +80,7 @@ class ExperienciaController extends Controller
             $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
         }
 
-        // 4. Obtener Destacados (por ahora sin condiciones específicas, los más recientes)
+        // 4. Obtener Destacados (por ahora los más recientes que cumplan el filtro)
         $destacadosQuery = clone $query;
         $destacados = $destacadosQuery->orderBy('id', 'desc')->take(10)->get();
         $totalDestacados = $destacadosQuery->count();
@@ -90,18 +94,21 @@ class ExperienciaController extends Controller
         // 6. Respuesta para AJAX
         if ($request->ajax()) {
             try {
-                $htmlDestacados = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
-                    'experiencias' => $destacados,
-                    'currentCurrency' => $currentCurrency
-                ])->render();
-
-                if ($totalDestacados > 10) {
-                     $htmlDestacados .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
-                        'items' => $destacados,
-                        'tipo' => 'destacados',
-                        'tituloModal' => __('Comercios Destacados'),
-                        'total' => $totalDestacados
+                $htmlDestacados = '';
+                if ($totalDestacados > 0) {
+                    $htmlDestacados = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
+                        'experiencias' => $destacados,
+                        'currentCurrency' => $currentCurrency
                     ])->render();
+
+                    if ($totalDestacados > 10) {
+                         $htmlDestacados .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
+                            'items' => $destacados,
+                            'tipo' => 'destacados',
+                            'tituloModal' => __('Comercios Destacados'),
+                            'total' => $totalDestacados
+                        ])->render();
+                    }
                 }
 
                 $htmlGeneral = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
@@ -126,6 +133,7 @@ class ExperienciaController extends Controller
                     'mensaje_usuario' => __('Resultados recuperados con éxito'),
                     'respuesta' => [
                         'html_destacados' => $htmlDestacados,
+                        'total_destacados' => $totalDestacados,
                         'html_general'    => $htmlGeneral,
                         'html_paginacion' => $htmlPaginacion,
                         'total'           => $totalExperiencias
@@ -144,13 +152,17 @@ class ExperienciaController extends Controller
             return response()->json($respuesta, $respuesta['code']);
         }
 
+        // 7. Lista de nombres para búsqueda inteligente
+        $nombresComercios = Experiencia::distinct()->whereNotNull('titulo')->pluck('titulo')->toArray();
+
         return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', compact(
             'experiencias',
             'totalExperiencias',
             'destacados',
             'totalDestacados',
             'categoriasNegocios',
-            'currentCurrency'
+            'currentCurrency',
+            'nombresComercios'
         ));
     }
 

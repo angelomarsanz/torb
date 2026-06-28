@@ -2,6 +2,12 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
+    <style>
+        .cursor-pointer { cursor: pointer; }
+        .font-weight-600 { font-weight: 600; }
+        .search-trigger-desktop:hover { transform: scale(1.02); transition: all 0.2s ease-in-out; }
+        .ui-autocomplete { z-index: 2147483647 !important; } /* Para que aparezca sobre el modal */
+    </style>
 @endpush
 
 @section('main')
@@ -13,68 +19,63 @@
     <div class="d-lg-none seccion-filtros-movil mb-4">
         <div class="search-trigger-movil" data-toggle="modal" data-target="#modalBusquedaComercios">
             <i class="fas fa-search"></i>
-            <span>{{ __('Buscar') }}</span>
+            <span>{{ __('¿Qué estás buscando?') }}</span>
         </div>
     </div>
 
-    <!-- Barra de Búsqueda Desktop (Solo visible en >= 992px) -->
-    <section class="seccion-filtros d-none d-lg-block">
+    <!-- Trigger de Búsqueda Desktop (Solo visible en >= 992px) -->
+    <section class="seccion-filtros-desktop d-none d-lg-block mb-5">
         <div class="row justify-content-center">
-            <div class="col-lg-11 col-xl-10">
-                <div class="search-bar-negocios">
-                    <form id="form_busqueda_negocios" class="form-busqueda-comercios row align-items-center m-0">
-                        <!-- Categoría -->
-                        <div class="col-md-3 search-item" id="item_categoria">
-                            <label>{{ __('Categoría') }}</label>
-                            <select name="categoria" class="filtro-categoria">
-                                <option value="">{{ __('Todas las categorías') }}</option>
-                                @foreach($categoriasNegocios as $clave => $nombre)
-                                    <option value="{{ $clave }}">{{ $nombre }}</option>
-                                @endforeach
-                            </select>
+            <div class="col-lg-6 col-xl-5">
+                <div class="search-trigger-desktop cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
+                    <div class="d-flex align-items-center justify-content-between px-4 py-3 bg-white border rounded-pill shadow-sm">
+                        <span class="text-muted font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="fas fa-search text-white text-14"></i>
                         </div>
-
-                        <!-- Radio / Distancia -->
-                        <div class="col-md-3 search-item" id="item_radio">
-                            <label>{{ __('Distancia') }}<span class="radio-km-display">25 km</span></label>
-                            <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="25">
-                        </div>
-
-                        <!-- Ubicación -->
-                        <div class="col-md-5 search-item" id="item_ubicacion">
-                            <label>{{ __('Ubicación del negocio') }}</label>
-                            <input type="text" name="ubicacion_texto" class="filtro-ubicacion" placeholder="{{ __('Sector, ciudad, estado...') }}" autocomplete="off">
-                            <input type="hidden" name="latitud" class="filtro-lat">
-                            <input type="hidden" name="longitud" class="filtro-lng">
-                        </div>
-
-                        <!-- Botón Buscar -->
-                        <div class="col-md-1 d-flex justify-content-end p-0">
-                            <button type="submit" class="btn-search-negocio">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Modal de Búsqueda Móvil -->
+    <!-- Modal de Búsqueda (Unificado para Móvil y Desktop) -->
     <div class="modal fade modal-busqueda-movil" id="modalBusquedaComercios" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Búsqueda de Comercios') }}</h5>
+            <div class="modal-content rounded-20 shadow-lg border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title font-weight-700">{{ __('Búsqueda de Comercios') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form id="form_busqueda_negocios_movil" class="form-busqueda-comercios">
-                        <div class="filtro-movil-item mb-4">
+                <div class="modal-body p-4">
+                    <form id="form_busqueda_negocios_modal" class="form-busqueda-comercios">
+                        <!-- NUEVO: Buscar por Comercio -->
+                        <div class="filtro-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Buscar comercio') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0"><i class="fas fa-store text-muted"></i></span>
+                                </div>
+                                <input type="text" name="nombre_comercio" id="input_nombre_comercio" class="form-control border-left-0" placeholder="{{ __('Nombre del negocio...') }}" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <!-- NUEVO: Buscar por Producto o Servicio (Por ahora solo visual) -->
+                        <div class="filtro-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Buscar producto o servicio') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0"><i class="fas fa-shopping-bag text-muted"></i></span>
+                                </div>
+                                <input type="text" name="producto_servicio" class="form-control border-left-0" placeholder="{{ __('¿Qué producto o servicio buscas?') }}" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="filtro-item mb-4">
                             <label class="font-weight-700 mb-2">{{ __('Categoría') }}</label>
-                            <select name="categoria" class="filtro-categoria form-control">
+                            <select name="categoria" class="filtro-categoria form-control rounded-10">
                                 <option value="">{{ __('Todas las categorías') }}</option>
                                 @foreach($categoriasNegocios as $clave => $nombre)
                                     <option value="{{ $clave }}">{{ $nombre }}</option>
@@ -82,8 +83,8 @@
                             </select>
                         </div>
 
-                        <div class="filtro-movil-item mb-4">
-                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-success ml-2">25 km</span></label>
+                        <div class="filtro-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-primary ml-2">25 km</span></label>
                             <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="25">
                             <div class="d-flex justify-content-between mt-1 text-muted f-12">
                                 <span>1 km</span>
@@ -91,7 +92,7 @@
                             </div>
                         </div>
 
-                        <div class="filtro-movil-item mb-4">
+                        <div class="filtro-item mb-4">
                             <label class="font-weight-700 mb-2">{{ __('Ubicación') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -104,11 +105,11 @@
                         </div>
 
                         <div class="modal-footer-search mt-5">
-                            <button type="submit" class="btn btn-primary btn-block btn-lg btn-ejecutar-busqueda-movil">
+                            <button type="submit" class="btn btn-primary btn-block btn-lg rounded-pill btn-ejecutar-busqueda-movil shadow-sm">
                                 <i class="fas fa-search mr-2"></i> {{ __('Buscar') }}
                             </button>
                             <button type="button" class="btn btn-link btn-block text-muted" data-dismiss="modal">
-                                {{ __('Cancelar') }}
+                                {{ __('Cerrar') }}
                             </button>
                         </div>
                     </form>
@@ -119,7 +120,7 @@
     
 
     <!-- SECCIÓN 2: DESTACADOS -->
-    <section class="seccion-productos mb-4">
+    <section class="seccion-productos mb-4" id="seccion_destacados" @if($totalDestacados == 0) style="display:none;" @endif>
         <div class="header-seccion-carrusel">
             <h2 class="text-18 font-weight-700 m-0">{{ __('Comercios Destacados') }}</h2>
             <div class="carrusel-controles-desktop d-none d-lg-flex">
@@ -203,6 +204,13 @@
 
 @section('validation_script')
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    
+    <script>
+        window.nombresComercios = @json($nombresComercios);
+    </script>
+
     @include('reda-alojamiento::general.main_footer')
     <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js?v=' . time()) }}"></script>
 @endsection

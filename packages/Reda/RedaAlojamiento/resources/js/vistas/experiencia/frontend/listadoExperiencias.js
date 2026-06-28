@@ -46,6 +46,20 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 initCarrusel($(this));
             });
 
+            // Inicializar Autocomplete para nombres de comercios
+            if (window.nombresComercios && $('#input_nombre_comercio').length) {
+                $('#input_nombre_comercio').autocomplete({
+                    source: window.nombresComercios,
+                    minLength: 1,
+                    select: function(event, ui) {
+                        // Al seleccionar, podemos disparar la búsqueda automáticamente
+                        setTimeout(() => {
+                            ejecutarBusqueda($('#form_busqueda_negocios_modal'));
+                        }, 100);
+                    }
+                });
+            }
+
             // Manejo de Clics en Desktop
             $(document).on('click', '.btn-carrusel-control', function() {
                 const $btn = $(this);
@@ -66,7 +80,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const $card = $(this);
                 
                 // Capturar filtros actuales para el listado infinito
-                const $form = $('#form_busqueda_negocios').is(':visible') ? $('#form_busqueda_negocios') : $('#form_busqueda_negocios_movil');
+                const $form = $('#form_busqueda_negocios_modal');
                 const extraData = {};
                 if ($form.length) {
                     $form.serializeArray().forEach(item => {
@@ -84,7 +98,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 ListadoInfinito.iniciar(options);
             });
 
-            // 1. Inicializar Google Places Autocomplete para ambos inputs (Desktop y Modal)
+            // 1. Inicializar Google Places Autocomplete para el input de ubicación
             const inputsUbicacion = document.querySelectorAll('.filtro-ubicacion');
             inputsUbicacion.forEach(input => {
                 const autocomplete = new google.maps.places.Autocomplete(input);
@@ -98,11 +112,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                         // Cambiar modo a ubicación
                         activarModoUbicacion($parentForm);
                         ejecutarBusqueda($parentForm);
-                        
-                        // Si estamos en móvil, cerrar el modal tras seleccionar
-                        if ($('#modalBusquedaComercios').hasClass('show')) {
-                            $('#modalBusquedaComercios').modal('hide');
-                        }
                     }
                 });
             });
@@ -111,8 +120,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             $(document).on('input', '.filtro-radio', function() {
                 const valor = $(this).val();
                 $('.radio-km-display').text(valor + ' km');
-                // Sincronizar el otro slider si existe
-                $('.filtro-radio').not(this).val(valor);
             });
 
             $(document).on('change', '.filtro-radio', function() {
@@ -121,19 +128,9 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 ejecutarBusqueda($parentForm);
             });
 
-            // Detectar si el usuario escribe manualmente en ubicación
-            $(document).on('input', '.filtro-ubicacion', function() {
-                const $parentForm = $(this).closest('form');
-                if ($(this).val().length > 0 && modoBusqueda === 'distancia') {
-                    activarModoUbicacion($parentForm);
-                }
-            });
-
             // 3. Manejar cambio de categoría
             $(document).on('change', '.filtro-categoria', function() {
                 const $parentForm = $(this).closest('form');
-                // Sincronizar el otro select
-                $('.filtro-categoria').not(this).val($(this).val());
                 ejecutarBusqueda($parentForm);
             });
 
@@ -142,10 +139,8 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 e.preventDefault();
                 ejecutarBusqueda($(this));
                 
-                // Si es el modal, cerrarlo
-                if ($(this).attr('id') === 'form_busqueda_negocios_movil') {
-                    $('#modalBusquedaComercios').modal('hide');
-                }
+                // Opcional: cerrar el modal al buscar (si el usuario así lo prefiere)
+                // $('#modalBusquedaComercios').modal('hide');
             });
 
             // 5. Botones de favoritos
@@ -165,9 +160,9 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             $(window).on('scroll', function() {
                 const scroll = $(window).scrollTop();
                 if (scroll > 40) {
-                    $('.seccion-filtros, .seccion-filtros-movil').addClass('is-sticky');
+                    $('.seccion-filtros-desktop, .seccion-filtros-movil').addClass('is-sticky');
                 } else {
-                    $('.seccion-filtros, .seccion-filtros-movil').removeClass('is-sticky');
+                    $('.seccion-filtros-desktop, .seccion-filtros-movil').removeClass('is-sticky');
                 }
             });
 
@@ -176,15 +171,10 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
              */
             function activarModoDistancia($form) {
                 modoBusqueda = 'distancia';
-                
-                // Sombreado visual solo en desktop
-                $('#item_ubicacion').addClass('item-sombreado-visual');
-                $('#item_radio').removeClass('item-sombreado-visual');
-
-                // Limpiar datos de ubicación en todos los forms para consistencia
-                $('.filtro-ubicacion').val('');
-                $('.filtro-lat').val('');
-                $('.filtro-lng').val('');
+                // Limpiar datos de ubicación en el form para consistencia
+                $form.find('.filtro-ubicacion').val('');
+                $form.find('.filtro-lat').val('');
+                $form.find('.filtro-lng').val('');
             }
 
             /**
@@ -192,13 +182,9 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
              */
             function activarModoUbicacion($form) {
                 modoBusqueda = 'ubicacion';
-                
-                $('#item_radio').addClass('item-sombreado-visual');
-                $('#item_ubicacion').removeClass('item-sombreado-visual');
-
                 // Restablecer slider a posición original (25km)
-                $('.filtro-radio').val(25);
-                $('.radio-km-display').text('25 km');
+                $form.find('.filtro-radio').val(25);
+                $form.find('.radio-km-display').text('25 km');
             }
 
             /**
@@ -208,6 +194,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const formData = $form.serialize();
                 const $contenedorDestacados = $('#contenedor_destacados');
                 const $contenedorGeneral = $('#contenedor_listado_general');
+                const $seccionDestacados = $('#seccion_destacados');
 
                 // Estado visual de carga (CSS-based)
                 $contenedorDestacados.addClass('is-loading-ajax');
@@ -218,13 +205,22 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 if (respuestaBusqueda.success) {
                     const data = respuestaBusqueda.respuesta;
                     
-                    // Actualizar contenido y quitar estado de carga
-                    $contenedorDestacados.html(data.html_destacados).removeClass('is-loading-ajax');
+                    // Actualizar visibilidad y contenido de destacados
+                    if (data.total_destacados > 0) {
+                        $seccionDestacados.show();
+                        $contenedorDestacados.html(data.html_destacados);
+                    } else {
+                        $seccionDestacados.hide();
+                    }
+
+                    // Actualizar contenido general y quitar estado de carga
                     $contenedorGeneral.html(data.html_general).removeClass('is-loading-ajax');
+                    $contenedorDestacados.removeClass('is-loading-ajax');
                     
-                    // Re-inicializar botones de carrusel tras actualización AJAX
-                    actualizarBotonesCarrusel($contenedorDestacados);
-                    actualizarBotonesCarrusel($contenedorGeneral);
+                    // Re-inicializar comportamientos de carrusel tras actualización AJAX
+                    $('.container-carrusel-productos').each(function() {
+                        actualizarBotonesCarrusel($(this));
+                    });
 
                 } else {
                     console.error(respuestaBusqueda.message);
