@@ -20,8 +20,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- PLUGIN REDA ALOJAMIENTO: GENERAL ---
     #"packages/Reda/RedaAlojamiento/composer.json"
     #"packages/Reda/RedaAlojamiento/config/reda-alojamiento.php"
-    #"packages/Reda/RedaAlojamiento/resources/lang/es.json"
-    #"packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
+    "packages/Reda/RedaAlojamiento/resources/lang/es.json"
+    "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
 
@@ -111,7 +111,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_crop.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_notificaciones.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_listado_infinito.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/general/paginacion.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/general/paginacion.blade.php"
 
     #"packages/Reda/RedaAlojamiento/resources/views/administrativo/administrativos/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/billetera_huesped/billeteras_huespedes/index.blade.php"
@@ -148,8 +148,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"

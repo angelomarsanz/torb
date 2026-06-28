@@ -49,19 +49,36 @@ class CalificacionController extends Controller
     {
         $userId = Auth::id();
         $busqueda = $peticion->search;
+        $categoria = $peticion->category;
 
         // Obtenemos los negocios del usuario con el promedio de estrellas y cantidad de calificaciones
-        $negocios = Experiencia::where('user_id', $userId)
+        $query = Experiencia::where('user_id', $userId)
             ->when($busqueda, function ($query) use ($busqueda) {
                 return $query->where('titulo', 'like', '%' . $busqueda . '%');
             })
+            ->when($categoria, function ($query) use ($categoria) {
+                return $query->where('categoria_negocio', $categoria);
+            })
             ->withCount('calificaciones')
-            ->withAvg('calificaciones', 'estrellas')
-            ->with(['fotos'])
+            ->withAvg('calificaciones', 'estrellas');
+
+        $negocios = $query->with(['fotos'])
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact('negocios', 'busqueda'));
+        // Lista de categorías para el filtro
+        $categorias = Experiencia::where('user_id', $userId)
+            ->whereNotNull('categoria_negocio')
+            ->distinct()
+            ->pluck('categoria_negocio')
+            ->toArray();
+
+        return view('reda-alojamiento::experiencia.experiencias.listado_calificaciones', compact(
+            'negocios', 
+            'busqueda', 
+            'categoria', 
+            'categorias'
+        ));
     }
 
     /**
@@ -84,7 +101,7 @@ class CalificacionController extends Controller
     }
 
     /**
-     * Muestra el detalle de calificaciones para un negocio específico.
+     * Muestra el detalle de calificaciones para un negocio específico con búsqueda inteligente.
      */
     public function detalleCalificacionesDuenio(Request $peticion, $id)
     {
@@ -97,21 +114,109 @@ class CalificacionController extends Controller
             abort(403);
         }
 
-        $busqueda = $peticion->search;
+        // Parámetros de búsqueda
+        $busqueda     = $peticion->search;
+        $reviewId     = $peticion->review_id;
+        $customerName = $peticion->customer_name;
+        $ratingFilter = $peticion->rating_filter; // 'best', 'worst', 'recent'
+        $isReported   = $peticion->is_reported;
+        $dateFrom     = $peticion->date_from;
+        $dateTo       = $peticion->date_to;
 
-        $calificaciones = CalificacionExperiencia::where('experiencia_id', $id)
-            ->when($busqueda, function ($query) use ($busqueda) {
-                return $query->where('comentario', 'like', '%' . $busqueda . '%')
-                    ->orWhereHas('usuario', function ($q) use ($busqueda) {
-                        $q->where('first_name', 'like', '%' . $busqueda . '%')
-                          ->orWhere('last_name', 'like', '%' . $busqueda . '%');
-                    });
+        $query = CalificacionExperiencia::where('experiencia_id', $id)
+            ->with(['usuario']);
+
+        // 1. Búsqueda General (Search bar superior)
+        if ($busqueda) {
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('comentario', 'like', '%' . $busqueda . '%')
+                  ->orWhereHas('usuario', function ($u) use ($busqueda) {
+                      $u->where('first_name', 'like', '%' . $busqueda . '%')
+                        ->orWhere('last_name', 'like', '%' . $busqueda . '%');
+                  });
+            });
+        }
+
+        // 2. Búsqueda por ID puntual
+        if ($reviewId) {
+            $query->where('id', $reviewId);
+        }
+
+        // 3. Búsqueda por Nombre de Cliente puntual
+        if ($customerName) {
+            $query->whereHas('usuario', function ($q) use ($customerName) {
+                $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $customerName . '%']);
+            });
+        }
+
+        // 4. Búsqueda por Calificaciones (Mejores / Peores)
+        if ($ratingFilter == 'best') {
+            $query->where('estrellas', 5);
+        } elseif ($ratingFilter == 'worst') {
+            $query->where('estrellas', '<=', 2);
+        }
+
+        // 5. Búsqueda de Reseñas Reportadas
+        if ($isReported) {
+             $reportedIds = \Reda\RedaAlojamiento\Models\Admin\SoporteTecnico::where('tema', 'Negocios')
+                ->get()
+                ->filter(function($t) {
+                    $linkError = $t->link_error;
+                    return isset($linkError['vista_origen']) && $linkError['vista_origen'] == 'Reportar calificación';
+                })
+                ->map(function($t) {
+                    return $t->link_error['id_de_la_reseña'] ?? null;
+                })
+                ->filter()
+                ->unique()
+                ->toArray();
+             
+             $query->whereIn('id', $reportedIds);
+        }
+
+        // 6. Búsqueda por Rango de Fechas
+        if ($dateFrom) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        // Ordenamiento por defecto o aplicado
+        if ($ratingFilter == 'best') {
+            $query->orderBy('estrellas', 'desc')->orderBy('created_at', 'desc');
+        } elseif ($ratingFilter == 'worst') {
+            $query->orderBy('estrellas', 'asc')->orderBy('created_at', 'desc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $calificaciones = $query->paginate(10);
+
+        // Lista de clientes para la búsqueda inteligente (Autocomplete)
+        $nombresClientes = CalificacionExperiencia::where('experiencia_id', $id)
+            ->with('usuario:id,first_name,last_name')
+            ->get()
+            ->map(function($cal) {
+                return $cal->usuario ? ($cal->usuario->first_name . ' ' . $cal->usuario->last_name) : null;
             })
-            ->with(['usuario'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
 
-        return view('reda-alojamiento::experiencia.experiencias.detalle_calificaciones', compact('experiencia', 'calificaciones', 'busqueda'));
+        return view('reda-alojamiento::experiencia.experiencias.detalle_calificaciones', compact(
+            'experiencia', 
+            'calificaciones', 
+            'busqueda',
+            'nombresClientes',
+            'reviewId',
+            'customerName',
+            'ratingFilter',
+            'isReported',
+            'dateFrom',
+            'dateTo'
+        ));
     }
 
     /**

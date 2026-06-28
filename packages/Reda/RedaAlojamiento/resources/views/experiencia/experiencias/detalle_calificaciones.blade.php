@@ -1,9 +1,5 @@
 @extends('template')
 
-@push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
-@endpush
-
 @section('main')
 <div id="detalle_calificaciones_duenio"></div>
 
@@ -35,17 +31,31 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mb-2" style="width: 100%; max-width: 350px;">
-                                    <form action="{{ route('reda.negocios.experiencias.detalle_calificaciones', $experiencia->id) }}" method="GET" id="form-busqueda-reseñas">
-                                        <div class="input-group">
-                                            <input type="text" name="search" id="input-busqueda-reseñas" class="form-control rounded-pill-left border-right-0" placeholder="{{ __('Buscar en reseñas...') }}" value="{{ $busqueda ?? '' }}" autocomplete="off">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-success rounded-pill-right" type="submit">
-                                                    <i class="fa fa-search"></i>
-                                                </button>
+                                <div class="mb-2 container-busqueda-superior">
+                                    <div class="input-group cursor-pointer shadow-sm rounded-pill border overflow-hidden" id="trigger-busqueda-inteligente">
+                                        @php
+                                            $textoBusqueda = '';
+                                            if ($reviewId) {
+                                                $textoBusqueda = __('ID #') . $reviewId;
+                                            } elseif ($customerName) {
+                                                $textoBusqueda = $customerName;
+                                            } elseif ($isReported) {
+                                                $textoBusqueda = __('Reportadas');
+                                            } elseif ($ratingFilter == 'best') {
+                                                $textoBusqueda = __('Mejores');
+                                            } elseif ($ratingFilter == 'worst') {
+                                                $textoBusqueda = __('Peores');
+                                            } elseif ($busqueda) {
+                                                $textoBusqueda = $busqueda;
+                                            }
+                                        @endphp
+                                        <input type="text" class="form-control border-0 bg-white cursor-pointer" placeholder="{{ __('Búsqueda de reseñas...') }}" readonly value="{{ $textoBusqueda }}">
+                                        <div class="input-group-append">
+                                            <div class="btn btn-success border-0 px-3 d-flex align-items-center cursor-pointer" id="btn-icon-busqueda-inteligente">
+                                                <i class="fa fa-search"></i>
                                             </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -164,11 +174,103 @@
     </div>
 </div>
 
+{{-- Modal de Búsqueda Inteligente --}}
+<div class="modal fade" id="modalBusquedaInteligente" tabindex="-1" role="dialog" aria-labelledby="modalBusquedaInteligenteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-success text-white rounded-0">
+                <h5 class="modal-title font-weight-700" id="modalBusquedaInteligenteLabel">
+                    <i class="fas fa-search-plus mr-2"></i> {{ __('Búsqueda de Reseñas') }}
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('reda.negocios.experiencias.detalle_calificaciones', $experiencia->id) }}" method="GET" id="form-busqueda-inteligente">
+                <div class="modal-body p-4">
+                    {{-- Búsqueda por ID o Nombre --}}
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label font-weight-700 text-14">{{ __('Buscar por ID o Nombre de Cliente') }}</label>
+                            <div class="input-group">
+                                <input type="text" id="input_puntual" class="form-control rounded-pill-left" placeholder="{{ __('ID de reseña o Nombre del cliente...') }}" list="listaClientes" autocomplete="off">
+                                <datalist id="listaClientes">
+                                    @foreach($nombresClientes as $nombre)
+                                        <option value="{{ $nombre }}">
+                                    @endforeach
+                                </datalist>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary px-3" id="btnBuscarID">
+                                        {{ __('Buscar ID') }}
+                                    </button>
+                                    <button type="button" class="btn btn-info px-3 rounded-pill-right" id="btnBuscarCliente">
+                                        {{ __('Buscar Cliente') }}
+                                    </button>
+                                </div>
+                            </div>
+                            {{-- Campos ocultos para enviar al controlador --}}
+                            <input type="hidden" name="review_id" id="hidden_review_id" value="{{ $reviewId }}">
+                            <input type="hidden" name="customer_name" id="hidden_customer_name" value="{{ $customerName }}">
+                            <input type="hidden" name="rating_filter" id="hidden_rating_filter" value="{{ $ratingFilter }}">
+                            <input type="hidden" name="is_reported" id="hidden_is_reported" value="{{ $isReported }}">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    {{-- Filtros Rápidos --}}
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label font-weight-700 text-14">{{ __('Filtros rápidos') }}</label>
+                            <div class="d-flex flex-wrap">
+                                <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 mr-2 mb-2 btn-filtro-rapido {{ $ratingFilter == 'best' ? 'active' : '' }}" data-filter="best">
+                                    <i class="fas fa-star mr-1"></i> {{ __('Mejores calificaciones') }}
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm rounded-pill px-3 mr-2 mb-2 btn-filtro-rapido {{ $ratingFilter == 'worst' ? 'active' : '' }}" data-filter="worst">
+                                    <i class="fas fa-star-half-alt mr-1"></i> {{ __('Peores calificaciones') }}
+                                </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 mr-2 mb-2 btn-filtro-rapido {{ $ratingFilter == 'recent' || (!$ratingFilter && !$reviewId && !$customerName && !$isReported && !$dateFrom) ? 'active' : '' }}" data-filter="recent">
+                                    <i class="fas fa-clock mr-1"></i> {{ __('Más recientes') }}
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 mr-2 mb-2 btn-filtro-rapido {{ $isReported ? 'active' : '' }}" data-filter="reported">
+                                    <i class="fas fa-flag mr-1"></i> {{ __('Reseñas reportadas') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    {{-- Búsqueda por Fecha --}}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="date_from" class="form-label font-weight-700 text-14">{{ __('Desde') }}</label>
+                            <input type="date" name="date_from" id="date_from" class="form-control rounded-3" value="{{ $dateFrom }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="date_to" class="form-label font-weight-700 text-14">{{ __('Hasta') }}</label>
+                            <input type="date" name="date_to" id="date_to" class="form-control rounded-3" value="{{ $dateTo }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <a href="{{ route('reda.negocios.experiencias.detalle_calificaciones', $experiencia->id) }}" class="btn btn-outline-secondary px-4 rounded-pill font-weight-700">
+                        {{ __('Limpiar todo') }}
+                    </a>
+                    <button type="submit" class="btn btn-success px-5 rounded-pill font-weight-700 shadow-sm">
+                        {{ __('Aplicar Búsqueda') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- Modal para Reportar Reseña --}}
 <div class="modal fade" id="modalReportarReseña" tabindex="-1" role="dialog" aria-labelledby="modalReportarReseñaLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-danger text-white rounded-top-4">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-danger text-white rounded-0">
                 <h5 class="modal-title font-weight-700" id="modalReportarReseñaLabel">
                     <i class="fas fa-flag mr-2"></i> {{ __('Reportar Reseña') }}
                 </h5>

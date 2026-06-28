@@ -59,10 +59,73 @@ export const guardarTicketSoporte = (formData) => {
     if ($(containerId).length) {
         $(function() {
             // --- Animación de espera para la búsqueda ---
-            $('#form-busqueda-reseñas').on('submit', function() {
+            $('#form-busqueda-inteligente').on('submit', function() {
                 if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
                     window.RedaNotificaciones.esperar();
                 }
+            });
+
+            // --- Búsqueda de Reseñas ---
+            
+            // Abrir el modal al hacer clic en el disparador (barra o icono de lupa)
+            $('#trigger-busqueda-inteligente').on('click', function(e) {
+                e.preventDefault();
+                $('#modalBusquedaInteligente').modal('show');
+            });
+
+            // Botón Buscar ID
+            $('#btnBuscarID').on('click', function() {
+                const valor = $('#input_puntual').val().trim();
+                if (valor === '') {
+                    $('#input_puntual').focus();
+                    return;
+                }
+                
+                // Limpiar otros filtros puntuales y generales
+                $('#hidden_customer_name').val('');
+                $('input[name="search"]').val('');
+                
+                // Si el valor empieza con # lo quitamos
+                const reviewId = valor.replace('#', '');
+                $('#hidden_review_id').val(reviewId);
+                
+                $('#form-busqueda-inteligente').submit();
+            });
+
+            // Botón Buscar Cliente
+            $('#btnBuscarCliente').on('click', function() {
+                const valor = $('#input_puntual').val().trim();
+                if (valor === '') {
+                    $('#input_puntual').focus();
+                    return;
+                }
+                
+                // Limpiar otros filtros puntuales y generales
+                $('#hidden_review_id').val('');
+                $('input[name="search"]').val('');
+                $('#hidden_customer_name').val(valor);
+                
+                $('#form-busqueda-inteligente').submit();
+            });
+
+            // Filtros Rápidos
+            $('.btn-filtro-rapido').on('click', function() {
+                const filter = $(this).data('filter');
+                
+                // Resetear campos puntuales y generales al usar filtros rápidos
+                $('#hidden_review_id').val('');
+                $('#hidden_customer_name').val('');
+                $('input[name="search"]').val('');
+                
+                if (filter === 'reported') {
+                    $('#hidden_is_reported').val('1');
+                    $('#hidden_rating_filter').val('');
+                } else {
+                    $('#hidden_is_reported').val('');
+                    $('#hidden_rating_filter').val(filter);
+                }
+                
+                $('#form-busqueda-inteligente').submit();
             });
 
             // --- Gestión de Reportar Reseña ---
@@ -87,7 +150,8 @@ export const guardarTicketSoporte = (formData) => {
                     id_de_la_reseña: calificacionId,
                     nombre_usuario_que_hizo_la_reseña: usuario,
                     calificacion_reseña: calificacion,
-                    comentario_reseña: comentario
+                    comentario_reseña: comentario,
+                    vista_origen: 'Reportar calificación'
                 };
                 
                 $('#reporte_link_error').val(JSON.stringify(linkErrorObj));

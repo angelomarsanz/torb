@@ -1996,11 +1996,17 @@
     letter-spacing: -2px;
 }
 
-.pdf-cartel-subtitle {
-    font-size: 24px;
-    margin-bottom: 60px;
-    color: #717171;
-    font-weight: 400;
+/* --- ESTILOS ADICIONALES PARA BÚSQUEDA DE RESEÑAS --- */
+.container-busqueda-superior {
+    width: 100%;
+    max-width: 400px;
+}
+    width: 100%;
+    max-width: 350px;
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
 }
 
 .pdf-cartel-qr-wrapper {

@@ -22,18 +22,23 @@
                                     <h1 class="text-24 font-weight-700 m-0">{{ __('Calificaciones por Negocio') }}</h1>
                                     <p class="text-muted m-0">{{ __('Resumen de la reputación de cada uno de tus comercios.') }}</p>
                                 </div>
-                                <div class="mt-3 mt-md-0" style="width: 100%; max-width: 400px;">
-                                    <form action="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" method="GET" id="form-busqueda-comercios">
-                                        <div class="input-group">
-                                            <input type="text" name="search" id="input-busqueda-comercios" class="form-control" placeholder="{{ __('Buscar comercio') }}" value="{{ $busqueda ?? '' }}" list="lista-nombres-comercios" autocomplete="off">
-                                            <datalist id="lista-nombres-comercios"></datalist>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-success" type="submit">
-                                                    <i class="fa fa-search"></i>
-                                                </button>
+                                <div class="mt-3 mt-md-0 container-busqueda-superior">
+                                    <div class="input-group cursor-pointer shadow-sm rounded-pill border overflow-hidden bg-white" id="trigger-busqueda-inteligente">
+                                        @php
+                                            $textoBusqueda = '';
+                                            if ($busqueda) {
+                                                $textoBusqueda = $busqueda;
+                                            } elseif ($categoria) {
+                                                $textoBusqueda = $categoria;
+                                            }
+                                        @endphp
+                                        <input type="text" class="form-control border-0 bg-white cursor-pointer" placeholder="{{ __('Búsqueda de comercios...') }}" readonly value="{{ $textoBusqueda }}">
+                                        <div class="input-group-append">
+                                            <div class="btn btn-success border-0 px-3 d-flex align-items-center cursor-pointer" id="btn-icon-busqueda-inteligente">
+                                                <i class="fa fa-search"></i>
                                             </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,7 +109,10 @@
                                             <tr>
                                                 <td colspan="4" class="text-center py-5 text-muted">
                                                     <i class="fas fa-store-slash fa-3x mb-3 opacity-05"></i>
-                                                    <p>{{ __('Aún no tienes negocios registrados.') }}</p>
+                                                    <p>{{ __('No se encontraron negocios que coincidan con tu búsqueda.') }}</p>
+                                                    <a href="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" class="btn btn-success mt-3 px-4 rounded-pill">
+                                                        {{ __('Ver todos los negocios') }}
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -168,7 +176,7 @@
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="text-center py-5 text-muted">
+                                    <div class="text-center py-5 text-muted bg-white border rounded-4 shadow-sm">
                                         <i class="fas fa-store-slash fa-3x mb-3 opacity-05"></i>
                                         <p>{{ __('No hay negocios disponibles.') }}</p>
                                     </div>
@@ -183,6 +191,69 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal de Búsqueda Inteligente de Comercios --}}
+<div class="modal fade" id="modalBusquedaInteligente" tabindex="-1" role="dialog" aria-labelledby="modalBusquedaInteligenteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-success text-white rounded-0">
+                <h5 class="modal-title font-weight-700" id="modalBusquedaInteligenteLabel">
+                    <i class="fas fa-search-plus mr-2"></i> {{ __('Búsqueda de Comercios') }}
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" method="GET" id="form-busqueda-comercios">
+                <div class="modal-body p-4">
+                    {{-- Búsqueda por Nombre --}}
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label font-weight-700 text-14">{{ __('Nombre del Comercio') }}</label>
+                            <div class="input-group">
+                                <input type="text" name="search" id="input-busqueda-comercios" class="form-control rounded-pill-left" placeholder="{{ __('Nombre del negocio...') }}" value="{{ $busqueda ?? '' }}" list="lista-nombres-comercios" autocomplete="off">
+                                <datalist id="lista-nombres-comercios"></datalist>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-success px-4 rounded-pill-right">
+                                        <i class="fas fa-search mr-2"></i> {{ __('Buscar') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    {{-- Filtros por Categoría --}}
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label font-weight-700 text-14">{{ __('Filtrar por Categoría') }}</label>
+                            <div class="d-flex flex-wrap">
+                                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 mr-2 mb-2 btn-filtro-categoria {{ !$categoria ? 'active' : '' }}" data-category="">
+                                    {{ __('Todas') }}
+                                </button>
+                                @foreach($categorias as $cat)
+                                    <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 mr-2 mb-2 btn-filtro-categoria {{ $categoria == $cat ? 'active' : '' }}" data-category="{{ $cat }}">
+                                        {{ $cat }}
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="category" id="hidden_category" value="{{ $categoria }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <a href="{{ route('reda.negocios.experiencias.calificaciones_listado') }}" class="btn btn-outline-secondary px-4 rounded-pill font-weight-700">
+                        {{ __('Limpiar todo') }}
+                    </a>
+                    <button type="submit" class="btn btn-success px-5 rounded-pill font-weight-700 shadow-sm">
+                        {{ __('Aplicar Búsqueda') }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
