@@ -2001,9 +2001,6 @@
     width: 100%;
     max-width: 400px;
 }
-    width: 100%;
-    max-width: 350px;
-}
 
 .cursor-pointer {
     cursor: pointer !important;
@@ -2585,7 +2582,7 @@
     border-left: 4px solid #28a745;
 }
 
-/* Corrección para que el autocompletado de Google Places sea visible en modales */
+/* Corrección para que el autocompletado de Google Places sea visible en modales y por encima de todo */
 .pac-container {
-    z-index: 2000 !important;
+    z-index: 110000000 !important; /* Valor superior a los índices extremos detectados en el tema base (100M) */
 }

@@ -175,3 +175,8 @@
 .bg-light-danger {
     background-color: #fff5f8 !important;
 }
+
+/* Corrección para que el autocompletado de Google Places sea visible en modales */
+.pac-container {
+    z-index: 110000000 !important;
+}
