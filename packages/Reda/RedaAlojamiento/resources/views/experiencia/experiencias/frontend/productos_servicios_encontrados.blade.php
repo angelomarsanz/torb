@@ -56,7 +56,12 @@
             @foreach($actividadesDestacadas as $actividad)
                 @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', [
                     'actividad' => $actividad,
-                    'mostrar_comercio' => true
+                    'mostrar_comercio' => true,
+                    'url_redireccion' => route('reda.negocios.experiencias.listado_productos_servicios', [
+                        'id' => $actividad->experiencia_id,
+                        'actividad_id' => $actividad->id,
+                        'q' => $busqueda
+                    ])
                 ])
             @endforeach
         </div>
@@ -81,7 +86,12 @@
             @foreach($actividades as $actividad)
                 @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', [
                     'actividad' => $actividad,
-                    'mostrar_comercio' => true
+                    'mostrar_comercio' => true,
+                    'url_redireccion' => route('reda.negocios.experiencias.listado_productos_servicios', [
+                        'id' => $actividad->experiencia_id,
+                        'actividad_id' => $actividad->id,
+                        'q' => $busqueda
+                    ])
                 ])
             @endforeach
 

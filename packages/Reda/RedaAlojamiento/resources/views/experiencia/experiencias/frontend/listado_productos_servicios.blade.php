@@ -227,7 +227,13 @@
                 <!-- SECCIÓN 4: EXPLORAR TODOS -->
                 <section class="seccion-productos mb-4" id="seccion_todos">
                     <div class="header-seccion-carrusel">
-                        <h2 class="text-18 font-weight-700">{{ __('Explorar Todo') }}</h2>
+                        <h2 class="text-18 font-weight-700">
+                            @if(isset($q) && $q)
+                                {{ __('Resultados para') }} "{{ $q }}"
+                            @else
+                                {{ __('Explorar Todo') }}
+                            @endif
+                        </h2>
                         <div class="carrusel-controles-desktop d-none d-lg-flex">
                             <button class="btn-carrusel-control btn-prev" data-target="#contenedor_todos_productos" disabled>
                                 <i class="fas fa-chevron-left"></i>
@@ -526,6 +532,7 @@
             lng: {{ $experiencia->ubicacion['longitud'] ?? 0 }},
             titulo: "{{ $experiencia->titulo }}"
         };
+        window.actividadIdCargar = {{ $actividadIdDeepLink ?? 'null' }};
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
     @include('reda-alojamiento::general.main_footer')

@@ -10,6 +10,10 @@
     }
 @endphp
 
+@if(isset($url_redireccion) && $url_redireccion)
+    <a href="{{ $url_redireccion }}" class="producto-card-wrapper-link text-decoration-none">
+@endif
+
 <div class="producto-card" data-tipo-actividad="{{ $actividad->tipo_producto_servicio }}" data-id="{{ $actividad->id }}">
     <div class="producto-img-container">
         @if($esPromoActiva && $precioPromo > 0)
@@ -37,3 +41,7 @@
         </div>
     </div>
 </div>
+
+@if(isset($url_redireccion) && $url_redireccion)
+    </a>
+@endif

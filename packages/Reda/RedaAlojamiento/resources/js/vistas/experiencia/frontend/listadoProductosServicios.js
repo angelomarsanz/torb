@@ -151,6 +151,11 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             window.addEventListener('load', () => {
                 manejarExpansionDescripcion();
                 manejarTruncamientoReseñas();
+
+                // DEEP LINK: Cargar actividad si viene de búsqueda global
+                if (window.actividadIdCargar) {
+                    abrirModalActividad(window.actividadIdCargar);
+                }
             });
 
             $('.container-carrusel-productos').each(function() { initCarrusel($(this)); });
@@ -193,19 +198,23 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
 
             // Filtros y Detalle
             $('#filtro_tipo_actividad').on('change', function() { filtrarActividades($(this).val()); });
-            $(document).on('click', '.producto-card:not(.card-ver-todos):not(.reseña-card)', async function() {
+            
+            $(document).on('click', '.producto-card:not(.card-ver-todos):not(.reseña-card)', function() {
                 const id = $(this).data('id');
-                if (!id) return;
-                $('#bodyDetalleActividad').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-success"></i></div>');
-                $('#modalDetalleActividad').modal('show');
-                const res = await obtenerDetalleActividad(id);
-                if (res.success) $('#bodyDetalleActividad').html(res.respuesta.html);
-                else {
-                    const errorHtml = `<div class="alert alert-danger m-4">${window.RedaAlojamientoJson['Error al cargar'] || 'Error al cargar'}</div>`;
-                    $('#bodyDetalleActividad').html(errorHtml);
-                }
+                if (id) abrirModalActividad(id);
             });
         });
+
+        async function abrirModalActividad(id) {
+            $('#bodyDetalleActividad').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-success"></i></div>');
+            $('#modalDetalleActividad').modal('show');
+            const res = await obtenerDetalleActividad(id);
+            if (res.success) $('#bodyDetalleActividad').html(res.respuesta.html);
+            else {
+                const errorHtml = `<div class="alert alert-danger m-4">${window.RedaAlojamientoJson['Error al cargar'] || 'Error al cargar'}</div>`;
+                $('#bodyDetalleActividad').html(errorHtml);
+            }
+        }
 
         function filtrarActividades(tipo) {
             $('.producto-card').each(function() {

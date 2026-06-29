@@ -299,10 +299,27 @@ class ExperienciaController extends Controller
             ->withAvg('calificaciones', 'estrellas')
             ->findOrFail($id);
 
-        // Obtenemos los productos/servicios activos (Primeros 10 para carrusel)
-        $queryBase = $experiencia->actividades()->where('estatus_producto_servicio', 'activo')->orderBy('orden_actividad', 'asc');
-        
-        $todasActividades = (clone $queryBase)->get();
+        $q = $request->get('q');
+        $actividadIdDeepLink = $request->get('actividad_id');
+
+        // Obtenemos los productos/servicios activos
+        $queryBase = $experiencia->actividades()
+            ->where('estatus_producto_servicio', 'activo');
+
+        $todasActividades = $queryBase->get();
+
+        // Si hay una búsqueda, ordenamos para que los que coincidan aparezcan primero
+        if ($q) {
+            $todasActividades = $todasActividades->sortByDesc(function($actividad) use ($q) {
+                // Prioridad: coincidencia exacta > contiene la palabra
+                if (strtolower($actividad->nombre_actividad) == strtolower($q)) return 2;
+                if (stripos($actividad->nombre_actividad, $q) !== false) return 1;
+                return 0;
+            });
+        } else {
+            $todasActividades = $todasActividades->sortBy('orden_actividad');
+        }
+
         $actividades = $todasActividades->take(10);
         $totalActividades = $todasActividades->count();
 
@@ -329,7 +346,9 @@ class ExperienciaController extends Controller
             'totalPromociones',
             'calificaciones',
             'totalCalificaciones',
-            'currentCurrency'
+            'currentCurrency',
+            'actividadIdDeepLink',
+            'q'
         ));
     }
 

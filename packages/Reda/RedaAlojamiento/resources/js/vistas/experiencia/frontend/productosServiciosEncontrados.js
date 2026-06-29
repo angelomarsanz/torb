@@ -33,23 +33,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             actualizarBotonesCarrusel($carrusel);
         };
 
-        /**
-         * Obtiene el detalle de la actividad vía Ajax.
-         */
-        const obtenerDetalleActividad = (id) => {
-            return new Promise((resolve) => {
-                $.ajax({
-                    url: APP_URL + '/reda/negocios/experiencias/actividades/detalle/' + id,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: (data) => resolve(data),
-                    error: function () {
-                        resolve({ success: false, mensaje_usuario: window.RedaAlojamientoJson['Error en el servidor'] || 'Error en el servidor' });
-                    }
-                });
-            });
-        };
-
         $(function() {
             // Inicializar carruseles
             $('.container-carrusel-productos').each(function() {
@@ -71,23 +54,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 }
             });
 
-            // Detalle de Actividad al hacer clic en una card
-            $(document).on('click', '.producto-card:not(.card-ver-todos)', async function() {
-                const id = $(this).data('id');
-                if (!id) return;
-
-                $('#bodyDetalleActividad').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-success"></i></div>');
-                $('#modalDetalleActividad').modal('show');
-
-                const res = await obtenerDetalleActividad(id);
-                if (res.success) {
-                    $('#bodyDetalleActividad').html(res.respuesta.html);
-                } else {
-                    const errorHtml = `<div class="alert alert-danger m-4">${res.mensaje_usuario}</div>`;
-                    $('#bodyDetalleActividad').html(errorHtml);
-                }
-            });
-
             // Interacción con "Ver todos" (Scroll Infinito)
             $(document).on('click', '.card-ver-todos', function() {
                 const $card = $(this);
@@ -95,7 +61,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const options = {
                     tipo: $card.data('tipo'),
                     tituloModal: $card.data('titulo-modal'),
-                    urlBase: APP_URL + '/reda/negocios/productos-servicios-encontrados', // Necesitaría endpoint paginado
+                    urlBase: APP_URL + '/reda/negocios/productos-servicios-encontrados',
                     extraData: {
                         q: $card.data('busqueda'),
                         tipo: $card.data('tipo-filtro'),
@@ -103,8 +69,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     }
                 };
                 
-                // Nota: El controlador productosServiciosEncontrados debe soportar AJAX para esto
-                // o crear una ruta específica de paginación similar a obtenerNegociosPaginados.
                 // ListadoInfinito.iniciar(options);
             });
         });
