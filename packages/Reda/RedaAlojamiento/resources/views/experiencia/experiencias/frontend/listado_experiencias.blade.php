@@ -211,7 +211,7 @@
     </section>
 </div>
 
-@include('reda-alojamiento::general.modal_listado_infinito')
+    @include('reda-alojamiento::general.modal_listado_infinito')
 
 @stop
 
@@ -223,46 +223,6 @@
     <script>
         window.nombresComercios = @json($nombresComercios);
         console.log('Comercios cargados para autocomplete:', window.nombresComercios);
-    </script>
-
-    @include('reda-alojamiento::general.main_footer')
-    <script src="{{ asset('public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js?v=' . time()) }}"></script>
-@endsection
-
-<!-- Modal Notificación (Si no está en el layout) -->
-<div class="modal fade z-1080" id="modal-notificacion" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content rounded-15 border-0 shadow-modal">
-            <div class="modal-header border-0 pb-0">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center pt-0">
-                <div id="notificacion-icono" class="mb-3"></div>
-                <h4 id="notificacion-titulo" class="modal-title mb-2 font-weight-bold"></h4>
-                <p id="notificacion-mensaje" class="text-muted f-14 mb-0"></p>
-            </div>
-            <div class="modal-footer border-0 pt-0 justify-content-center">
-                <button type="button" class="btn btn-primary rounded-20 py-8 px-30" data-dismiss="modal">
-                    {{ __('Aceptar') }}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@include('reda-alojamiento::general.modal_listado_infinito')
-
-@stop
-
-@section('validation_script')
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    
-    <script>
-        window.nombresComercios = @json($nombresComercios);
     </script>
 
     @include('reda-alojamiento::general.main_footer')
