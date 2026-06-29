@@ -19,6 +19,14 @@
     </div>
     <div class="producto-info">
         <h4 class="producto-nombre">{{ $actividad->nombre_actividad }}</h4>
+        
+        @if(isset($mostrar_comercio) && $mostrar_comercio && $actividad->experiencia)
+            <div class="producto-comercio mb-1">
+                <i class="fas fa-store text-muted mr-1 small"></i>
+                <span class="text-muted small font-weight-600">{{ $actividad->experiencia->titulo }}</span>
+            </div>
+        @endif
+
         <div class="producto-precio">
             @if($precioPromo > 0)
                 <span class="precio-original">{{ $currencySymbol }} {{ reda_number_format($actividad->precio, 2) }}</span>

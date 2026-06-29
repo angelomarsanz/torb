@@ -152,8 +152,22 @@ class ExperienciaController extends Controller
             return response()->json($respuesta, $respuesta['code']);
         }
 
-        // 7. Lista de nombres para búsqueda inteligente
+        // 7. Listas para búsqueda inteligente
         $nombresComercios = Experiencia::distinct()->whereNotNull('titulo')->pluck('titulo')->toArray();
+        
+        $nombresProductos = ActividadExperiencia::where('tipo_producto_servicio', 'producto')
+            ->where('estatus_producto_servicio', 'activo')
+            ->whereNotNull('nombre_actividad')
+            ->distinct()
+            ->pluck('nombre_actividad')
+            ->toArray();
+
+        $nombresServicios = ActividadExperiencia::where('tipo_producto_servicio', 'servicio')
+            ->where('estatus_producto_servicio', 'activo')
+            ->whereNotNull('nombre_actividad')
+            ->distinct()
+            ->pluck('nombre_actividad')
+            ->toArray();
 
         return view('reda-alojamiento::experiencia.experiencias.frontend.listado_experiencias', compact(
             'experiencias',
@@ -162,7 +176,55 @@ class ExperienciaController extends Controller
             'totalDestacados',
             'categoriasNegocios',
             'currentCurrency',
-            'nombresComercios'
+            'nombresComercios',
+            'nombresProductos',
+            'nombresServicios'
+        ));
+    }
+
+    /**
+     * Muestra todos los productos y servicios encontrados independientemente del comercio.
+     */
+    public function productosServiciosEncontrados(Request $request)
+    {
+        $busqueda = $request->get('q');
+        $tipo = $request->get('tipo'); // 'producto' o 'servicio'
+
+        $query = ActividadExperiencia::with(['experiencia.fotos', 'currency'])
+            ->where('estatus_producto_servicio', 'activo');
+
+        if ($busqueda) {
+            $query->where('nombre_actividad', 'like', '%' . $busqueda . '%');
+        }
+
+        if ($tipo) {
+            $query->where('tipo_producto_servicio', $tipo);
+        }
+
+        // Obtener resultados destacados (por ahora los 10 primeros que coincidan)
+        $destacadosQuery = clone $query;
+        $actividadesDestacadas = $destacadosQuery->orderBy('id', 'desc')->take(10)->get();
+        $totalDestacados = $destacadosQuery->count();
+
+        // Obtener todos los resultados con paginación
+        $actividades = $query->orderBy('id', 'desc')->paginate(12);
+        $totalActividades = $actividades->total();
+
+        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+
+        // Si es AJAX (para scroll infinito o filtros rápidos en esta vista)
+        if ($request->ajax()) {
+            // Implementar lógica similar a obtenerActividadesPaginadas si es necesario
+        }
+
+        return view('reda-alojamiento::experiencia.experiencias.frontend.productos_servicios_encontrados', compact(
+            'actividades',
+            'totalActividades',
+            'actividadesDestacadas',
+            'totalDestacados',
+            'currentCurrency',
+            'busqueda',
+            'tipo'
         ));
     }
 

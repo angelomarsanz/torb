@@ -51,12 +51,37 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 $('#input_nombre_comercio').autocomplete({
                     source: window.nombresComercios,
                     minLength: 1,
-                    appendTo: "#modalBusquedaComercios", // Asegura que se vea sobre el modal
+                    appendTo: "#modalBusquedaComercios",
                     select: function(event, ui) {
-                        // Al seleccionar, podemos disparar la búsqueda automáticamente
                         setTimeout(() => {
                             ejecutarBusqueda($('#form_busqueda_negocios_modal'));
                         }, 100);
+                    }
+                });
+            }
+
+            // Inicializar Autocomplete para nombres de productos
+            if (window.nombresProductos && $('#input_nombre_producto').length) {
+                $('#input_nombre_producto').autocomplete({
+                    source: window.nombresProductos,
+                    minLength: 1,
+                    appendTo: "#modalBusquedaComercios",
+                    select: function(event, ui) {
+                        const seleccion = ui.item.value;
+                        window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(seleccion) + '&tipo=producto';
+                    }
+                });
+            }
+
+            // Inicializar Autocomplete para nombres de servicios
+            if (window.nombresServicios && $('#input_nombre_servicio').length) {
+                $('#input_nombre_servicio').autocomplete({
+                    source: window.nombresServicios,
+                    minLength: 1,
+                    appendTo: "#modalBusquedaComercios",
+                    select: function(event, ui) {
+                        const seleccion = ui.item.value;
+                        window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(seleccion) + '&tipo=servicio';
                     }
                 });
             }
@@ -138,10 +163,22 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // 4. Manejar el envío del formulario (Enter o Botón)
             $(document).on('submit', '.form-busqueda-comercios', function(e) {
                 e.preventDefault();
-                ejecutarBusqueda($(this));
                 
-                // Opcional: cerrar el modal al buscar (si el usuario así lo prefiere)
-                // $('#modalBusquedaComercios').modal('hide');
+                // Si el usuario escribió algo en productos o servicios pero no seleccionó del autocomplete,
+                // redirigimos a la vista de encontrados si esos inputs tienen valor.
+                const valProducto = $('#input_nombre_producto').val();
+                const valServicio = $('#input_nombre_servicio').val();
+
+                if (valProducto) {
+                    window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(valProducto) + '&tipo=producto';
+                    return;
+                }
+                if (valServicio) {
+                    window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(valServicio) + '&tipo=servicio';
+                    return;
+                }
+
+                ejecutarBusqueda($(this));
             });
 
             // 5. Botones de favoritos

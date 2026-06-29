@@ -98,14 +98,25 @@
                             </div>
                         </div>
 
-                        <!-- Buscar por Producto o Servicio (Visual) -->
+                        <!-- Buscar por Producto (CON AUTOCOMPLETADO) -->
                         <div class="filtro-item mb-4">
-                            <label class="font-weight-700 mb-2">{{ __('Buscar producto o servicio') }}</label>
+                            <label class="font-weight-700 mb-2">{{ __('Buscar producto') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-right-0"><i class="fas fa-shopping-bag text-muted"></i></span>
                                 </div>
-                                <input type="text" name="producto_servicio" class="form-control border-left-0" placeholder="{{ __('¿Qué producto o servicio buscas?') }}" autocomplete="off">
+                                <input type="text" name="nombre_producto" id="input_nombre_producto" class="form-control border-left-0" placeholder="{{ __('¿Qué producto buscas?') }}" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <!-- Buscar por Servicio (CON AUTOCOMPLETADO) -->
+                        <div class="filtro-item mb-4">
+                            <label class="font-weight-700 mb-2">{{ __('Buscar servicio') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0"><i class="fas fa-concierge-bell text-muted"></i></span>
+                                </div>
+                                <input type="text" name="nombre_servicio" id="input_nombre_servicio" class="form-control border-left-0" placeholder="{{ __('¿Qué servicio buscas?') }}" autocomplete="off">
                             </div>
                         </div>
 
@@ -222,7 +233,11 @@
     
     <script>
         window.nombresComercios = @json($nombresComercios);
+        window.nombresProductos = @json($nombresProductos);
+        window.nombresServicios = @json($nombresServicios);
         console.log('Comercios cargados para autocomplete:', window.nombresComercios);
+        console.log('Productos cargados para autocomplete:', window.nombresProductos);
+        console.log('Servicios cargados para autocomplete:', window.nombresServicios);
     </script>
 
     @include('reda-alojamiento::general.main_footer')
