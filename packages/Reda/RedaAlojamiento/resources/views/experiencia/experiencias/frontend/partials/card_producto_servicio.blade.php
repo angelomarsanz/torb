@@ -14,7 +14,10 @@
     <a href="{{ $url_redireccion }}" class="producto-card-wrapper-link text-decoration-none">
 @endif
 
-<div class="producto-card" data-tipo-actividad="{{ $actividad->tipo_producto_servicio }}" data-id="{{ $actividad->id }}">
+<div class="producto-card" 
+     data-tipo-actividad="{{ $actividad->tipo_producto_servicio }}" 
+     data-id="{{ $actividad->id }}"
+     data-id-experiencia="{{ $actividad->experiencia_id }}">
     <div class="producto-img-container">
         @if($esPromoActiva && $precioPromo > 0)
             <span class="badge-promo">{{ __('Oferta') }}</span>

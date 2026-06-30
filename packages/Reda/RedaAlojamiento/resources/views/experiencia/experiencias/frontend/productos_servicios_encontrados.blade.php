@@ -38,7 +38,15 @@
     @if($totalDestacados > 0)
     <section class="seccion-productos mb-5" id="seccion_destacados">
         <div class="header-seccion-carrusel">
-            <h2 class="text-20 font-weight-700 m-0">{{ __('Resultados Destacados') }}</h2>
+            <h2 class="text-20 font-weight-700 m-0">
+                @if($tipo == 'producto')
+                    {{ __('Productos destacados') }}
+                @elseif($tipo == 'servicio')
+                    {{ __('Servicios destacados') }}
+                @else
+                    {{ __('Resultados Destacados') }}
+                @endif
+            </h2>
             <div class="carrusel-controles-desktop d-none d-lg-flex">
                 <button class="btn-carrusel-control btn-prev" data-target="#contenedor_destacados" disabled>
                     <i class="fas fa-chevron-left"></i>
@@ -52,12 +60,7 @@
             @foreach($actividadesDestacadas as $actividad)
                 @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', [
                     'actividad' => $actividad,
-                    'mostrar_comercio' => true,
-                    'url_redireccion' => route('reda.negocios.experiencias.listado_productos_servicios', [
-                        'id' => $actividad->experiencia_id,
-                        'actividad_id' => $actividad->id,
-                        'q' => $busqueda
-                    ])
+                    'mostrar_comercio' => true
                 ])
             @endforeach
         </div>
@@ -96,7 +99,7 @@
                      data-tipo="todos"
                      data-busqueda="{{ $busqueda }}"
                      data-tipo-filtro="{{ $tipo }}"
-                     data-titulo-modal="{{ __('Todos los resultados') }}">
+                     data-titulo-modal="{{ $tipo == 'producto' ? __('Todos los productos') : ($tipo == 'servicio' ? __('Todos los servicios') : __('Todos los resultados')) }}">
                     <div class="icon-wrapper mb-2">
                         <i class="fas fa-plus-circle fa-2x text-primary"></i>
                     </div>

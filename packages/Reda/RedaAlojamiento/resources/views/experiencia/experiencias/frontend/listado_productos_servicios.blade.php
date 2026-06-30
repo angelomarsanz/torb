@@ -133,6 +133,16 @@
                             <button class="btn-leer-mas-desc">{{ __('Más') }}</button>
                         </div>
 
+                        <!-- TRATAMIENTO ESPECIAL (MÓVIL): Si hay una actividad objetivo, mostrarla aquí -->
+                        @if(isset($actividadTarget) && $actividadTarget)
+                            <div class="seccion-actividad-objetivo-mobile mt-4 mb-2">
+                                <div class="card border-primary shadow-sm rounded-12 overflow-hidden">
+                                    @include('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad', ['actividad' => $actividadTarget])
+                                </div>
+                                <hr class="my-4">
+                            </div>
+                        @endif
+
                         <!-- SECCIÓN DE CONTACTO (Solo Móvil) -->
                         <div class="negocio-detalle-contacto" id="contacto_negocio_mobile">
                             <p class="titulo-contacto">{{ __('Contacto:') }}</p>
@@ -187,6 +197,16 @@
                         </div>
                     </section>
                 </div>
+
+                <!-- TRATAMIENTO ESPECIAL (ESCRITORIO): Si hay una actividad objetivo, mostrarla aquí arriba -->
+                @if(isset($actividadTarget) && $actividadTarget)
+                    <div class="seccion-actividad-objetivo-desktop d-none d-lg-block px-4 mb-5">
+                        <div class="card border-primary shadow-sm rounded-12 overflow-hidden">
+                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad', ['actividad' => $actividadTarget])
+                        </div>
+                        <hr class="mt-5">
+                    </div>
+                @endif
 
                 <!-- SECCIÓN 3: PRODUCTOS Y SERVICIOS EN PROMOCIÓN -->
                 @if($promociones->count() > 0)

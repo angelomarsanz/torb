@@ -310,7 +310,7 @@ class ExperienciaController extends Controller
     /**
      * Muestra la vista de detalle de un negocio (experiencia) para el frontend.
      */
-    public function listadoProductosServicios(Request $request, $id)
+    public function listadoProductosServicios(Request $request, $id, $actividad_id = null)
     {
         $experiencia = Experiencia::with(['fotos', 'actividades', 'owner', 'anfitrion', 'informaciones', 'calificaciones.usuario'])
             ->withCount('calificaciones')
@@ -318,7 +318,16 @@ class ExperienciaController extends Controller
             ->findOrFail($id);
 
         $q = $request->get('q');
-        $actividadIdDeepLink = $request->get('actividad_id');
+        // El parámetro puede venir de la ruta ({actividad_id}) o del query string (?actividad_id=)
+        $actividadIdDeepLink = $actividad_id ?? $request->get('actividad_id');
+        $actividadTarget = null;
+
+        if ($actividadIdDeepLink) {
+            $actividadTarget = $experiencia->actividades()
+                ->where('id', $actividadIdDeepLink)
+                ->where('estatus_producto_servicio', 'activo')
+                ->first();
+        }
 
         // Obtenemos los productos/servicios activos
         $queryBase = $experiencia->actividades()
@@ -366,6 +375,7 @@ class ExperienciaController extends Controller
             'totalCalificaciones',
             'currentCurrency',
             'actividadIdDeepLink',
+            'actividadTarget',
             'q'
         ));
     }

@@ -54,6 +54,20 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 }
             });
 
+            // Redirección al hacer clic en una tarjeta de producto/servicio (Tratamiento especial solicitado)
+            $(document).on('click', '.producto-card:not(.card-ver-todos):not(.reseña-card)', function(e) {
+                const $card = $(this);
+                const idExperiencia = $card.data('id-experiencia');
+                const idActividad = $card.data('id');
+                
+                // Si la tarjeta ya es un enlace (vía Blade), permitimos el comportamiento natural del enlace 
+                // pero si el clic ocurre en el contenedor, forzamos la redirección con los parámetros correctos.
+                if ($(e.target).closest('a').length === 0 && idExperiencia && idActividad) {
+                    const url = APP_URL + '/reda/negocios/listado-productos-servicios/' + idExperiencia + '/' + idActividad;
+                    window.location.href = url;
+                }
+            });
+
             // Interacción con "Ver todos" (Scroll Infinito)
             $(document).on('click', '.card-ver-todos', function() {
                 const $card = $(this);

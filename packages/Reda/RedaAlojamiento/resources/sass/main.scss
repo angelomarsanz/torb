@@ -1532,7 +1532,7 @@
         }
 
         /* En el carrusel, las tarjetas tienen un ancho fijo para permitir el scroll horizontal */
-        .producto-card, .col-item-carrusel {
+        .producto-card, .col-item-carrusel, .producto-card-wrapper-link {
             flex: 0 0 280px;
             scroll-snap-align: start;
         }
