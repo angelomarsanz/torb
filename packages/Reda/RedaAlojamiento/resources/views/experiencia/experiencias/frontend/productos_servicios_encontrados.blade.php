@@ -6,23 +6,34 @@
 
 @section('main')
 
-<div class="reda-search-results-header">
-    <div class="container-fluid container-fluid-90">
-        <h1 class="text-28 font-weight-700 m-0">
-            @if($busqueda)
-                {{ __('Resultados para') }}: <span class="reda-search-term-highlight">"{{ $busqueda }}"</span>
-            @else
-                {{ __('Explorando') }} {{ $tipo == 'producto' ? __('Productos') : ($tipo == 'servicio' ? __('Servicios') : __('Productos y Servicios')) }}
-            @endif
-        </h1>
-        <p class="text-muted mt-2">
-            {{ $totalActividades }} {{ trans_choice('resultado encontrado|resultados encontrados', $totalActividades) }}
-        </p>
-    </div>
-</div>
-
 <div id="productos_servicios_encontrados" class="container-fluid container-fluid-90 reda-productos-servicios-encontrados-container">
     
+    <!-- Mensaje de resultados -->
+    <div id="contenedor_mensaje_resultados" class="mb-5 text-center">
+        <h5 class="text-dark">
+            @if($totalActividades > 0)
+                <span id="cantidad_resultados_busqueda" class="text-dark">{{ $totalActividades }}</span> 
+                @if($tipo == 'producto')
+                    <span id="texto_resultados_busqueda" class="text-dark">{{ trans_choice('producto encontrado|productos encontrados', $totalActividades) }}</span>
+                @elseif($tipo == 'servicio')
+                    <span id="texto_resultados_busqueda" class="text-dark">{{ trans_choice('servicio encontrado|servicios encontrados', $totalActividades) }}</span>
+                @else
+                    <span id="texto_resultados_busqueda" class="text-dark">{{ trans_choice('resultado encontrado|resultados encontrados', $totalActividades) }}</span>
+                @endif
+            @else
+                <span id="cantidad_resultados_busqueda" class="d-none">0</span>
+                @if($tipo == 'producto')
+                    <span id="texto_resultados_busqueda" class="text-danger">{{ __('No se encontraron productos') }}</span>
+                @elseif($tipo == 'servicio')
+                    <span id="texto_resultados_busqueda" class="text-danger">{{ __('No se encontraron servicios') }}</span>
+                @else
+                    <span id="texto_resultados_busqueda" class="text-danger">{{ __('No se encontraron resultados') }}</span>
+                @endif
+            @endif
+        </h5>
+        <hr class="w-25 mx-auto border-primary">
+    </div>
+
     <!-- SECCIÓN 1: DESTACADOS -->
     @if($totalDestacados > 0)
     <section class="seccion-productos mb-5" id="seccion_destacados">

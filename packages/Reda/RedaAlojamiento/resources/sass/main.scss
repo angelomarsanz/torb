@@ -524,7 +524,8 @@
 /* --- LISTADO DE COMERCIOS (FRONTEND) --- */
 
 #listado_experiencias {
-    margin-top: 90px !important;
+    margin-top: 170px !important;
+    padding-top: 60px !important;
 
     .section-intro {
         text-align: left;
@@ -535,7 +536,8 @@
 
 @media (max-width: 767px) {
     #listado_experiencias {
-        margin-top: 80px !important;
+        margin-top: 160px !important;
+        padding-top: 40px !important;
 
         .section-intro {
             padding-left: 15px; // Un poco más de aire en móvil
@@ -2624,8 +2626,8 @@
 }
 
 .reda-listado-experiencias-container {
-    margin-top: 100px !important;
-    padding-top: 50px !important;
+    margin-top: 170px !important;
+    padding-top: 40px !important;
 }
 
 .reda-search-icon-circle {
@@ -2642,8 +2644,8 @@
         top: 80px;
     }
     .reda-listado-experiencias-container {
-        margin-top: 90px !important;
-        padding-top: 40px !important;
+        margin-top: 160px !important;
+        padding-top: 30px !important;
     }
 }
 
@@ -2660,23 +2662,17 @@
 }
 
 /* --- ESTILOS PARA PRODUCTOS Y SERVICIOS ENCONTRADOS --- */
-.reda-search-results-header {
-    background: #f8f9fa;
-    padding: 40px 0;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
-    margin-top: 90px !important;
+.reda-productos-servicios-encontrados-container {
+    margin-top: 100px !important;
+    padding-bottom: 50px;
 }
 .reda-search-term-highlight {
     color: #28a745;
     font-weight: 700;
 }
-.reda-productos-servicios-encontrados-container {
-    padding-bottom: 50px;
-}
 
 @media (max-width: 767px) {
-    .reda-search-results-header {
-        margin-top: 80px !important;
+    .reda-productos-servicios-encontrados-container {
+        margin-top: 90px !important;
     }
 }

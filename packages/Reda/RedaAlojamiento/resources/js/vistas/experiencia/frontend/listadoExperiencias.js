@@ -288,14 +288,21 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     const $cantidadResultados = $('#cantidad_resultados_busqueda');
                     const $textoResultados = $('#texto_resultados_busqueda');
 
-                    $cantidadResultados.text(data.total);
+                    if (data.total > 0) {
+                        $cantidadResultados.text(data.total).removeClass('d-none');
+                        $textoResultados.removeClass('text-danger');
+                        
+                        // Lógica sutil de pluralización basada en el key de es.json
+                        const rawString = window.RedaAlojamientoJson['comercio encontrado|comercios encontrados'] || 'comercio encontrado|comercios encontrados';
+                        const parts = rawString.split('|');
+                        const textoPlural = data.total === 1 ? (parts[0] || 'comercio encontrado') : (parts[1] || 'comercios encontrados');
+                        
+                        $textoResultados.text(textoPlural);
+                    } else {
+                        $cantidadResultados.text('0').addClass('d-none');
+                        $textoResultados.text(window.RedaAlojamientoJson['No se encontraron comercios'] || 'No se encontraron comercios').addClass('text-danger');
+                    }
                     
-                    // Lógica sutil de pluralización basada en el key de es.json
-                    const rawString = window.RedaAlojamientoJson['comercio encontrado|comercios encontrados'] || 'comercio encontrado|comercios encontrados';
-                    const parts = rawString.split('|');
-                    const textoPlural = data.total === 1 ? (parts[0] || 'comercio encontrado') : (parts[1] || 'comercios encontrados');
-                    
-                    $textoResultados.text(textoPlural);
                     $contenedorMensaje.removeClass('d-none');
 
                     // Actualizar visibilidad y contenido de destacados

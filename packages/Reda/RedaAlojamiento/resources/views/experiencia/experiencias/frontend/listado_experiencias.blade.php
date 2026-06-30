@@ -41,16 +41,28 @@
 
     <!-- Mensaje de resultados (Visible si hay búsqueda activa) -->
     @php
-        $hayBusqueda = request()->filled('nombre_comercio') || request()->filled('categoria') || request()->filled('ubicacion_texto') || (request()->filled('latitud') && request()->filled('longitud'));
+        $hayBusqueda = request()->filled('nombre_comercio') || 
+                       request()->filled('nombre_producto') || 
+                       request()->filled('nombre_servicio') || 
+                       request()->filled('categoria') || 
+                       request()->filled('ubicacion_texto') || 
+                       (request()->filled('latitud') && request()->filled('longitud')) ||
+                       (request()->filled('radio') && request()->radio != 25);
     @endphp
 
     <div id="contenedor_mensaje_resultados" class="mb-5 text-center {{ $hayBusqueda ? '' : 'd-none' }}">
-        <h3 class="reda-font-weight-700 text-dark">
-            <span id="cantidad_resultados_busqueda">{{ $totalExperiencias }}</span> 
-            <span id="texto_resultados_busqueda">{{ trans_choice('reda-alojamiento::es.comercio encontrado|comercios encontrados', $totalExperiencias) }}</span>
-        </h3>
+        <h5 class="text-dark">
+            @if($totalExperiencias > 0)
+                <span id="cantidad_resultados_busqueda">{{ $totalExperiencias }}</span> 
+                <span id="texto_resultados_busqueda">{{ trans_choice('comercio encontrado|comercios encontrados', $totalExperiencias) }}</span>
+            @else
+                <span id="cantidad_resultados_busqueda" class="d-none">0</span> 
+                <span id="texto_resultados_busqueda" class="text-danger">{{ __('No se encontraron comercios') }}</span>
+            @endif
+        </h5>
         <hr class="w-25 mx-auto border-primary">
     </div>
+
 
     <!-- Modal de Búsqueda Unificado -->
     <div class="modal fade modal-busqueda-movil reda-modal-zindex-1060" id="modalBusquedaComercios" role="dialog" aria-hidden="true">
