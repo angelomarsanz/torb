@@ -8,6 +8,7 @@
             padding: 40px 0;
             margin-bottom: 30px;
             border-bottom: 1px solid #eee;
+            margin-top: 90px !important;
         }
         .search-term-highlight {
             color: #28a745;
@@ -15,6 +16,12 @@
         }
         #productos_servicios_encontrados {
             padding-bottom: 50px;
+        }
+
+        @media (max-width: 767px) {
+            .search-results-header {
+                margin-top: 80px !important;
+            }
         }
     </style>
 @endpush

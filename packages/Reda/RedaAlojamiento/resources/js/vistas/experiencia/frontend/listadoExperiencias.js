@@ -68,6 +68,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     appendTo: "#modalBusquedaComercios",
                     select: function(event, ui) {
                         const seleccion = ui.item.value;
+                        $('#modalBusquedaComercios').modal('hide');
                         window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(seleccion) + '&tipo=producto';
                     }
                 });
@@ -81,10 +82,37 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     appendTo: "#modalBusquedaComercios",
                     select: function(event, ui) {
                         const seleccion = ui.item.value;
+                        $('#modalBusquedaComercios').modal('hide');
                         window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(seleccion) + '&tipo=servicio';
                     }
                 });
             }
+
+            // --- EXCLUSIVIDAD DE INPUTS DE BÚSQUEDA ---
+            const $inputComercio = $('#input_nombre_comercio');
+            const $inputProducto = $('#input_nombre_producto');
+            const $inputServicio = $('#input_nombre_servicio');
+
+            $inputComercio.on('input', function() {
+                if ($(this).val().length > 0) {
+                    $inputProducto.val('');
+                    $inputServicio.val('');
+                }
+            });
+
+            $inputProducto.on('input', function() {
+                if ($(this).val().length > 0) {
+                    $inputComercio.val('');
+                    $inputServicio.val('');
+                }
+            });
+
+            $inputServicio.on('input', function() {
+                if ($(this).val().length > 0) {
+                    $inputComercio.val('');
+                    $inputProducto.val('');
+                }
+            });
 
             // Manejo de Clics en Desktop
             $(document).on('click', '.btn-carrusel-control', function() {
@@ -170,10 +198,12 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const valServicio = $('#input_nombre_servicio').val();
 
                 if (valProducto) {
+                    $('#modalBusquedaComercios').modal('hide');
                     window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(valProducto) + '&tipo=producto';
                     return;
                 }
                 if (valServicio) {
+                    $('#modalBusquedaComercios').modal('hide');
                     window.location.href = APP_URL + '/reda/negocios/productos-servicios-encontrados?q=' + encodeURIComponent(valServicio) + '&tipo=servicio';
                     return;
                 }
@@ -229,6 +259,8 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
              * Orquestador de la búsqueda
              */
             async function ejecutarBusqueda($form) {
+                $('#modalBusquedaComercios').modal('hide');
+
                 const formData = $form.serialize();
                 const $contenedorDestacados = $('#contenedor_destacados');
                 const $contenedorGeneral = $('#contenedor_listado_general');

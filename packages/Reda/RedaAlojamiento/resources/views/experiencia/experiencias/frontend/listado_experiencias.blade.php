@@ -8,21 +8,42 @@
         .search-trigger-desktop:hover { transform: scale(1.01); transition: all 0.2s ease-in-out; }
         .ui-autocomplete { z-index: 2147483647 !important; } /* Máximo nivel para sobrepasar el modal */
         
-        /* Ajuste para la barra sticky */
+        /* Ajuste para la barra sticky/fixed */
         .search-sticky-wrapper {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: white;
-            transition: box-shadow 0.3s ease;
+            position: fixed;
+            top: 90px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 999;
+            background: transparent; /* Fondo transparente para efecto flotante real */
+            transition: all 0.3s ease;
+            border-bottom: none !important;
+            pointer-events: none; /* Permite clics a través del área transparente */
+        }
+        .search-sticky-wrapper .container-fluid {
+            pointer-events: auto; /* Reactiva los clics solo para el contenido de la barra */
         }
         .search-sticky-wrapper.is-sticky {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            /* Eliminamos la sombra de la caja rectangular y ajustamos padding */
+            box-shadow: none; 
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
         }
         
-        /* Ajuste de márgenes para que el contenido no quede oculto bajo la barra sticky */
+        /* Ajuste de márgenes para que el contenido no quede oculto bajo la barra fija */
         #listado_experiencias {
+            margin-top: 100px !important;
             padding-top: 20px !important;
+        }
+
+        @media (max-width: 767px) {
+            .search-sticky-wrapper {
+                top: 80px;
+            }
+            #listado_experiencias {
+                margin-top: 90px !important;
+            }
         }
 
         @media (max-width: 991px) {
@@ -33,16 +54,19 @@
                 background: #fff;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
+                justify-content: center;
             }
+            /* En móvil, si prefieres que la barra mantenga fondo blanco al hacer scroll 
+               para no tapar contenido crítico, podrías añadirlo aquí, pero por ahora 
+               seguimos tu instrucción de transparencia general. */
         }
     </style>
 @endpush
 
 @section('main')
 
-<!-- BARRA DE BÚSQUEDA FLOTANTE (STICKY) -->
-<div class="search-sticky-wrapper py-3 border-bottom" id="search_sticky_bar">
+<!-- BARRA DE BÚSQUEDA FLOTANTE (FIXED) -->
+<div class="search-sticky-wrapper py-3" id="search_sticky_bar">
     <div class="container-fluid container-fluid-90">
         <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
         <div class="d-lg-none seccion-filtros-movil">
@@ -51,7 +75,6 @@
                     <i class="fas fa-search text-primary mr-3"></i>
                     <span class="text-muted font-weight-600">{{ __('¿Qué estás buscando?') }}</span>
                 </div>
-                <i class="fas fa-sliders-h text-muted"></i>
             </div>
         </div>
 
