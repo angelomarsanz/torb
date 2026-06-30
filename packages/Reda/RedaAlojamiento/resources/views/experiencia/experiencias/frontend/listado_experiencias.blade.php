@@ -47,7 +47,7 @@
     <div id="contenedor_mensaje_resultados" class="mb-5 text-center {{ $hayBusqueda ? '' : 'd-none' }}">
         <h3 class="reda-font-weight-700 text-dark">
             <span id="cantidad_resultados_busqueda">{{ $totalExperiencias }}</span> 
-            <span id="texto_resultados_busqueda">{{ trans_choice('reda-alojamiento::es.resultado encontrado|resultados encontrados', $totalExperiencias) }}</span>
+            <span id="texto_resultados_busqueda">{{ trans_choice('reda-alojamiento::es.comercio encontrado|comercios encontrados', $totalExperiencias) }}</span>
         </h3>
         <hr class="w-25 mx-auto border-primary">
     </div>

@@ -291,9 +291,9 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     $cantidadResultados.text(data.total);
                     
                     // Lógica sutil de pluralización basada en el key de es.json
-                    const rawString = window.RedaAlojamientoJson['resultado encontrado|resultados encontrados'] || 'resultado encontrado|resultados encontrados';
+                    const rawString = window.RedaAlojamientoJson['comercio encontrado|comercios encontrados'] || 'comercio encontrado|comercios encontrados';
                     const parts = rawString.split('|');
-                    const textoPlural = data.total === 1 ? (parts[0] || 'resultado encontrado') : (parts[1] || 'resultados encontrados');
+                    const textoPlural = data.total === 1 ? (parts[0] || 'comercio encontrado') : (parts[1] || 'comercios encontrados');
                     
                     $textoResultados.text(textoPlural);
                     $contenedorMensaje.removeClass('d-none');
