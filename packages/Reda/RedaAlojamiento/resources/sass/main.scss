@@ -2676,3 +2676,83 @@
         margin-top: 90px !important;
     }
 }
+
+/* --- DETALLE DE ACTIVIDAD INLINE (Tratamiento Especial) --- */
+.detalle-actividad-inline {
+    width: 100%;
+    
+    .actividad-inline-img-wrapper {
+        position: relative;
+        width: 100%;
+        max-height: 500px;
+        overflow: hidden;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        border: 1px solid rgba(0,0,0,0.05);
+
+        img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+        }
+
+        .badge-oferta-inline {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            background-color: #e31c5f;
+            color: white;
+            font-size: 14px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+    }
+
+    .actividad-inline-info {
+        h2.text-28 {
+            font-size: 28px;
+            line-height: 1.2;
+            color: #222;
+        }
+
+        .text-32 {
+            font-size: 32px;
+        }
+
+        .text-18 {
+            font-size: 18px;
+        }
+
+        .text-crossed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .actividad-inline-desc {
+            p {
+                line-height: 1.6;
+                color: #484848;
+            }
+        }
+    }
+}
+
+/* Ajustes Responsivos Detalle Inline */
+@media (max-width: 991.98px) {
+    .detalle-actividad-inline {
+        .actividad-inline-img-wrapper {
+            max-height: 350px;
+        }
+
+        .actividad-inline-info {
+            h2.text-28 {
+                font-size: 24px;
+            }
+            .text-32 {
+                font-size: 28px;
+            }
+        }
+    }
+}

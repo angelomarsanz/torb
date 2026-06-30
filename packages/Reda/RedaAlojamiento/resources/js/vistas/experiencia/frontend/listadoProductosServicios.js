@@ -168,11 +168,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             window.addEventListener('load', () => {
                 manejarExpansionDescripcion();
                 manejarTruncamientoReseñas();
-
-                // DEEP LINK: Cargar actividad si viene de búsqueda global
-                if (window.actividadIdCargar) {
-                    abrirModalActividad(window.actividadIdCargar);
-                }
+                // Nota: Ya no abrimos el modal automáticamente porque se muestra inline
             });
 
             $('.container-carrusel-productos').each(function() { initCarrusel($(this)); });

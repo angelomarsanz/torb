@@ -136,10 +136,8 @@
                         <!-- TRATAMIENTO ESPECIAL (MÓVIL): Si hay una actividad objetivo, mostrarla aquí -->
                         @if(isset($actividadTarget) && $actividadTarget)
                             <div class="seccion-actividad-objetivo-mobile mt-4 mb-2">
-                                <div class="card border-primary shadow-sm rounded-12 overflow-hidden">
-                                    @include('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad', ['actividad' => $actividadTarget])
-                                </div>
-                                <hr class="my-4">
+                                @include('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad_inline', ['actividad' => $actividadTarget])
+                                <hr class="my-5">
                             </div>
                         @endif
 
@@ -201,9 +199,7 @@
                 <!-- TRATAMIENTO ESPECIAL (ESCRITORIO): Si hay una actividad objetivo, mostrarla aquí arriba -->
                 @if(isset($actividadTarget) && $actividadTarget)
                     <div class="seccion-actividad-objetivo-desktop d-none d-lg-block px-4 mb-5">
-                        <div class="card border-primary shadow-sm rounded-12 overflow-hidden">
-                            @include('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad', ['actividad' => $actividadTarget])
-                        </div>
+                        @include('reda-alojamiento::experiencia.experiencias.frontend.partials.detalle_actividad_inline', ['actividad' => $actividadTarget])
                         <hr class="mt-5">
                     </div>
                 @endif
