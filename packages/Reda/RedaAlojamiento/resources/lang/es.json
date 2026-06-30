@@ -381,5 +381,15 @@
     "Filtrar por Categoría": "Filtrar por Categoría",
     "Calificación Mínima": "Calificación Mínima",
     "Cualquiera": "Cualquiera",
-    "Ver todos los negocios": "Ver todos los negocios"
+    "Ver todos los negocios": "Ver todos los negocios",
+    "km": "km",
+    "Más": "Más",
+    "resultado encontrado|resultados encontrados": "resultado encontrado|resultados encontrados",
+    "comercio encontrado|comercios encontrados": "comercio encontrado|comercios encontrados",
+    "Error al cargar": "Error al cargar",
+    "Script para Listado de Comercios cargado correctamente": "Script para Listado de Comercios cargado correctamente",
+    "Script para Productos y Servicios Encontrados cargado correctamente": "Script para Productos y Servicios Encontrados cargado correctamente",
+    "Script para Listado de Productos y Servicios cargado correctamente": "Script para Listado de Productos y Servicios cargado correctamente",
+    "Error en el servidor": "Error en el servidor",
+    "Error obteniendo detalle": "Error obteniendo detalle"
 }

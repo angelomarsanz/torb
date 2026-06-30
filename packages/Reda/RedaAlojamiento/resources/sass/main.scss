@@ -2586,3 +2586,97 @@
 .pac-container {
     z-index: 110000000 !important; /* Valor superior a los índices extremos detectados en el tema base (100M) */
 }
+
+/* --- ESTILOS PARA LISTADO DE EXPERIENCIAS --- */
+.reda-cursor-pointer { cursor: pointer; }
+.reda-font-weight-600 { font-weight: 600; }
+.reda-search-trigger-desktop {
+    &:hover {
+        transform: scale(1.01);
+        transition: all 0.2s ease-in-out;
+    }
+}
+.reda-ui-autocomplete {
+    z-index: 2147483647 !important;
+}
+
+.reda-search-sticky-wrapper {
+    position: fixed;
+    top: 90px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 999;
+    background: transparent;
+    transition: all 0.3s ease;
+    border-bottom: none !important;
+    pointer-events: none;
+
+    .container-fluid {
+        pointer-events: auto;
+    }
+
+    &.is-sticky {
+        box-shadow: none;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+}
+
+.reda-listado-experiencias-container {
+    margin-top: 100px !important;
+    padding-top: 50px !important;
+}
+
+.reda-search-icon-circle {
+    width: 32px;
+    height: 32px;
+}
+
+.reda-modal-zindex-1060 {
+    z-index: 1060;
+}
+
+@media (max-width: 767px) {
+    .reda-search-sticky-wrapper {
+        top: 80px;
+    }
+    .reda-listado-experiencias-container {
+        margin-top: 90px !important;
+        padding-top: 40px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .reda-search-trigger-movil {
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* --- ESTILOS PARA PRODUCTOS Y SERVICIOS ENCONTRADOS --- */
+.reda-search-results-header {
+    background: #f8f9fa;
+    padding: 40px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    margin-top: 90px !important;
+}
+.reda-search-term-highlight {
+    color: #28a745;
+    font-weight: 700;
+}
+.reda-productos-servicios-encontrados-container {
+    padding-bottom: 50px;
+}
+
+@media (max-width: 767px) {
+    .reda-search-results-header {
+        margin-top: 80px !important;
+    }
+}

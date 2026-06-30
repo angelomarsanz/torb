@@ -48,24 +48,44 @@ export const ListadoInfinito = {
         if (this.config.loading || this.config.noMore) return;
 
         this.config.loading = true;
-        $(this.config.loaderId).fadeIn(200);
+        
+        // Para el scroll infinito usamos el loader local discreto si ya hay items,
+        // pero si es la primera carga o según mandato usamos la animación global.
+        const esPrimeraCarga = (this.config.offset === 0);
+        if (esPrimeraCarga) {
+            window.RedaNotificaciones.esperar();
+        } else {
+            $(this.config.loaderId).fadeIn(200);
+        }
 
         try {
             const response = await this.peticionAjax();
-            if (response.success && response.cantidad > 0) {
+            
+            if (esPrimeraCarga) window.RedaNotificaciones.ocultar();
+
+            if (response.success) {
+                const data = response.respuesta;
                 // Agregar los items al contenedor (vista de tarjetas)
-                $(this.config.contenedorId).append(response.html_modal || response.html);
-                this.config.offset = response.proximo_offset;
+                $(this.config.contenedorId).append(data.html_modal || data.html);
+                this.config.offset = data.proximo_offset;
                 
-                if (response.cantidad < 10) {
+                if (data.cantidad < 10) {
                     this.config.noMore = true;
                     $(this.config.noMoreId).fadeIn(300);
                 }
             } else {
                 this.config.noMore = true;
                 $(this.config.noMoreId).fadeIn(300);
+                
+                // Notificar error
+                window.RedaNotificaciones.notificar(
+                    window.RedaAlojamientoJson['Error'] || 'Error',
+                    response.mensaje_usuario,
+                    'error'
+                );
             }
         } catch (error) {
+            if (esPrimeraCarga) window.RedaNotificaciones.ocultar();
             console.error('Error cargando listado infinito:', error);
         } finally {
             this.config.loading = false;
@@ -84,14 +104,33 @@ export const ListadoInfinito = {
             ...this.config.extraData
         };
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             $.ajax({
                 url: this.config.urlBase,
                 type: 'GET',
                 data: data,
                 dataType: 'json',
                 success: (data) => resolve(data),
-                error: (err) => reject(err)
+                error: function (x, xs, xt) {
+                    let respuestaServidor = {};
+                    try {
+                        respuestaServidor = JSON.parse(x.responseText);
+                    } catch (e) {
+                        respuestaServidor = {};
+                    }
+
+                    const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                    const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                    let respuesta = {
+                        'success': false,
+                        'message' : window.RedaAlojamientoJson["Error cargando items"] || 'Error cargando items',
+                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                        'respuesta': respuestaServidor.respuesta || '',
+                        'code': x.status !== 0 ? x.status : 504,
+                    };
+                    resolve(respuesta);
+                }
             });
         });
     },

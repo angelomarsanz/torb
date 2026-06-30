@@ -233,60 +233,78 @@ class ExperienciaController extends Controller
      */
     public function obtenerNegociosPaginados(Request $request)
     {
-        $offset = $request->get('offset', 0);
-        $limit = 10;
-        $tipo = $request->get('tipo', 'todos');
-        $esModal = $request->get('es_modal', false);
+        try {
+            $offset = $request->get('offset', 0);
+            $limit = 10;
+            $tipo = $request->get('tipo', 'todos');
+            $esModal = $request->get('es_modal', false);
 
-        $query = Experiencia::with(['fotos', 'owner'])
-            ->withCount('calificaciones')
-            ->withAvg('calificaciones', 'estrellas');
+            $query = Experiencia::with(['fotos', 'owner'])
+                ->withCount('calificaciones')
+                ->withAvg('calificaciones', 'estrellas');
 
-        // Aplicar los mismos filtros que en listadoFrontend si es necesario
-        if ($request->filled('categoria')) {
-            $query->where('categoria_negocio', $request->categoria);
-        }
-
-        if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
-            $lat = $request->latitud;
-            $lng = $request->longitud;
-            $radio = $request->radio;
-            $query->whereRaw("
-                (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
-                * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
-                + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
-            ", [$lat, $lng, $lat, $radio]);
-        } elseif ($request->filled('ubicacion_texto')) {
-            $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
-        }
-
-        $items = $query->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
-        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
-        $html = '';
-
-        foreach ($items as $item) {
-            if ($esModal) {
-                $html .= '<div class="col-12 col-md-6 col-lg-4 item-col-infinito mb-4">';
-                $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
-                    'experiencia' => $item,
-                    'currentCurrency' => $currentCurrency,
-                    'es_modal' => true
-                ])->render();
-                $html .= '</div>';
-            } else {
-                $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
-                    'experiencia' => $item,
-                    'currentCurrency' => $currentCurrency
-                ])->render();
+            // Aplicar los mismos filtros que en listadoFrontend si es necesario
+            if ($request->filled('categoria')) {
+                $query->where('categoria_negocio', $request->categoria);
             }
-        }
 
-        return response()->json([
-            'success' => true,
-            'html' => $html,
-            'cantidad' => $items->count(),
-            'proximo_offset' => $offset + $items->count()
-        ]);
+            if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
+                $lat = $request->latitud;
+                $lng = $request->longitud;
+                $radio = $request->radio;
+                $query->whereRaw("
+                    (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
+                    * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
+                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
+                ", [$lat, $lng, $lat, $radio]);
+            } elseif ($request->filled('ubicacion_texto')) {
+                $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+            }
+
+            $items = $query->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
+            $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+            $html = '';
+
+            foreach ($items as $item) {
+                if ($esModal) {
+                    $html .= '<div class="col-12 col-md-6 col-lg-4 item-col-infinito mb-4">';
+                    $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
+                        'experiencia' => $item,
+                        'currentCurrency' => $currentCurrency,
+                        'es_modal' => true
+                    ])->render();
+                    $html .= '</div>';
+                } else {
+                    $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
+                        'experiencia' => $item,
+                        'currentCurrency' => $currentCurrency
+                    ])->render();
+                }
+            }
+
+            $respuesta = [
+                'success' => true,
+                'message' => 'Businesses retrieved successfully',
+                'mensaje_usuario' => __('Negocios recuperados con éxito'),
+                'respuesta' => [
+                    'html' => $html,
+                    'cantidad' => $items->count(),
+                    'proximo_offset' => $offset + $items->count()
+                ],
+                'code' => 200
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+
+        } catch (\Exception $e) {
+            $respuesta = [
+                'success' => false,
+                'message' => 'Error retrieving businesses: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al recuperar los negocios'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+        }
     }
 
     /**
@@ -357,76 +375,94 @@ class ExperienciaController extends Controller
      */
     public function obtenerActividadesPaginadas(Request $request, $id)
     {
-        $offset = $request->get('offset', 0);
-        $limit = 10;
-        $tipo = $request->get('tipo', 'todas'); 
-        $esModal = $request->get('es_modal', false);
+        try {
+            $offset = $request->get('offset', 0);
+            $limit = 10;
+            $tipo = $request->get('tipo', 'todas'); 
+            $esModal = $request->get('es_modal', false);
 
-        $experiencia = Experiencia::findOrFail($id);
-        $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
-        $html = '';
+            $experiencia = Experiencia::findOrFail($id);
+            $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+            $html = '';
 
-        if ($tipo === 'reseñas') {
-            $items = $experiencia->calificaciones()
-                ->with('usuario')
-                ->orderBy('created_at', 'desc')
-                ->offset($offset)
-                ->limit($limit)
-                ->get();
+            if ($tipo === 'reseñas') {
+                $items = $experiencia->calificaciones()
+                    ->with('usuario')
+                    ->orderBy('created_at', 'desc')
+                    ->offset($offset)
+                    ->limit($limit)
+                    ->get();
 
-            foreach ($items as $item) {
-                $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_reseña';
-                if ($esModal) {
-                    $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
-                    $html .= view($view, ['calificacion' => $item])->render();
-                    $html .= '</div>';
-                } else {
-                    $html .= view($view, ['calificacion' => $item])->render();
+                foreach ($items as $item) {
+                    $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_reseña';
+                    if ($esModal) {
+                        $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
+                        $html .= view($view, ['calificacion' => $item])->render();
+                        $html .= '</div>';
+                    } else {
+                        $html .= view($view, ['calificacion' => $item])->render();
+                    }
                 }
-            }
-        } else {
-            $query = $experiencia->actividades()
-                ->where('estatus_producto_servicio', 'activo')
-                ->orderBy('orden_actividad', 'asc');
-
-            if ($tipo === 'promociones') {
-                $todas = $query->get();
-                $itemsFiltrados = $todas->filter(function($actividad) {
-                    $complementos = json_decode($actividad->precios_monedas_complementarios, true);
-                    return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
-                });
-                $items = $itemsFiltrados->slice($offset, $limit);
             } else {
-                $items = $query->offset($offset)->limit($limit)->get();
-            }
+                $query = $experiencia->actividades()
+                    ->where('estatus_producto_servicio', 'activo')
+                    ->orderBy('orden_actividad', 'asc');
 
-            foreach ($items as $item) {
-                $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio';
-                
-                if ($esModal) {
-                    $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
-                    $html .= view($view, [
-                        'actividad' => $item,
-                        'currentCurrency' => $currentCurrency,
-                        'es_promo' => ($tipo === 'promociones')
-                    ])->render();
-                    $html .= '</div>';
+                if ($tipo === 'promociones') {
+                    $todas = $query->get();
+                    $itemsFiltrados = $todas->filter(function($actividad) {
+                        $complementos = json_decode($actividad->precios_monedas_complementarios, true);
+                        return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
+                    });
+                    $items = $itemsFiltrados->slice($offset, $limit);
                 } else {
-                    $html .= view($view, [
-                        'actividad' => $item,
-                        'currentCurrency' => $currentCurrency,
-                        'es_promo' => ($tipo === 'promociones')
-                    ])->render();
+                    $items = $query->offset($offset)->limit($limit)->get();
+                }
+
+                foreach ($items as $item) {
+                    $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio';
+                    
+                    if ($esModal) {
+                        $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
+                        $html .= view($view, [
+                            'actividad' => $item,
+                            'currentCurrency' => $currentCurrency,
+                            'es_promo' => ($tipo === 'promociones')
+                        ])->render();
+                        $html .= '</div>';
+                    } else {
+                        $html .= view($view, [
+                            'actividad' => $item,
+                            'currentCurrency' => $currentCurrency,
+                            'es_promo' => ($tipo === 'promociones')
+                        ])->render();
+                    }
                 }
             }
-        }
 
-        return response()->json([
-            'success' => true,
-            'html' => $html,
-            'cantidad' => (isset($items) ? $items->count() : 0),
-            'proximo_offset' => $offset + (isset($items) ? $items->count() : 0)
-        ]);
+            $respuesta = [
+                'success' => true,
+                'message' => 'Activities retrieved successfully',
+                'mensaje_usuario' => __('Actividades recuperadas con éxito'),
+                'respuesta' => [
+                    'html' => $html,
+                    'cantidad' => (isset($items) ? $items->count() : 0),
+                    'proximo_offset' => $offset + (isset($items) ? $items->count() : 0)
+                ],
+                'code' => 200
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+
+        } catch (\Exception $e) {
+            $respuesta = [
+                'success' => false,
+                'message' => 'Error retrieving activities: ' . $e->getMessage(),
+                'mensaje_usuario' => __('Error al recuperar las actividades'),
+                'respuesta' => $e->getMessage(),
+                'code' => 500
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+        }
     }
 
     public function create(Request $request)
@@ -1138,13 +1174,14 @@ class ExperienciaController extends Controller
             $preciosAfectar = $request->precios_afectar; // Array: ['general', 'bolivares', 'promocion']
 
             if (empty($ids) || !is_array($ids)) {
-                return response()->json([
+                $respuesta = [
                     'success' => false,
                     'message' => 'No activities selected',
                     'mensaje_usuario' => __('Debe seleccionar al menos una actividad'),
                     'respuesta' => '',
                     'code' => 400
-                ], 400);
+                ];
+                return response()->json($respuesta, $respuesta['code']);
             }
 
             $factor = ($tipoCambio === 'aumento') ? (1 + ($porcentaje / 100)) : (1 - ($porcentaje / 100));
@@ -1173,22 +1210,24 @@ class ExperienciaController extends Controller
                 $actividad->save();
             }
 
-            return response()->json([
+            $respuesta = [
                 'success' => true,
                 'message' => 'Prices updated successfully in bulk',
                 'mensaje_usuario' => __('Precios actualizados con éxito para las actividades seleccionadas'),
                 'respuesta' => '',
                 'code' => 200
-            ], 200);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
 
         } catch (\Exception $e) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
                 'message' => 'Error updating prices in bulk: ' . $e->getMessage(),
                 'mensaje_usuario' => __('Error al actualizar los precios en lote'),
                 'respuesta' => $e->getMessage(),
                 'code' => 500
-            ], 500);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
     }
 

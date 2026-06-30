@@ -173,7 +173,8 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // 2. Manejar el rango de distancia (Sync displays)
             $(document).on('input', '.filtro-radio', function() {
                 const valor = $(this).val();
-                $('.radio-km-display').text(valor + ' km');
+                const etiquetaKm = window.RedaAlojamientoJson['km'] || 'km';
+                $('.radio-km-display').text(valor + ' ' + etiquetaKm);
             });
 
             $(document).on('change', '.filtro-radio', function() {
@@ -252,7 +253,8 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 modoBusqueda = 'ubicacion';
                 // Restablecer slider a posición original (25km)
                 $form.find('.filtro-radio').val(25);
-                $form.find('.radio-km-display').text('25 km');
+                const etiquetaKm = window.RedaAlojamientoJson['km'] || 'km';
+                $form.find('.radio-km-display').text('25 ' + etiquetaKm);
             }
 
             /**
@@ -266,15 +268,36 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const $contenedorGeneral = $('#contenedor_listado_general');
                 const $seccionDestacados = $('#seccion_destacados');
 
-                // Estado visual de carga (CSS-based)
+                // Mostrar animación de espera global
+                window.RedaNotificaciones.esperar();
+
+                // Estado visual de carga local (CSS-based)
                 $contenedorDestacados.addClass('is-loading-ajax');
                 $contenedorGeneral.addClass('is-loading-ajax');
 
                 const respuestaBusqueda = await obtenerComercios(formData);
 
+                // Ocultar animación de espera global
+                window.RedaNotificaciones.ocultar();
+
                 if (respuestaBusqueda.success) {
                     const data = respuestaBusqueda.respuesta;
                     
+                    // Actualizar mensaje de conteo de resultados
+                    const $contenedorMensaje = $('#contenedor_mensaje_resultados');
+                    const $cantidadResultados = $('#cantidad_resultados_busqueda');
+                    const $textoResultados = $('#texto_resultados_busqueda');
+
+                    $cantidadResultados.text(data.total);
+                    
+                    // Lógica sutil de pluralización basada en el key de es.json
+                    const rawString = window.RedaAlojamientoJson['resultado encontrado|resultados encontrados'] || 'resultado encontrado|resultados encontrados';
+                    const parts = rawString.split('|');
+                    const textoPlural = data.total === 1 ? (parts[0] || 'resultado encontrado') : (parts[1] || 'resultados encontrados');
+                    
+                    $textoResultados.text(textoPlural);
+                    $contenedorMensaje.removeClass('d-none');
+
                     // Actualizar visibilidad y contenido de destacados
                     if (data.total_destacados > 0) {
                         $seccionDestacados.show();
@@ -296,6 +319,13 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     console.error(respuestaBusqueda.message);
                     $contenedorDestacados.removeClass('is-loading-ajax');
                     $contenedorGeneral.removeClass('is-loading-ajax');
+                    
+                    // Notificar error al usuario
+                    window.RedaNotificaciones.notificar(
+                        window.RedaAlojamientoJson['Error'] || 'Error',
+                        respuestaBusqueda.mensaje_usuario,
+                        'error'
+                    );
                 }
             }
         });

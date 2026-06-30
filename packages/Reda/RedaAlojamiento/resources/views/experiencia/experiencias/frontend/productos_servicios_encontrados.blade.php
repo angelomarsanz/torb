@@ -2,37 +2,15 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
-    <style>
-        .search-results-header {
-            background: #f8f9fa;
-            padding: 40px 0;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            margin-top: 90px !important;
-        }
-        .search-term-highlight {
-            color: #28a745;
-            font-weight: 700;
-        }
-        #productos_servicios_encontrados {
-            padding-bottom: 50px;
-        }
-
-        @media (max-width: 767px) {
-            .search-results-header {
-                margin-top: 80px !important;
-            }
-        }
-    </style>
 @endpush
 
 @section('main')
 
-<div class="search-results-header">
+<div class="reda-search-results-header">
     <div class="container-fluid container-fluid-90">
         <h1 class="text-28 font-weight-700 m-0">
             @if($busqueda)
-                {{ __('Resultados para') }}: <span class="search-term-highlight">"{{ $busqueda }}"</span>
+                {{ __('Resultados para') }}: <span class="reda-search-term-highlight">"{{ $busqueda }}"</span>
             @else
                 {{ __('Explorando') }} {{ $tipo == 'producto' ? __('Productos') : ($tipo == 'servicio' ? __('Servicios') : __('Productos y Servicios')) }}
             @endif
@@ -43,7 +21,7 @@
     </div>
 </div>
 
-<div id="productos_servicios_encontrados" class="container-fluid container-fluid-90">
+<div id="productos_servicios_encontrados" class="container-fluid container-fluid-90 reda-productos-servicios-encontrados-container">
     
     <!-- SECCIÓN 1: DESTACADOS -->
     @if($totalDestacados > 0)

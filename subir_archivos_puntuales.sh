@@ -146,7 +146,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/general/utilidades/listadoInfinito.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/utilidades/listadoInfinito.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"

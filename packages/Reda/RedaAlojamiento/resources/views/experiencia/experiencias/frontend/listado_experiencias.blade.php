@@ -2,78 +2,19 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/user-front.min.css') }}" />
-    <style>
-        .cursor-pointer { cursor: pointer; }
-        .font-weight-600 { font-weight: 600; }
-        .search-trigger-desktop:hover { transform: scale(1.01); transition: all 0.2s ease-in-out; }
-        .ui-autocomplete { z-index: 2147483647 !important; } /* Máximo nivel para sobrepasar el modal */
-        
-        /* Ajuste para la barra sticky/fixed */
-        .search-sticky-wrapper {
-            position: fixed;
-            top: 90px;
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: 999;
-            background: transparent; /* Fondo transparente para efecto flotante real */
-            transition: all 0.3s ease;
-            border-bottom: none !important;
-            pointer-events: none; /* Permite clics a través del área transparente */
-        }
-        .search-sticky-wrapper .container-fluid {
-            pointer-events: auto; /* Reactiva los clics solo para el contenido de la barra */
-        }
-        .search-sticky-wrapper.is-sticky {
-            /* Eliminamos la sombra de la caja rectangular y ajustamos padding */
-            box-shadow: none; 
-            padding-top: 10px !important;
-            padding-bottom: 10px !important;
-        }
-        
-        /* Ajuste de márgenes para que el contenido no quede oculto bajo la barra fija */
-        #listado_experiencias {
-            margin-top: 100px !important;
-            padding-top: 20px !important;
-        }
-
-        @media (max-width: 767px) {
-            .search-sticky-wrapper {
-                top: 80px;
-            }
-            #listado_experiencias {
-                margin-top: 90px !important;
-            }
-        }
-
-        @media (max-width: 991px) {
-            .search-trigger-movil {
-                padding: 12px 20px;
-                border: 1px solid #ddd;
-                border-radius: 30px;
-                background: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            /* En móvil, si prefieres que la barra mantenga fondo blanco al hacer scroll 
-               para no tapar contenido crítico, podrías añadirlo aquí, pero por ahora 
-               seguimos tu instrucción de transparencia general. */
-        }
-    </style>
 @endpush
 
 @section('main')
 
 <!-- BARRA DE BÚSQUEDA FLOTANTE (FIXED) -->
-<div class="search-sticky-wrapper py-3" id="search_sticky_bar">
+<div class="reda-search-sticky-wrapper py-3" id="search_sticky_bar">
     <div class="container-fluid container-fluid-90">
         <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
         <div class="d-lg-none seccion-filtros-movil">
-            <div class="search-trigger-movil cursor-pointer shadow-sm" data-toggle="modal" data-target="#modalBusquedaComercios">
+            <div class="reda-search-trigger-movil reda-cursor-pointer shadow-sm" data-toggle="modal" data-target="#modalBusquedaComercios">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-search text-primary mr-3"></i>
-                    <span class="text-muted font-weight-600">{{ __('¿Qué estás buscando?') }}</span>
+                    <span class="text-muted reda-font-weight-600">{{ __('¿Qué estás buscando?') }}</span>
                 </div>
             </div>
         </div>
@@ -82,10 +23,10 @@
         <div class="d-none d-lg-block seccion-filtros-desktop">
             <div class="row justify-content-center">
                 <div class="col-lg-6 col-xl-5">
-                    <div class="search-trigger-desktop cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
+                    <div class="reda-search-trigger-desktop reda-cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
                         <div class="d-flex align-items-center justify-content-between px-4 py-2 bg-white border rounded-pill shadow-sm">
-                            <span class="text-muted font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <span class="text-muted reda-font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center reda-search-icon-circle">
                                 <i class="fas fa-search text-white text-14"></i>
                             </div>
                         </div>
@@ -96,10 +37,23 @@
     </div>
 </div>
 
-<div id="listado_experiencias" class="container-fluid container-fluid-90">
+<div id="listado_experiencias" class="container-fluid container-fluid-90 reda-listado-experiencias-container">
+
+    <!-- Mensaje de resultados (Visible si hay búsqueda activa) -->
+    @php
+        $hayBusqueda = request()->filled('nombre_comercio') || request()->filled('categoria') || request()->filled('ubicacion_texto') || (request()->filled('latitud') && request()->filled('longitud'));
+    @endphp
+
+    <div id="contenedor_mensaje_resultados" class="mb-5 text-center {{ $hayBusqueda ? '' : 'd-none' }}">
+        <h3 class="reda-font-weight-700 text-dark">
+            <span id="cantidad_resultados_busqueda">{{ $totalExperiencias }}</span> 
+            <span id="texto_resultados_busqueda">{{ trans_choice('reda-alojamiento::es.resultado encontrado|resultados encontrados', $totalExperiencias) }}</span>
+        </h3>
+        <hr class="w-25 mx-auto border-primary">
+    </div>
 
     <!-- Modal de Búsqueda Unificado -->
-    <div class="modal fade modal-busqueda-movil" id="modalBusquedaComercios" role="dialog" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal fade modal-busqueda-movil reda-modal-zindex-1060" id="modalBusquedaComercios" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content rounded-20 shadow-lg border-0">
                 <div class="modal-header border-0 pb-0">
@@ -154,11 +108,11 @@
                         </div>
 
                         <div class="filtro-item mb-4">
-                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-primary ml-2">25 km</span></label>
+                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-primary ml-2">25 {{ __('km') }}</span></label>
                             <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="25">
                             <div class="d-flex justify-content-between mt-1 text-muted f-12">
-                                <span>1 km</span>
-                                <span>50 km</span>
+                                <span>1 {{ __('km') }}</span>
+                                <span>50 {{ __('km') }}</span>
                             </div>
                         </div>
 
@@ -190,7 +144,7 @@
     
 
     <!-- SECCIÓN 2: DESTACADOS -->
-    <section class="seccion-productos mb-4" id="seccion_destacados" @if($totalDestacados == 0) style="display:none;" @endif>
+    <section class="seccion-productos mb-4 {{ $totalDestacados == 0 ? 'd-none' : '' }}" id="seccion_destacados">
         <div class="header-seccion-carrusel">
             <h2 class="text-18 font-weight-700 m-0">{{ __('Comercios Destacados') }}</h2>
             <div class="carrusel-controles-desktop d-none d-lg-flex">

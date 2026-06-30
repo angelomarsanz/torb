@@ -69,7 +69,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     }
                 };
                 
-                // ListadoInfinito.iniciar(options);
+                ListadoInfinito.iniciar(options);
             });
         });
     }

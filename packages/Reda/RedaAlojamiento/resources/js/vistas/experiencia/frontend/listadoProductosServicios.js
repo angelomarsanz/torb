@@ -112,8 +112,25 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     type: 'GET',
                     dataType: 'json',
                     success: (data) => resolve(data),
-                    error: function () {
-                        resolve({ success: false, mensaje_usuario: window.RedaAlojamientoJson['Error en el servidor'] || 'Error en el servidor' });
+                    error: function (x, xs, xt) {
+                        let respuestaServidor = {};
+                        try {
+                            respuestaServidor = JSON.parse(x.responseText);
+                        } catch (e) {
+                            respuestaServidor = {};
+                        }
+
+                        const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                        const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                        let respuesta = {
+                            'success': false,
+                            'message' : window.RedaAlojamientoJson["Error obteniendo detalle"] || 'Error obteniendo detalle',
+                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                            'respuesta': respuestaServidor.respuesta || '',
+                            'code': x.status !== 0 ? x.status : 504,
+                        };
+                        resolve(respuesta);
                     }
                 });
             });
@@ -206,13 +223,24 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
         });
 
         async function abrirModalActividad(id) {
-            $('#bodyDetalleActividad').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-success"></i></div>');
-            $('#modalDetalleActividad').modal('show');
+            // Mostrar animación de espera global
+            window.RedaNotificaciones.esperar();
+
             const res = await obtenerDetalleActividad(id);
-            if (res.success) $('#bodyDetalleActividad').html(res.respuesta.html);
-            else {
-                const errorHtml = `<div class="alert alert-danger m-4">${window.RedaAlojamientoJson['Error al cargar'] || 'Error al cargar'}</div>`;
-                $('#bodyDetalleActividad').html(errorHtml);
+
+            // Ocultar animación de espera global
+            window.RedaNotificaciones.ocultar();
+
+            if (res.success) {
+                $('#bodyDetalleActividad').html(res.respuesta.html);
+                $('#modalDetalleActividad').modal('show');
+            } else {
+                // Notificar error al usuario
+                window.RedaNotificaciones.notificar(
+                    window.RedaAlojamientoJson['Error'] || 'Error',
+                    res.mensaje_usuario,
+                    'error'
+                );
             }
         }
 
