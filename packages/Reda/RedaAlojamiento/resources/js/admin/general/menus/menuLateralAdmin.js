@@ -15,7 +15,9 @@ export const menuLateralAdmin = () =>
 
                 if ($propertiesMenuItem.length) {
                     const linkOpcionesNegocios = `${baseUrl}/admin/reda/negocios/opciones-tipos-de-negocios`;
+                    const linkConfiguracionPlanes = `${baseUrl}/admin/reda/negocios/configuracion-planes`;
                     const labelNegocios = window.RedaAlojamientoJson["Negocios"] || "Negocios";
+                    const labelConfigurarPlanes = window.RedaAlojamientoJson["Configurar planes"] || "Configurar planes";
                     const labelTiposNegocios = window.RedaAlojamientoJson["Tipos de negocios"] || "Tipos de negocios";
 
                     const nuevoMenuHtml = `
@@ -25,6 +27,9 @@ export const menuLateralAdmin = () =>
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu reda-admin-menu-hidden">
+                                <li>
+                                    <a href="${linkConfiguracionPlanes}"><span>${labelConfigurarPlanes}</span></a>
+                                </li>
                                 <li>
                                     <a href="${linkOpcionesNegocios}"><span>${labelTiposNegocios}</span></a>
                                 </li>

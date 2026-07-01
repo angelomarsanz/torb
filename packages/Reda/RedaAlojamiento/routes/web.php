@@ -49,6 +49,20 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
             Route::match(['GET', 'POST'], 'opciones-tipos-de-negocios', 'opcionesTiposDeNegocios')
                 ->name('opciones_tipos_de_negocios');
 
+            // Ruta para la configuración de Planes de Negocios
+            // URL resultante: tu-dominio.com/admin/reda/negocios/configuracion-planes
+            Route::get('configuracion-planes', 'configuracionPlanes')->name('configuracion_planes');
+
+            // Ruta para guardar la configuración general de planes vía Ajax
+            Route::post('configuracion-planes/store', 'storeConfiguracionPlanes')->name('configuracion_planes.store');
+
+            // Rutas para la gestión de Planes de Negocios
+            Route::get('configuracion-planes/listado', 'indexPlanes')->name('configuracion_planes.index_planes');
+            Route::get('configuracion-planes/get/{id}', 'getPlan')->name('configuracion_planes.get_plan');
+            Route::post('configuracion-planes/store-plan', 'storePlan')->name('configuracion_planes.store_plan');
+            Route::post('configuracion-planes/update-plan', 'updatePlan')->name('configuracion_planes.update_plan');
+            Route::delete('configuracion-planes/destroy-plan/{id}', 'destroyPlan')->name('configuracion_planes.destroy_plan');
+
             // Ruta para guardar una nueva categoría vía Ajax
             Route::post('opciones-tipos-de-negocios/store', 'storeOpcionTipoNegocio')
                 ->name('opciones_tipos_de_negocios.store');

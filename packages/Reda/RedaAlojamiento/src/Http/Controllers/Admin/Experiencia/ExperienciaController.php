@@ -11,7 +11,8 @@ use Reda\RedaAlojamiento\Models\Experiencia\{
     HorarioExperiencia,
     InformacionExperiencia,
     AnfitrionExperiencia,
-    FotoExperiencia
+    FotoExperiencia,
+    PlanNegocio
 };
 use Auth;
 use Illuminate\Support\Facades\File;
@@ -25,6 +26,187 @@ class ExperienciaController extends Controller
     {
         //
     }
+
+    public function configuracionPlanes()
+    {
+        // Recuperar antigüedad
+        $settingAntiguedad = DB::table('settings')->where('name', 'antiguedad_planes_destacados')->first();
+        $configuracion = [
+            'cantidad'      => 0,
+            'unidad_tiempo' => 'Mes(es)'
+        ];
+        if ($settingAntiguedad && !empty($settingAntiguedad->value)) {
+            $configuracion = json_decode($settingAntiguedad->value, true);
+        }
+
+        // Recuperar promedio calificaciones
+        $settingPromedio = DB::table('settings')->where('name', 'promedio_calificaciones_planes_destacados')->first();
+        $promedio_calificaciones = $settingPromedio->value ?? 0;
+
+        return view('reda-alojamiento::admin.experiencia.configuracion_planes', compact('configuracion', 'promedio_calificaciones'));
+    }
+
+    public function storeConfiguracionPlanes(Request $request)
+    {
+        // Validación de campos obligatorios
+        $request->validate([
+            'cantidad'                => 'required|numeric|min:0',
+            'unidad_tiempo'           => 'required|string',
+            'promedio_calificaciones' => 'required|numeric|min:0|max:5',
+        ]);
+
+        // Guardar Antigüedad
+        $dataAntiguedad = [
+            'cantidad'      => $request->cantidad,
+            'unidad_tiempo' => $request->unidad_tiempo
+        ];
+        DB::table('settings')->updateOrInsert(
+            ['name' => 'antiguedad_planes_destacados'],
+            ['value' => json_encode($dataAntiguedad)]
+        );
+
+        // Guardar Promedio Calificaciones
+        DB::table('settings')->updateOrInsert(
+            ['name' => 'promedio_calificaciones_planes_destacados'],
+            ['value' => $request->promedio_calificaciones]
+        );
+
+        $respuesta = [
+            'success'         => true,
+            'message'         => 'Configuración de planes guardada correctamente',
+            'mensaje_usuario' => __('Configuración de planes guardada con éxito'),
+            'respuesta'       => '',
+            'code'            => 200
+        ];
+
+        Log::info("storeConfiguracionPlanes: " . print_r($respuesta, true));
+
+        return response()->json($respuesta, $respuesta['code']);
+    }
+
+    // --- CRUD DE PLANES ---
+
+    public function indexPlanes(Request $request)
+    {
+        $planes = PlanNegocio::orderBy('orden', 'asc')->paginate(10);
+        
+        // Renderizamos solo la tabla para la petición AJAX de la pestaña o paginación
+        $tablaHtml = view('reda-alojamiento::admin.experiencia.partials.tabla_planes', compact('planes'))->render();
+
+        return response()->json([
+            'success'         => true,
+            'message'         => 'Listado de planes recuperado',
+            'mensaje_usuario' => '',
+            'respuesta'       => $tablaHtml,
+            'code'            => 200
+        ]);
+    }
+
+    public function getPlan($id)
+    {
+        $plan = PlanNegocio::find($id);
+
+        if (!$plan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Plan no encontrado',
+                'code' => 404
+            ], 404);
+        }
+
+        return response()->json([
+            'success'         => true,
+            'message'         => 'Plan recuperado',
+            'mensaje_usuario' => '',
+            'respuesta'       => $plan,
+            'code'            => 200
+        ]);
+    }
+
+    public function storePlan(Request $request)
+    {
+        $request->validate([
+            'nombre'     => 'required|string|max:255',
+            'precio'     => 'required|numeric|min:0',
+            'moneda'     => 'required|string',
+            'lapso_pago' => 'required|string',
+        ]);
+
+        $plan = PlanNegocio::create([
+            'nombre'     => $request->nombre,
+            'precio'     => $request->precio,
+            'moneda'     => $request->moneda,
+            'lapso_pago' => $request->lapso_pago,
+            'beneficios' => $request->beneficios ?? [],
+            'destacado'  => $request->has('destacado'),
+            'estatus'    => $request->has('estatus'),
+            'orden'      => $request->orden ?? 0,
+        ]);
+
+        return response()->json([
+            'success'         => true,
+            'message'         => 'Plan creado',
+            'mensaje_usuario' => __('Plan guardado con éxito'),
+            'respuesta'       => $plan,
+            'code'            => 200
+        ]);
+    }
+
+    public function updatePlan(Request $request)
+    {
+        $request->validate([
+            'id'         => 'required|exists:planes_negocios,id',
+            'nombre'     => 'required|string|max:255',
+            'precio'     => 'required|numeric|min:0',
+            'moneda'     => 'required|string',
+            'lapso_pago' => 'required|string',
+        ]);
+
+        $plan = PlanNegocio::find($request->id);
+        $plan->update([
+            'nombre'     => $request->nombre,
+            'precio'     => $request->precio,
+            'moneda'     => $request->moneda,
+            'lapso_pago' => $request->lapso_pago,
+            'beneficios' => $request->beneficios ?? [],
+            'destacado'  => $request->has('destacado'),
+            'estatus'    => $request->has('estatus'),
+            'orden'      => $request->orden ?? 0,
+        ]);
+
+        return response()->json([
+            'success'         => true,
+            'message'         => 'Plan actualizado',
+            'mensaje_usuario' => __('Plan actualizado con éxito'),
+            'respuesta'       => $plan,
+            'code'            => 200
+        ]);
+    }
+
+    public function destroyPlan($id)
+    {
+        $plan = PlanNegocio::find($id);
+
+        if (!$plan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Plan no encontrado',
+                'code' => 404
+            ], 404);
+        }
+
+        $plan->delete();
+
+        return response()->json([
+            'success'         => true,
+            'message'         => 'Plan eliminado',
+            'mensaje_usuario' => __('Plan eliminado con éxito'),
+            'respuesta'       => '',
+            'code'            => 200
+        ]);
+    }
+
+    // --- FIN CRUD DE PLANES ---
 
     public function opcionesTiposDeNegocios()
     {
