@@ -178,7 +178,10 @@
 @stop
 
 @section('validate_script')
-    <script>window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));</script>
+    <script>
+        window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
+        window.RedaAlojamientoJson = @json(__('reda-alojamiento::es'));
+    </script>
     <script>
         window.RedaRutas = {
             store_config_planes: "{{ route('reda.admin.negocios.configuracion_planes.store') }}",
