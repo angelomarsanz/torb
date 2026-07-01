@@ -63,6 +63,39 @@
             $('#form_busqueda_soporte').submit();
         });
 
+        // Búsqueda inteligente: detectar si presiona Enter en el input puntual
+        $(document).on('keypress', '#input_puntual', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                const valor = $(this).val().trim();
+                if (!valor) return;
+
+                // Si es un número, buscamos por ID, si no por nombre
+                if (!isNaN(valor) && valor.length > 0) {
+                    $('.btn-buscar-puntual[data-tipo="id"]').trigger('click');
+                } else {
+                    $('.btn-buscar-puntual[data-tipo="nombre"]').trigger('click');
+                }
+            }
+        });
+
+        // Búsqueda automática al seleccionar de la datalist (opcional, pero mejora la experiencia)
+        $(document).on('input', '#input_puntual', function() {
+            const valor = $(this).val().trim();
+            const dataList = $('#lista_usuarios');
+            
+            if (dataList.length && valor.length > 3) {
+                const existeEnLista = dataList.find('option').filter(function() {
+                    return $(this).val() === valor;
+                }).length > 0;
+
+                if (existeEnLista) {
+                    // Si coincide exactamente con un nombre de la lista, disparamos la búsqueda por nombre
+                    $('.btn-buscar-puntual[data-tipo="nombre"]').trigger('click');
+                }
+            }
+        });
+
         // Animación de espera al enviar el formulario de búsqueda general
         $(document).on('submit', '#form_busqueda_soporte', function() {
             if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {

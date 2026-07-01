@@ -192,7 +192,14 @@
                         <label class="form-label fw-bold text-dark mb-2">{{ __('Búsqueda rápida') }}</label>
                         <div class="input-group mb-3 shadow-sm">
                             <span class="input-group-addon bg-white border-end-0"><i class="fa fa-keyboard-o text-muted"></i></span>
-                            <input type="text" id="input_puntual" class="form-control border-start-0" placeholder="{{ __('ID del ticket o nombre del usuario...') }}">
+                            <input type="text" id="input_puntual" list="lista_usuarios" class="form-control border-start-0" placeholder="{{ __('ID del ticket o nombre del usuario...') }}">
+                            <datalist id="lista_usuarios">
+                                @if(isset($usuariosConTickets))
+                                    @foreach($usuariosConTickets as $nombre)
+                                        <option value="{{ $nombre }}">
+                                    @endforeach
+                                @endif
+                            </datalist>
                         </div>
                         <div class="d-flex gap-2">
                             <button type="button" class="btn btn-primary btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="id">

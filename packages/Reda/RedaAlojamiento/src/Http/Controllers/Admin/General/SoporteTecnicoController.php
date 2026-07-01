@@ -26,9 +26,9 @@ class SoporteTecnicoController extends Controller
 
         // Filtrado por nombre de usuario
         if ($request->filled('nombre_usuario')) {
-            $query->whereHas('user', function($q) use ($request) {
-                $q->where('first_name', 'like', '%' . $request->nombre_usuario . '%')
-                  ->orWhere('last_name', 'like', '%' . $request->nombre_usuario . '%');
+            $nombreBusqueda = $request->nombre_usuario;
+            $query->whereHas('user', function($q) use ($nombreBusqueda) {
+                $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$nombreBusqueda%"]);
             });
         }
 
@@ -61,7 +61,13 @@ class SoporteTecnicoController extends Controller
         // Obtener temas únicos para el filtro
         $temas = SoporteTecnico::select('tema')->distinct()->pluck('tema');
 
-        return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets', 'temas'));
+        // Obtener nombres de usuarios únicos que tienen tickets
+        $usuariosConTickets = SoporteTecnico::join('users', 'soportes_tecnicos.user_id', '=', 'users.id')
+            ->selectRaw("DISTINCT CONCAT(users.first_name, ' ', users.last_name) as nombre")
+            ->orderBy('nombre')
+            ->pluck('nombre');
+
+        return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets', 'temas', 'usuariosConTickets'));
     }
 
     /**
