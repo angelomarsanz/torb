@@ -20,7 +20,7 @@
                         {{-- Pestaña 1: Opciones Generales --}}
                         <div class="tab-pane active" id="tab_opciones_generales">
                             <div class="row">
-                                <div class="col-xs-12 col-md-10 col-lg-8">
+                                <div class="col-xs-12 col-md-11 col-lg-10">
                                     <form id="form-configuracion-planes" method="POST" action="{{ route('reda.admin.negocios.configuracion_planes.store') }}">
                                         @csrf
                                         <div class="box-body">
@@ -33,17 +33,18 @@
                                                     </h3>
                                                 </div>
                                                 <div class="box-body">
-                                                    {{-- Opción 1: Antigüedad --}}
                                                     <div class="row">
-                                                        <div class="col-md-6">
+                                                        {{-- Cantidad de tiempo --}}
+                                                        <div class="col-md-3">
                                                             <div class="form-group">
-                                                                <label for="cantidad">{{ __('Antigüedad requerida') }} <span class="text-danger">*</span></label>
+                                                                <label for="cantidad">{{ __('Cantidad de tiempo') }} <span class="text-danger">*</span></label>
                                                                 <input type="number" name="cantidad" id="cantidad" class="form-control f-14" step="0.1" min="0" value="{{ $configuracion['cantidad'] ?? 0 }}" required>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        {{-- Unidad de tiempo (Sin etiqueta visible, pero ocupando el mismo espacio) --}}
+                                                        <div class="col-md-3">
                                                             <div class="form-group">
-                                                                <label for="unidad_tiempo">{{ __('Unidad de tiempo') }} <span class="text-danger">*</span></label>
+                                                                <label for="unidad_tiempo" style="display: block; margin-bottom: 5px;">&nbsp;</label>
                                                                 <select name="unidad_tiempo" id="unidad_tiempo" class="form-control f-14" required>
                                                                     <option value="Año(s)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Año(s)' ? 'selected' : '' }}>{{ __('Año(s)') }}</option>
                                                                     <option value="Mes(es)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Mes(es)' ? 'selected' : '' }}>{{ __('Mes(es)') }}</option>
@@ -51,13 +52,11 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-12">
+                                                        {{-- Promedio de calificaciones --}}
+                                                        <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label for="promedio_calificaciones">{{ __('Promedio de calificaciones mínimo') }} <span class="text-danger">*</span></label>
-                                                                <input type="number" name="promedio_calificaciones" id="promedio_calificaciones" class="form-control f-14" step="0.01" min="0" max="5" value="{{ $promedio_calificaciones ?? 0 }}" required>
+                                                                <label for="promedio_calificaciones">{{ __('Promedio de calificaciones') }} <span class="text-danger">*</span></label>
+                                                                <input type="number" name="promedio_calificaciones" id="promedio_calificaciones" class="form-control f-14" step="0.01" min="0" value="{{ $promedio_calificaciones ?? 0 }}" required>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -78,21 +77,23 @@
                         </div>
 
                         {{-- Pestaña 2: Planes --}}
-                        <div class="tab-pane" id="tab_planes">
+                        <div class="tab-pane" id="tab_planes" style="display: none;">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <div class="box-header with-border d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                        <h3 class="box-title">{{ __('Configuración de Planes') }}</h3>
-                                        <div class="box-tools position-static">
-                                            <button type="button" id="btn-add-plan" class="btn btn-sm btn-success btn-flat">
-                                                <i class="fa fa-plus"></i> {{ __('Agregar nuevo plan') }}
-                                            </button>
+                                    <div class="box box-solid" style="border: 1px solid #d2d6de; border-radius: 5px;">
+                                        <div class="box-header with-border d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #f7f7f7;">
+                                            <h3 class="box-title" style="font-size: 15px; font-weight: bold;">{{ __('Configuración de Planes') }}</h3>
+                                            <div class="box-tools position-static">
+                                                <button type="button" id="btn-add-plan" class="btn btn-sm btn-success btn-flat">
+                                                    <i class="fa fa-plus"></i> {{ __('Agregar nuevo plan') }}
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="box-body" id="contenedor-tabla-planes">
-                                        <p class="text-muted text-center p-5">
-                                            <i class="fa fa-spinner fa-spin"></i> {{ __('Cargando planes...') }}
-                                        </p>
+                                        <div class="box-body" id="contenedor-tabla-planes">
+                                            <p class="text-muted text-center p-5">
+                                                <i class="fa fa-spinner fa-spin"></i> {{ __('Cargando planes...') }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -28,16 +28,25 @@ export const menuLateralAdmin = () =>
                             </a>
                             <ul class="treeview-menu reda-admin-menu-hidden">
                                 <li>
-                                    <a href="${linkConfiguracionPlanes}"><span>${labelConfigurarPlanes}</span></a>
+                                    <a href="${linkConfiguracionPlanes}" class="btn-menu-negocios"><span>${labelConfigurarPlanes}</span></a>
                                 </li>
                                 <li>
-                                    <a href="${linkOpcionesNegocios}"><span>${labelTiposNegocios}</span></a>
+                                    <a href="${linkOpcionesNegocios}" class="btn-menu-negocios"><span>${labelTiposNegocios}</span></a>
                                 </li>
                             </ul>
                         </li>
                     `;
                     $propertiesMenuItem.after(nuevoMenuHtml);
                     console.log('Opción "Negocios" inyectada.');
+
+                    // Animación de espera al hacer clic en submenú de Negocios
+                    $(document).on('click', '.btn-menu-negocios', function(e) {
+                        if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+                            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                                window.RedaNotificaciones.esperar();
+                            }
+                        }
+                    });
 
                     $('#menu-negocios > .negocios-toggle').on('click', function(e) {
                         e.preventDefault();

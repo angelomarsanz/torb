@@ -34,8 +34,8 @@
                     alert(mensajeErrorBase);
                 },
                 complete: function() {
-                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.cerrar === 'function') {
-                        window.RedaNotificaciones.cerrar();
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                        window.RedaNotificaciones.ocultar();
                     }
                 }
             });
@@ -45,7 +45,15 @@
             // Manejo de cambio de pestañas (Tabs)
             $('.nav-tabs a').on('click', function(e) {
                 e.preventDefault();
-                $(this).tab('show');
+                const target = $(this).attr('href');
+                
+                // 1. Manejo de la lista visual de pestañas (clase active en li)
+                $('.nav-tabs li').removeClass('active');
+                $(this).closest('li').addClass('active');
+
+                // 2. Manejo de los paneles de contenido
+                $('.tab-pane').hide().removeClass('active show');
+                $(target).show().addClass('active show');
             });
 
             // Al hacer clic en la pestaña "Planes", cargar el listado
@@ -62,13 +70,31 @@
                 }
             });
 
-            // Guardar Opciones Generales (Antigüedad y Promedio)
+            // Guardar Opciones Generales (Cantidad y Promedio)
             $('#form-configuracion-planes').on('submit', function(e) {
                 e.preventDefault();
                 
                 const $form = $(this);
                 const $btn = $('#btn-save-config-planes');
                 const url = $form.attr('action');
+
+                // Validación básica: mayor o igual a cero
+                const cantidad = parseFloat($('#cantidad').val());
+                const promedio = parseFloat($('#promedio_calificaciones').val());
+
+                if (isNaN(cantidad) || cantidad < 0 || isNaN(promedio) || promedio < 0) {
+                    const mensajeValidacion = window.RedaAlojamientoJson["Los valores deben ser mayores o iguales a cero"] || "Los valores deben ser mayores o iguales a cero";
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.notificar === 'function') {
+                        window.RedaNotificaciones.notificar(
+                            window.RedaAlojamientoJson["¡Error!"] || "¡Error!",
+                            mensajeValidacion,
+                            'error'
+                        );
+                    } else {
+                        alert(mensajeValidacion);
+                    }
+                    return false;
+                }
 
                 $btn.prop('disabled', true);
                 $btn.find('.btn-text').addClass('d-none');
@@ -108,8 +134,8 @@
                         $btn.prop('disabled', false);
                         $btn.find('.btn-text').removeClass('d-none');
                         $btn.find('.fa-spinner').addClass('d-none');
-                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.cerrar === 'function') {
-                            window.RedaNotificaciones.cerrar();
+                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                            window.RedaNotificaciones.ocultar();
                         }
                     }
                 });
@@ -160,8 +186,8 @@
                         }
                     },
                     complete: function() {
-                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.cerrar === 'function') {
-                            window.RedaNotificaciones.cerrar();
+                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                            window.RedaNotificaciones.ocultar();
                         }
                     }
                 });
@@ -202,8 +228,8 @@
                     },
                     complete: function() {
                         $btn.prop('disabled', false).find('.fa-spinner').addClass('d-none');
-                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.cerrar === 'function') {
-                            window.RedaNotificaciones.cerrar();
+                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                            window.RedaNotificaciones.ocultar();
                         }
                     }
                 });
@@ -236,8 +262,8 @@
                             }
                         },
                         complete: function() {
-                            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.cerrar === 'function') {
-                                window.RedaNotificaciones.cerrar();
+                            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                                window.RedaNotificaciones.ocultar();
                             }
                         }
                     });
