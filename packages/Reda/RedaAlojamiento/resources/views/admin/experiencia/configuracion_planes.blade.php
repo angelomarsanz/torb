@@ -20,41 +20,51 @@
                         {{-- Pestaña 1: Opciones Generales --}}
                         <div class="tab-pane active" id="tab_opciones_generales">
                             <div class="row">
-                                <div class="col-xs-12 col-md-8 col-lg-6">
+                                <div class="col-xs-12 col-md-10 col-lg-8">
                                     <form id="form-configuracion-planes" method="POST" action="{{ route('reda.admin.negocios.configuracion_planes.store') }}">
                                         @csrf
                                         <div class="box-body">
-                                            {{-- Opción 1: Antigüedad --}}
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="cantidad">{{ __('Cantidad') }} <span class="text-danger">*</span></label>
-                                                        <input type="number" name="cantidad" id="cantidad" class="form-control f-14" step="0.1" min="0" value="{{ $configuracion['cantidad'] ?? 0 }}" required>
-                                                    </div>
+                                            
+                                            {{-- Grupo: Planes destacados --}}
+                                            <div class="box box-solid" style="border: 1px solid #d2d6de; border-radius: 5px;">
+                                                <div class="box-header with-border" style="background-color: #f7f7f7;">
+                                                    <h3 class="box-title" style="font-size: 15px; font-weight: bold;">
+                                                        <i class="fa fa-star text-yellow"></i> {{ __('Planes destacados') }}
+                                                    </h3>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="unidad_tiempo">{{ __('Unidad de tiempo') }} <span class="text-danger">*</span></label>
-                                                        <select name="unidad_tiempo" id="unidad_tiempo" class="form-control f-14" required>
-                                                            <option value="Año(s)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Año(s)' ? 'selected' : '' }}>{{ __('Año(s)') }}</option>
-                                                            <option value="Mes(es)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Mes(es)' ? 'selected' : '' }}>{{ __('Mes(es)') }}</option>
-                                                            <option value="Día(s)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Día(s)' ? 'selected' : '' }}>{{ __('Día(s)') }}</option>
-                                                        </select>
+                                                <div class="box-body">
+                                                    {{-- Opción 1: Antigüedad --}}
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="cantidad">{{ __('Antigüedad requerida') }} <span class="text-danger">*</span></label>
+                                                                <input type="number" name="cantidad" id="cantidad" class="form-control f-14" step="0.1" min="0" value="{{ $configuracion['cantidad'] ?? 0 }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="unidad_tiempo">{{ __('Unidad de tiempo') }} <span class="text-danger">*</span></label>
+                                                                <select name="unidad_tiempo" id="unidad_tiempo" class="form-control f-14" required>
+                                                                    <option value="Año(s)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Año(s)' ? 'selected' : '' }}>{{ __('Año(s)') }}</option>
+                                                                    <option value="Mes(es)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Mes(es)' ? 'selected' : '' }}>{{ __('Mes(es)') }}</option>
+                                                                    <option value="Día(s)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Día(s)' ? 'selected' : '' }}>{{ __('Día(s)') }}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="promedio_calificaciones">{{ __('Promedio de calificaciones mínimo') }} <span class="text-danger">*</span></label>
+                                                                <input type="number" name="promedio_calificaciones" id="promedio_calificaciones" class="form-control f-14" step="0.01" min="0" max="5" value="{{ $promedio_calificaciones ?? 0 }}" required>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            {{-- Fin Grupo: Planes destacados --}}
 
-                                            <hr>
-
-                                            {{-- Opción 2: Promedio de calificaciones --}}
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="promedio_calificaciones">{{ __('Promedio de calificaciones para planes destacados') }} <span class="text-danger">*</span></label>
-                                                        <input type="number" name="promedio_calificaciones" id="promedio_calificaciones" class="form-control f-14" step="0.01" min="0" max="5" value="{{ $promedio_calificaciones ?? 0 }}" required>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                         <div class="box-footer">
                                             <button type="submit" id="btn-save-config-planes" class="btn btn-primary btn-flat pull-right">
