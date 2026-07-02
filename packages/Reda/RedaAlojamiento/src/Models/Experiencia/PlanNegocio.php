@@ -10,9 +10,7 @@ class PlanNegocio extends Model
 
     protected $fillable = [
         'nombre',
-        'precio',
-        'moneda',
-        'lapso_pago',
+        'planes_pago',
         'beneficios',
         'destacado',
         'estatus',
@@ -20,9 +18,9 @@ class PlanNegocio extends Model
     ];
 
     protected $casts = [
-        'beneficios' => 'array',
-        'destacado'  => 'boolean',
-        'estatus'    => 'boolean',
-        'precio'     => 'decimal:2'
+        'planes_pago' => 'array',
+        'beneficios'  => 'array',
+        'destacado'   => 'boolean',
+        'estatus'     => 'boolean'
     ];
 }

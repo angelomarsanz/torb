@@ -126,21 +126,23 @@ class ExperienciaController extends Controller
     public function storePlan(Request $request)
     {
         $request->validate([
-            'nombre'     => 'required|string|max:255',
-            'precio'     => 'required|numeric|min:0',
-            'moneda'     => 'required|string',
-            'lapso_pago' => 'required|string',
+            'nombre'               => 'required|string|max:255',
+            'orden'                => 'required|integer|min:0',
+            'planes_pago'          => 'required|array|min:1',
+            'planes_pago.*.precio' => 'required|numeric|min:0',
+            'planes_pago.*.moneda' => 'required|string',
+            'planes_pago.*.lapso'  => 'required|string',
+            'beneficios'           => 'required|array|min:1',
+            'beneficios.*'         => 'required|string',
         ]);
 
         $plan = PlanNegocio::create([
-            'nombre'     => $request->nombre,
-            'precio'     => $request->precio,
-            'moneda'     => $request->moneda,
-            'lapso_pago' => $request->lapso_pago,
-            'beneficios' => $request->beneficios ?? [],
-            'destacado'  => $request->has('destacado'),
-            'estatus'    => $request->has('estatus'),
-            'orden'      => $request->orden ?? 0,
+            'nombre'      => $request->nombre,
+            'planes_pago' => $request->planes_pago,
+            'beneficios'  => $request->beneficios,
+            'destacado'   => $request->has('destacado'),
+            'estatus'     => $request->has('estatus'),
+            'orden'       => $request->orden,
         ]);
 
         return response()->json([
@@ -155,23 +157,25 @@ class ExperienciaController extends Controller
     public function updatePlan(Request $request)
     {
         $request->validate([
-            'id'         => 'required|exists:planes_negocios,id',
-            'nombre'     => 'required|string|max:255',
-            'precio'     => 'required|numeric|min:0',
-            'moneda'     => 'required|string',
-            'lapso_pago' => 'required|string',
+            'id'                   => 'required|exists:planes_negocios,id',
+            'nombre'               => 'required|string|max:255',
+            'orden'                => 'required|integer|min:0',
+            'planes_pago'          => 'required|array|min:1',
+            'planes_pago.*.precio' => 'required|numeric|min:0',
+            'planes_pago.*.moneda' => 'required|string',
+            'planes_pago.*.lapso'  => 'required|string',
+            'beneficios'           => 'required|array|min:1',
+            'beneficios.*'         => 'required|string',
         ]);
 
         $plan = PlanNegocio::find($request->id);
         $plan->update([
-            'nombre'     => $request->nombre,
-            'precio'     => $request->precio,
-            'moneda'     => $request->moneda,
-            'lapso_pago' => $request->lapso_pago,
-            'beneficios' => $request->beneficios ?? [],
-            'destacado'  => $request->has('destacado'),
-            'estatus'    => $request->has('estatus'),
-            'orden'      => $request->orden ?? 0,
+            'nombre'      => $request->nombre,
+            'planes_pago' => $request->planes_pago,
+            'beneficios'  => $request->beneficios,
+            'destacado'   => $request->has('destacado'),
+            'estatus'     => $request->has('estatus'),
+            'orden'       => $request->orden,
         ]);
 
         return response()->json([
@@ -183,7 +187,7 @@ class ExperienciaController extends Controller
         ]);
     }
 
-    public function destroyPlan($id)
+    public function destroyPlan(Request $request, $id)
     {
         $plan = PlanNegocio::find($id);
 
@@ -195,7 +199,27 @@ class ExperienciaController extends Controller
             ], 404);
         }
 
-        $plan->delete();
+        // Si se recibe un índice, eliminamos solo esa opción de pago del JSON
+        if ($request->has('index')) {
+            $index = (int) $request->index;
+            $planesPago = $plan->planes_pago;
+
+            if (isset($planesPago[$index])) {
+                unset($planesPago[$index]);
+                // Reindexar el array para evitar huecos en el JSON
+                $planesPago = array_values($planesPago);
+                
+                if (count($planesPago) > 0) {
+                    $plan->update(['planes_pago' => $planesPago]);
+                } else {
+                    // Si ya no quedan opciones de pago, eliminamos el plan completo
+                    $plan->delete();
+                }
+            }
+        } else {
+            // Si no hay índice, eliminación tradicional del registro completo
+            $plan->delete();
+        }
 
         return response()->json([
             'success'         => true,
