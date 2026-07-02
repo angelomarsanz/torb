@@ -12,7 +12,8 @@ use Reda\RedaAlojamiento\Models\Experiencia\{
     HorarioExperiencia,
     InformacionExperiencia,
     AnfitrionExperiencia,
-    FotoExperiencia
+    FotoExperiencia,
+    PlanNegocio
 };
 use Auth;
 use Illuminate\Support\Facades\File;
@@ -547,6 +548,11 @@ class ExperienciaController extends Controller
                 }
             }
 
+            $planes = [];
+            if ($paso === 'precio') {
+                $planes = PlanNegocio::where('estatus', 1)->orderBy('orden', 'asc')->get();
+            }
+
             if ($paso === 'ubicacion') {
                 $country = Country::pluck('name', 'short_name');
 
@@ -587,7 +593,7 @@ class ExperienciaController extends Controller
             Log::info("formularioDePasosExperiencias, actividades: " . print_r($actividades, true));
 
             return view("reda-alojamiento::experiencia.experiencias.formularios_de_pasos.$paso",
-                compact('result', 'paso', 'actividades', 'categoriasNegocios', 'country'));
+                compact('result', 'paso', 'actividades', 'categoriasNegocios', 'country', 'planes'));
         }
         elseif ($request->isMethod('post')) {
             switch ($paso) {

@@ -1385,7 +1385,22 @@ $(function() {
                 });
 
                 break;
-            // ... resto de los pasos
+
+            case 'precio':
+                // Por ahora solo manejo de envío básico, la selección se implementará después
+                $('#list_des').on('submit', function() {
+                    $("#btn_next").attr("disabled", true);
+                    $(".spinner").removeClass('d-none');
+                    $("#btn_next-text").text(window.RedaAlojamientoJson["Procesando..."] || "Procesando...");
+                });
+
+                // Efecto visual al hacer clic en una tarjeta (opcional por ahora)
+                $(document).on('click', '.plan-card', function() {
+                    $('.plan-card').removeClass('border-primary shadow-lg').addClass('shadow-sm');
+                    $(this).removeClass('shadow-sm').addClass('border-primary shadow-lg');
+                });
+
+                break;
         }
     }
 });
