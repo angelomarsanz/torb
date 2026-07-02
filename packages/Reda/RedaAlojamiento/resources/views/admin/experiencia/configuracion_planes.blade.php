@@ -1,54 +1,6 @@
 @extends('admin.template')
 
 @section('main')
-<style>
-    /* Estilos para el botón flotante de edición en el modal de vista */
-    .btn-flotante-editar {
-        position: absolute;
-        bottom: 80px; /* Subimos la posición para no tapar el footer */
-        right: 25px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #007bff;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-        z-index: 10;
-        border: none;
-    }
-    .btn-flotante-editar:hover {
-        background-color: #0056b3;
-        transform: scale(1.1);
-        color: white;
-    }
-    .modal-ver-contenido .box {
-        border-top: none;
-        box-shadow: none;
-        margin-bottom: 10px;
-    }
-    .modal-ver-contenido .label-detalle {
-        font-weight: bold;
-        color: #555;
-        display: block;
-        font-size: 12px;
-        text-transform: uppercase;
-    }
-    .modal-ver-contenido .valor-detalle {
-        font-size: 15px;
-        color: #333;
-    }
-    /* Forzar desplazamiento vertical interno en los modales */
-    #modal-plan .modal-body, #modal-ver-plan .modal-body {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
-</style>
-
 <div id="configuracion_planes_container"></div>
 <div class="content-wrapper">
 	<section class="content-header">
@@ -74,9 +26,9 @@
                                         <div class="box-body">
                                             
                                             {{-- Grupo: Requisitos para adquirir planes destacados --}}
-                                            <div class="box box-solid" style="border: 1px solid #d2d6de; border-radius: 5px;">
-                                                <div class="box-header with-border" style="background-color: #f7f7f7;">
-                                                    <h3 class="box-title" style="font-size: 15px; font-weight: bold;">
+                                            <div class="box box-solid planes-negocio-box-custom">
+                                                <div class="box-header with-border planes-negocio-box-header-custom">
+                                                    <h3 class="box-title planes-negocio-box-title-custom">
                                                         {{ __('Requisitos para adquirir planes destacados') }}
                                                     </h3>
                                                 </div>
@@ -92,7 +44,7 @@
                                                         {{-- Unidad de tiempo (Sin etiqueta visible, pero ocupando el mismo espacio) --}}
                                                         <div class="col-md-3">
                                                             <div class="form-group">
-                                                                <label for="unidad_tiempo" style="display: block; margin-bottom: 5px;">&nbsp;</label>
+                                                                <label for="unidad_tiempo" class="planes-negocio-label-block">&nbsp;</label>
                                                                 <select name="unidad_tiempo" id="unidad_tiempo" class="form-control f-14" required>
                                                                     <option value="Año(s)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Año(s)' ? 'selected' : '' }}>{{ __('Año(s)') }}</option>
                                                                     <option value="Mes(es)" {{ ($configuracion['unidad_tiempo'] ?? '') == 'Mes(es)' ? 'selected' : '' }}>{{ __('Mes(es)') }}</option>
@@ -128,9 +80,9 @@
                         <div class="tab-pane" id="tab_planes" style="display: none;">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <div class="box box-solid" style="border: 1px solid #d2d6de; border-radius: 5px;">
-                                        <div class="box-header with-border d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #f7f7f7;">
-                                            <h3 class="box-title" style="font-size: 15px; font-weight: bold;">{{ __('Configuración de Planes') }}</h3>
+                                    <div class="box box-solid planes-negocio-box-custom">
+                                        <div class="box-header with-border d-flex align-items-center justify-content-between flex-wrap gap-2 planes-negocio-box-header-custom">
+                                            <h3 class="box-title planes-negocio-box-title-custom">{{ __('Configuración de Planes') }}</h3>
                                             <div class="box-tools position-static">
                                                 <button type="button" id="btn-add-plan" class="btn btn-sm btn-success btn-flat">
                                                     <i class="fa fa-plus"></i> {{ __('Agregar nuevo plan') }}
@@ -156,42 +108,42 @@
 <!-- Modal para Ver Plan (No modificable) -->
 <div class="modal fade" id="modal-ver-plan" role="dialog">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="border-radius: 10px; position: relative;">
+        <div class="modal-content rounded-4 position-relative">
             <div class="modal-header d-flex align-items-center justify-content-between">
                 <h4 class="modal-title" id="modal-title-ver-plan">{{ __('Detalles del Plan de Negocio') }}</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body modal-ver-contenido">
+            <div class="modal-body planes-negocio-modal-body-scroll">
                 <div class="row">
                     <div class="col-md-6">
-                        <span class="label-detalle">{{ __('Nombre del plan') }}</span>
-                        <div id="ver_nombre_plan" class="valor-detalle mb-3"></div>
+                        <span class="planes-negocio-label-detalle">{{ __('Nombre del plan') }}</span>
+                        <div id="ver_nombre_plan" class="planes-negocio-valor-detalle mb-3"></div>
                     </div>
                     <div class="col-md-3">
-                        <span class="label-detalle">{{ __('Orden') }}</span>
-                        <div id="ver_orden_plan" class="valor-detalle mb-3"></div>
+                        <span class="planes-negocio-label-detalle">{{ __('Orden') }}</span>
+                        <div id="ver_orden_plan" class="planes-negocio-valor-detalle mb-3"></div>
                     </div>
                     <div class="col-md-3">
-                        <span class="label-detalle">{{ __('Estatus') }}</span>
+                        <span class="planes-negocio-label-detalle">{{ __('Estatus') }}</span>
                         <div id="ver_estatus_plan" class="mb-3"></div>
                     </div>
                 </div>
 
-                <div class="box box-solid" style="border: 1px solid #eee; border-radius: 8px; background: #fafafa;">
+                <div class="box box-solid planes-negocio-well-ver">
                     <div class="box-header with-border">
-                        <h5 class="box-title" style="font-weight: bold; font-size: 14px;">{{ __('Opciones de pago') }}</h5>
+                        <h5 class="box-title fw-700 f-14">{{ __('Planes de pago') }}</h5>
                     </div>
                     <div class="box-body" id="ver_contenedor_planes_pago">
                         {{-- Contenido dinámico --}}
                     </div>
                 </div>
 
-                <div class="box box-solid mt-3" style="border: 1px solid #eee; border-radius: 8px; background: #fafafa;">
+                <div class="box box-solid mt-3 planes-negocio-well-ver">
                     <div class="box-header with-border">
-                        <h5 class="box-title" style="font-weight: bold; font-size: 14px;">{{ __('Beneficios incluidos') }}</h5>
+                        <h5 class="box-title fw-700 f-14">{{ __('Beneficios incluidos') }}</h5>
                     </div>
                     <div class="box-body">
-                        <ul id="ver_contenedor_beneficios" class="list-group list-group-flush" style="background: transparent;">
+                        <ul id="ver_contenedor_beneficios" class="list-group list-group-flush bg-transparent">
                             {{-- Contenido dinámico --}}
                         </ul>
                     </div>
@@ -202,7 +154,7 @@
             </div>
             
             {{-- Botón Flotante para Editar --}}
-            <button type="button" id="btn-flotante-edit-plan" class="btn-flotante-editar" title="{{ __('Editar este plan') }}">
+            <button type="button" id="btn-flotante-edit-plan" class="planes-negocio-btn-flotante-editar" title="{{ __('Editar este plan') }}">
                 <i class="fa fa-edit"></i>
             </button>
         </div>
@@ -220,7 +172,7 @@
                     <h4 class="modal-title" id="modal-title-plan">{{ __('Agregar nuevo plan') }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body planes-negocio-modal-body-scroll">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -235,7 +187,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group" style="margin-top: 25px;">
+                            <div class="form-group planes-negocio-mt-25">
                                 <label>
                                     <input type="checkbox" name="destacado" id="destacado_plan" value="1"> {{ __('Destacado') }}
                                 </label>
@@ -248,9 +200,9 @@
                     </div>
 
                     {{-- Sección: Planes de pago --}}
-                    <div class="box box-solid mt-4" style="border: 1px solid #d2d6de; border-radius: 5px;">
-                        <div class="box-header with-border" style="background-color: #f7f7f7;">
-                            <h3 class="box-title" style="font-size: 15px; font-weight: bold;">
+                    <div class="box box-solid mt-4 planes-negocio-box-custom">
+                        <div class="box-header with-border planes-negocio-box-header-custom">
+                            <h3 class="box-title planes-negocio-box-title-custom">
                                 {{ __('Planes de pago') }}
                             </h3>
                         </div>
@@ -265,9 +217,9 @@
                     </div>
 
                     {{-- Sección: Beneficios del plan --}}
-                    <div class="box box-solid mt-4" style="border: 1px solid #d2d6de; border-radius: 5px;">
-                        <div class="box-header with-border" style="background-color: #f7f7f7;">
-                            <h3 class="box-title" style="font-size: 15px; font-weight: bold;">
+                    <div class="box box-solid mt-4 planes-negocio-box-custom">
+                        <div class="box-header with-border planes-negocio-box-header-custom">
+                            <h3 class="box-title planes-negocio-box-title-custom">
                                 {{ __('Beneficios del Plan') }}
                             </h3>
                         </div>

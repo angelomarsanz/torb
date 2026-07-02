@@ -90,16 +90,17 @@ class ExperienciaController extends Controller
     {
         $planes = PlanNegocio::orderBy('orden', 'asc')->paginate(10);
         
-        // Renderizamos solo la tabla para la petición AJAX de la pestaña o paginación
         $tablaHtml = view('reda-alojamiento::admin.experiencia.partials.tabla_planes', compact('planes'))->render();
 
-        return response()->json([
+        $respuesta = [
             'success'         => true,
             'message'         => 'Listado de planes recuperado',
             'mensaje_usuario' => '',
             'respuesta'       => $tablaHtml,
             'code'            => 200
-        ]);
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
     }
 
     public function getPlan($id)
@@ -107,20 +108,25 @@ class ExperienciaController extends Controller
         $plan = PlanNegocio::find($id);
 
         if (!$plan) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
                 'message' => 'Plan no encontrado',
+                'mensaje_usuario' => __('Plan no encontrado'),
+                'respuesta' => '',
                 'code' => 404
-            ], 404);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
 
-        return response()->json([
+        $respuesta = [
             'success'         => true,
             'message'         => 'Plan recuperado',
             'mensaje_usuario' => '',
             'respuesta'       => $plan,
             'code'            => 200
-        ]);
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
     }
 
     public function storePlan(Request $request)
@@ -145,13 +151,15 @@ class ExperienciaController extends Controller
             'orden'       => $request->orden,
         ]);
 
-        return response()->json([
+        $respuesta = [
             'success'         => true,
             'message'         => 'Plan creado',
             'mensaje_usuario' => __('Plan guardado con éxito'),
             'respuesta'       => $plan,
             'code'            => 200
-        ]);
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
     }
 
     public function updatePlan(Request $request)
@@ -178,13 +186,15 @@ class ExperienciaController extends Controller
             'orden'       => $request->orden,
         ]);
 
-        return response()->json([
+        $respuesta = [
             'success'         => true,
             'message'         => 'Plan actualizado',
             'mensaje_usuario' => __('Plan actualizado con éxito'),
             'respuesta'       => $plan,
             'code'            => 200
-        ]);
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
     }
 
     public function destroyPlan(Request $request, $id)
@@ -192,42 +202,43 @@ class ExperienciaController extends Controller
         $plan = PlanNegocio::find($id);
 
         if (!$plan) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
                 'message' => 'Plan no encontrado',
+                'mensaje_usuario' => __('Plan no encontrado'),
+                'respuesta' => '',
                 'code' => 404
-            ], 404);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
 
-        // Si se recibe un índice, eliminamos solo esa opción de pago del JSON
         if ($request->has('index')) {
             $index = (int) $request->index;
             $planesPago = $plan->planes_pago;
 
             if (isset($planesPago[$index])) {
                 unset($planesPago[$index]);
-                // Reindexar el array para evitar huecos en el JSON
                 $planesPago = array_values($planesPago);
                 
                 if (count($planesPago) > 0) {
                     $plan->update(['planes_pago' => $planesPago]);
                 } else {
-                    // Si ya no quedan opciones de pago, eliminamos el plan completo
                     $plan->delete();
                 }
             }
         } else {
-            // Si no hay índice, eliminación tradicional del registro completo
             $plan->delete();
         }
 
-        return response()->json([
+        $respuesta = [
             'success'         => true,
             'message'         => 'Plan eliminado',
             'mensaje_usuario' => __('Plan eliminado con éxito'),
             'respuesta'       => '',
             'code'            => 200
-        ]);
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
     }
 
     // --- FIN CRUD DE PLANES ---

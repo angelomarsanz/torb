@@ -176,6 +176,117 @@
     background-color: #fff5f8 !important;
 }
 
+/* Estilos para el módulo de Planes de Negocio */
+.planes-negocio {
+    &-box-custom {
+        border: 1px solid #d2d6de;
+        border-radius: 5px;
+    }
+    &-box-header-custom {
+        background-color: #f7f7f7;
+    }
+    &-box-title-custom {
+        font-size: 15px;
+        font-weight: bold;
+    }
+    &-label-block {
+        display: block;
+        margin-bottom: 5px;
+    }
+    &-mt-25 {
+        margin-top: 25px;
+    }
+    &-well-ver {
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: #fafafa;
+    }
+    &-modal-body-scroll {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    &-btn-flotante-editar {
+        position: absolute;
+        bottom: 85px; /* Por encima del footer del modal */
+        right: 25px;
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
+        transition: all 0.4s ease;
+        z-index: 1060;
+        border: 2px solid #fff;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 123, 255, 0.4);
+            background: #0056b3;
+            color: white !important;
+        }
+
+        @media (max-width: 767px) {
+            bottom: 75px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    }
+    &-label-detalle {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    &-valor-detalle {
+        font-size: 15px;
+        color: #333;
+    }
+    &-fila-plan-pago {
+        margin-bottom: 12px;
+        border-bottom: 1px dashed #eee;
+        padding-bottom: 10px;
+    }
+    &-align-end-pb-15 {
+        padding-bottom: 15px;
+        display: flex;
+        align-items: flex-end;
+    }
+    &-fila-beneficio {
+        margin-bottom: 8px;
+    }
+    &-bg-header-table {
+        background-color: #f4f4f4;
+    }
+    &-w-40 { width: 40%; }
+    &-w-20-center { width: 20%; text-align: center; }
+    &-text-center { text-align: center; }
+    &-padding-20 { padding: 20px; }
+    &-card-movil {
+        border-radius: 10px;
+        border: 1px solid #eee;
+    }
+    &-flex-1 { flex: 1; }
+    &-label-movil {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    &-badge-destacado-movil {
+        font-size: 9px;
+    }
+    &-opacity-03 { opacity: 0.3; }
+}
+
 /* Corrección para que el autocompletado de Google Places sea visible en modales */
 .pac-container {
     z-index: 110000000 !important;

@@ -2,10 +2,10 @@
 <div class="table-responsive d-none d-md-block">
     <table class="table table-bordered table-striped table-hover f-14">
         <thead>
-            <tr style="background-color: #f4f4f4;">
-                <th style="width: 40%">{{ __('Nombre del plan') }}</th>
-                <th style="width: 40%">{{ __('Precio') }}</th>
-                <th style="width: 20%; text-align: center;">{{ __('Acciones') }}</th>
+            <tr class="planes-negocio-bg-header-table">
+                <th class="planes-negocio-w-40">{{ __('Nombre del plan') }}</th>
+                <th class="planes-negocio-w-40">{{ __('Precio') }}</th>
+                <th class="planes-negocio-w-20-center">{{ __('Acciones') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -28,7 +28,7 @@
                             <td>
                                 {{ reda_money_format($opcion['moneda'] == 'dólar' ? '$' : 'Bs', $opcion['precio']) }} / {{ __($opcion['lapso']) }}
                             </td>
-                            <td style="text-align: center;">
+                            <td class="text-center">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-xs btn-default btn-flat btn-view-plan" data-id="{{ $plan->id }}" data-toggle="tooltip" title="{{ __('Ver') }}">
                                         <i class="fa fa-eye"></i>
@@ -46,7 +46,7 @@
                 @endforeach
             @else
                 <tr>
-                    <td colspan="3" class="text-center text-muted" style="padding: 20px;">
+                    <td colspan="3" class="text-center text-muted planes-negocio-padding-20">
                         <i class="fa fa-info-circle"></i> {{ __('No se encontraron planes configurados') }}
                     </td>
                 </tr>
@@ -63,17 +63,17 @@
                 $planesPago = is_array($plan->planes_pago) ? $plan->planes_pago : (json_decode($plan->planes_pago, true) ?: []);
             @endphp
             @foreach($planesPago as $index => $opcion)
-                <div class="card mb-3 shadow-sm border-light" style="border-radius: 10px; border: 1px solid #eee;">
+                <div class="card mb-3 shadow-sm border-light planes-negocio-card-movil">
                     <div class="card-body p-3">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div style="flex: 1;">
-                                <small class="text-muted d-block" style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">{{ __('Nombre del plan') }}</small>
-                                <strong class="text-blue" style="font-size: 15px;">{{ $plan->nombre }}</strong>
+                            <div class="planes-negocio-flex-1">
+                                <small class="text-muted d-block planes-negocio-label-movil">{{ __('Nombre del plan') }}</small>
+                                <strong class="text-blue f-15">{{ $plan->nombre }}</strong>
                                 @if($plan->destacado)
-                                    <span class="label label-warning ml-2" style="font-size: 9px;">Destacado</span>
+                                    <span class="label label-warning ml-2 planes-negocio-badge-destacado-movil">Destacado</span>
                                 @endif
                                 @if(count($planesPago) > 1)
-                                    <small class="text-muted d-block" style="font-size: 9px;">Opción {{ $index + 1 }}</small>
+                                    <small class="text-muted d-block f-9">Opción {{ $index + 1 }}</small>
                                 @endif
                             </div>
                             <div class="btn-group">
@@ -90,7 +90,7 @@
                         </div>
 
                         <div class="mt-2 pt-2 border-top">
-                            <small class="text-muted d-block" style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">{{ __('Precio') }}</small>
+                            <small class="text-muted d-block planes-negocio-label-movil">{{ __('Precio') }}</small>
                             <p class="mb-0 text-dark f-14">{{ reda_money_format($opcion['moneda'] == 'dólar' ? '$' : 'Bs', $opcion['precio']) }} / {{ __($opcion['lapso']) }}</p>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
         @endforeach
     @else
         <div class="text-center text-muted p-5 bg-light rounded">
-            <i class="fa fa-info-circle fa-3x mb-3" style="opacity: 0.3;"></i>
+            <i class="fa fa-info-circle fa-3x mb-3 planes-negocio-opacity-03"></i>
             <p>{{ __('No se encontraron planes configurados') }}</p>
         </div>
     @endif
