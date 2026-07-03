@@ -1387,17 +1387,63 @@ $(function() {
                 break;
 
             case 'precio':
-                // Por ahora solo manejo de envío básico, la selección se implementará después
-                $('#list_des').on('submit', function() {
+                // Lógica para el selector dinámico de lapsos/precios en las tarjetas de planes
+                $(document).on('click', '.pricing-btn-lapso', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Evitar que el clic en el botón active la tarjeta inmediatamente si no queremos
+                    
+                    const $btn = $(this);
+                    const $card = $btn.closest('.pricing-card');
+                    const price = $btn.data('price');
+                    const lapso = $btn.data('lapso');
+                    const index = $btn.data('index');
+
+                    // Actualizar estado activo de los botones en este grupo
+                    $btn.siblings().removeClass('active');
+                    $btn.addClass('active');
+
+                    // Actualizar el display del precio en la tarjeta
+                    $card.find('.pricing-amount').text(price);
+                    $card.find('.pricing-period').text('/ ' + lapso);
+
+                    // Si la tarjeta ya está seleccionada, actualizamos el input oculto del índice
+                    if ($card.hasClass('is-active')) {
+                        $('#selected_plan_opcion_index').val(index);
+                    }
+                });
+
+                // Lógica para seleccionar una tarjeta de plan
+                $(document).on('click', '.pricing-card', function() {
+                    const $card = $(this);
+                    const planId = $card.data('id');
+                    const opcionIndex = $card.find('.pricing-btn-lapso.active').data('index') || 0;
+
+                    // Visual: Marcar como activa
+                    $('.pricing-card').removeClass('is-active');
+                    $card.addClass('is-active');
+
+                    // Actualizar textos de botones
+                    $('.pricing-btn-select').text(window.RedaAlojamientoJson["Elegir Plan"] || "Elegir Plan");
+                    $card.find('.pricing-btn-select').text(window.RedaAlojamientoJson["Plan Seleccionado"] || "Plan Seleccionado");
+
+                    // Actualizar inputs ocultos
+                    $('#selected_plan_id').val(planId);
+                    $('#selected_plan_opcion_index').val(opcionIndex);
+                });
+
+                // Validación antes de enviar
+                $('#list_des').on('submit', function(e) {
+                    const planId = $('#selected_plan_id').val();
+                    
+                    if (!planId) {
+                        e.preventDefault();
+                        alert(window.RedaAlojamientoJson["Por favor seleccione un plan para continuar"] || "Por favor seleccione un plan para continuar");
+                        return false;
+                    }
+
                     $("#btn_next").attr("disabled", true);
                     $(".spinner").removeClass('d-none');
                     $("#btn_next-text").text(window.RedaAlojamientoJson["Procesando..."] || "Procesando...");
-                });
-
-                // Efecto visual al hacer clic en una tarjeta (opcional por ahora)
-                $(document).on('click', '.plan-card', function() {
-                    $('.plan-card').removeClass('border-primary shadow-lg').addClass('shadow-sm');
-                    $(this).removeClass('shadow-sm').addClass('border-primary shadow-lg');
                 });
 
                 break;

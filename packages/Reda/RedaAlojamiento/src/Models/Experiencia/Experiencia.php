@@ -45,7 +45,8 @@ class Experiencia extends Model
         'precio_grupo',
         'minimo_personas_grupo',
         'reglas_cancelacion',
-        'horarios'
+        'horarios',
+        'plan_negocios'
     ];
 
     /**
@@ -56,6 +57,7 @@ class Experiencia extends Model
     protected $casts = [
         'ubicacion' => 'array',
         'horarios' => 'array',
+        'plan_negocios' => 'array',
     ];
 
     /**

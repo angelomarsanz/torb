@@ -13,7 +13,8 @@ use Reda\RedaAlojamiento\Models\Experiencia\{
     InformacionExperiencia,
     AnfitrionExperiencia,
     FotoExperiencia,
-    PlanNegocio
+    PlanNegocio,
+    CalificacionExperiencia
 };
 use Auth;
 use Illuminate\Support\Facades\File;
@@ -857,6 +858,66 @@ class ExperienciaController extends Controller
                     return redirect()->route('reda.negocios.experiencias.pasos', ['id' => $id, 'paso' => 'precio'])
                     ->with('success', __('Información adicional actualizada con éxito'));
                 case 'precio':
+                    $request->validate([
+                        'plan_id'           => 'required|exists:planes_negocios,id',
+                        'plan_opcion_index' => 'required|integer|min:0'
+                    ], [
+                        'plan_id.required' => __('Por favor seleccione un plan para continuar'),
+                        'plan_id.exists'   => __('El plan seleccionado no es válido'),
+                    ]);
+
+                    // --- VALIDACIÓN DE REQUISITOS PARA PLANES DESTACADOS ---
+                    $plan = PlanNegocio::find($request->plan_id);
+                    if ($plan && $plan->destacado) {
+                        
+                        // 1. Verificar Antigüedad
+                        $settingAntiguedad = DB::table('settings')->where('name', 'antiguedad_planes_destacados')->first();
+                        if ($settingAntiguedad) {
+                            $config = json_decode($settingAntiguedad->value, true);
+                            $cantidadReq = $config['cantidad'] ?? 0;
+                            $unidadReq = $config['unidad_tiempo'] ?? 'Mes(es)';
+                            
+                            $fechaCreacion = \Carbon\Carbon::parse($result->created_at);
+                            $antiguedadReal = 0;
+                            
+                            if ($unidadReq == 'Año(s)') {
+                                $antiguedadReal = $fechaCreacion->diffInYears(now());
+                            } elseif ($unidadReq == 'Mes(es)') {
+                                $antiguedadReal = $fechaCreacion->diffInMonths(now());
+                            } else {
+                                $antiguedadReal = $fechaCreacion->diffInDays(now());
+                            }
+                            
+                            if ($antiguedadReal < $cantidadReq) {
+                                return back()->with('error_destacado', __('Su comercio no cumple con el requisito de antigüedad mínima de :cantidad :unidad para optar a un plan destacado.', [
+                                    'cantidad' => $cantidadReq, 
+                                    'unidad' => __($unidadReq)
+                                ]));
+                            }
+                        }
+                        
+                        // 2. Verificar Promedio de Calificaciones
+                        $settingPromedio = DB::table('settings')->where('name', 'promedio_calificaciones_planes_destacados')->first();
+                        if ($settingPromedio) {
+                            $promedioMinimo = (float) $settingPromedio->value;
+                            $promedioReal = (float) CalificacionExperiencia::where('experiencia_id', $id)->avg('estrellas') ?? 0;
+                            
+                            if ($promedioReal < $promedioMinimo) {
+                                return back()->with('error_destacado', __('Su comercio no cumple con el promedio de calificaciones mínimo de :promedio estrellas para optar a un plan destacado.', [
+                                    'promedio' => $promedioMinimo
+                                ]));
+                            }
+                        }
+                    }
+                    // --- FIN VALIDACIÓN ---
+
+                    $result->plan_negocios = [
+                        'plan_id'           => $request->plan_id,
+                        'plan_opcion_index' => $request->plan_opcion_index,
+                        // Aquí se pueden agregar estatus, fechas, etc. en el futuro
+                    ];
+                    $result->save();
+
                     return redirect()->route('reda.negocios.experiencias.index')
                                 ->with('success', __('Pago realizado con éxito'));
             }

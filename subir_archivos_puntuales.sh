@@ -37,7 +37,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/ActividadExperiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/AnfitrionExperiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/CalificacionExperiencia.php"
-    #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/Experiencia.php"
+    "packages/Reda/RedaAlojamiento/src/Models/Experiencia/Experiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/FotoExperiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/HorarioExperiencia.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/InformacionExperiencia.php"
@@ -88,6 +88,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_26_150000_agregar_resultado_gestion_a_soportes_tecnicos.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_01_100000_crear_tabla_planes_negocios.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_02_100000_modificar_tabla_planes_negocios_multiplanes.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_03_100000_add_plan_negocios_to_experiencias_table.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
