@@ -86,8 +86,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_22_000000_create_soportes_tecnicos_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_24_100000_cambiar_link_error_a_text_en_soportes_tecnicos.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_06_26_150000_agregar_resultado_gestion_a_soportes_tecnicos.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_01_100000_crear_tabla_planes_negocios.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_02_100000_modificar_tabla_planes_negocios_multiplanes.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_01_100000_crear_tabla_planes_negocios.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_02_100000_modificar_tabla_planes_negocios_multiplanes.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
@@ -139,9 +139,8 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- Archivos Javascript admin ---
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
     "packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/configuracionPlanes.js"
-    "public/js/reda/admin/vistas/experiencia/configuracionPlanes.min.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/indexSoporteTecnico.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/showSoporteTecnico.js"
 

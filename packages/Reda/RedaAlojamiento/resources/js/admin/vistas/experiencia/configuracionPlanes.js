@@ -190,7 +190,8 @@
                             <select name="planes_pago[${index}][lapso]" class="form-control f-14 select-lapso-plan" required>
                                 <option value="anual" ${lapso === 'anual' ? 'selected' : ''}>${window.RedaAlojamientoJson["Anual"] || "Anual"}</option>
                                 <option value="mensual" ${lapso === 'mensual' ? 'selected' : ''}>${window.RedaAlojamientoJson["Mensual"] || "Mensual"}</option>
-                                <option value="quincenal" ${lapso === 'quincenal' ? 'selected' : ''}>${window.RedaAlojamientoJson["Quincenal"] || "Quincenal"}</option>
+                                <option value="semestral" ${lapso === 'semestral' ? 'selected' : ''}>${window.RedaAlojamientoJson["Semestral"] || "Semestral"}</option>
+                                <option value="trimestral" ${lapso === 'trimestral' ? 'selected' : ''}>${window.RedaAlojamientoJson["Trimestral"] || "Trimestral"}</option>
                             </select>
                         </div>
                     </div>
@@ -237,7 +238,7 @@
                 $('#destacado_plan').prop('checked', plan.destacado);
                 $('#estatus_plan').prop('checked', plan.estatus);
                 
-                // Cargar planes de pago dinámicos
+                // Cargar opciones de pago dinámicas
                 $('#contenedor-planes-pago').empty();
                 let planesPago = plan.planes_pago || [];
                 if (planesPago.length > 0) {
@@ -300,13 +301,30 @@
                 }
             });
 
-            // Agregar nueva fila de plan de pago
+            // Lógica para el selector dinámico de lapsos/precios en el listado
+            $(document).on('click', '.planes-negocio-btn-lapso', function(e) {
+                e.preventDefault();
+                const $btn = $(this);
+                const $container = $btn.closest('.planes-negocio-selector-container');
+                const price = $btn.data('price');
+                const lapso = $btn.data('lapso');
+
+                // Actualizar estado activo de los botones en este grupo
+                $btn.siblings().removeClass('active');
+                $btn.addClass('active');
+
+                // Actualizar el display del precio
+                $container.find('.planes-negocio-price-amount').text(price);
+                $container.find('.planes-negocio-price-label').text('/ ' + lapso);
+            });
+
+            // Agregar nueva fila de opción de pago
             $(document).on('click', '#btn-agregar-plan-pago', function(e) {
                 e.preventDefault();
                 $('#contenedor-planes-pago').append(htmlFilaPlanPago());
             });
 
-            // Eliminar fila de plan de pago
+            // Eliminar fila de opción de pago
             $(document).on('click', '.btn-eliminar-plan-pago', function(e) {
                 e.preventDefault();
                 $(this).closest('.fila-plan-pago').remove();
@@ -330,7 +348,7 @@
                 $(this).closest('.fila-beneficio').remove();
             });
 
-            // Guardar Opciones Generales (Cantidad y Promedio)
+            // Guardar Opciones Generales (Antiguedad y Promedio)
             $('#form-configuracion-planes').on('submit', async function(e) {
                 e.preventDefault();
                 const $form = $(this);

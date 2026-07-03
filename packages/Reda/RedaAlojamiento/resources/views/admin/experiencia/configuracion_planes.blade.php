@@ -1,6 +1,121 @@
 @extends('admin.template')
 
 @section('main')
+<style>
+    /* Estilos para el listado de planes interactivo */
+    .planes-negocio-selector-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .planes-negocio-lapsos-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        background: #f1f5f9;
+        padding: 4px;
+        border-radius: 8px;
+        width: fit-content;
+    }
+    .planes-negocio-btn-lapso {
+        border: none;
+        background: transparent;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.2s;
+        cursor: pointer;
+        outline: none !important;
+    }
+    .planes-negocio-btn-lapso:hover {
+        color: #1e293b;
+        background: rgba(255,255,255,0.5);
+    }
+    .planes-negocio-btn-lapso.active {
+        background: white;
+        color: #2563eb;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .planes-negocio-price-display {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+    }
+    .planes-negocio-price-amount {
+        font-size: 18px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+    .planes-negocio-price-label {
+        font-size: 12px;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+    
+    /* Estilos para el listado de planes anterior (compatibilidad) */
+    .planes-negocio-pills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .planes-negocio-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        background-color: #f0f4f8;
+        border: 1px solid #d1e1e9;
+        border-radius: 50px;
+        color: #2c5282;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .planes-negocio-pill:hover {
+        background-color: #e2e8f0;
+        border-color: #cbd5e0;
+    }
+    .planes-negocio-card-header {
+        border-bottom: 1px solid #edf2f7;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+    .planes-negocio-option-card {
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        flex: 1;
+        min-width: 140px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .planes-negocio-option-price {
+        color: #2b6cb0;
+        font-size: 14px;
+        font-weight: 700;
+        display: block;
+    }
+    .planes-negocio-option-lapso {
+        color: #718096;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    /* Ajustes para la tabla en escritorio */
+    .table-planes-v2 th {
+        background-color: #f7fafc !important;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: #4a5568;
+    }
+    .table-planes-v2 td {
+        vertical-align: middle !important;
+    }
+</style>
 <div id="configuracion_planes_container"></div>
 <div class="content-wrapper">
 	<section class="content-header">
@@ -25,19 +140,19 @@
                                         @csrf
                                         <div class="box-body">
                                             
-                                            {{-- Grupo: Requisitos para adquirir planes destacados --}}
+                                            {{-- Grupo: Requisitos de los comercios para adquirir planes destacados --}}
                                             <div class="box box-solid planes-negocio-box-custom">
                                                 <div class="box-header with-border planes-negocio-box-header-custom">
                                                     <h3 class="box-title planes-negocio-box-title-custom">
-                                                        {{ __('Requisitos para adquirir planes destacados') }}
+                                                        {{ __('Requisitos de los comercios para adquirir planes destacados') }}
                                                     </h3>
                                                 </div>
                                                 <div class="box-body">
                                                     <div class="row">
-                                                        {{-- Cantidad de tiempo --}}
+                                                        {{-- Antiguedad --}}
                                                         <div class="col-md-3">
                                                             <div class="form-group">
-                                                                <label for="cantidad">{{ __('Cantidad de tiempo') }} <span class="text-danger">*</span></label>
+                                                                <label for="cantidad">{{ __('Antiguedad') }} <span class="text-danger">*</span></label>
                                                                 <input type="number" name="cantidad" id="cantidad" class="form-control f-14" step="0.1" min="0" value="{{ $configuracion['cantidad'] ?? 0 }}" required>
                                                             </div>
                                                         </div>
@@ -131,7 +246,7 @@
 
                 <div class="box box-solid planes-negocio-well-ver">
                     <div class="box-header with-border">
-                        <h5 class="box-title fw-700 f-14">{{ __('Planes de pago') }}</h5>
+                        <h5 class="box-title fw-700 f-14">{{ __('Opciones de pago') }}</h5>
                     </div>
                     <div class="box-body" id="ver_contenedor_planes_pago">
                         {{-- Contenido dinámico --}}
@@ -199,19 +314,19 @@
                         </div>
                     </div>
 
-                    {{-- Sección: Planes de pago --}}
+                    {{-- Sección: Opciones de pago --}}
                     <div class="box box-solid mt-4 planes-negocio-box-custom">
                         <div class="box-header with-border planes-negocio-box-header-custom">
                             <h3 class="box-title planes-negocio-box-title-custom">
-                                {{ __('Planes de pago') }}
+                                {{ __('Opciones de pago') }}
                             </h3>
                         </div>
                         <div class="box-body">
                             <div id="contenedor-planes-pago">
-                                {{-- Aquí se cargarán dinámicamente las filas de planes de pago --}}
+                                {{-- Aquí se cargarán dinámicamente las filas de opciones de pago --}}
                             </div>
                             <button type="button" id="btn-agregar-plan-pago" class="btn btn-sm btn-success btn-flat mt-2">
-                                <i class="fa fa-plus"></i> {{ __('Agregar nuevo plan de pago') }}
+                                <i class="fa fa-plus"></i> {{ __('Agregar nueva opción de pago') }}
                             </button>
                         </div>
                     </div>
