@@ -83,7 +83,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-right-0"><i class="fas fa-store text-muted"></i></span>
                                 </div>
-                                <input type="text" name="nombre_comercio" id="input_nombre_comercio" class="form-control border-left-0" placeholder="{{ __('Nombre del negocio...') }}" autocomplete="off">
+                                <input type="text" name="nombre_comercio" id="input_nombre_comercio" class="form-control border-left-0" placeholder="{{ __('Nombre del negocio...') }}" autocomplete="off" value="{{ request('nombre_comercio') }}">
                             </div>
                         </div>
 
@@ -94,7 +94,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-right-0"><i class="fas fa-shopping-bag text-muted"></i></span>
                                 </div>
-                                <input type="text" name="nombre_producto" id="input_nombre_producto" class="form-control border-left-0" placeholder="{{ __('¿Qué producto buscas?') }}" autocomplete="off">
+                                <input type="text" name="nombre_producto" id="input_nombre_producto" class="form-control border-left-0" placeholder="{{ __('¿Qué producto buscas?') }}" autocomplete="off" value="{{ request('nombre_producto') }}">
                             </div>
                         </div>
 
@@ -105,7 +105,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-right-0"><i class="fas fa-concierge-bell text-muted"></i></span>
                                 </div>
-                                <input type="text" name="nombre_servicio" id="input_nombre_servicio" class="form-control border-left-0" placeholder="{{ __('¿Qué servicio buscas?') }}" autocomplete="off">
+                                <input type="text" name="nombre_servicio" id="input_nombre_servicio" class="form-control border-left-0" placeholder="{{ __('¿Qué servicio buscas?') }}" autocomplete="off" value="{{ request('nombre_servicio') }}">
                             </div>
                         </div>
 
@@ -114,14 +114,14 @@
                             <select name="categoria" class="filtro-categoria form-control rounded-10">
                                 <option value="">{{ __('Todas las categorías') }}</option>
                                 @foreach($categoriasNegocios as $clave => $nombre)
-                                    <option value="{{ $clave }}">{{ $nombre }}</option>
+                                    <option value="{{ $clave }}" {{ request('categoria') == $clave ? 'selected' : '' }}>{{ $nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="filtro-item mb-4">
-                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-primary ml-2">25 {{ __('km') }}</span></label>
-                            <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="25">
+                            <label class="font-weight-700 mb-2">{{ __('Distancia') }} <span class="radio-km-display badge badge-primary ml-2">{{ request('radio', 25) }} {{ __('km') }}</span></label>
+                            <input type="range" name="radio" class="filtro-radio custom-range" min="1" max="50" value="{{ request('radio', 25) }}">
                             <div class="d-flex justify-content-between mt-1 text-muted f-12">
                                 <span>1 {{ __('km') }}</span>
                                 <span>50 {{ __('km') }}</span>
@@ -134,10 +134,10 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-right-0"><i class="fas fa-map-marker-alt text-muted"></i></span>
                                 </div>
-                                <input type="text" name="ubicacion_texto" class="filtro-ubicacion form-control border-left-0" placeholder="{{ __('Sector, ciudad, estado...') }}" autocomplete="off">
+                                <input type="text" name="ubicacion_texto" class="filtro-ubicacion form-control border-left-0" placeholder="{{ __('Sector, ciudad, estado...') }}" autocomplete="off" value="{{ request('ubicacion_texto') }}">
                             </div>
-                            <input type="hidden" name="latitud" class="filtro-lat">
-                            <input type="hidden" name="longitud" class="filtro-lng">
+                            <input type="hidden" name="latitud" class="filtro-lat" value="{{ request('latitud') }}">
+                            <input type="hidden" name="longitud" class="filtro-lng" value="{{ request('longitud') }}">
                         </div>
 
                         <div class="modal-footer-search mt-5">

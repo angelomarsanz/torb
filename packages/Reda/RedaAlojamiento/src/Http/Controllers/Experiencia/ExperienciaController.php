@@ -66,24 +66,34 @@ class ExperienciaController extends Controller
             $query->where('categoria_negocio', $request->categoria);
         }
 
+        $distanciaCalculada = false;
         if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
             $lat = $request->latitud;
             $lng = $request->longitud;
             $radio = $request->radio; // en km
 
-            // Fórmula de Haversine para filtrar por distancia
-            // Nota: Esto asume que la base de datos es MySQL 5.7+ para usar JSON_EXTRACT
+            // Fórmula de Haversine para filtrar por distancia usando whereRaw (más robusto para filtrado puro)
             $query->whereRaw("
                 (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
                 * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
                 + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
             ", [$lat, $lng, $lat, $radio]);
+
+            $distanciaCalculada = true;
         } elseif ($request->filled('ubicacion_texto')) {
             $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
         }
 
-        // 4. Obtener Destacados (por ahora los más recientes que cumplan el filtro)
+        // 4. Obtener Destacados (Filtrar por los que tienen plan_negocios y el plan sea destacado)
+        $idsPlanesDestacados = PlanNegocio::where('destacado', true)->pluck('id')->toArray();
+
         $destacadosQuery = clone $query;
+        $destacadosQuery->whereNotNull('plan_negocios')
+                        ->where('plan_negocios', '<>', '[]')
+                        ->where('plan_negocios', '<>', '{}')
+                        ->whereIn('plan_negocios->plan_id', $idsPlanesDestacados);
+        
+        // Ordenar destacados: si hay búsqueda por radio, el orden por defecto es el de la query filtrada
         $destacados = $destacadosQuery->orderBy('id', 'desc')->take(10)->get();
         $totalDestacados = $destacadosQuery->count();
 
@@ -100,7 +110,8 @@ class ExperienciaController extends Controller
                 if ($totalDestacados > 0) {
                     $htmlDestacados = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
                         'experiencias' => $destacados,
-                        'currentCurrency' => $currentCurrency
+                        'currentCurrency' => $currentCurrency,
+                        'idsPlanesDestacados' => $idsPlanesDestacados
                     ])->render();
 
                     if ($totalDestacados > 10) {
@@ -115,7 +126,8 @@ class ExperienciaController extends Controller
 
                 $htmlGeneral = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', [
                     'experiencias' => $experiencias,
-                    'currentCurrency' => $currentCurrency
+                    'currentCurrency' => $currentCurrency,
+                    'idsPlanesDestacados' => $idsPlanesDestacados
                 ])->render();
 
                 if ($totalExperiencias > 10) {
@@ -180,7 +192,8 @@ class ExperienciaController extends Controller
             'currentCurrency',
             'nombresComercios',
             'nombresProductos',
-            'nombresServicios'
+            'nombresServicios',
+            'idsPlanesDestacados'
         ));
     }
 
@@ -245,26 +258,53 @@ class ExperienciaController extends Controller
                 ->withCount('calificaciones')
                 ->withAvg('calificaciones', 'estrellas');
 
-            // Aplicar los mismos filtros que en listadoFrontend si es necesario
+            // --- APLICAR MISMOS FILTROS QUE EN listadoFrontend ---
+
+            if ($request->filled('nombre_comercio')) {
+                $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
+            }
+
             if ($request->filled('categoria')) {
                 $query->where('categoria_negocio', $request->categoria);
             }
 
+            $distanciaCalculada = false;
             if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
                 $lat = $request->latitud;
                 $lng = $request->longitud;
                 $radio = $request->radio;
-                $query->whereRaw("
+
+                // Fórmula de Haversine para filtrar por distancia y SELECCIONAR la distancia
+                $query->addSelect('*')->selectRaw("
                     (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
                     * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
-                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
-                ", [$lat, $lng, $lat, $radio]);
+                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) AS distancia
+                ", [$lat, $lng, $lat]);
+
+                $query->having('distancia', '<=', $radio);
+                $distanciaCalculada = true;
             } elseif ($request->filled('ubicacion_texto')) {
                 $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
             }
 
-            $items = $query->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
+            // Filtrar por plan_negocios si el tipo es destacados
+            if ($tipo === 'destacados') {
+                $idsPlanesDestacados = PlanNegocio::where('destacado', true)->pluck('id')->toArray();
+                $query->whereNotNull('plan_negocios')
+                      ->where('plan_negocios', '<>', '[]')
+                      ->where('plan_negocios', '<>', '{}')
+                      ->whereIn('plan_negocios->plan_id', $idsPlanesDestacados);
+            }
+
+            if ($distanciaCalculada) {
+                $query->orderBy('distancia', 'asc');
+            } else {
+                $query->orderBy('id', 'desc');
+            }
+
+            $items = $query->offset($offset)->limit($limit)->get();
             $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
+            $idsPlanesDestacados = PlanNegocio::where('destacado', true)->pluck('id')->toArray();
             $html = '';
 
             foreach ($items as $item) {
@@ -273,13 +313,15 @@ class ExperienciaController extends Controller
                     $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
                         'experiencia' => $item,
                         'currentCurrency' => $currentCurrency,
-                        'es_modal' => true
+                        'es_modal' => true,
+                        'idsPlanesDestacados' => $idsPlanesDestacados
                     ])->render();
                     $html .= '</div>';
                 } else {
                     $html .= view('reda-alojamiento::experiencia.experiencias.frontend.partials.card_negocio', [
                         'experiencia' => $item,
-                        'currentCurrency' => $currentCurrency
+                        'currentCurrency' => $currentCurrency,
+                        'idsPlanesDestacados' => $idsPlanesDestacados
                     ])->render();
                 }
             }
@@ -392,6 +434,7 @@ class ExperienciaController extends Controller
             $limit = 10;
             $tipo = $request->get('tipo', 'todas'); 
             $esModal = $request->get('es_modal', false);
+            $tipoActividadFiltro = $request->get('tipo_actividad'); // 'producto' o 'servicio'
 
             $experiencia = Experiencia::findOrFail($id);
             $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
@@ -417,8 +460,14 @@ class ExperienciaController extends Controller
                 }
             } else {
                 $query = $experiencia->actividades()
-                    ->where('estatus_producto_servicio', 'activo')
-                    ->orderBy('orden_actividad', 'asc');
+                    ->where('estatus_producto_servicio', 'activo');
+
+                // Aplicar filtro por tipo de actividad si se recibe
+                if (!empty($tipoActividadFiltro)) {
+                    $query->where('tipo_producto_servicio', $tipoActividadFiltro);
+                }
+
+                $query->orderBy('orden_actividad', 'asc');
 
                 if ($tipo === 'promociones') {
                     $todas = $query->get();

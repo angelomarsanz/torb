@@ -2,6 +2,13 @@
 <div class="col-item-carrusel">
 @endif
     <div class="negocio-card">
+        {{-- Badge de Destacado --}}
+        @if(isset($idsPlanesDestacados) && in_array(data_get($experiencia->plan_negocios, 'plan_id'), $idsPlanesDestacados))
+            <div class="badge-destacado-negocio">
+                <i class="fas fa-star mr-1"></i> {{ __('Destacado') }}
+            </div>
+        @endif
+
         {{-- Botón Favorito --}}
         <button class="btn-favorito" type="button">
             <i class="far fa-heart"></i>
@@ -32,9 +39,6 @@
 
         <div class="negocio-info">
             <h3 class="negocio-titulo">{{ $experiencia->titulo }}</h3>
-            <p class="negocio-ubicacion">
-                {{ $experiencia->ubicacion['ciudad'] ?? __('Ubicación no especificada') }}
-            </p>
             <p class="negocio-rating star-rating">
                 @if($experiencia->calificaciones_count > 0)
                     <i class="fas fa-star text-warning"></i> 

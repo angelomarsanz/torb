@@ -193,11 +193,21 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const $card = $(this);
                 const tipo = $card.data('tipo');
                 
+                // Capturar el filtro de tipo de actividad activo (si no es reseñas)
+                const extraData = {};
+                if (tipo !== 'reseñas') {
+                    const tipoActividad = $('#filtro_tipo_actividad').val() || $('#filtro_tipo_actividad_movil').val();
+                    if (tipoActividad) {
+                        extraData['tipo_actividad'] = tipoActividad;
+                    }
+                }
+
                 let options = {
                     idNegocio: $card.data('id-negocio'),
                     tipo: tipo,
                     tituloModal: $card.data('titulo-modal'),
-                    urlBase: APP_URL + `/reda/negocios/experiencias/actividades/paginadas/${$card.data('id-negocio')}`
+                    urlBase: APP_URL + `/reda/negocios/experiencias/actividades/paginadas/${$card.data('id-negocio')}`,
+                    extraData: extraData
                 };
 
                 // Si son reseñas, ajustar tamaño y estilos
@@ -210,7 +220,18 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             });
 
             // Filtros y Detalle
-            $('#filtro_tipo_actividad').on('change', function() { filtrarActividades($(this).val()); });
+            $('#filtro_tipo_actividad').on('change', function() { 
+                const valor = $(this).val();
+                $('#filtro_tipo_actividad_movil').val(valor); // Sincronizar con móvil
+                filtrarActividades(valor); 
+            });
+
+            $('.btn-aplicar-filtro').on('click', function() {
+                const valor = $('#filtro_tipo_actividad_movil').val();
+                $('#filtro_tipo_actividad').val(valor); // Sincronizar con desktop
+                filtrarActividades(valor);
+                $('#modalBusquedaActividades').modal('hide');
+            });
             
             $(document).on('click', '.producto-card:not(.card-ver-todos):not(.reseña-card)', function() {
                 const id = $(this).data('id');

@@ -235,15 +235,43 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 }
             });
 
+            // --- CAPTURA DE UBICACIÓN REAL AL ABRIR MODAL ---
+            $('#modalBusquedaComercios').on('show.bs.modal', function () {
+                const $form = $('#form_busqueda_negocios_modal');
+                const $latInput = $form.find('.filtro-lat');
+                const $lngInput = $form.find('.filtro-lng');
+                const $radioDisplay = $form.find('.radio-km-display');
+
+                // Si no hay coordenadas fijadas manualmente por búsqueda de texto
+                // intentamos obtener la ubicación actual por GPS para el slider de distancia
+                if (!$latInput.val() && navigator.geolocation) {
+                    const originalText = $radioDisplay.html();
+                    $radioDisplay.html('<i class="fas fa-spinner fa-spin mr-1"></i>' + (window.RedaAlojamientoJson['Ubicando...'] || 'Ubicando...'));
+
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        $latInput.val(position.coords.latitude);
+                        $lngInput.val(position.coords.longitude);
+                        $radioDisplay.html(originalText);
+                        console.log('Ubicación capturada por GPS:', position.coords.latitude, position.coords.longitude);
+                    }, function(error) {
+                        $radioDisplay.html(originalText);
+                        console.warn('Error al obtener ubicación GPS:', error.message);
+                    }, {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    });
+                }
+            });
+
             /**
              * Lógica de Exclusividad: Activar Modo Distancia
              */
             function activarModoDistancia($form) {
                 modoBusqueda = 'distancia';
-                // Limpiar datos de ubicación en el form para consistencia
+                // No limpiamos lat/lng aquí para que use el GPS capturado al abrir el modal
+                // pero sí limpiamos el texto de ubicación para evitar confusiones
                 $form.find('.filtro-ubicacion').val('');
-                $form.find('.filtro-lat').val('');
-                $form.find('.filtro-lng').val('');
             }
 
             /**
@@ -367,7 +395,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                         'message' : window.RedaAlojamientoJson["Error buscando negocios"] || 'Error buscando negocios',
                         'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
                         'respuesta': respuestaServidor.respuesta || '',
-                        'code': x.status !== 0 ? x.status : 504,
+                        'code' : x.status !== 0 ? x.status : 504,
                     };
                     resolve(respuesta);
                 }
