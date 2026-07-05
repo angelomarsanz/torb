@@ -90,31 +90,30 @@
             <!-- COLUMNA DERECHA: 70% DESPLAZABLE (Escritorio) / 100% (Móvil) -->
             <div class="col-12 col-lg-70">
 
-                <!-- SECCIÓN 2: BARRA DE BÚSQUEDA -->
+                <!-- SECCIÓN 2: BARRA DE BÚSQUEDA (Activador de Modal) -->
                 <section class="seccion-busqueda-actividades px-4 mb-4">
-                    <!-- Vista Desktop -->
-                    <div class="d-none d-lg-block">
-                        <div class="search-bar-actividades d-flex align-items-center">
-                            <div class="flex-grow-1 pr-3">
-                                <select id="filtro_tipo_actividad" class="form-control border-0 shadow-none">
-                                    <option value="">{{ __('¿Qué estás buscando?') }}</option>
-                                    <option value="producto">{{ __('Productos') }}</option>
-                                    <option value="servicio">{{ __('Servicios') }}</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary rounded-circle p-2 btn-search-round">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Vista Móvil -->
-                    <div class="d-lg-none">
-                        <div class="search-bar-actividades d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#modalBusquedaActividades">
-                            <span class="text-muted"><i class="fas fa-search mr-2"></i> {{ __('¿Qué estás buscando?') }}</span>
-                        </div>
+                    <div class="search-bar-actividades d-flex align-items-center justify-content-center" 
+                         data-toggle="modal" data-target="#modalBusquedaActividades"
+                         style="cursor: pointer;">
+                        <span class="text-muted"><i class="fas fa-search mr-2"></i> {{ __('¿Qué estás buscando?') }}</span>
                     </div>
                 </section>
+
+                <!-- TÍTULO DE RESULTADOS DE BÚSQUEDA (Siempre arriba si hay búsqueda) -->
+                @if(isset($q) || request('tipo_actividad'))
+                    <div class="px-4 mb-4">
+                        <h2 class="text-22 font-weight-700">
+                            @if(isset($q) && $q)
+                                {{ __('Resultados para') }} "{{ $q }}"
+                            @elseif(request('tipo_actividad'))
+                                {{ __('Listado de') }} {{ request('tipo_actividad') == 'producto' ? __('Productos') : __('Servicios') }}
+                            @endif
+                        </h2>
+                        <a href="{{ url()->current() }}" class="btn btn-link btn-sm p-0 text-primary font-weight-600">
+                            <i class="fas fa-times-circle mr-1"></i>{{ __('Limpiar filtros y ver todo') }}
+                        </a>
+                    </div>
+                @endif
 
                 <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO (Solo Móvil) -->
                 <div class="d-lg-none">
@@ -244,8 +243,8 @@
                 <section class="seccion-productos mb-4" id="seccion_todos">
                     <div class="header-seccion-carrusel">
                         <h2 class="text-18 font-weight-700">
-                            @if(isset($q) && $q)
-                                {{ __('Resultados para') }} "{{ $q }}"
+                            @if(isset($q) || request('tipo_actividad'))
+                                {{ __('Coincidencias encontradas') }}
                             @else
                                 {{ __('Explorar Todo') }}
                             @endif
@@ -264,9 +263,14 @@
                          id="contenedor_todos_productos"
                          data-tipo="todas"
                          data-id-negocio="{{ $experiencia->id }}">
-                        @foreach($actividades as $actividad)
+                        
+                        @forelse($actividades as $actividad)
                             @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio', ['actividad' => $actividad])
-                        @endforeach
+                        @empty
+                            <div class="w-100 bg-light p-4 rounded-12 text-center text-muted">
+                                <p class="m-0">{{ __('No se encontraron resultados para su búsqueda.') }}</p>
+                            </div>
+                        @endforelse
 
                         @if($totalActividades > 10)
                             @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos', [
@@ -467,28 +471,69 @@
     </div>
 </div>
 
-<!-- Modal de Búsqueda Móvil -->
+<!-- Modal de Búsqueda (Unificado) -->
 <div class="modal fade" id="modalBusquedaActividades" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content modal-negocio-rounded">
-            <div class="modal-header border-0">
-                <h5 class="modal-title font-weight-700">{{ __('Filtrar por') }}</h5>
+        <div class="modal-content modal-negocio-rounded shadow-lg border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title font-weight-700 text-20">{{ __('Filtros de búsqueda') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="font-weight-600">{{ __('Tipo') }}</label>
-                    <select class="form-control custom-select" id="filtro_tipo_actividad_movil">
-                        <option value="">{{ __('Todos') }}</option>
-                        <option value="producto">{{ __('Productos') }}</option>
-                        <option value="servicio">{{ __('Servicios') }}</option>
-                    </select>
+            <div class="modal-body p-4">
+                <!-- Filtro por Texto: Producto -->
+                <div class="form-group mb-4">
+                    <label class="font-weight-600 mb-2">{{ __('Buscar producto') }}</label>
+                    <div class="d-flex align-items-center border rounded-pill px-3 py-1">
+                         <i class="fas fa-box text-muted mr-2"></i>
+                         <input type="text" id="buscar_producto_modal" 
+                                class="form-control border-0 shadow-none" 
+                                list="datalist_productos_negocio"
+                                placeholder="{{ __('Escribe el nombre del producto') }}">
+                    </div>
                 </div>
+
+                <!-- Filtro por Texto: Servicio -->
+                <div class="form-group mb-4">
+                    <label class="font-weight-600 mb-2">{{ __('Buscar servicio') }}</label>
+                    <div class="d-flex align-items-center border rounded-pill px-3 py-1">
+                         <i class="fas fa-concierge-bell text-muted mr-2"></i>
+                         <input type="text" id="buscar_servicio_modal" 
+                                class="form-control border-0 shadow-none" 
+                                list="datalist_servicios_negocio"
+                                placeholder="{{ __('Escribe el nombre del servicio') }}">
+                    </div>
+                </div>
+
+                <!-- Filtro por Tipo (Select) -->
+                <div class="form-group">
+                    <label class="font-weight-600 mb-2">{{ __('Por tipo:') }}</label>
+                    <div class="d-flex align-items-center border rounded-pill px-3 py-1">
+                        <i class="fas fa-filter text-muted mr-2"></i>
+                        <select class="form-control border-0 shadow-none custom-select" id="filtro_tipo_modal">
+                            <option value="">{{ __('Todos') }}</option>
+                            <option value="producto">{{ __('Producto') }}</option>
+                            <option value="servicio">{{ __('Servicio') }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Datalists para búsqueda inteligente -->
+                <datalist id="datalist_productos_negocio">
+                    @foreach($listaNombresProductos as $nombre)
+                        <option value="{{ $nombre }}">
+                    @endforeach
+                </datalist>
+
+                <datalist id="datalist_servicios_negocio">
+                    @foreach($listaNombresServicios as $nombre)
+                        <option value="{{ $nombre }}">
+                    @endforeach
+                </datalist>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-primary btn-block btn-lg btn-aplicar-filtro">{{ __('Aplicar') }}</button>
+                <button type="button" class="btn btn-primary btn-block btn-lg btn-aplicar-filtro rounded-pill font-weight-700">{{ __('Aplicar filtros') }}</button>
             </div>
         </div>
     </div>
@@ -549,6 +594,10 @@
             titulo: "{{ $experiencia->titulo }}"
         };
         window.actividadIdCargar = {{ $actividadIdDeepLink ?? 'null' }};
+        
+        // Listas para búsqueda inteligente
+        window.nombresProductosNegocio = {!! json_encode($listaNombresProductos) !!};
+        window.nombresServiciosNegocio = {!! json_encode($listaNombresServicios) !!};
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
     @include('reda-alojamiento::general.main_footer')

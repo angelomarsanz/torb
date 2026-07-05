@@ -193,12 +193,21 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const $card = $(this);
                 const tipo = $card.data('tipo');
                 
-                // Capturar el filtro de tipo de actividad activo (si no es reseñas)
+                // Capturar filtros activos para el listado infinito
                 const extraData = {};
                 if (tipo !== 'reseñas') {
-                    const tipoActividad = $('#filtro_tipo_actividad').val() || $('#filtro_tipo_actividad_movil').val();
-                    if (tipoActividad) {
-                        extraData['tipo_actividad'] = tipoActividad;
+                    const prod = $('#buscar_producto_modal').val();
+                    const serv = $('#buscar_servicio_modal').val();
+                    const tipoAct = $('#filtro_tipo_modal').val();
+                    
+                    if (prod) {
+                        extraData['tipo_actividad'] = 'producto';
+                        extraData['q'] = prod;
+                    } else if (serv) {
+                        extraData['tipo_actividad'] = 'servicio';
+                        extraData['q'] = serv;
+                    } else if (tipoAct) {
+                        extraData['tipo_actividad'] = tipoAct;
                     }
                 }
 
@@ -219,18 +228,46 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 ListadoInfinito.iniciar(options);
             });
 
-            // Filtros y Detalle
-            $('#filtro_tipo_actividad').on('change', function() { 
-                const valor = $(this).val();
-                $('#filtro_tipo_actividad_movil').val(valor); // Sincronizar con móvil
-                filtrarActividades(valor); 
+            // Lógica de Exclusión Mutua en el Modal
+            $('#buscar_producto_modal').on('input', function() {
+                if ($(this).val().length > 0) {
+                    $('#buscar_servicio_modal').val('');
+                    $('#filtro_tipo_modal').val('');
+                }
+            });
+
+            $('#buscar_servicio_modal').on('input', function() {
+                if ($(this).val().length > 0) {
+                    $('#buscar_producto_modal').val('');
+                    $('#filtro_tipo_modal').val('');
+                }
+            });
+            
+            $('#filtro_tipo_modal').on('change', function() {
+                if ($(this).val() !== '') {
+                    $('#buscar_producto_modal, #buscar_servicio_modal').val('');
+                }
             });
 
             $('.btn-aplicar-filtro').on('click', function() {
-                const valor = $('#filtro_tipo_actividad_movil').val();
-                $('#filtro_tipo_actividad').val(valor); // Sincronizar con desktop
-                filtrarActividades(valor);
-                $('#modalBusquedaActividades').modal('hide');
+                const prod = $('#buscar_producto_modal').val().trim();
+                const serv = $('#buscar_servicio_modal').val().trim();
+                const tipoSelect = $('#filtro_tipo_modal').val();
+                
+                window.RedaNotificaciones.esperar();
+                const url = new URL(window.location.origin + window.location.pathname);
+                
+                if (prod) {
+                    url.searchParams.set('q', prod);
+                    url.searchParams.set('tipo_actividad', 'producto');
+                } else if (serv) {
+                    url.searchParams.set('q', serv);
+                    url.searchParams.set('tipo_actividad', 'servicio');
+                } else if (tipoSelect) {
+                    url.searchParams.set('tipo_actividad', tipoSelect);
+                }
+                
+                window.location.href = url.toString();
             });
             
             $(document).on('click', '.producto-card:not(.card-ver-todos):not(.reseña-card)', function() {
@@ -261,13 +298,43 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             }
         }
 
-        function filtrarActividades(tipo) {
-            $('.producto-card').each(function() {
-                const tc = $(this).data('tipo-actividad');
-                if (tipo === '' || tipo === tc) $(this).fadeIn(300); else $(this).hide();
+        function filtrarActividades(texto, tipo) {
+            const search = (texto || '').toLowerCase().trim();
+            const filterTipo = (tipo || '').toLowerCase().trim();
+            const esBusqueda = search !== '' || filterTipo !== '';
+
+            $('.producto-card:not(.reseña-card)').each(function() {
+                const $card = $(this);
+                
+                if ($card.hasClass('card-ver-todos')) {
+                    // Si hay búsqueda activa, ocultamos el "Ver todos" del carrusel
+                    if (esBusqueda) {
+                        $card.hide();
+                    } else {
+                        $card.show();
+                    }
+                    return;
+                }
+
+                // Usar .attr() para mayor seguridad con atributos hyphenated y normalizar a minúsculas
+                const tc = ($card.attr('data-tipo-actividad') || '').toLowerCase().trim();
+                const nombre = $card.find('.producto-nombre').text().toLowerCase();
+                
+                const matchesTipo = (filterTipo === '' || filterTipo === tc);
+                const matchesTexto = (search === '' || nombre.includes(search));
+
+                if (matchesTipo && matchesTexto) {
+                    $card.fadeIn(300);
+                } else {
+                    $card.hide();
+                }
             });
+
+            // Ocultar secciones vacías
             $('.seccion-productos').each(function() {
-                $(this).toggle($(this).find('.producto-card:visible').length > 0);
+                if ($(this).attr('id') === 'seccion_reseñas') return;
+                const visibles = $(this).find('.producto-card:visible:not(.card-ver-todos)').length;
+                $(this).toggle(visibles > 0);
             });
         }
     }

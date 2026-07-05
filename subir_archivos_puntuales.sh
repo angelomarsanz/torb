@@ -10,7 +10,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"config/app.php"
     #"config/pdf.php"
     #"package.json"
-    "webpack.mix.js"
+    #"webpack.mix.js"
     #"resources/views/admin/common/head.blade.php"
     #"resources/views/admin/common/foot.blade.php"
     #"resources/views/common/head.blade.php"

@@ -361,6 +361,8 @@ class ExperienciaController extends Controller
             ->findOrFail($id);
 
         $q = $request->get('q');
+        $tipo_actividad_filtro = $request->get('tipo_actividad');
+
         // El parámetro puede venir de la ruta ({actividad_id}) o del query string (?actividad_id=)
         $actividadIdDeepLink = $actividad_id ?? $request->get('actividad_id');
         $actividadTarget = null;
@@ -372,19 +374,27 @@ class ExperienciaController extends Controller
                 ->first();
         }
 
-        // Obtenemos los productos/servicios activos
+        // Obtenemos los productos/servicios activos con FILTRADO REAL
         $queryBase = $experiencia->actividades()
             ->where('estatus_producto_servicio', 'activo');
 
+        if ($q) {
+            $queryBase->where('nombre_actividad', 'like', '%' . $q . '%');
+        }
+
+        // Filtrado ESTRICTO por tipo si se recibe (evita mezcla de productos y servicios)
+        if ($tipo_actividad_filtro) {
+            $queryBase->where('tipo_producto_servicio', $tipo_actividad_filtro);
+        }
+
         $todasActividades = $queryBase->get();
 
-        // Si hay una búsqueda, ordenamos para que los que coincidan aparezcan primero
+        // Ordenamos por relevancia si hay búsqueda por texto
         if ($q) {
             $todasActividades = $todasActividades->sortByDesc(function($actividad) use ($q) {
                 // Prioridad: coincidencia exacta > contiene la palabra
                 if (strtolower($actividad->nombre_actividad) == strtolower($q)) return 2;
-                if (stripos($actividad->nombre_actividad, $q) !== false) return 1;
-                return 0;
+                return 1;
             });
         } else {
             $todasActividades = $todasActividades->sortBy('orden_actividad');
@@ -393,7 +403,7 @@ class ExperienciaController extends Controller
         $actividades = $todasActividades->take(10);
         $totalActividades = $todasActividades->count();
 
-        // Promociones (Primeras 10 para carrusel)
+        // Promociones (Filtradas también por los criterios de búsqueda)
         $promocionesCompletas = $todasActividades->filter(function($actividad) {
             $complementos = json_decode($actividad->precios_monedas_complementarios, true);
             return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
@@ -408,6 +418,23 @@ class ExperienciaController extends Controller
 
         $currentCurrency = \App\Http\Helpers\Common::getCurrentCurrency();
 
+        // --- Listas para búsqueda inteligente (Sugerencias) ---
+        $listaNombresProductos = $experiencia->actividades()
+            ->where('tipo_producto_servicio', 'producto')
+            ->where('estatus_producto_servicio', 'activo')
+            ->whereNotNull('nombre_actividad')
+            ->distinct()
+            ->pluck('nombre_actividad')
+            ->toArray();
+
+        $listaNombresServicios = $experiencia->actividades()
+            ->where('tipo_producto_servicio', 'servicio')
+            ->where('estatus_producto_servicio', 'activo')
+            ->whereNotNull('nombre_actividad')
+            ->distinct()
+            ->pluck('nombre_actividad')
+            ->toArray();
+
         return view('reda-alojamiento::experiencia.experiencias.frontend.listado_productos_servicios', compact(
             'experiencia',
             'actividades',
@@ -419,7 +446,9 @@ class ExperienciaController extends Controller
             'currentCurrency',
             'actividadIdDeepLink',
             'actividadTarget',
-            'q'
+            'q',
+            'listaNombresProductos',
+            'listaNombresServicios'
         ));
     }
 

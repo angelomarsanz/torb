@@ -2795,3 +2795,54 @@
         }
     }
 }
+
+/* --- MEJORAS BARRA DE BÚSQUEDA ACTIVIDADES --- */
+.search-bar-actividades {
+    .border-right {
+        border-right: 1px solid #eee !important;
+    }
+    
+    input {
+        &::placeholder {
+            font-size: 13px;
+            color: #717171;
+        }
+    }
+}
+
+/* Modal de Búsqueda Móvil - Nuevos Inputs */
+#modalBusquedaActividades {
+    .modal-body {
+        .form-group {
+            label {
+                font-size: 14px;
+                color: #222;
+                margin-bottom: 10px;
+                display: block;
+            }
+        }
+        
+        .border.rounded-pill {
+            border-color: #ddd !important;
+            transition: border-color 0.2s ease;
+            
+            &:focus-within {
+                border-color: #1dbf73 !important;
+                box-shadow: 0 0 0 1px #1dbf73;
+            }
+            
+            i {
+                font-size: 16px;
+            }
+            
+            input {
+                font-size: 14px;
+                padding: 8px 0;
+                
+                &::placeholder {
+                    color: #b0b0b0;
+                }
+            }
+        }
+    }
+}
