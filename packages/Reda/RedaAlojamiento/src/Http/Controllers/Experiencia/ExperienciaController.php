@@ -171,6 +171,14 @@ class ExperienciaController extends Controller
 
         // 7. Listas para búsqueda inteligente
         $nombresComercios = Experiencia::distinct()->whereNotNull('titulo')->pluck('titulo')->toArray();
+
+        $listaUbicaciones = Experiencia::whereNotNull('ubicacion')
+            ->get()
+            ->pluck('ubicacion.busqueda_mapa')
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
         
         $nombresProductos = ActividadExperiencia::where('tipo_producto_servicio', 'producto')
             ->where('estatus_producto_servicio', 'activo')
@@ -196,6 +204,7 @@ class ExperienciaController extends Controller
             'nombresComercios',
             'nombresProductos',
             'nombresServicios',
+            'listaUbicaciones',
             'idsPlanesDestacados'
         ));
     }

@@ -224,9 +224,11 @@
         window.nombresComercios = @json($nombresComercios);
         window.nombresProductos = @json($nombresProductos);
         window.nombresServicios = @json($nombresServicios);
+        window.listaUbicaciones = @json($listaUbicaciones);
         console.log('Comercios cargados para autocomplete:', window.nombresComercios);
         console.log('Productos cargados para autocomplete:', window.nombresProductos);
         console.log('Servicios cargados para autocomplete:', window.nombresServicios);
+        console.log('Ubicaciones cargadas para autocomplete:', window.listaUbicaciones);
     </script>
 
     @include('reda-alojamiento::general.main_footer')

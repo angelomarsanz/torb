@@ -88,6 +88,26 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 });
             }
 
+            // Inicializar Autocomplete para ubicaciones existentes en BD
+            if (window.listaUbicaciones && $('.filtro-ubicacion').length) {
+                $('.filtro-ubicacion').autocomplete({
+                    source: window.listaUbicaciones,
+                    minLength: 1,
+                    appendTo: "#modalBusquedaComercios",
+                    select: function(event, ui) {
+                        const $parentForm = $(this).closest('form');
+                        // Al seleccionar de la lista local, no tenemos lat/lng nuevos,
+                        // la búsqueda en servidor usará el texto 'ubicacion_texto'
+                        $parentForm.find('.filtro-lat').val('');
+                        $parentForm.find('.filtro-lng').val('');
+                        
+                        setTimeout(() => {
+                            ejecutarBusqueda($parentForm);
+                        }, 100);
+                    }
+                });
+            }
+
             // --- EXCLUSIVIDAD DE INPUTS DE BÚSQUEDA ---
             const $inputComercio = $('#input_nombre_comercio');
             const $inputProducto = $('#input_nombre_producto');
@@ -122,6 +142,17 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 if ($(this).val().length > 0) {
                     $inputComercio.val('');
                     $inputProducto.val('');
+                }
+            });
+
+            // Exclusividad para Ubicación: Reiniciar otros filtros al escribir
+            $inputUbicacion.on('input', function() {
+                if ($(this).val().length > 0) {
+                    $inputComercio.val('');
+                    $inputProducto.val('');
+                    $inputServicio.val('');
+                    $selectCategoria.val('');
+                    // El slider se resetea vía activarModoUbicacion al disparar búsqueda
                 }
             });
 
