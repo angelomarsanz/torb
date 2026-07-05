@@ -174,6 +174,12 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                         $parentForm.find('.filtro-lat').val(place.geometry.location.lat());
                         $parentForm.find('.filtro-lng').val(place.geometry.location.lng());
 
+                        // Limpiar otros filtros (Prioridad absoluta a la Ubicación seleccionada)
+                        $inputComercio.val('');
+                        $inputProducto.val('');
+                        $inputServicio.val('');
+                        $selectCategoria.val('');
+
                         // Cambiar modo a ubicación
                         activarModoUbicacion($parentForm);
                         ejecutarBusqueda($parentForm);

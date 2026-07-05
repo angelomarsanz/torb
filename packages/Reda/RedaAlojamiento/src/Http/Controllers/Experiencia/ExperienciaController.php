@@ -57,12 +57,15 @@ class ExperienciaController extends Controller
             ->withCount('calificaciones')
             ->withAvg('calificaciones', 'estrellas');
 
-        // 3. Aplicar Filtros si existen (para AJAX o búsqueda directa)
+        // 3. Aplicar Filtros con Prioridad Excluyente
         if ($request->filled('nombre_comercio')) {
-            // SI SE BUSCA POR NOMBRE: Ignoramos los demás filtros para asegurar que aparezca
+            // PRIORIDAD 1: Búsqueda por Nombre (Ignora todo lo demás)
             $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
+        } elseif ($request->filled('ubicacion_texto')) {
+            // PRIORIDAD 2: Búsqueda por Ubicación sugerida (Ignora distancia y categoría)
+            $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
         } else {
-            // SI NO HAY NOMBRE: Aplicamos filtros normales
+            // PRIORIDAD 3: Filtros normales (Categoría y Distancia por GPS)
             if ($request->filled('categoria')) {
                 $query->where('categoria_negocio', $request->categoria);
             }
@@ -81,8 +84,6 @@ class ExperienciaController extends Controller
                 ", [$lat, $lng, $lat, $radio]);
 
                 $distanciaCalculada = true;
-            } elseif ($request->filled('ubicacion_texto')) {
-                $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
             }
         }
 
@@ -263,29 +264,32 @@ class ExperienciaController extends Controller
             // --- APLICAR MISMOS FILTROS QUE EN listadoFrontend ---
 
             if ($request->filled('nombre_comercio')) {
+                // PRIORIDAD 1: Búsqueda por Nombre (Ignora todo lo demás)
                 $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
-            }
-
-            if ($request->filled('categoria')) {
-                $query->where('categoria_negocio', $request->categoria);
-            }
-
-            $distanciaCalculada = false;
-            if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
-                $lat = $request->latitud;
-                $lng = $request->longitud;
-                $radio = $request->radio;
-
-                // Fórmula de Haversine para filtrar por distancia usando whereRaw (más robusto para filtrado puro)
-                $query->whereRaw("
-                    (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
-                    * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
-                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
-                ", [$lat, $lng, $lat, $radio]);
-
-                $distanciaCalculada = true;
             } elseif ($request->filled('ubicacion_texto')) {
+                // PRIORIDAD 2: Búsqueda por Ubicación sugerida (Ignora distancia y categoría)
                 $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+            } else {
+                // PRIORIDAD 3: Filtros normales (Categoría y Distancia por GPS)
+                if ($request->filled('categoria')) {
+                    $query->where('categoria_negocio', $request->categoria);
+                }
+
+                $distanciaCalculada = false;
+                if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
+                    $lat = $request->latitud;
+                    $lng = $request->longitud;
+                    $radio = $request->radio;
+
+                    // Fórmula de Haversine para filtrar por distancia usando whereRaw (más robusto para filtrado puro)
+                    $query->whereRaw("
+                        (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
+                        * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
+                        + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
+                    ", [$lat, $lng, $lat, $radio]);
+
+                    $distanciaCalculada = true;
+                }
             }
 
             // Filtrar por plan_negocios si el tipo es destacados
@@ -297,7 +301,7 @@ class ExperienciaController extends Controller
                       ->whereIn('plan_negocios->plan_id', $idsPlanesDestacados);
             }
 
-            if ($distanciaCalculada) {
+            if (isset($distanciaCalculada) && $distanciaCalculada) {
                 $query->orderBy('distancia', 'asc');
             } else {
                 $query->orderBy('id', 'desc');
