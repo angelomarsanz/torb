@@ -2,10 +2,6 @@
 
 /**
  * Función llamada: Ejecuta la petición AJAX para guardar el ticket de soporte.
- * Cumple con las directrices de GEMINI.md (Promesas, Estructura AJAX, Manejo de errores).
- * 
- * @param {Object} formData Datos del formulario serializados o como objeto.
- * @returns {Promise} Resolviedo con un objeto de respuesta estandarizado.
  */
 export const guardarTicketSoporte = (formData) => {
     return new Promise((resolve) => {
@@ -18,17 +14,14 @@ export const guardarTicketSoporte = (formData) => {
                     resolve(data);
                 },
                 error: function (x, xs, xt) {
-                    // 1. Intentamos obtener el JSON que el servidor envió junto con el error
                     let respuestaServidor = {};
                     try {
-                        // x.responseText contiene el cuerpo del JSON enviado por Laravel
                         respuestaServidor = JSON.parse(x.responseText);
                     } catch (e) {
                         respuestaServidor = {};
                     }
                     console.log('respuestaServidor', respuestaServidor);
 
-                    // Si hay errores de validación específicos (ej: mensaje corto), los extraemos
                     let detalleValidacion = '';
                     if (respuestaServidor.errors && respuestaServidor.errors.mensaje) {
                         detalleValidacion = `<br /><span class="text-danger">${respuestaServidor.errors.mensaje[0]}</span>`;
@@ -37,7 +30,6 @@ export const guardarTicketSoporte = (formData) => {
                     const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                     const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
 
-                    // 2. Construimos la respuesta usando los datos reales del servidor si existen
                     let respuesta = {
                         'success': false,
                         'message' : window.RedaAlojamientoJson["Error al crear el ticket de soporte"] || 'Error al crear el ticket de soporte',
@@ -58,91 +50,107 @@ export const guardarTicketSoporte = (formData) => {
     const containerId = '#detalle_calificaciones_duenio';
     if ($(containerId).length) {
         $(function() {
-            // --- Animación de espera para la búsqueda ---
-            $('#form-busqueda-inteligente').on('submit', function() {
+            // --- ELEMENTOS ---
+            const formBusqueda = $('#form-busqueda-inteligente');
+            const inputReviewId = $('#input_review_id');
+            const inputCustomerName = $('#input_customer_name');
+            const inputDateFrom = $('#date_from');
+            const inputDateTo = $('#date_to');
+            const hiddenRatingFilter = $('#hidden_rating_filter');
+            const hiddenIsReported = $('#hidden_is_reported');
+
+            // --- LÓGICA DE BÚSQUEDA ---
+
+            // Animación de espera al enviar
+            formBusqueda.on('submit', function() {
                 if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
                     window.RedaNotificaciones.esperar();
                 }
+                return true;
             });
 
-            // --- Búsqueda de Reseñas ---
-            
-            // Abrir el modal al hacer clic en el disparador (barra o icono de lupa)
+            // Abrir el modal
             $('#trigger-busqueda-inteligente').on('click', function(e) {
                 e.preventDefault();
                 $('#modalBusquedaInteligente').modal('show');
             });
 
-            // Botón Buscar ID
-            $('#btnBuscarID').on('click', function() {
-                const valor = $('#input_puntual').val().trim();
-                if (valor === '') {
-                    $('#input_puntual').focus();
-                    return;
+            /**
+             * Resetea grupos de filtros excluyentes.
+             * @param {string} excepcion El grupo que NO debe resetearse.
+             */
+            const resetearFiltrosExcluyentes = (excepcion) => {
+                // 1. Grupo Puntual (ID / Nombre)
+                if (excepcion !== 'puntual') {
+                    inputReviewId.val('');
+                    inputCustomerName.val('');
                 }
+
+                // 2. Grupo Rápidos (Botones)
+                if (excepcion !== 'rapidos') {
+                    $('.btn-filtro-rapido').removeClass('active');
+                    hiddenRatingFilter.val('');
+                    hiddenIsReported.val('');
+                }
+
+                // 3. Grupo Fechas
+                if (excepcion !== 'fechas') {
+                    inputDateFrom.val('');
+                    inputDateTo.val('');
+                }
+            };
+
+            // Listener para ID (Numérico estricto + Exclusión)
+            inputReviewId.on('input', function() {
+                const cleanValue = $(this).val().replace(/\D/g, '');
+                $(this).val(cleanValue); // Forzar valor limpio en el input visible
                 
-                // Limpiar otros filtros puntuales y generales
-                $('#hidden_customer_name').val('');
-                $('input[name="search"]').val('');
-                
-                // Si el valor empieza con # lo quitamos
-                const reviewId = valor.replace('#', '');
-                $('#hidden_review_id').val(reviewId);
-                
-                $('#form-busqueda-inteligente').submit();
+                if (cleanValue !== '') {
+                    inputCustomerName.val(''); // Limpiar compañero de grupo
+                    resetearFiltrosExcluyentes('puntual');
+                }
             });
 
-            // Botón Buscar Cliente
-            $('#btnBuscarCliente').on('click', function() {
-                const valor = $('#input_puntual').val().trim();
-                if (valor === '') {
-                    $('#input_puntual').focus();
-                    return;
+            // Listener para Nombre (Exclusión)
+            inputCustomerName.on('input', function() {
+                if ($(this).val().trim() !== '') {
+                    inputReviewId.val(''); // Limpiar compañero de grupo
+                    resetearFiltrosExcluyentes('puntual');
                 }
-                
-                // Limpiar otros filtros puntuales y generales
-                $('#hidden_review_id').val('');
-                $('input[name="search"]').val('');
-                $('#hidden_customer_name').val(valor);
-                
-                $('#form-busqueda-inteligente').submit();
             });
 
-            // Filtros Rápidos
+            // Listener para Fechas (Exclusión)
+            inputDateFrom.add(inputDateTo).on('change', function() {
+                if ($(this).val() !== '') {
+                    resetearFiltrosExcluyentes('fechas');
+                }
+            });
+
+            // Filtros Rápidos (Exclusión + Auto-submit)
             $('.btn-filtro-rapido').on('click', function() {
                 const filter = $(this).data('filter');
-                
-                // Resetear campos puntuales y generales al usar filtros rápidos
-                $('#hidden_review_id').val('');
-                $('#hidden_customer_name').val('');
-                $('input[name="search"]').val('');
+                resetearFiltrosExcluyentes('rapidos');
                 
                 if (filter === 'reported') {
-                    $('#hidden_is_reported').val('1');
-                    $('#hidden_rating_filter').val('');
-                } else {
-                    $('#hidden_is_reported').val('');
-                    $('#hidden_rating_filter').val(filter);
+                    hiddenIsReported.val('1');
+                } else if (filter !== 'recent') {
+                    hiddenRatingFilter.val(filter);
                 }
                 
-                $('#form-busqueda-inteligente').submit();
+                formBusqueda.submit();
             });
 
-            // --- Gestión de Reportar Reseña ---
+            // --- GESTIÓN DE REPORTES ---
             
-            // Al hacer clic en el botón Reportar
             $(document).on('click', '.btn-reportar-reseña', function() {
                 const calificacionId = $(this).data('id');
-                const negocio = $(this).data('negocio');
                 const usuario = $(this).data('usuario');
                 const calificacion = $(this).data('calificacion');
                 const comentario = $(this).data('comentario');
                 
-                // Llenar campos ocultos del modal
                 $('#reporte_calificacion_id').val(calificacionId);
                 $('#reporte_tema').val("Negocios");
                 
-                // Actualizar título del modal con el ID
                 const tituloBase = window.RedaAlojamientoJson["Reportar Reseña"] || "Reportar Reseña";
                 $('#modalReportarReseñaLabel').html(`<i class="fas fa-flag mr-2"></i> ${tituloBase} #${calificacionId}`);
 
@@ -155,65 +163,37 @@ export const guardarTicketSoporte = (formData) => {
                 };
                 
                 $('#reporte_link_error').val(JSON.stringify(linkErrorObj));
-                
-                // Limpiar textarea, resetear prioridad y limpiar errores
                 $('#mensaje').val('').removeClass('border-danger');
                 $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
                 $('#prioridad').val('Media');
-                
-                // Mostrar modal
                 $('#modalReportarReseña').modal('show');
             });
 
-            // Limpiar error visual mientras el usuario escribe
             $('#mensaje').on('input', function() {
-                const length = $(this).val().trim().length;
-                if (length >= 10) {
+                if ($(this).val().trim().length >= 10) {
                     $(this).removeClass('border-danger');
                     $('#mensaje_error').removeClass('text-danger').addClass('text-muted');
                 }
             });
 
-            // Manejar el envío del formulario de reporte
             $('#formReportarReseña').on('submit', async function(e) {
                 e.preventDefault();
-
                 const $mensaje = $('#mensaje');
-                const $errorLabel = $('#mensaje_error');
-                const textoMensaje = $mensaje.val().trim();
-
-                // Validación del lado del cliente para respuesta inmediata
-                if (textoMensaje.length < 10) {
+                if ($mensaje.val().trim().length < 10) {
                     $mensaje.addClass('border-danger').focus();
-                    $errorLabel.removeClass('text-muted').addClass('text-danger');
+                    $('#mensaje_error').removeClass('text-muted').addClass('text-danger');
                     return false;
                 }
                 
-                // Animación de espera (Directriz GEMINI.md)
                 window.RedaNotificaciones.esperar();
-
-                // Al serializar el formulario, se incluye automáticamente el campo 'vista_origen' 
-                // que agregamos como hidden input en la vista Blade.
                 const formData = $(this).serialize();
-                
-                // Ejecutamos la función llamada (Promesa)
                 const respuesta = await guardarTicketSoporte(formData);
 
                 if (respuesta.success) {
                     $('#modalReportarReseña').modal('hide');
-                    // Mostramos notificación de éxito
-                    window.RedaNotificaciones.notificar(
-                        window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!",
-                        respuesta.mensaje_usuario,
-                        'exito'
-                    );
+                    window.RedaNotificaciones.notificar(window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!", respuesta.mensaje_usuario, 'exito');
                 } else {
-                    // Mostramos notificación de error
-                    window.RedaNotificaciones.notificar(
-                        window.RedaAlojamientoJson["Error"] || "Error",
-                        respuesta.mensaje_usuario,
-                        'error'
-                    );
+                    window.RedaNotificaciones.notificar(window.RedaAlojamientoJson["Error"] || "Error", respuesta.mensaje_usuario, 'error');
                 }
             });
         });

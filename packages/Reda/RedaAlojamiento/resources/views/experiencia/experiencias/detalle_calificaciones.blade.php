@@ -33,23 +33,7 @@
                                 </div>
                                 <div class="mb-2 container-busqueda-superior">
                                     <div class="input-group cursor-pointer shadow-sm rounded-pill border overflow-hidden" id="trigger-busqueda-inteligente">
-                                        @php
-                                            $textoBusqueda = '';
-                                            if ($reviewId) {
-                                                $textoBusqueda = __('ID #') . $reviewId;
-                                            } elseif ($customerName) {
-                                                $textoBusqueda = $customerName;
-                                            } elseif ($isReported) {
-                                                $textoBusqueda = __('Reportadas');
-                                            } elseif ($ratingFilter == 'best') {
-                                                $textoBusqueda = __('Mejores');
-                                            } elseif ($ratingFilter == 'worst') {
-                                                $textoBusqueda = __('Peores');
-                                            } elseif ($busqueda) {
-                                                $textoBusqueda = $busqueda;
-                                            }
-                                        @endphp
-                                        <input type="text" class="form-control border-0 bg-white cursor-pointer" placeholder="{{ __('Búsqueda de reseñas...') }}" readonly value="{{ $textoBusqueda }}">
+                                        <input type="text" class="form-control border-0 bg-white cursor-pointer" placeholder="{{ __('Búsqueda de reseñas...') }}" readonly value="">
                                         <div class="input-group-append">
                                             <div class="btn btn-success border-0 px-3 d-flex align-items-center cursor-pointer" id="btn-icon-busqueda-inteligente">
                                                 <i class="fa fa-search"></i>
@@ -190,31 +174,34 @@
                 <div class="modal-body p-4">
                     {{-- Búsqueda por ID o Nombre --}}
                     <div class="row">
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label font-weight-700 text-14">{{ __('Buscar por ID o Nombre de Cliente') }}</label>
+                        <div class="col-md-6 mb-4">
+                            <label for="input_review_id" class="form-label font-weight-700 text-14">{{ __('Buscar por ID') }}</label>
                             <div class="input-group">
-                                <input type="text" id="input_puntual" class="form-control rounded-pill-left" placeholder="{{ __('ID de reseña o Nombre del cliente...') }}" list="listaClientes" autocomplete="off">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0 rounded-pill-left"><i class="fas fa-hashtag text-muted"></i></span>
+                                </div>
+                                <input type="text" name="review_id" id="input_review_id" class="form-control border-left-0 rounded-pill-right" placeholder="{{ __('Ej: 123') }}" value="{{ $reviewId }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="input_customer_name" class="form-label font-weight-700 text-14">{{ __('Buscar por Cliente') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0 rounded-pill-left"><i class="fas fa-user text-muted"></i></span>
+                                </div>
+                                <input type="text" name="customer_name" id="input_customer_name" class="form-control border-left-0 rounded-pill-right" placeholder="{{ __('Nombre del cliente...') }}" list="listaClientes" autocomplete="off" value="{{ $customerName }}">
                                 <datalist id="listaClientes">
                                     @foreach($nombresClientes as $nombre)
                                         <option value="{{ $nombre }}">
                                     @endforeach
                                 </datalist>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-primary px-3" id="btnBuscarID">
-                                        {{ __('Buscar ID') }}
-                                    </button>
-                                    <button type="button" class="btn btn-info px-3 rounded-pill-right" id="btnBuscarCliente">
-                                        {{ __('Buscar Cliente') }}
-                                    </button>
-                                </div>
                             </div>
-                            {{-- Campos ocultos para enviar al controlador --}}
-                            <input type="hidden" name="review_id" id="hidden_review_id" value="{{ $reviewId }}">
-                            <input type="hidden" name="customer_name" id="hidden_customer_name" value="{{ $customerName }}">
-                            <input type="hidden" name="rating_filter" id="hidden_rating_filter" value="{{ $ratingFilter }}">
-                            <input type="hidden" name="is_reported" id="hidden_is_reported" value="{{ $isReported }}">
                         </div>
                     </div>
+
+                    {{-- Campos ocultos para enviar al controlador (Filtros de estado) --}}
+                    <input type="hidden" name="rating_filter" id="hidden_rating_filter" value="{{ $ratingFilter }}">
+                    <input type="hidden" name="is_reported" id="hidden_is_reported" value="{{ $isReported }}">
 
                     <hr>
 
