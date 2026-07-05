@@ -59,29 +59,31 @@ class ExperienciaController extends Controller
 
         // 3. Aplicar Filtros si existen (para AJAX o búsqueda directa)
         if ($request->filled('nombre_comercio')) {
+            // SI SE BUSCA POR NOMBRE: Ignoramos los demás filtros para asegurar que aparezca
             $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
-        }
+        } else {
+            // SI NO HAY NOMBRE: Aplicamos filtros normales
+            if ($request->filled('categoria')) {
+                $query->where('categoria_negocio', $request->categoria);
+            }
 
-        if ($request->filled('categoria')) {
-            $query->where('categoria_negocio', $request->categoria);
-        }
+            $distanciaCalculada = false;
+            if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
+                $lat = $request->latitud;
+                $lng = $request->longitud;
+                $radio = $request->radio; // en km
 
-        $distanciaCalculada = false;
-        if ($request->filled('latitud') && $request->filled('longitud') && $request->filled('radio')) {
-            $lat = $request->latitud;
-            $lng = $request->longitud;
-            $radio = $request->radio; // en km
+                // Fórmula de Haversine para filtrar por distancia usando whereRaw (más robusto para filtrado puro)
+                $query->whereRaw("
+                    (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
+                    * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
+                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
+                ", [$lat, $lng, $lat, $radio]);
 
-            // Fórmula de Haversine para filtrar por distancia usando whereRaw (más robusto para filtrado puro)
-            $query->whereRaw("
-                (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
-                * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
-                + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
-            ", [$lat, $lng, $lat, $radio]);
-
-            $distanciaCalculada = true;
-        } elseif ($request->filled('ubicacion_texto')) {
-            $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+                $distanciaCalculada = true;
+            } elseif ($request->filled('ubicacion_texto')) {
+                $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+            }
         }
 
         // 4. Obtener Destacados (Filtrar por los que tienen plan_negocios y el plan sea destacado)

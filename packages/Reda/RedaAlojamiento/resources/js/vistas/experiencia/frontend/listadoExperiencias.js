@@ -92,11 +92,22 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             const $inputComercio = $('#input_nombre_comercio');
             const $inputProducto = $('#input_nombre_producto');
             const $inputServicio = $('#input_nombre_servicio');
+            const $selectCategoria = $('.filtro-categoria');
+            const $inputUbicacion = $('.filtro-ubicacion');
+            const $latInput = $('.filtro-lat');
+            const $lngInput = $('.filtro-lng');
 
             $inputComercio.on('input', function() {
                 if ($(this).val().length > 0) {
+                    // Limpiar otros textos
                     $inputProducto.val('');
                     $inputServicio.val('');
+                    
+                    // Limpiar Categoría y Ubicación (Prioridad absoluta al Nombre del Comercio)
+                    $selectCategoria.val('');
+                    $inputUbicacion.val('');
+                    $latInput.val('');
+                    $lngInput.val('');
                 }
             });
 
