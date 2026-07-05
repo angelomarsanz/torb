@@ -41,11 +41,11 @@
 
     <!-- Mensaje de resultados (Visible si hay búsqueda activa) -->
     @php
-        $hayBusqueda = request()->filled('nombre_comercio') || 
-                       request()->filled('nombre_producto') || 
-                       request()->filled('nombre_servicio') || 
-                       request()->filled('categoria') || 
-                       request()->filled('ubicacion_texto') || 
+        $hayBusqueda = request()->filled('nombre_comercio') ||
+                       request()->filled('nombre_producto') ||
+                       request()->filled('nombre_servicio') ||
+                       request()->filled('categoria') ||
+                       request()->filled('ubicacion_texto') ||
                        (request()->filled('latitud') && request()->filled('longitud')) ||
                        (request()->filled('radio') && request()->radio != 25);
     @endphp
@@ -53,10 +53,10 @@
     <div id="contenedor_mensaje_resultados" class="mb-5 text-center {{ $hayBusqueda ? '' : 'd-none' }}">
         <h5 class="text-dark">
             @if($totalExperiencias > 0)
-                <span id="cantidad_resultados_busqueda">{{ $totalExperiencias }}</span> 
+                <span id="cantidad_resultados_busqueda">{{ $totalExperiencias }}</span>
                 <span id="texto_resultados_busqueda">{{ trans_choice('comercio encontrado|comercios encontrados', $totalExperiencias) }}</span>
             @else
-                <span id="cantidad_resultados_busqueda" class="d-none">0</span> 
+                <span id="cantidad_resultados_busqueda" class="d-none">0</span>
                 <span id="texto_resultados_busqueda" class="text-danger">{{ __('No se encontraron comercios') }}</span>
             @endif
         </h5>
@@ -153,7 +153,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <!-- SECCIÓN 2: DESTACADOS -->
     <section class="seccion-productos mb-4 {{ $totalDestacados == 0 ? 'd-none' : '' }}" id="seccion_destacados">
@@ -170,7 +170,7 @@
         </div>
         <div class="container-carrusel-productos" id="contenedor_destacados">
             @include('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_cards', ['experiencias' => $destacados])
-            
+
             @if($totalDestacados > 10)
                 @include('reda-alojamiento::experiencia.experiencias.frontend.partials.card_ver_todos_negocios', [
                     'items' => $destacados,
@@ -219,16 +219,12 @@
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('vrent.google_map_key') }}&libraries=places"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    
+
     <script>
         window.nombresComercios = @json($nombresComercios);
         window.nombresProductos = @json($nombresProductos);
         window.nombresServicios = @json($nombresServicios);
         window.listaUbicaciones = @json($listaUbicaciones);
-        console.log('Comercios cargados para autocomplete:', window.nombresComercios);
-        console.log('Productos cargados para autocomplete:', window.nombresProductos);
-        console.log('Servicios cargados para autocomplete:', window.nombresServicios);
-        console.log('Ubicaciones cargadas para autocomplete:', window.listaUbicaciones);
     </script>
 
     @include('reda-alojamiento::general.main_footer')

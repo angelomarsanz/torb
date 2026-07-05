@@ -96,20 +96,20 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     appendTo: "#modalBusquedaComercios",
                     select: function(event, ui) {
                         const $parentForm = $(this).closest('form');
-                        
+
                         // 1. Limpiar otros filtros (Prioridad absoluta a la Ubicación seleccionada)
                         $('#input_nombre_comercio').val('');
                         $('#input_nombre_producto').val('');
                         $('#input_nombre_servicio').val('');
                         $('.filtro-categoria').val('');
-                        
+
                         // 2. Limpiar coordenadas anteriores para forzar búsqueda por texto
                         $parentForm.find('.filtro-lat').val('');
                         $parentForm.find('.filtro-lng').val('');
-                        
+
                         // 3. Activar modo ubicación (Resetea distancia)
                         activarModoUbicacion($parentForm);
-                        
+
                         setTimeout(() => {
                             ejecutarBusqueda($parentForm);
                         }, 100);
@@ -131,7 +131,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     // Limpiar otros textos
                     $inputProducto.val('');
                     $inputServicio.val('');
-                    
+
                     // Limpiar Categoría y Ubicación (Prioridad absoluta al Nombre del Comercio)
                     $selectCategoria.val('');
                     $inputUbicacion.val('');
@@ -161,6 +161,10 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     $inputProducto.val('');
                     $inputServicio.val('');
                     $selectCategoria.val('');
+
+                    // Limpiar coordenadas para forzar búsqueda por texto en el servidor
+                    $latInput.val('');
+                    $lngInput.val('');
                 }
             });
 
@@ -182,7 +186,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // Interacción con "Ver todos" (Scroll Infinito)
             $(document).on('click', '.card-ver-todos', function() {
                 const $card = $(this);
-                
+
                 // Capturar filtros actuales para el listado infinito
                 const $form = $('#form_busqueda_negocios_modal');
                 const extraData = {};
@@ -198,7 +202,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     urlBase: APP_URL + '/reda/negocios/listado-negocios/paginados',
                     extraData: extraData
                 };
-                
+
                 ListadoInfinito.iniciar(options);
             });
 
@@ -224,7 +228,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
             // 4. Manejar el envío del formulario (Enter o Botón)
             $(document).on('submit', '.form-busqueda-comercios', function(e) {
                 e.preventDefault();
-                
+
                 // Si el usuario escribió algo en productos o servicios pero no seleccionó del autocomplete,
                 // redirigimos a la vista de encontrados si esos inputs tienen valor.
                 const valProducto = $('#input_nombre_producto').val();
@@ -342,7 +346,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
 
                 if (respuestaBusqueda.success) {
                     const data = respuestaBusqueda.respuesta;
-                    
+
                     // Actualizar mensaje de conteo de resultados
                     const $contenedorMensaje = $('#contenedor_mensaje_resultados');
                     const $cantidadResultados = $('#cantidad_resultados_busqueda');
@@ -351,18 +355,18 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     if (data.total > 0) {
                         $cantidadResultados.text(data.total).removeClass('d-none');
                         $textoResultados.removeClass('text-danger');
-                        
+
                         // Lógica sutil de pluralización basada en el key de es.json
                         const rawString = window.RedaAlojamientoJson['comercio encontrado|comercios encontrados'] || 'comercio encontrado|comercios encontrados';
                         const parts = rawString.split('|');
                         const textoPlural = data.total === 1 ? (parts[0] || 'comercio encontrado') : (parts[1] || 'comercios encontrados');
-                        
+
                         $textoResultados.text(textoPlural);
                     } else {
                         $cantidadResultados.text('0').addClass('d-none');
                         $textoResultados.text(window.RedaAlojamientoJson['No se encontraron comercios'] || 'No se encontraron comercios').addClass('text-danger');
                     }
-                    
+
                     $contenedorMensaje.removeClass('d-none');
 
                     // Actualizar visibilidad y contenido de destacados
@@ -376,7 +380,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     // Actualizar contenido general y quitar estado de carga
                     $contenedorGeneral.html(data.html_general).removeClass('is-loading-ajax');
                     $contenedorDestacados.removeClass('is-loading-ajax');
-                    
+
                     // Re-inicializar comportamientos de carrusel tras actualización AJAX
                     $('.container-carrusel-productos').each(function() {
                         actualizarBotonesCarrusel($(this));
@@ -386,7 +390,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     console.error(respuestaBusqueda.message);
                     $contenedorDestacados.removeClass('is-loading-ajax');
                     $contenedorGeneral.removeClass('is-loading-ajax');
-                    
+
                     // Notificar error al usuario
                     window.RedaNotificaciones.notificar(
                         window.RedaAlojamientoJson['Error'] || 'Error',

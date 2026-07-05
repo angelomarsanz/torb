@@ -63,7 +63,21 @@ class ExperienciaController extends Controller
             $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
         } elseif ($request->filled('ubicacion_texto')) {
             // PRIORIDAD 2: Búsqueda por Ubicación sugerida (Ignora distancia y categoría)
-            $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+            $busqueda = $request->ubicacion_texto;
+            $query->where(function($q) use ($busqueda) {
+                $term = '%' . $busqueda . '%';
+                // 1. Coincidencia en busqueda_mapa o concatenación sin país (para búsqueda parcial)
+                $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.busqueda_mapa')) LIKE ?", [$term])
+                  ->orWhereRaw("CONCAT_WS(', ',
+                        JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.linea_uno_direccion')),
+                        JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.ciudad')),
+                        JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.estado'))
+                    ) LIKE ?", [$term])
+                  // 2. Búsqueda inversa: verifica que la dirección y ciudad del registro existan dentro de la sugerencia seleccionada
+                  // Esto resuelve el conflicto entre "Venezuela" (nombre) y "VE" (código en BD)
+                  ->orWhereRaw("? LIKE CONCAT('%', JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.linea_uno_direccion')), '%')
+                                AND ? LIKE CONCAT('%', JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.ciudad')), '%')", [$busqueda, $busqueda]);
+            });
         } else {
             // PRIORIDAD 3: Filtros normales (Categoría y Distancia por GPS)
             if ($request->filled('categoria')) {
@@ -95,7 +109,7 @@ class ExperienciaController extends Controller
                         ->where('plan_negocios', '<>', '[]')
                         ->where('plan_negocios', '<>', '{}')
                         ->whereIn('plan_negocios->plan_id', $idsPlanesDestacados);
-        
+
         // Ordenar destacados: si hay búsqueda por radio, el orden por defecto es el de la query filtrada
         $destacados = $destacadosQuery->orderBy('id', 'desc')->take(10)->get();
         $totalDestacados = $destacadosQuery->count();
@@ -172,14 +186,42 @@ class ExperienciaController extends Controller
         // 7. Listas para búsqueda inteligente
         $nombresComercios = Experiencia::distinct()->whereNotNull('titulo')->pluck('titulo')->toArray();
 
-        $listaUbicaciones = Experiencia::whereNotNull('ubicacion')
-            ->get()
-            ->pluck('ubicacion.busqueda_mapa')
-            ->filter()
-            ->unique()
-            ->values()
-            ->toArray();
-        
+        // Obtener nombres de países para el mapeo de códigos ISO
+        $nombresPaises = Country::pluck('name', 'short_name')->toArray();
+
+        // Obtener todas las experiencias con ubicación para construir el vector inteligente
+        $experienciasConUbicacion = Experiencia::whereNotNull('ubicacion')->get();
+        $sugerenciasUbicacion = [];
+
+        foreach ($experienciasConUbicacion as $item) {
+            $u = $item->ubicacion;
+            if (!$u || !is_array($u)) continue;
+
+            // Vía 1: busqueda_mapa (Google Places o similar)
+            if (!empty($u['busqueda_mapa'])) {
+                $sugerenciasUbicacion[] = $u['busqueda_mapa'];
+            }
+
+            // Vía 2: Concatenación de atributos específicos
+            $partes = [];
+            if (!empty($u['linea_uno_direccion'])) $partes[] = $u['linea_uno_direccion'];
+            if (!empty($u['ciudad'])) $partes[] = $u['ciudad'];
+            if (!empty($u['estado'])) $partes[] = $u['estado'];
+
+            if (!empty($u['pais'])) {
+                $codigo = $u['pais'];
+                // Si existe el nombre en la tabla de países, lo usamos; si no, el código original
+                $partes[] = $nombresPaises[$codigo] ?? $codigo;
+            }
+
+            if (count($partes) > 0) {
+                $sugerenciasUbicacion[] = implode(', ', $partes);
+            }
+        }
+
+        // Limpiar, eliminar duplicados y reindexar
+        $listaUbicaciones = array_values(array_unique(array_filter($sugerenciasUbicacion)));
+
         $nombresProductos = ActividadExperiencia::where('tipo_producto_servicio', 'producto')
             ->where('estatus_producto_servicio', 'activo')
             ->whereNotNull('nombre_actividad')
@@ -277,7 +319,20 @@ class ExperienciaController extends Controller
                 $query->where('titulo', 'like', '%' . $request->nombre_comercio . '%');
             } elseif ($request->filled('ubicacion_texto')) {
                 // PRIORIDAD 2: Búsqueda por Ubicación sugerida (Ignora distancia y categoría)
-                $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
+                $busqueda = $request->ubicacion_texto;
+                $query->where(function($q) use ($busqueda) {
+                    $term = '%' . $busqueda . '%';
+                    // 1. Coincidencia en busqueda_mapa o concatenación sin país
+                    $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.busqueda_mapa')) LIKE ?", [$term])
+                      ->orWhereRaw("CONCAT_WS(', ',
+                            JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.linea_uno_direccion')),
+                            JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.ciudad')),
+                            JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.estado'))
+                        ) LIKE ?", [$term])
+                      // 2. Búsqueda inversa para coincidencia exacta con sugerencias del autocomplete
+                      ->orWhereRaw("? LIKE CONCAT('%', JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.linea_uno_direccion')), '%')
+                                    AND ? LIKE CONCAT('%', JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.ciudad')), '%')", [$busqueda, $busqueda]);
+                });
             } else {
                 // PRIORIDAD 3: Filtros normales (Categoría y Distancia por GPS)
                 if ($request->filled('categoria')) {
@@ -423,7 +478,7 @@ class ExperienciaController extends Controller
             $complementos = json_decode($actividad->precios_monedas_complementarios, true);
             return isset($complementos['precio_promocion']) && floatval($complementos['precio_promocion']) > 0;
         });
-        
+
         $promociones = $promocionesCompletas->take(10);
         $totalPromociones = $promocionesCompletas->count();
 
@@ -475,7 +530,7 @@ class ExperienciaController extends Controller
         try {
             $offset = $request->get('offset', 0);
             $limit = 10;
-            $tipo = $request->get('tipo', 'todas'); 
+            $tipo = $request->get('tipo', 'todas');
             $esModal = $request->get('es_modal', false);
             $tipoActividadFiltro = $request->get('tipo_actividad'); // 'producto' o 'servicio'
 
@@ -525,7 +580,7 @@ class ExperienciaController extends Controller
 
                 foreach ($items as $item) {
                     $view = 'reda-alojamiento::experiencia.experiencias.frontend.partials.card_producto_servicio';
-                    
+
                     if ($esModal) {
                         $html .= '<div class="col-12 col-lg-6 item-col-infinito">';
                         $html .= view($view, [
@@ -961,17 +1016,17 @@ class ExperienciaController extends Controller
                     // --- VALIDACIÓN DE REQUISITOS PARA PLANES DESTACADOS ---
                     $plan = PlanNegocio::find($request->plan_id);
                     if ($plan && $plan->destacado) {
-                        
+
                         // 1. Verificar Antigüedad
                         $settingAntiguedad = DB::table('settings')->where('name', 'antiguedad_planes_destacados')->first();
                         if ($settingAntiguedad) {
                             $config = json_decode($settingAntiguedad->value, true);
                             $cantidadReq = $config['cantidad'] ?? 0;
                             $unidadReq = $config['unidad_tiempo'] ?? 'Mes(es)';
-                            
+
                             $fechaCreacion = \Carbon\Carbon::parse($result->created_at);
                             $antiguedadReal = 0;
-                            
+
                             if ($unidadReq == 'Año(s)') {
                                 $antiguedadReal = $fechaCreacion->diffInYears(now());
                             } elseif ($unidadReq == 'Mes(es)') {
@@ -979,21 +1034,21 @@ class ExperienciaController extends Controller
                             } else {
                                 $antiguedadReal = $fechaCreacion->diffInDays(now());
                             }
-                            
+
                             if ($antiguedadReal < $cantidadReq) {
                                 return back()->with('error_destacado', __('Su comercio no cumple con el requisito de antigüedad mínima de :cantidad :unidad para optar a un plan destacado.', [
-                                    'cantidad' => $cantidadReq, 
+                                    'cantidad' => $cantidadReq,
                                     'unidad' => __($unidadReq)
                                 ]));
                             }
                         }
-                        
+
                         // 2. Verificar Promedio de Calificaciones
                         $settingPromedio = DB::table('settings')->where('name', 'promedio_calificaciones_planes_destacados')->first();
                         if ($settingPromedio) {
                             $promedioMinimo = (float) $settingPromedio->value;
                             $promedioReal = (float) CalificacionExperiencia::where('experiencia_id', $id)->avg('estrellas') ?? 0;
-                            
+
                             if ($promedioReal < $promedioMinimo) {
                                 return back()->with('error_destacado', __('Su comercio no cumple con el promedio de calificaciones mínimo de :promedio estrellas para optar a un plan destacado.', [
                                     'promedio' => $promedioMinimo
