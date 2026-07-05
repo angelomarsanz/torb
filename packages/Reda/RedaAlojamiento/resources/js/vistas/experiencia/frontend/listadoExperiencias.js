@@ -88,7 +88,7 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 });
             }
 
-            // Inicializar Autocomplete para ubicaciones existentes en BD
+            // Inicializar Autocomplete para UBICACIONES EXISTENTES EN BD (Sustituye a Google Places)
             if (window.listaUbicaciones && $('.filtro-ubicacion').length) {
                 $('.filtro-ubicacion').autocomplete({
                     source: window.listaUbicaciones,
@@ -96,10 +96,19 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     appendTo: "#modalBusquedaComercios",
                     select: function(event, ui) {
                         const $parentForm = $(this).closest('form');
-                        // Al seleccionar de la lista local, no tenemos lat/lng nuevos,
-                        // la búsqueda en servidor usará el texto 'ubicacion_texto'
+                        
+                        // 1. Limpiar otros filtros (Prioridad absoluta a la Ubicación seleccionada)
+                        $('#input_nombre_comercio').val('');
+                        $('#input_nombre_producto').val('');
+                        $('#input_nombre_servicio').val('');
+                        $('.filtro-categoria').val('');
+                        
+                        // 2. Limpiar coordenadas anteriores para forzar búsqueda por texto
                         $parentForm.find('.filtro-lat').val('');
                         $parentForm.find('.filtro-lng').val('');
+                        
+                        // 3. Activar modo ubicación (Resetea distancia)
+                        activarModoUbicacion($parentForm);
                         
                         setTimeout(() => {
                             ejecutarBusqueda($parentForm);
@@ -152,7 +161,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     $inputProducto.val('');
                     $inputServicio.val('');
                     $selectCategoria.val('');
-                    // El slider se resetea vía activarModoUbicacion al disparar búsqueda
                 }
             });
 
@@ -192,30 +200,6 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 };
                 
                 ListadoInfinito.iniciar(options);
-            });
-
-            // 1. Inicializar Google Places Autocomplete para el input de ubicación
-            const inputsUbicacion = document.querySelectorAll('.filtro-ubicacion');
-            inputsUbicacion.forEach(input => {
-                const autocomplete = new google.maps.places.Autocomplete(input);
-                autocomplete.addListener('place_changed', function() {
-                    const place = autocomplete.getPlace();
-                    if (place.geometry) {
-                        const $parentForm = $(input).closest('form');
-                        $parentForm.find('.filtro-lat').val(place.geometry.location.lat());
-                        $parentForm.find('.filtro-lng').val(place.geometry.location.lng());
-
-                        // Limpiar otros filtros (Prioridad absoluta a la Ubicación seleccionada)
-                        $inputComercio.val('');
-                        $inputProducto.val('');
-                        $inputServicio.val('');
-                        $selectCategoria.val('');
-
-                        // Cambiar modo a ubicación
-                        activarModoUbicacion($parentForm);
-                        ejecutarBusqueda($parentForm);
-                    }
-                });
             });
 
             // 2. Manejar el rango de distancia (Sync displays)
