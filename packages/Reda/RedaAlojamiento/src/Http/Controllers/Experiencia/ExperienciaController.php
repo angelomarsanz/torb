@@ -274,14 +274,13 @@ class ExperienciaController extends Controller
                 $lng = $request->longitud;
                 $radio = $request->radio;
 
-                // Fórmula de Haversine para filtrar por distancia y SELECCIONAR la distancia
-                $query->addSelect('*')->selectRaw("
+                // Fórmula de Haversine para filtrar por distancia usando whereRaw (más robusto para filtrado puro)
+                $query->whereRaw("
                     (6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud'))))
                     * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.longitud'))) - radians(?))
-                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) AS distancia
-                ", [$lat, $lng, $lat]);
+                    + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(ubicacion, '$.latitud')))))) <= ?
+                ", [$lat, $lng, $lat, $radio]);
 
-                $query->having('distancia', '<=', $radio);
                 $distanciaCalculada = true;
             } elseif ($request->filled('ubicacion_texto')) {
                 $query->where('ubicacion', 'like', '%' . $request->ubicacion_texto . '%');
