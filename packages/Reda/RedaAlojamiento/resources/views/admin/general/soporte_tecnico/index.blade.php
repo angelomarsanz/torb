@@ -31,7 +31,8 @@
                                     <tr class="soporte-tecnico-header-row">
                                         <th class="soporte-tecnico-w-5 text-center">{{ __('ID') }}</th>
                                         <th class="soporte-tecnico-w-15">{{ __('Usuario') }}</th>
-                                        <th class="soporte-tecnico-w-25">{{ __('Tema') }}</th>
+                                        <th class="soporte-tecnico-w-15">{{ __('Comercio') }}</th>
+                                        <th class="soporte-tecnico-w-20">{{ __('Tema') }}</th>
                                         <th class="soporte-tecnico-w-10 text-center">{{ __('Prioridad') }}</th>
                                         <th class="soporte-tecnico-w-10 text-center">{{ __('Estatus') }}</th>
                                         <th class="soporte-tecnico-w-15 text-center">{{ __('Fecha') }}</th>
@@ -56,10 +57,13 @@
                                                     @endif
                                                 </td>
                                                 <td>
+                                                    {{ $ticket->nombre_comercio ?? __('N/A') }}
+                                                </td>
+                                                <td>
                                                     {{ $ticket->tema }}
                                                     @if($ticket->link_error)
-                                                        <i class="fa fa-info-circle text-info ms-1 cursor-pointer btn-info-tecnica" 
-                                                           data-toggle="popover" 
+                                                        <i class="fa fa-info-circle text-info ms-1 cursor-pointer btn-info-tecnica"
+                                                           data-toggle="popover"
                                                            data-content='<ul class="list-unstyled mb-0 f-12">@if(is_array($ticket->link_error) || is_object($ticket->link_error))@foreach($ticket->link_error as $k => $v)<li><strong>{{ ucfirst(str_replace("_", " ", $k)) }}:</strong> {{ is_array($v) ? json_encode($v) : $v }}</li>@endforeach @else <li>{{ $ticket->link_error }}</li> @endif</ul>'
                                                            data-html="true"
                                                            data-trigger="hover"
@@ -120,6 +124,11 @@
                                                         {{ __('N/A') }}
                                                     @endif
                                                 </span>
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Comercio') }}</small>
+                                                <span class="f-14 fw-bold">{{ $ticket->nombre_comercio ?? __('N/A') }}</span>
                                             </div>
 
                                             <div class="mb-2">
@@ -192,11 +201,16 @@
                         <label class="form-label fw-bold text-dark mb-2">{{ __('Búsqueda rápida') }}</label>
                         <div class="input-group mb-3 shadow-sm">
                             <span class="input-group-addon bg-white border-end-0"><i class="fa fa-keyboard-o text-muted"></i></span>
-                            <input type="text" id="input_puntual" list="lista_usuarios" class="form-control border-start-0" placeholder="{{ __('ID del ticket o nombre del usuario...') }}">
-                            <datalist id="lista_usuarios">
+                            <input type="text" id="input_puntual" list="lista_busqueda_combinada" class="form-control border-start-0" placeholder="{{ __('ID, usuario o comercio...') }}">
+                            <datalist id="lista_busqueda_combinada">
                                 @if(isset($usuariosConTickets))
                                     @foreach($usuariosConTickets as $nombre)
                                         <option value="{{ $nombre }}">
+                                    @endforeach
+                                @endif
+                                @if(isset($comerciosConTickets))
+                                    @foreach($comerciosConTickets as $comercio)
+                                        <option value="{{ $comercio }}">
                                     @endforeach
                                 @endif
                             </datalist>
@@ -208,10 +222,14 @@
                             <button type="button" class="btn btn-info btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="nombre">
                                 <i class="fa fa-user me-1"></i> {{ __('Por nombre del usuario') }}
                             </button>
+                            <button type="button" class="btn btn-success btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="comercio">
+                                <i class="fa fa-building me-1"></i> {{ __('Por nombre del comercio') }}
+                            </button>
                         </div>
                         {{-- Campos ocultos que se enviarán al servidor --}}
                         <input type="hidden" name="id" id="search_id">
                         <input type="hidden" name="nombre_usuario" id="search_nombre">
+                        <input type="hidden" name="nombre_comercio" id="search_comercio">
                     </div>
 
                     <div class="separator separator-dashed border-gray-300 my-4"></div>

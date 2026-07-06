@@ -32,6 +32,27 @@ class SoporteTecnicoController extends Controller
             });
         }
 
+        // Filtrado por nombre de comercio (basado en el contenido de link_error)
+        if ($request->filled('nombre_comercio')) {
+            $nombreComercio = $request->nombre_comercio;
+
+            // Buscamos IDs de calificaciones que pertenecen a comercios con ese nombre
+            $calificacionesIds = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::whereHas('experiencia', function($q) use ($nombreComercio) {
+                $q->where('titulo', 'LIKE', "%$nombreComercio%");
+            })->pluck('id');
+
+            // Filtramos tickets cuyo link_error contenga alguno de esos IDs en formato JSON
+            if ($calificacionesIds->isNotEmpty()) {
+                $query->where(function($q) use ($calificacionesIds) {
+                    foreach ($calificacionesIds as $id) {
+                        $q->orWhere('link_error', 'LIKE', "%\"id_reseña\":$id%")
+                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_reseña\":$id%")
+                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_rese\\u00f1a\":$id%");
+                    }
+                });
+            }
+        }
+
         // Filtrado por tema
         if ($request->filled('tema')) {
             $query->where('tema', $request->tema);
@@ -67,7 +88,10 @@ class SoporteTecnicoController extends Controller
             ->orderBy('nombre')
             ->pluck('nombre');
 
-        return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets', 'temas', 'usuariosConTickets'));
+        // Obtener nombres de comercios únicos para el buscador
+        $comerciosConTickets = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::orderBy('titulo')->pluck('titulo');
+
+        return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets', 'temas', 'usuariosConTickets', 'comerciosConTickets'));
     }
 
     /**
@@ -79,10 +103,10 @@ class SoporteTecnicoController extends Controller
     public function show($id)
     {
         $ticket = SoporteTecnico::with('user')->findOrFail($id);
-        
+
         // Verificamos si el recurso vinculado (ej: reseña) aún existe
         $ticket->recurso_existe = $ticket->verificarExistenciaRecurso();
-        
+
         return view('reda-alojamiento::admin.general.soporte_tecnico.show', compact('ticket'));
     }
 

@@ -57,9 +57,9 @@ class SoporteTecnico extends Model
         return Attribute::make(
             get: function ($value) {
                 if (is_null($value)) return [];
-                
+
                 $datos = $value;
-                
+
                 // Decodificación recursiva: mientras sea un string, intentamos decodificarlo
                 // Esto maneja casos de doble o triple codificación JSON heredada
                 while (is_string($datos) && !empty($datos)) {
@@ -79,6 +79,36 @@ class SoporteTecnico extends Model
 
                 // Si quedó como un string no JSON, lo envolvemos en un array bajo la clave 'mensaje'
                 return ['url' => $datos];
+            },
+        );
+    }
+
+    /**
+     * Accessor para obtener el nombre del comercio asociado a través del link_error.
+     * Sigue la ruta: link_error -> id_de_la_reseña -> CalificacionExperiencia -> Experiencia -> titulo.
+     */
+    protected function nombreComercio(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $datos = $this->link_error;
+                if (empty($datos) || !is_array($datos)) return null;
+
+                // Solo si el ticket es sobre reportar una calificación
+                $vistaOrigen = $datos['vista_origen'] ?? '';
+                if ($vistaOrigen === 'Reportar calificación') {
+                    // Soporte para variaciones de nombre de clave y problemas de codificación JSON heredada
+                    $idReseña = $datos['id_reseña'] ?? $datos['id_de_la_reseña'] ?? $datos['id_de_la_rese\u00f1a'] ?? null;
+
+                    if ($idReseña) {
+                        // Obtenemos la calificación y su comercio (experiencia) vinculado
+                        $calificacion = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::with('experiencia')->find($idReseña);
+                        if ($calificacion && $calificacion->experiencia) {
+                            return $calificacion->experiencia->titulo;
+                        }
+                    }
+                }
+                return null;
             },
         );
     }
@@ -110,7 +140,7 @@ class SoporteTecnico extends Model
                     return \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::where('id', $id)->exists();
                 }
                 break;
-            
+
             // Aquí se pueden agregar otros casos a futuro (ej: 'Reportar negocio', 'Reportar mensaje', etc.)
         }
 

@@ -49,11 +49,14 @@
             $('#form_busqueda_soporte').find('select, input[type="date"]').val('');
             $('#search_id').val('');
             $('#search_nombre').val('');
+            $('#search_comercio').val('');
 
             if (tipo === 'id') {
                 $('#search_id').val(valor);
-            } else {
+            } else if (tipo === 'nombre') {
                 $('#search_nombre').val(valor);
+            } else if (tipo === 'comercio') {
+                $('#search_comercio').val(valor);
             }
 
             // Mostrar animación e iniciar búsqueda (submit del form)
@@ -83,7 +86,7 @@
         $(document).on('input', '#input_puntual', function() {
             const valor = $(this).val().trim();
             const dataList = $('#lista_usuarios');
-            
+
             if (dataList.length && valor.length > 3) {
                 const existeEnLista = dataList.find('option').filter(function() {
                     return $(this).val() === valor;
@@ -135,4 +138,3 @@
     }
 
 })(jQuery);
-
