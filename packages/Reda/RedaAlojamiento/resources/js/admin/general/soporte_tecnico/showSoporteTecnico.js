@@ -121,9 +121,16 @@
                         } catch (e) {
                             respuestaServidor = {};
                         }
+
+                        const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                        const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
                         let respuesta = {
                             'success': false,
-                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? (window.RedaAlojamientoJson["Error al cerrar el ticket"] || 'Error al cerrar el ticket'),
+                            'message' : window.RedaAlojamientoJson["Error al cerrar el ticket"] || 'Error al cerrar el ticket',
+                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                            'respuesta': respuestaServidor.respuesta || '',
+                            'code': x.status !== 0 ? x.status : 504,
                         };
                         resolve(respuesta);
                     }

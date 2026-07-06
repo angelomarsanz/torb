@@ -1471,13 +1471,14 @@ class ExperienciaController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
+                $respuesta = [
                     'success' => false,
                     'message' => 'Validation error',
                     'mensaje_usuario' => __('Por favor complete todos los campos del horario.'),
                     'respuesta' => $validator->errors(),
                     'code' => 422
-                ], 422);
+                ];
+                return response()->json($respuesta, $respuesta['code']);
             }
 
             $nuevoHorario = [
@@ -1494,21 +1495,24 @@ class ExperienciaController extends Controller
             $experiencia->horarios = $horarios;
             $experiencia->save();
 
-            return response()->json([
+            $respuesta = [
                 'success' => true,
                 'message' => 'Schedule saved successfully',
                 'mensaje_usuario' => __('Horario guardado con éxito'),
                 'respuesta' => $horarios,
                 'code' => 200
-            ]);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+
         } catch (\Exception $e) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
                 'message' => $e->getMessage(),
                 'mensaje_usuario' => __('Error al guardar el horario'),
                 'respuesta' => '',
                 'code' => 500
-            ], 500);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
     }
 
@@ -1525,21 +1529,24 @@ class ExperienciaController extends Controller
                 $experiencia->save();
             }
 
-            return response()->json([
+            $respuesta = [
                 'success' => true,
                 'message' => 'Schedule deleted successfully',
                 'mensaje_usuario' => __('Horario eliminado con éxito'),
                 'respuesta' => $horarios,
                 'code' => 200
-            ]);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
+
         } catch (\Exception $e) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
                 'message' => $e->getMessage(),
                 'mensaje_usuario' => __('Error al eliminar el horario'),
                 'respuesta' => '',
                 'code' => 500
-            ], 500);
+            ];
+            return response()->json($respuesta, $respuesta['code']);
         }
     }
 }
