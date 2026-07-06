@@ -73,9 +73,14 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if($ticket->admin)
-                                                        <span class="badge badge-light-success fw-bold">{{ $ticket->admin->username }}</span>
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <div class="symbol symbol-30px symbol-circle me-2">
+                                                                <span class="symbol-label bg-light-success text-success fw-bold">{{ substr(trim($ticket->admin->username), 0, 1) }}</span>
+                                                            </div>
+                                                            <span class="text-muted">{{ $ticket->admin->username }}</span>
+                                                        </div>
                                                     @else
-                                                        <span class="text-muted small">{{ __('N/A') }}</span>
+                                                        <span class="text-muted small italic">{{ __('N/A') }}</span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
@@ -145,11 +150,16 @@
                                             </div>
 
                                             <div class="mb-2">
-                                                <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Gestionado por') }}</small>
+                                                <small class="text-muted d-block soporte-tecnico-label-small text-success">{{ __('Gestionado por') }}</small>
                                                 @if($ticket->admin)
-                                                    <span class="badge badge-light-success fw-bold">{{ $ticket->admin->username }}</span>
+                                                    <div class="d-flex align-items-center mt-1">
+                                                        <div class="symbol symbol-30px symbol-circle me-2">
+                                                            <span class="symbol-label bg-light-success text-success fw-bold">{{ substr(trim($ticket->admin->username), 0, 1) }}</span>
+                                                        </div>
+                                                        <span class="f-14 fw-bold">{{ $ticket->admin->username }}</span>
+                                                    </div>
                                                 @else
-                                                    <span class="text-muted small">{{ __('N/A') }}</span>
+                                                    <span class="text-muted small italic">{{ __('N/A') }}</span>
                                                 @endif
                                             </div>
 
