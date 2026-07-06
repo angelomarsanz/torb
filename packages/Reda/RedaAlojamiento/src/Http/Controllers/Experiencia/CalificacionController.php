@@ -344,7 +344,7 @@ class CalificacionController extends Controller
                     $ticket->update([
                         'estatus' => 'Cerrado',
                         'resultado_gestion' => 'Reseña eliminada',
-                        'id_usuario_gestor' => $idAdmin, // Guardamos estrictamente el ID de la tabla "admin"
+                        'admin_id' => $idAdmin, // Guardamos estrictamente el ID de la tabla "admin"
                         'fecha_cambio_estatus' => now(),
                         'mensaje_soporte_tecnico' => $ticket->mensaje_soporte_tecnico . "\n\n" . __('Acción automática: Reseña eliminada por el administrador.')
                     ]);

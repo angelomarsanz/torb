@@ -26,7 +26,7 @@ class SoporteTecnico extends Model
         'tema',
         'mensaje_usuario',
         'link_error',
-        'id_usuario_gestor',
+        'admin_id',
         'estatus',
         'resultado_gestion',
         'fecha_cambio_estatus',
@@ -135,9 +135,9 @@ class SoporteTecnico extends Model
     /**
      * Relación con el administrador que gestionó el ticket.
      */
-    public function gestor()
+    public function admin()
     {
-        return $this->belongsTo(Admin::class, 'id_usuario_gestor');
+        return $this->belongsTo(Admin::class, 'admin_id');
     }
 
     /**

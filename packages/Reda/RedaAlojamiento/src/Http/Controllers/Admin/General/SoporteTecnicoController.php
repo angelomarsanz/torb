@@ -18,7 +18,7 @@ class SoporteTecnicoController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SoporteTecnico::with(['user', 'gestor']); // Eager load user y gestor
+        $query = SoporteTecnico::with(['user', 'admin']); // Eager load user y gestor (admin)
 
         // Filtrado por ID puntual
         if ($request->filled('id')) {
@@ -108,7 +108,7 @@ class SoporteTecnicoController extends Controller
      */
     public function show($id)
     {
-        $ticket = SoporteTecnico::with(['user', 'gestor'])->findOrFail($id);
+        $ticket = SoporteTecnico::with(['user', 'admin'])->findOrFail($id);
 
         // Verificamos si el recurso vinculado (ej: reseña) aún existe
         $ticket->recurso_existe = $ticket->verificarExistenciaRecurso();
@@ -142,7 +142,7 @@ class SoporteTecnicoController extends Controller
             $ticket->update([
                 'estatus' => 'Cerrado',
                 'resultado_gestion' => $resultado,
-                'id_usuario_gestor' => $idAdmin,
+                'admin_id' => $idAdmin,
                 'fecha_cambio_estatus' => now(),
                 'mensaje_soporte_tecnico' => $ticket->mensaje_soporte_tecnico . "\n\n" . __("Acción manual: Ticket cerrado con resultado: :resultado", ['resultado' => $resultado])
             ]);

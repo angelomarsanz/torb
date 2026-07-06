@@ -72,8 +72,8 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    @if($ticket->gestor)
-                                                        <span class="badge badge-light-success fw-bold">{{ $ticket->gestor->username }}</span>
+                                                    @if($ticket->admin)
+                                                        <span class="badge badge-light-success fw-bold">{{ $ticket->admin->username }}</span>
                                                     @else
                                                         <span class="text-muted small">{{ __('N/A') }}</span>
                                                     @endif
@@ -146,8 +146,8 @@
 
                                             <div class="mb-2">
                                                 <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Gestionado por') }}</small>
-                                                @if($ticket->gestor)
-                                                    <span class="badge badge-light-success fw-bold">{{ $ticket->gestor->username }}</span>
+                                                @if($ticket->admin)
+                                                    <span class="badge badge-light-success fw-bold">{{ $ticket->admin->username }}</span>
                                                 @else
                                                     <span class="text-muted small">{{ __('N/A') }}</span>
                                                 @endif

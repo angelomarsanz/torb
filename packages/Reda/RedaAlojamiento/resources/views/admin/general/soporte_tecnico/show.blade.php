@@ -36,12 +36,12 @@
                             <div class="col-md-3 border-right">
                                 <strong><i class="fa fa-user-shield margin-r-5 text-success"></i> {{ __('Gestor') }}</strong>
                                 <div class="d-flex align-items-center mt-1">
-                                    @if($ticket->gestor)
+                                    @if($ticket->admin)
                                         <div class="symbol symbol-30px symbol-circle me-2">
-                                            <span class="symbol-label bg-light-success text-success fw-bold">{{ substr(trim($ticket->gestor->username), 0, 1) }}</span>
+                                            <span class="symbol-label bg-light-success text-success fw-bold">{{ substr(trim($ticket->admin->username), 0, 1) }}</span>
                                         </div>
                                         <span class="text-muted">
-                                            {{ $ticket->gestor->username }}
+                                            {{ $ticket->admin->username }}
                                         </span>
                                     @else
                                         <span class="text-muted small italic">{{ __('N/A') }}</span>
@@ -102,8 +102,8 @@
                                     <div class="col-12 mb-3 d-flex align-items-center">
                                         <div class="symbol symbol-30px symbol-circle me-2">
                                             <span class="symbol-label bg-light-success text-success fw-bold">
-                                                @if($ticket->gestor)
-                                                    {{ substr(trim($ticket->gestor->username), 0, 1) }}
+                                                @if($ticket->admin)
+                                                    {{ substr(trim($ticket->admin->username), 0, 1) }}
                                                 @else
                                                     ?
                                                 @endif
@@ -112,8 +112,8 @@
                                         <div>
                                             <small class="text-muted d-block soporte-tecnico-label-small text-success">{{ __('Gestionado por') }}</small>
                                             <span class="f-14 fw-bold">
-                                                @if($ticket->gestor)
-                                                    {{ $ticket->gestor->username }}
+                                                @if($ticket->admin)
+                                                    {{ $ticket->admin->username }}
                                                 @else
                                                     <span class="text-muted small italic">{{ __('N/A') }}</span>
                                                 @endif
