@@ -4,6 +4,7 @@ namespace Reda\RedaAlojamiento\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class SoporteTecnico extends Model
@@ -25,7 +26,7 @@ class SoporteTecnico extends Model
         'tema',
         'mensaje_usuario',
         'link_error',
-        'asignado_a',
+        'id_usuario_gestor',
         'estatus',
         'resultado_gestion',
         'fecha_cambio_estatus',
@@ -85,7 +86,8 @@ class SoporteTecnico extends Model
 
     /**
      * Accessor para obtener el nombre del comercio asociado a través del link_error.
-     * Sigue la ruta: link_error -> id_de_la_reseña -> CalificacionExperiencia -> Experiencia -> titulo.
+     * Prioriza el nuevo atributo id_experiencia.
+     * Fallback: link_error -> id_de_la_reseña -> CalificacionExperiencia -> Experiencia -> titulo.
      */
     protected function nombreComercio(): Attribute
     {
@@ -94,7 +96,16 @@ class SoporteTecnico extends Model
                 $datos = $this->link_error;
                 if (empty($datos) || !is_array($datos)) return null;
 
-                // Solo si el ticket es sobre reportar una calificación
+                // 1. Prioridad: Intentamos obtener id_experiencia directamente
+                $idExperiencia = $datos['id_experiencia'] ?? null;
+                if ($idExperiencia) {
+                    $experiencia = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::find($idExperiencia);
+                    if ($experiencia) {
+                        return $experiencia->titulo;
+                    }
+                }
+
+                // 2. Fallback: Lógica antigua basada en el reporte de calificación (para tickets previos)
                 $vistaOrigen = $datos['vista_origen'] ?? '';
                 if ($vistaOrigen === 'Reportar calificación') {
                     // Soporte para variaciones de nombre de clave y problemas de codificación JSON heredada
@@ -119,6 +130,14 @@ class SoporteTecnico extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Relación con el administrador que gestionó el ticket.
+     */
+    public function gestor()
+    {
+        return $this->belongsTo(Admin::class, 'id_usuario_gestor');
     }
 
     /**

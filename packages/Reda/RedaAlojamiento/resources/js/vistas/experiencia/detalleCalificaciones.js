@@ -144,6 +144,7 @@ export const guardarTicketSoporte = (formData) => {
             
             $(document).on('click', '.btn-reportar-reseña', function() {
                 const calificacionId = $(this).data('id');
+                const idExperiencia = $(this).data('id-experiencia');
                 const usuario = $(this).data('usuario');
                 const calificacion = $(this).data('calificacion');
                 const comentario = $(this).data('comentario');
@@ -156,6 +157,7 @@ export const guardarTicketSoporte = (formData) => {
 
                 const linkErrorObj = {
                     id_de_la_reseña: calificacionId,
+                    id_experiencia: idExperiencia,
                     nombre_usuario_que_hizo_la_reseña: usuario,
                     calificacion_reseña: calificacion,
                     comentario_reseña: comentario,

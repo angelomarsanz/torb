@@ -329,9 +329,22 @@ class CalificacionController extends Controller
             if ($peticion->has('ticket_id')) {
                 $ticket = \Reda\RedaAlojamiento\Models\Admin\SoporteTecnico::find($peticion->ticket_id);
                 if ($ticket) {
+                    $idAdmin = Auth::guard('admin')->id();
+
+                    if (!$idAdmin) {
+                        Log::error("CalificacionController::destroy - Intento de eliminación de reseña sin sesión en guard 'admin' para el ticket #$peticion->ticket_id");
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No admin session detected',
+                            'mensaje_usuario' => __('No tiene permisos para gestionar este ticket o su sesión de administrador ha expirado'),
+                            'code' => 403
+                        ], 403);
+                    }
+
                     $ticket->update([
                         'estatus' => 'Cerrado',
                         'resultado_gestion' => 'Reseña eliminada',
+                        'id_usuario_gestor' => $idAdmin, // Guardamos estrictamente el ID de la tabla "admin"
                         'fecha_cambio_estatus' => now(),
                         'mensaje_soporte_tecnico' => $ticket->mensaje_soporte_tecnico . "\n\n" . __('Acción automática: Reseña eliminada por el administrador.')
                     ]);

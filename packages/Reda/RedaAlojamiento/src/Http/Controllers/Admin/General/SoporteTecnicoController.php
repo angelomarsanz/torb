@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Reda\RedaAlojamiento\Models\Admin\SoporteTecnico;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class SoporteTecnicoController extends Controller
 {
@@ -17,7 +18,7 @@ class SoporteTecnicoController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SoporteTecnico::with('user');
+        $query = SoporteTecnico::with(['user', 'gestor']); // Eager load user y gestor
 
         // Filtrado por ID puntual
         if ($request->filled('id')) {
@@ -36,18 +37,23 @@ class SoporteTecnicoController extends Controller
         if ($request->filled('nombre_comercio')) {
             $nombreComercio = $request->nombre_comercio;
 
-            // Buscamos IDs de calificaciones que pertenecen a comercios con ese nombre
-            $calificacionesIds = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::whereHas('experiencia', function($q) use ($nombreComercio) {
-                $q->where('titulo', 'LIKE', "%$nombreComercio%");
-            })->pluck('id');
+            // 1. Buscamos IDs de comercios (experiencias) con ese nombre
+            $experienciasIds = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::where('titulo', 'LIKE', "%$nombreComercio%")->pluck('id');
 
-            // Filtramos tickets cuyo link_error contenga alguno de esos IDs en formato JSON
-            if ($calificacionesIds->isNotEmpty()) {
-                $query->where(function($q) use ($calificacionesIds) {
-                    foreach ($calificacionesIds as $id) {
-                        $q->orWhere('link_error', 'LIKE', "%\"id_reseña\":$id%")
-                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_reseña\":$id%")
-                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_rese\\u00f1a\":$id%");
+            if ($experienciasIds->isNotEmpty()) {
+                $query->where(function($q) use ($experienciasIds) {
+                    foreach ($experienciasIds as $id) {
+                        // Búsqueda por el nuevo atributo id_experiencia
+                        $q->orWhere('link_error', 'LIKE', "%\"id_experiencia\":$id%")
+                          ->orWhere('link_error', 'LIKE', "%\"id_experiencia\":\"$id\"%");
+                    }
+
+                    // 2. Fallback: Búsqueda por IDs de calificaciones (para tickets antiguos)
+                    $calificacionesIds = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::whereIn('experiencia_id', $experienciasIds)->pluck('id');
+                    foreach ($calificacionesIds as $idReseña) {
+                        $q->orWhere('link_error', 'LIKE', "%\"id_reseña\":$idReseña%")
+                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_reseña\":$idReseña%")
+                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_rese\\u00f1a\":$idReseña%");
                     }
                 });
             }
@@ -102,7 +108,7 @@ class SoporteTecnicoController extends Controller
      */
     public function show($id)
     {
-        $ticket = SoporteTecnico::with('user')->findOrFail($id);
+        $ticket = SoporteTecnico::with(['user', 'gestor'])->findOrFail($id);
 
         // Verificamos si el recurso vinculado (ej: reseña) aún existe
         $ticket->recurso_existe = $ticket->verificarExistenciaRecurso();
@@ -120,9 +126,23 @@ class SoporteTecnicoController extends Controller
             $ticket = SoporteTecnico::findOrFail($id);
             $resultado = $peticion->input('resultado', 'Gestionado');
 
+            // Los tickets solo pueden ser gestionados por usuarios en la tabla "admin"
+            $idAdmin = Auth::guard('admin')->id();
+
+            if (!$idAdmin) {
+                Log::error("SoporteTecnicoController::cerrarTicket - No se detectó sesión en guard 'admin' para el ticket #$id");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No session detected in admin guard',
+                    'mensaje_usuario' => __('Su sesión de administrador ha expirado o no es válida'),
+                    'code' => 401
+                ], 401);
+            }
+
             $ticket->update([
                 'estatus' => 'Cerrado',
                 'resultado_gestion' => $resultado,
+                'id_usuario_gestor' => $idAdmin,
                 'fecha_cambio_estatus' => now(),
                 'mensaje_soporte_tecnico' => $ticket->mensaje_soporte_tecnico . "\n\n" . __("Acción manual: Ticket cerrado con resultado: :resultado", ['resultado' => $resultado])
             ]);

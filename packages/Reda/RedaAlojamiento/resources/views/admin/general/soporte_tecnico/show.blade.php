@@ -17,7 +17,7 @@
                     <div class="box-body">
                         <!-- Información General (Desktop) -->
                         <div class="row d-none d-md-flex mb-4">
-                            <div class="col-md-3">
+                            <div class="col-md-3 border-right">
                                 <strong><i class="fa fa-user margin-r-5"></i> {{ __('Usuario') }}</strong>
                                 <div class="d-flex align-items-center mt-1">
                                     @if($ticket->user)
@@ -32,11 +32,28 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-3">
+
+                            <div class="col-md-3 border-right">
+                                <strong><i class="fa fa-user-shield margin-r-5 text-success"></i> {{ __('Gestor') }}</strong>
+                                <div class="d-flex align-items-center mt-1">
+                                    @if($ticket->gestor)
+                                        <div class="symbol symbol-30px symbol-circle me-2">
+                                            <span class="symbol-label bg-light-success text-success fw-bold">{{ substr(trim($ticket->gestor->username), 0, 1) }}</span>
+                                        </div>
+                                        <span class="text-muted">
+                                            {{ $ticket->gestor->username }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted small italic">{{ __('N/A') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 border-right">
                                 <strong><i class="fa fa-calendar margin-r-5"></i> {{ __('Fecha') }}</strong>
                                 <p class="text-muted mt-1">{{ $ticket->created_at->format('d/m/Y H:i') }}</p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2 border-right">
                                 <strong><i class="fa fa-warning margin-r-5"></i> {{ __('Prioridad') }}</strong>
                                 <div class="mt-1">
                                     @php
@@ -51,7 +68,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <strong><i class="fa fa-check-circle margin-r-5"></i> {{ __('Estatus') }}</strong>
                                 <div class="mt-1">
                                     <span class="text-primary fw-bold">{{ $ticket->estatus ?? 'Abierto' }}</span>
@@ -81,6 +98,29 @@
                                             </div>
                                         @endif
                                     </div>
+
+                                    <div class="col-12 mb-3 d-flex align-items-center">
+                                        <div class="symbol symbol-30px symbol-circle me-2">
+                                            <span class="symbol-label bg-light-success text-success fw-bold">
+                                                @if($ticket->gestor)
+                                                    {{ substr(trim($ticket->gestor->username), 0, 1) }}
+                                                @else
+                                                    ?
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block soporte-tecnico-label-small text-success">{{ __('Gestionado por') }}</small>
+                                            <span class="f-14 fw-bold">
+                                                @if($ticket->gestor)
+                                                    {{ $ticket->gestor->username }}
+                                                @else
+                                                    <span class="text-muted small italic">{{ __('N/A') }}</span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                    </div>
+
                                     <div class="col-6 mb-2">
                                         <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Estatus') }}</small>
                                         <span class="text-primary fw-bold">{{ $ticket->estatus ?? 'Abierto' }}</span>
@@ -107,6 +147,16 @@
                         <div class="well well-sm soporte-tecnico-well-custom">
                             {!! nl2br(e($ticket->mensaje_usuario ?? __('Sin descripción disponible.'))) !!}
                         </div>
+
+                        @if($ticket->resultado_gestion)
+                            <div class="mt-4 alert alert-light border-dashed border-primary p-4">
+                                <h5 class="fw-bold text-primary mb-2"><i class="fa fa-check-circle me-2"></i>{{ __('Resultado de la gestión') }}</h5>
+                                <p class="mb-0 text-muted italic f-14">"{{ $ticket->resultado_gestion }}"</p>
+                                @if($ticket->fecha_cambio_estatus)
+                                    <small class="text-muted mt-2 d-block">{{ __('Cerrado el:') }} {{ $ticket->fecha_cambio_estatus->format('d/m/Y H:i') }}</small>
+                                @endif
+                            </div>
+                        @endif
 
                         @if(isset($ticket->link_error) && !empty($ticket->link_error))
                             <div class="text-center mt-4">
@@ -160,4 +210,5 @@
 @push('scripts')
     <script src="{{ asset('public/js/reda/admin/general/soporte_tecnico/showSoporteTecnico.min.js?v=' . time()) }}"></script>
 @endpush
+
 

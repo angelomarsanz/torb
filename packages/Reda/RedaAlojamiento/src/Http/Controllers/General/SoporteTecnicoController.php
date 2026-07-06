@@ -20,16 +20,18 @@ class SoporteTecnicoController extends Controller
     {
         try {
             $datosValidados = $request->validate([
-                'mensaje'      => 'required|string|min:10',
-                'prioridad'    => 'required|string|in:Baja,Media,Alta,Urgente',
-                'tema'         => 'required|string',
-                'link_error'   => 'nullable|string',
-                'vista_origen' => 'nullable|string',
+                'mensaje'         => 'required|string|min:10',
+                'prioridad'       => 'required|string|in:Baja,Media,Alta,Urgente',
+                'tema'            => 'required|string',
+                'link_error'      => 'nullable|string',
+                'vista_origen'    => 'nullable|string',
+                'id_experiencia'  => 'nullable|integer',
             ]);
 
-            // Manejo de link_error para añadir vista_origen si existe
+            // Manejo de link_error para añadir vista_origen e id_experiencia si existen
             $linkError = $datosValidados['link_error'];
             $vistaOrigen = $datosValidados['vista_origen'] ?? '';
+            $idExperiencia = $datosValidados['id_experiencia'] ?? null;
             $linkErrorArray = [];
 
             if ($linkError) {
@@ -44,6 +46,10 @@ class SoporteTecnicoController extends Controller
 
             if ($vistaOrigen) {
                 $linkErrorArray['vista_origen'] = $vistaOrigen;
+            }
+
+            if ($idExperiencia && !isset($linkErrorArray['id_experiencia'])) {
+                $linkErrorArray['id_experiencia'] = $idExperiencia;
             }
 
             $ticket = SoporteTecnico::create([

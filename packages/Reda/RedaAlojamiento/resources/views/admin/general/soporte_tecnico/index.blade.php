@@ -33,6 +33,7 @@
                                         <th class="soporte-tecnico-w-15">{{ __('Usuario') }}</th>
                                         <th class="soporte-tecnico-w-15">{{ __('Comercio') }}</th>
                                         <th class="soporte-tecnico-w-20">{{ __('Tema') }}</th>
+                                        <th class="soporte-tecnico-w-10 text-center">{{ __('Gestor') }}</th>
                                         <th class="soporte-tecnico-w-10 text-center">{{ __('Prioridad') }}</th>
                                         <th class="soporte-tecnico-w-10 text-center">{{ __('Estatus') }}</th>
                                         <th class="soporte-tecnico-w-15 text-center">{{ __('Fecha') }}</th>
@@ -71,6 +72,13 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
+                                                    @if($ticket->gestor)
+                                                        <span class="badge badge-light-success fw-bold">{{ $ticket->gestor->username }}</span>
+                                                    @else
+                                                        <span class="text-muted small">{{ __('N/A') }}</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
                                                     @php
                                                         $prioridadClass = [
                                                             'Alta' => 'text-danger',
@@ -95,7 +103,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="7" class="text-center text-muted soporte-tecnico-no-results-td">
+                                            <td colspan="9" class="text-center text-muted soporte-tecnico-no-results-td">
                                                 <i class="fa fa-info-circle"></i> {{ __('No se encontraron tickets de soporte.') }}
                                             </td>
                                         </tr>
@@ -134,6 +142,15 @@
                                             <div class="mb-2">
                                                 <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Tema') }}</small>
                                                 <strong class="f-15">{{ $ticket->tema }}</strong>
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block soporte-tecnico-label-small">{{ __('Gestionado por') }}</small>
+                                                @if($ticket->gestor)
+                                                    <span class="badge badge-light-success fw-bold">{{ $ticket->gestor->username }}</span>
+                                                @else
+                                                    <span class="text-muted small">{{ __('N/A') }}</span>
+                                                @endif
                                             </div>
 
                                             <div class="mb-2">
