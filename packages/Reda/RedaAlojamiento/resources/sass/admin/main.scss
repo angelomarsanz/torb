@@ -48,9 +48,9 @@
         width: 100% !important;
     }
     &-btn-flotante-buscar {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
+        position: absolute;
+        bottom: 70px; /* Ajustado ligeramente hacia abajo para evitar solapamientos con inputs */
+        right: 20px;
         width: 60px;
         height: 60px;
         border-radius: 50% !important;
@@ -62,7 +62,7 @@
         font-size: 24px;
         box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
         transition: all 0.4s ease;
-        z-index: 9999 !important; /* Valor máximo para evitar solapamientos */
+        z-index: 1070; /* Por encima del modal-body pero contenido en el modal-content */
         border: 2px solid #fff;
         padding: 0 !important;
 
@@ -74,6 +74,13 @@
 
         i {
             margin: 0 !important;
+        }
+    }
+    &-modal-body-scroll {
+        @media (min-width: 768px) {
+            max-height: 65vh;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
     }
 }

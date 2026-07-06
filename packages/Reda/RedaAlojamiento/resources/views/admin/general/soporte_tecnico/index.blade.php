@@ -213,13 +213,13 @@
 
 {{-- Modal de Búsqueda --}}
 <div class="modal fade" id="modal_busqueda_soporte" tabindex="-1" role="dialog" aria-labelledby="modalBusquedaLabel">
-    <!-- Botón Flotante para Móviles (Visible solo cuando el modal está abierto) -->
-    <button type="submit" form="form_busqueda_soporte" class="btn btn-primary soporte-tecnico-btn-flotante-buscar d-md-none shadow-lg">
-        <i class="fa fa-search"></i>
-    </button>
-
     <div class="modal-dialog" role="document">
-        <div class="modal-content border-0 shadow-lg rounded-0">
+        <div class="modal-content border-0 shadow-lg rounded-0 position-relative">
+            <!-- Botón Flotante para Búsqueda (Contenido dentro del modal) -->
+            <button type="submit" form="form_busqueda_soporte" class="btn btn-primary soporte-tecnico-btn-flotante-buscar shadow-lg" title="{{ __('Buscar ahora') }}">
+                <i class="fa fa-search"></i>
+            </button>
+
             <div class="modal-header bg-primary text-white rounded-0">
                 <h4 class="modal-title fw-bold" id="modalBusquedaLabel">
                     <i class="fa fa-search me-2"></i> {{ __('Búsqueda de tickets') }}
@@ -227,7 +227,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="form_busqueda_soporte" action="{{ route('reda.admin.general.soporte_tecnico.index') }}" method="GET">
-                <div class="modal-body p-4">
+                <div class="modal-body p-4 soporte-tecnico-modal-body-scroll">
                     <!-- Búsqueda por campos específicos -->
                     <div class="row mb-4">
                         <div class="col-md-12 mb-3">
@@ -321,10 +321,6 @@
                     <a href="{{ route('reda.admin.general.soporte_tecnico.index') }}" class="btn btn-warning btn-flat">
                         <i class="fa fa-refresh me-1"></i> {{ __('Limpiar filtros') }}
                     </a>
-                    {{-- Solo ocultamos el botón de texto de buscar en móviles, ya que tenemos la lupa flotante --}}
-                    <button type="submit" class="btn btn-primary btn-flat fw-bold d-none d-md-inline-block ms-auto">
-                        <i class="fa fa-search me-1"></i> {{ __('Buscar ahora') }}
-                    </button>
                 </div>
             </form>
         </div>
