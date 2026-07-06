@@ -90,7 +90,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_02_100000_modificar_tabla_planes_negocios_multiplanes.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_03_100000_add_plan_negocios_to_experiencias_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_06_100000_renombrar_asignado_a_en_soportes_tecnicos.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_06_110000_renombrar_id_usuario_gestor_a_admin_id.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_06_110000_renombrar_id_usuario_gestor_a_admin_id.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"

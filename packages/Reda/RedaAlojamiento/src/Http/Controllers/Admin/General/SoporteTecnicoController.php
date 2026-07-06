@@ -37,26 +37,37 @@ class SoporteTecnicoController extends Controller
         if ($request->filled('nombre_comercio')) {
             $nombreComercio = $request->nombre_comercio;
 
-            // 1. Buscamos IDs de comercios (experiencias) con ese nombre
-            $experienciasIds = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::where('titulo', 'LIKE', "%$nombreComercio%")->pluck('id');
+            // 1. Obtenemos todos los tickets que tienen link_error para filtrar en memoria (más seguro que LIKE en JSON)
+            // Solo traemos ID y link_error para optimizar memoria
+            $ticketsConDatos = SoporteTecnico::whereNotNull('link_error')->select('id', 'link_error')->get();
 
-            if ($experienciasIds->isNotEmpty()) {
-                $query->where(function($q) use ($experienciasIds) {
-                    foreach ($experienciasIds as $id) {
-                        // Búsqueda por el nuevo atributo id_experiencia
-                        $q->orWhere('link_error', 'LIKE', "%\"id_experiencia\":$id%")
-                          ->orWhere('link_error', 'LIKE', "%\"id_experiencia\":\"$id\"%");
-                    }
+            // 2. Buscamos IDs de experiencias que coincidan parcialmente con el nombre buscado
+            $experienciasCoincidentes = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::where('titulo', 'LIKE', "%$nombreComercio%")->pluck('id')->toArray();
 
-                    // 2. Fallback: Búsqueda por IDs de calificaciones (para tickets antiguos)
-                    $calificacionesIds = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::whereIn('experiencia_id', $experienciasIds)->pluck('id');
-                    foreach ($calificacionesIds as $idReseña) {
-                        $q->orWhere('link_error', 'LIKE', "%\"id_reseña\":$idReseña%")
-                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_reseña\":$idReseña%")
-                          ->orWhere('link_error', 'LIKE', "%\"id_de_la_rese\\u00f1a\":$idReseña%");
-                    }
-                });
+            // 3. Buscamos IDs de reseñas vinculadas a esas experiencias
+            $reseñasCoincidentes = [];
+            if (!empty($experienciasCoincidentes)) {
+                $reseñasCoincidentes = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::whereIn('experiencia_id', $experienciasCoincidentes)->pluck('id')->toArray();
             }
+
+            // 4. Filtramos los tickets basándonos en si su link_error apunta a uno de esos comercios o reseñas
+            $idsTicketsFiltrados = $ticketsConDatos->filter(function($t) use ($experienciasCoincidentes, $reseñasCoincidentes) {
+                $datos = $t->link_error; // Esto usa el cast/accessor del modelo
+                if (empty($datos) || !is_array($datos)) return false;
+
+                // Caso directo: id_experiencia
+                $idExp = $datos['id_experiencia'] ?? null;
+                if ($idExp && in_array($idExp, $experienciasCoincidentes)) return true;
+
+                // Caso indirecto: id_reseña
+                $idRes = $datos['id_reseña'] ?? $datos['id_de_la_reseña'] ?? $datos['id_de_la_rese\u00f1a'] ?? null;
+                if ($idRes && in_array($idRes, $reseñasCoincidentes)) return true;
+
+                return false;
+            })->pluck('id');
+
+            // Aplicamos el filtro de IDs a la consulta principal
+            $query->whereIn('id', $idsTicketsFiltrados);
         }
 
         // Filtrado por tema
@@ -88,14 +99,46 @@ class SoporteTecnicoController extends Controller
         // Obtener temas únicos para el filtro
         $temas = SoporteTecnico::select('tema')->distinct()->pluck('tema');
 
-        // Obtener nombres de usuarios únicos que tienen tickets
+        // Obtener nombres de usuarios únicos que tienen tickets (solo los que abrieron tickets)
         $usuariosConTickets = SoporteTecnico::join('users', 'soportes_tecnicos.user_id', '=', 'users.id')
-            ->selectRaw("DISTINCT CONCAT(users.first_name, ' ', users.last_name) as nombre")
+            ->selectRaw("DISTINCT TRIM(CONCAT(users.first_name, ' ', users.last_name)) as nombre")
             ->orderBy('nombre')
-            ->pluck('nombre');
+            ->pluck('nombre')
+            ->unique()
+            ->values();
 
-        // Obtener nombres de comercios únicos para el buscador
-        $comerciosConTickets = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::orderBy('titulo')->pluck('titulo');
+        // Obtener nombres de comercios únicos que tienen tickets (solo los vinculados en link_error)
+        $todasLasLinkError = SoporteTecnico::whereNotNull('link_error')->get()->pluck('link_error');
+        
+        $experienciaIds = collect();
+        $reseñaIds = collect();
+
+        foreach ($todasLasLinkError as $datos) {
+            if (!is_array($datos)) continue;
+
+            if (isset($datos['id_experiencia'])) {
+                $experienciaIds->push($datos['id_experiencia']);
+            }
+
+            if (($datos['vista_origen'] ?? '') === 'Reportar calificación') {
+                $idReseña = $datos['id_reseña'] ?? $datos['id_de_la_reseña'] ?? $datos['id_de_la_rese\u00f1a'] ?? null;
+                if ($idReseña) {
+                    $reseñaIds->push($idReseña);
+                }
+            }
+        }
+
+        if ($reseñaIds->isNotEmpty()) {
+            $idsFromReseñas = \Reda\RedaAlojamiento\Models\Experiencia\CalificacionExperiencia::whereIn('id', $reseñaIds->unique())
+                ->pluck('experiencia_id');
+            $experienciaIds = $experienciaIds->merge($idsFromReseñas);
+        }
+
+        $comerciosConTickets = \Reda\RedaAlojamiento\Models\Experiencia\Experiencia::whereIn('id', $experienciaIds->unique())
+            ->orderBy('titulo')
+            ->pluck('titulo')
+            ->unique()
+            ->values();
 
         return view('reda-alojamiento::admin.general.soporte_tecnico.index', compact('tickets', 'temas', 'usuariosConTickets', 'comerciosConTickets'));
     }

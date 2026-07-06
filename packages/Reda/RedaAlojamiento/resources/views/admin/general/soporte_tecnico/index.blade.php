@@ -223,40 +223,43 @@
             </div>
             <form id="form_busqueda_soporte" action="{{ route('reda.admin.general.soporte_tecnico.index') }}" method="GET">
                 <div class="modal-body p-4">
-                    <!-- Búsqueda Puntual -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-dark mb-2">{{ __('Búsqueda rápida') }}</label>
-                        <div class="input-group mb-3 shadow-sm">
-                            <span class="input-group-addon bg-white border-end-0"><i class="fa fa-keyboard-o text-muted"></i></span>
-                            <input type="text" id="input_puntual" list="lista_busqueda_combinada" class="form-control border-start-0" placeholder="{{ __('ID, usuario o comercio...') }}">
-                            <datalist id="lista_busqueda_combinada">
-                                @if(isset($usuariosConTickets))
-                                    @foreach($usuariosConTickets as $nombre)
-                                        <option value="{{ $nombre }}">
-                                    @endforeach
-                                @endif
-                                @if(isset($comerciosConTickets))
-                                    @foreach($comerciosConTickets as $comercio)
-                                        <option value="{{ $comercio }}">
-                                    @endforeach
-                                @endif
-                            </datalist>
+                    <!-- Búsqueda por campos específicos -->
+                    <div class="row mb-4">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Buscar por ID del ticket') }}</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-addon bg-white border-end-0"><i class="fa fa-hashtag text-muted"></i></span>
+                                <input type="number" name="id" id="search_id" class="form-control border-start-0" value="{{ request('id') }}" placeholder="{{ __('Ej: 123') }}">
+                            </div>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-primary btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="id">
-                                <i class="fa fa-hashtag me-1"></i> {{ __('Por ID del ticket') }}
-                            </button>
-                            <button type="button" class="btn btn-info btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="nombre">
-                                <i class="fa fa-user me-1"></i> {{ __('Por nombre del usuario') }}
-                            </button>
-                            <button type="button" class="btn btn-success btn-sm btn-flat flex-grow-1 btn-buscar-puntual" data-tipo="comercio">
-                                <i class="fa fa-building me-1"></i> {{ __('Por nombre del comercio') }}
-                            </button>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Buscar por usuario') }}</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-addon bg-white border-end-0"><i class="fa fa-user text-muted"></i></span>
+                                <input type="text" name="nombre_usuario" id="search_nombre" list="lista_usuarios" class="form-control border-start-0" value="{{ request('nombre_usuario') }}" placeholder="{{ __('Nombre del usuario...') }}">
+                                <datalist id="lista_usuarios">
+                                    @if(isset($usuariosConTickets))
+                                        @foreach($usuariosConTickets as $nombre)
+                                            <option value="{{ $nombre }}">
+                                        @endforeach
+                                    @endif
+                                </datalist>
+                            </div>
                         </div>
-                        {{-- Campos ocultos que se enviarán al servidor --}}
-                        <input type="hidden" name="id" id="search_id">
-                        <input type="hidden" name="nombre_usuario" id="search_nombre">
-                        <input type="hidden" name="nombre_comercio" id="search_comercio">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark mb-2">{{ __('Buscar por comercio') }}</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-addon bg-white border-end-0"><i class="fa fa-building text-muted"></i></span>
+                                <input type="text" name="nombre_comercio" id="search_comercio" list="lista_comercios" class="form-control border-start-0" value="{{ request('nombre_comercio') }}" placeholder="{{ __('Nombre del comercio...') }}">
+                                <datalist id="lista_comercios">
+                                    @if(isset($comerciosConTickets))
+                                        @foreach($comerciosConTickets as $comercio)
+                                            <option value="{{ $comercio }}">
+                                        @endforeach
+                                    @endif
+                                </datalist>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="separator separator-dashed border-gray-300 my-4"></div>

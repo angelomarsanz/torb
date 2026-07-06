@@ -31,71 +31,43 @@
         // Abrir modal de búsqueda
         $(document).on('click', '.btn-abrir-busqueda', function(e) {
             e.preventDefault();
+
+            // Limpiar el formulario antes de mostrar el modal
+            const $form = $('#form_busqueda_soporte');
+            if ($form.length) {
+                // Limpiamos todos los inputs de texto, número y fecha
+                $form.find('input[type="text"], input[type="number"], input[type="date"]').val('');
+                
+                // Limpiamos los selects (y disparamos change por si se usa Select2)
+                $form.find('select').val('').trigger('change');
+            }
+
             $('#modal_busqueda_soporte').modal('show');
         });
 
-        // Búsqueda puntual (ID o Nombre)
-        $(document).on('click', '.btn-buscar-puntual', function(e) {
-            e.preventDefault();
-            const valor = $('#input_puntual').val().trim();
-            const tipo = $(this).data('tipo');
-
-            if (!valor) {
-                $('#input_puntual').focus();
-                return;
-            }
-
-            // Limpiar campos de búsqueda avanzados para que sea una búsqueda puntual real
-            $('#form_busqueda_soporte').find('select, input[type="date"]').val('');
-            $('#search_id').val('');
-            $('#search_nombre').val('');
-            $('#search_comercio').val('');
-
-            if (tipo === 'id') {
-                $('#search_id').val(valor);
-            } else if (tipo === 'nombre') {
-                $('#search_nombre').val(valor);
-            } else if (tipo === 'comercio') {
-                $('#search_comercio').val(valor);
-            }
-
-            // Mostrar animación e iniciar búsqueda (submit del form)
-            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
-                window.RedaNotificaciones.esperar();
-            }
-            $('#form_busqueda_soporte').submit();
-        });
-
-        // Búsqueda inteligente: detectar si presiona Enter en el input puntual
-        $(document).on('keypress', '#input_puntual', function(e) {
-            if (e.which === 13) {
-                e.preventDefault();
-                const valor = $(this).val().trim();
-                if (!valor) return;
-
-                // Si es un número, buscamos por ID, si no por nombre
-                if (!isNaN(valor) && valor.length > 0) {
-                    $('.btn-buscar-puntual[data-tipo="id"]').trigger('click');
-                } else {
-                    $('.btn-buscar-puntual[data-tipo="nombre"]').trigger('click');
-                }
+        /**
+         * Lógica de filtros excluyentes:
+         * Si el usuario escribe en ID, se limpian los demás.
+         * Si el usuario escribe/selecciona en otros, se limpia el ID.
+         */
+        
+        // Al escribir en el ID
+        $(document).on('input', '#search_id', function() {
+            if ($(this).val().trim() !== '') {
+                const $form = $('#form_busqueda_soporte');
+                // Limpiamos los otros inputs
+                $form.find('input[name="nombre_usuario"], input[name="nombre_comercio"], input[type="date"]').val('');
+                // Limpiamos los selects
+                $form.find('select').val('').trigger('change');
             }
         });
 
-        // Búsqueda automática al seleccionar de la datalist (opcional, pero mejora la experiencia)
-        $(document).on('input', '#input_puntual', function() {
-            const valor = $(this).val().trim();
-            const dataList = $('#lista_usuarios');
-
-            if (dataList.length && valor.length > 3) {
-                const existeEnLista = dataList.find('option').filter(function() {
-                    return $(this).val() === valor;
-                }).length > 0;
-
-                if (existeEnLista) {
-                    // Si coincide exactamente con un nombre de la lista, disparamos la búsqueda por nombre
-                    $('.btn-buscar-puntual[data-tipo="nombre"]').trigger('click');
-                }
+        // Al interactuar con cualquier otro campo que no sea ID
+        $(document).on('input change', '#form_busqueda_soporte input:not(#search_id), #form_busqueda_soporte select', function() {
+            const $valor = $(this).val();
+            // Si el campo tiene valor, limpiamos el ID
+            if ($valor && $valor !== '') {
+                $('#search_id').val('');
             }
         });
 
