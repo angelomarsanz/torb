@@ -176,8 +176,9 @@ class SoporteTecnicoController extends Controller
                 Log::error("SoporteTecnicoController::cerrarTicket - No se detectó sesión en guard 'admin' para el ticket #$id");
                 return response()->json([
                     'success' => false,
-                    'message' => 'No session detected in admin guard',
+                    'message' => __('No se detectó sesión de administrador'),
                     'mensaje_usuario' => __('Su sesión de administrador ha expirado o no es válida'),
+                    'respuesta' => 'No session detected in admin guard',
                     'code' => 401
                 ], 401);
             }
@@ -192,7 +193,7 @@ class SoporteTecnicoController extends Controller
 
             $respuesta = [
                 'success' => true,
-                'message' => 'Ticket cerrado',
+                'message' => __('Ticket cerrado'),
                 'mensaje_usuario' => __('El ticket ha sido cerrado con éxito'),
                 'respuesta' => '',
                 'code' => 200
@@ -201,9 +202,9 @@ class SoporteTecnicoController extends Controller
             Log::error("Error cerrando ticket: " . $e->getMessage());
             $respuesta = [
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => __('Error al cerrar el ticket'),
                 'mensaje_usuario' => __('Error al intentar cerrar el ticket'),
-                'respuesta' => '',
+                'respuesta' => $e->getMessage(),
                 'code' => 400
             ];
         }

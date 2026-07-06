@@ -463,5 +463,18 @@
     "Listado de planes recuperado": "Listado de planes recuperado",
     "Plan recuperado": "Plan recuperado",
     "Dólar ($)": "Dólar ($)",
-    "Bolívares (Bs)": "Bolívares (Bs)"
+    "Bolívares (Bs)": "Bolívares (Bs)",
+    "Gestor": "Gestor",
+    "Gestionado por": "Gestionado por",
+    "Buscar por ID del ticket": "Buscar por ID del ticket",
+    "Ej: 123": "Ej: 123",
+    "Buscar por usuario": "Buscar por usuario",
+    "Nombre del usuario...": "Nombre del usuario...",
+    "Buscar por comercio": "Buscar por comercio",
+    "Nombre del comercio...": "Nombre del comercio...",
+    "Resultado de la gestión": "Resultado de la gestión",
+    "Cerrado el:": "Cerrado el:",
+    "No se detectó sesión de administrador": "No se detectó sesión de administrador",
+    "Su sesión de administrador ha expirado o no es válida": "Su sesión de administrador ha expirado o no es válida",
+    "Error al cerrar el ticket": "Error al cerrar el ticket"
 }

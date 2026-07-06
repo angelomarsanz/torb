@@ -53,7 +53,6 @@
      */
     const eliminarReseña = (idReseña, ticketId) => {
         const urlEliminar = APP_URL + '/admin/reda/general/eliminar-calificacion/' + idReseña;
-        console.log('Intentando eliminar reseña en URL:', urlEliminar);
 
         return new Promise((resolve) => {
             (function( $ ) {
@@ -65,11 +64,9 @@
                         "ticket_id": ticketId // Enviamos el ID del ticket para cerrarlo automáticamente
                     },
                     success: function(data) {
-                        console.log('Respuesta de eliminación:', data);
                         resolve(data);
                     },
                     error: function (x, xs, xt) {
-                        console.error('Error en AJAX de eliminación:', x);
                         let respuestaServidor = {};
                         try {
                             respuestaServidor = JSON.parse(x.responseText);
@@ -167,7 +164,6 @@
 
         // --- DECODIFICACIÓN ROBUSTA (Doble/Triple JSON) ---
         let datosSoporte = linkError;
-        console.log('datosSoporte original:', datosSoporte);
 
         // Decodificación recursiva: mientras sea un string, intentamos parsearlo.
         let niveles = 0;
@@ -185,15 +181,10 @@
         // Normalizamos la vista de origen
         let vistaOrigen = datosSoporte?.vista_origen || '';
 
-        console.log('Datos procesados:', datosSoporte);
-        console.log('Identificador de origen final:', vistaOrigen);
-
         let htmlContenido = '';
 
         switch (vistaOrigen) {
             case 'Reportar calificación':
-                console.log('Renderizando panel de Gestión de Calificaciones');
-
                 // Extracción robusta de datos
                 const idReseña = obtenerValorSeguro(datosSoporte, ['id_reseña', 'id_de_la_reseña', 'id_de_la_rese\u00f1a']) || 'N/A';
                 const usuarioReseña = obtenerValorSeguro(datosSoporte, ['nombre_usuario_que_hizo_la_reseña', 'nombre_usuario', 'usuario_reseña']) || 'N/A';
@@ -272,7 +263,6 @@
         // Evento para el botón de gestionar ticket
         $(document).on('click', '#btn_gestionar_ticket', function(e) {
             e.preventDefault();
-            console.log('Click en gestionar ticket');
 
             const linkError = $(this).data('link-error');
             const metadatosTicket = {
@@ -373,7 +363,6 @@
     // Ejecutar cuando el DOM esté listo y el contenedor exista
     if ($(containerId).length) {
         $(function() {
-            console.log('showSoporteTecnico.js cargado correctamente.')
             inicializarDetalleSoporte();
         });
     }
