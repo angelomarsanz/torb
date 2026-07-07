@@ -1124,6 +1124,8 @@
         max-height: calc(100vh - 120px);
         overflow-y: auto;
         padding-bottom: 20px;
+        align-self: flex-start; /* Evita que la columna se estire y permite que el sticky funcione */
+        z-index: 10;
 
         /* Ocultar barra de desplazamiento pero mantener funcionalidad */
         -ms-overflow-style: none;

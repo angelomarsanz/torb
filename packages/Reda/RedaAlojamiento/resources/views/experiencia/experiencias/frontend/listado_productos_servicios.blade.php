@@ -9,7 +9,7 @@
     <div class="row m-0">
             <!-- COLUMNA IZQUIERDA: 30% (Escritorio) -->
             <div class="col-12 col-lg-30 d-none d-lg-block">
-                <div class="pr-lg-4">
+                <div class="pr-lg-4 sticky-top-detail">
                     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
                     <section class="seccion-info-negocio">
                         @if($experiencia->ruta_imagenes)
