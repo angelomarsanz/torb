@@ -27,6 +27,28 @@
                             <button class="btn-leer-mas-desc" id="btn_leer_mas_fija">{{ __('Más') }}</button>
                         </div>
 
+                        <div class="negocio-detalle-rating star-rating px-2 mt-3 mb-4">
+                            @if($experiencia->calificaciones_count > 0)
+                                @php $puntuacion = (float) $experiencia->calificaciones_avg_estrellas; @endphp
+                                <div class="mb-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($puntuacion >= $i)
+                                            <i class="fas fa-star text-warning"></i>
+                                        @elseif($puntuacion > ($i - 1) && $puntuacion < $i)
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        @else
+                                            <i class="far fa-star text-warning"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <span class="font-weight-700 text-dark">{{ number_format($puntuacion, 1, '.', '') }}</span>
+                                <span class="text-muted ml-1">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
+                            @else
+                                <i class="fas fa-star text-muted"></i>
+                                <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
+                            @endif
+                        </div>
+
                         <!-- SECCIÓN DE CONTACTO -->
                         @php
                             $emailNegocio = data_get($experiencia->ubicacion, 'email_negocio');
@@ -71,28 +93,6 @@
                                 @endif
                             @else
                                 <p class="text-muted small italic">{{ __('No se han cargado los datos de contacto') }}</p>
-                            @endif
-                        </div>
-
-                        <div class="negocio-detalle-rating star-rating mt-3">
-                            @if($experiencia->calificaciones_count > 0)
-                                @php $puntuacion = (float) $experiencia->calificaciones_avg_estrellas; @endphp
-                                <div class="mb-1">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        @if($puntuacion >= $i)
-                                            <i class="fas fa-star text-warning"></i>
-                                        @elseif($puntuacion > ($i - 1) && $puntuacion < $i)
-                                            <i class="fas fa-star-half-alt text-warning"></i>
-                                        @else
-                                            <i class="far fa-star text-warning"></i>
-                                        @endif
-                                    @endfor
-                                </div>
-                                <span class="font-weight-700 text-dark">{{ number_format($puntuacion, 1, '.', '') }}</span>
-                                <span class="text-muted ml-1">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
-                            @else
-                                <i class="fas fa-star text-muted"></i>
-                                <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
                             @endif
                         </div>
                     </section>
@@ -144,6 +144,28 @@
                             <button class="btn-leer-mas-desc">{{ __('Más') }}</button>
                         </div>
 
+                        <div class="negocio-detalle-rating star-rating mt-3 mb-4">
+                            @if($experiencia->calificaciones_count > 0)
+                                @php $puntuacion = (float) $experiencia->calificaciones_avg_estrellas; @endphp
+                                <div class="mb-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($puntuacion >= $i)
+                                            <i class="fas fa-star text-warning"></i>
+                                        @elseif($puntuacion > ($i - 1) && $puntuacion < $i)
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        @else
+                                            <i class="far fa-star text-warning"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <span class="font-weight-700 text-dark">{{ number_format($puntuacion, 1, '.', '') }}</span>
+                                <span class="text-muted ml-1">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
+                            @else
+                                <i class="fas fa-star text-muted"></i>
+                                <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
+                            @endif
+                        </div>
+
                         <!-- TRATAMIENTO ESPECIAL (MÓVIL): Si hay una actividad objetivo, mostrarla aquí -->
                         @if(isset($actividadTarget) && $actividadTarget)
                             <div class="seccion-actividad-objetivo-mobile mt-4 mb-2">
@@ -191,28 +213,6 @@
                                 @endif
                             @else
                                 <p class="text-muted small italic">{{ __('No se han cargado los datos de contacto') }}</p>
-                            @endif
-                        </div>
-
-                        <div class="negocio-detalle-rating star-rating mt-3">
-                            @if($experiencia->calificaciones_count > 0)
-                                @php $puntuacion = (float) $experiencia->calificaciones_avg_estrellas; @endphp
-                                <div class="mb-1">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        @if($puntuacion >= $i)
-                                            <i class="fas fa-star text-warning"></i>
-                                        @elseif($puntuacion > ($i - 1) && $puntuacion < $i)
-                                            <i class="fas fa-star-half-alt text-warning"></i>
-                                        @else
-                                            <i class="far fa-star text-warning"></i>
-                                        @endif
-                                    @endfor
-                                </div>
-                                <span class="font-weight-700 text-dark">{{ number_format($puntuacion, 1, '.', '') }}</span>
-                                <span class="text-muted ml-1">({{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }})</span>
-                            @else
-                                <i class="fas fa-star text-muted"></i>
-                                <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
                             @endif
                         </div>
                     </section>
