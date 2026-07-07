@@ -65,12 +65,15 @@
                                                 {{-- Promedio de Calificaciones --}}
                                                 <div class="star-rating d-flex align-items-center justify-content-start">
                                                     <i class="fas fa-star text-warning mr-1"></i>
-                                                    @if($experiencia->calificaciones_count > 0)
-                                                        <span class="font-weight-700 text-dark mr-1">{{ reda_number_format($experiencia->calificaciones_avg_estrellas, 1) }}</span>
-                                                        <span class="text-muted small">· {{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }}</span>
-                                                    @else
-                                                        <span class="text-muted small">{{ __('Sin reseñas todavía') }}</span>
-                                                    @endif
+                                                    <span class="font-weight-700 text-dark mr-1">{{ number_format($experiencia->calificaciones_avg_estrellas ?? 0, 1, '.', '') }}</span>
+                                                    <span class="text-muted small">
+                                                        - 
+                                                        @if($experiencia->calificaciones_count > 0)
+                                                            {{ $experiencia->calificaciones_count }} {{ trans_choice('Reseña|Reseñas', $experiencia->calificaciones_count) }}
+                                                        @else
+                                                            {{ __('Sin reseñas todavía') }}
+                                                        @endif
+                                                    </span>
                                                 </div>
                                             </div>
 
