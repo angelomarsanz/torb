@@ -430,6 +430,13 @@ class ExperienciaController extends Controller
             ->withAvg('calificaciones', 'estrellas')
             ->findOrFail($id);
 
+        // --- CONTADOR DE VISITAS ---
+        // Se incrementa solo si el usuario logueado NO es el dueño del comercio.
+        // Si no hay usuario logueado (invitado), también se cuenta la visita.
+        if (Auth::id() != $experiencia->user_id) {
+            $experiencia->increment('visitas');
+        }
+
         $q = $request->get('q');
         $tipo_actividad_filtro = $request->get('tipo_actividad');
 

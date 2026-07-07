@@ -75,6 +75,13 @@
                                                         @endif
                                                     </span>
                                                 </div>
+
+                                                {{-- Contador de Visitas --}}
+                                                <div class="mt-2 text-muted small">
+                                                    <i class="fas fa-eye mr-1"></i> 
+                                                    <span class="font-weight-700 text-dark">{{ number_format($experiencia->visitas ?? 0, 0, '.', '.') }}</span> 
+                                                    {{ __('visitas al sitio') }}
+                                                </div>
                                             </div>
 
                                             {{-- Columna de Acciones --}}

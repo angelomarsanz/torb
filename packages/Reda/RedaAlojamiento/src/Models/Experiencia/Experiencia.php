@@ -46,7 +46,8 @@ class Experiencia extends Model
         'minimo_personas_grupo',
         'reglas_cancelacion',
         'horarios',
-        'plan_negocios'
+        'plan_negocios',
+        'visitas'
     ];
 
     /**
