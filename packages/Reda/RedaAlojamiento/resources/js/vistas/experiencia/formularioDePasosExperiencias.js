@@ -956,21 +956,71 @@ $(function() {
             case 'horario':
                 let bloqueIndex = 0;
 
+                const formatTimeValue = (val) => {
+                    if (!val) return '';
+                    let cleanVal = val.replace(/[^0-9:]/g, '');
+                    let parts = cleanVal.split(':');
+                    let h = parts[0].trim();
+                    let m = parts.length > 1 ? parts[1].trim() : '00';
+
+                    h = h.replace(/\D/g, '');
+                    m = m.replace(/\D/g, '');
+
+                    let hour = parseInt(h);
+                    let minute = parseInt(m);
+
+                    if (isNaN(hour)) return '';
+                    if (hour < 1) hour = 1;
+                    if (hour > 12) hour = 12;
+                    if (isNaN(minute) || minute < 0) minute = 0;
+                    if (minute > 60) minute = 60;
+
+                    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                };
+
+                const toggleOptionM = (input) => {
+                    const $input = $(input);
+                    const val = $input.val();
+                    if (!val) return;
+                    
+                    const hour = parseInt(val.split(':')[0]);
+                    const $select = $input.closest('.input-group').find('select');
+                    const $optionM = $select.find('option[value="m"]');
+
+                    if (hour === 12) {
+                        $optionM.removeClass('d-none').prop('disabled', false);
+                    } else {
+                        if ($select.val() === 'm') {
+                            $select.val('am');
+                        }
+                        $optionM.addClass('d-none').prop('disabled', true);
+                    }
+                };
+
                 const crearBloqueHtml = (index, data = null) => {
-                    const horaDesde = data ? data.hora_desde : '';
-                    const ampmDesde = data ? data.ampm_desde : 'am';
-                    const horaHasta = data ? data.hora_hasta : '';
-                    const ampmHasta = data ? data.ampm_hasta : 'pm';
+                    let horaDesde = data ? data.hora_desde : '';
+                    let ampmDesde = data ? data.ampm_desde : 'am';
+                    let horaHasta = data ? data.hora_hasta : '';
+                    let ampmHasta = data ? data.ampm_hasta : 'pm';
+
+                    // Los datos que vienen del servidor ya están formateados, 
+                    // pero para nuevos bloques o datos antiguos aplicamos el formato.
+                    if (horaDesde) horaDesde = formatTimeValue(horaDesde);
+                    if (horaHasta) horaHasta = formatTimeValue(horaHasta);
+
+                    const hourDesdeInt = parseInt(horaDesde.split(':')[0]);
+                    const hourHastaInt = parseInt(horaHasta.split(':')[0]);
 
                     return `
                         <div class="row m-0 align-items-center mb-3 bloque-hora" data-index="${index}">
                             <div class="col-md-5 col-5 p-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control hora-desde" name="bloques[${index}][hora_desde]" value="${horaDesde}" placeholder="00:00" required>
+                                    <input type="text" class="form-control hora-desde input-time-format" name="bloques[${index}][hora_desde]" value="${horaDesde}" placeholder="00:00" maxlength="5" required>
                                     <div class="input-group-append">
                                         <select class="form-control ampm-desde select-compact-ampm" name="bloques[${index}][ampm_desde]">
                                             <option value="am" ${ampmDesde === 'am' ? 'selected' : ''}>AM</option>
                                             <option value="pm" ${ampmDesde === 'pm' ? 'selected' : ''}>PM</option>
+                                            <option value="m" ${ampmDesde === 'm' ? 'selected' : ''} class="option-m ${hourDesdeInt !== 12 ? 'd-none' : ''}" ${hourDesdeInt !== 12 ? 'disabled' : ''}>M</option>
                                         </select>
                                     </div>
                                 </div>
@@ -978,11 +1028,12 @@ $(function() {
                             <div class="col-md-1 col-1 text-center font-weight-700 p-0"> - </div>
                             <div class="col-md-5 col-5 p-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control hora-hasta" name="bloques[${index}][hora_hasta]" value="${horaHasta}" placeholder="00:00" required>
+                                    <input type="text" class="form-control hora-hasta input-time-format" name="bloques[${index}][hora_hasta]" value="${horaHasta}" placeholder="00:00" maxlength="5" required>
                                     <div class="input-group-append">
                                         <select class="form-control ampm-hasta select-compact-ampm" name="bloques[${index}][ampm_hasta]">
-                                            <option value="am" ${ampmDesde === 'am' ? 'selected' : ''}>AM</option>
-                                            <option value="pm" ${ampmDesde === 'pm' ? 'selected' : ''}>PM</option>
+                                            <option value="am" ${ampmHasta === 'am' ? 'selected' : ''}>AM</option>
+                                            <option value="pm" ${ampmHasta === 'pm' ? 'selected' : ''}>PM</option>
+                                            <option value="m" ${ampmHasta === 'm' ? 'selected' : ''} class="option-m ${hourHastaInt !== 12 ? 'd-none' : ''}" ${hourHastaInt !== 12 ? 'disabled' : ''}>M</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1007,6 +1058,12 @@ $(function() {
                     bloqueIndex = 0;
                     $('#bloques-container').append(crearBloqueHtml(bloqueIndex++));
                 };
+
+                $(document).on('blur', '.input-time-format', function() {
+                    const formatted = formatTimeValue($(this).val());
+                    $(this).val(formatted);
+                    toggleOptionM(this);
+                });
 
                 const guardarHorarioAjax = (formData) => {
                     return new Promise((resolve) => {

@@ -1481,9 +1481,20 @@ class ExperienciaController extends Controller
                 return response()->json($respuesta, $respuesta['code']);
             }
 
+            // Procesar y formatear los bloques de horas
+            $bloquesProcesados = [];
+            foreach ($request->bloques as $bloque) {
+                $bloquesProcesados[] = [
+                    'hora_desde' => $this->formatTime($bloque['hora_desde']),
+                    'ampm_desde' => $bloque['ampm_desde'],
+                    'hora_hasta' => $this->formatTime($bloque['hora_hasta']),
+                    'ampm_hasta' => $bloque['ampm_hasta'],
+                ];
+            }
+
             $nuevoHorario = [
                 'dias' => array_values($request->dias),
-                'bloques' => array_values($request->bloques)
+                'bloques' => $bloquesProcesados
             ];
 
             if ($request->has('index') && $request->index !== null && $request->index !== '') {
@@ -1514,6 +1525,29 @@ class ExperienciaController extends Controller
             ];
             return response()->json($respuesta, $respuesta['code']);
         }
+    }
+
+    /**
+     * Formatea un string de tiempo al formato hh:mm siguiendo las reglas de 12 horas.
+     */
+    private function formatTime($time)
+    {
+        if (empty($time)) return '00:00';
+
+        // Extraer números y dos puntos
+        $clean = preg_replace('/[^0-9:]/', '', $time);
+        $parts = explode(':', $clean);
+
+        $h = intval($parts[0] ?? 1);
+        $m = intval($parts[1] ?? 0);
+
+        // Restricciones: 1-12 para horas, 0-60 para minutos
+        if ($h < 1) $h = 1;
+        if ($h > 12) $h = 12;
+        if ($m < 0) $m = 0;
+        if ($m > 60) $m = 60;
+
+        return sprintf('%02d:%02d', $h, $m);
     }
 
     public function eliminarHorario(Request $request, $id, $index)
