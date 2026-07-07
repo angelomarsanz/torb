@@ -7,9 +7,9 @@
 @section('main')
 <div id="listado_productos_servicios" class="container-fluid">
     <div class="row m-0">
-            <!-- COLUMNA IZQUIERDA: 30% FIJA (Escritorio) -->
+            <!-- COLUMNA IZQUIERDA: 30% (Escritorio) -->
             <div class="col-12 col-lg-30 d-none d-lg-block">
-                <div class="sticky-top-detail pr-lg-4">
+                <div class="pr-lg-4">
                     <!-- SECCIÓN 1: INFORMACIÓN DEL NEGOCIO -->
                     <section class="seccion-info-negocio">
                         @if($experiencia->ruta_imagenes)
@@ -31,10 +31,11 @@
                         @php
                             $emailNegocio = data_get($experiencia->ubicacion, 'email_negocio');
                             $whatsappNegocio = data_get($experiencia->ubicacion, 'whatsapp_negocio');
+                            $instagramNegocio = data_get($experiencia->ubicacion, 'instagram_negocio');
                         @endphp
                         <div class="negocio-detalle-contacto" id="contacto_negocio_desktop">
                             <p class="titulo-contacto">{{ __('Contacto:') }}</p>
-                            @if(!empty($emailNegocio) || !empty($whatsappNegocio))
+                            @if(!empty($emailNegocio) || !empty($whatsappNegocio) || !empty($instagramNegocio))
                                 @if(!empty($emailNegocio))
                                     <div class="contacto-item">
                                         <div class="contacto-header">
@@ -57,8 +58,19 @@
                                         </div>
                                     </div>
                                 @endif
+                                @if(!empty($instagramNegocio))
+                                    <div class="contacto-item">
+                                        <div class="contacto-header">
+                                            <i class="fab fa-instagram"></i>
+                                            <span class="label-contacto">{{ __('Instagram:') }}</span>
+                                        </div>
+                                        <div class="contacto-valor">
+                                            <a href="https://www.instagram.com/{{ ltrim($instagramNegocio, '@') }}/" target="_blank">{{ $instagramNegocio }}</a>
+                                        </div>
+                                    </div>
+                                @endif
                             @else
-                                <p class="text-muted small italic">{{ __('No se han cargado el correo y el teléfono Whatsapp') }}</p>
+                                <p class="text-muted small italic">{{ __('No se han cargado los datos de contacto') }}</p>
                             @endif
                         </div>
 
@@ -143,7 +155,7 @@
                         <!-- SECCIÓN DE CONTACTO (Solo Móvil) -->
                         <div class="negocio-detalle-contacto" id="contacto_negocio_mobile">
                             <p class="titulo-contacto">{{ __('Contacto:') }}</p>
-                            @if(!empty($emailNegocio) || !empty($whatsappNegocio))
+                            @if(!empty($emailNegocio) || !empty($whatsappNegocio) || !empty($instagramNegocio))
                                 @if(!empty($emailNegocio))
                                     <div class="contacto-item">
                                         <div class="contacto-header">
@@ -166,8 +178,19 @@
                                         </div>
                                     </div>
                                 @endif
+                                @if(!empty($instagramNegocio))
+                                    <div class="contacto-item">
+                                        <div class="contacto-header">
+                                            <i class="fab fa-instagram"></i>
+                                            <span class="label-contacto">{{ __('Instagram:') }}</span>
+                                        </div>
+                                        <div class="contacto-valor">
+                                            <a href="https://www.instagram.com/{{ ltrim($instagramNegocio, '@') }}/" target="_blank">{{ $instagramNegocio }}</a>
+                                        </div>
+                                    </div>
+                                @endif
                             @else
-                                <p class="text-muted small italic">{{ __('No se han cargado el correo y el teléfono Whatsapp') }}</p>
+                                <p class="text-muted small italic">{{ __('No se han cargado los datos de contacto') }}</p>
                             @endif
                         </div>
 
@@ -463,7 +486,7 @@
                                 'total' => $totalCalificaciones
                             ])
                         @endif
-                    </section>
+                </section>
 
             </div>
         </div>
@@ -591,7 +614,8 @@
         window.datosUbicacionNegocio = {
             lat: {{ $experiencia->ubicacion['latitud'] ?? 0 }},
             lng: {{ $experiencia->ubicacion['longitud'] ?? 0 }},
-            titulo: "{{ $experiencia->titulo }}"
+            titulo: "{{ $experiencia->titulo }}",
+            instagram: "{{ data_get($experiencia->ubicacion, 'instagram_negocio') }}"
         };
         window.actividadIdCargar = {{ $actividadIdDeepLink ?? 'null' }};
         

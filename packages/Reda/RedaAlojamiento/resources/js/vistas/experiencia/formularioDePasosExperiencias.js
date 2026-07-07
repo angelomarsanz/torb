@@ -1337,7 +1337,8 @@ $(function() {
                         country: { required: true },
                         latitude: { required: true, min: -90, max: 90 },
                         email_negocio: { required: true, email: true, maxlength: 255 },
-                        whatsapp_negocio: { required: true, maxlength: 255 }
+                        whatsapp_negocio: { required: true, maxlength: 255 },
+                        instagram_negocio: { maxlength: 255 }
                     },
                     submitHandler: function(form) {
                         $('#btn_next').attr('disabled', true);
@@ -1377,6 +1378,9 @@ $(function() {
                         },
                         whatsapp_negocio: {
                             required: window.RedaAlojamientoJson['WhatsApp obligatorio'] || 'WhatsApp obligatorio'
+                        },
+                        instagram_negocio: {
+                            maxlength: window.RedaAlojamientoJson['Por favor, no introduzcas más de 255 caracteres.'] || 'Por favor, no introduzcas más de 255 caracteres.'
                         }
                     },
                     errorPlacement: function(error, element) {

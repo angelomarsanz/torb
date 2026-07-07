@@ -732,6 +732,7 @@ class ExperienciaController extends Controller
                         'codigo_postal'       => $datosUbicacion['codigo_postal'] ?? $datosUbicacion['código_postal'] ?? '',
                         'email_negocio'       => $datosUbicacion['email_negocio'] ?? '',
                         'whatsapp_negocio'    => $datosUbicacion['whatsapp_negocio'] ?? '',
+                        'instagram_negocio'   => $datosUbicacion['instagram_negocio'] ?? '',
                     ];
                 }
 
@@ -902,6 +903,7 @@ class ExperienciaController extends Controller
                                 'latitude'            => 'required|not_in:0',
                                 'email_negocio'       => 'required|email|max:255',
                                 'whatsapp_negocio'    => 'required|max:255',
+                                'instagram_negocio'   => 'nullable|max:255',
                             ],
                             [
                                 'map_search.required'     => __('Búsqueda en el mapa obligatoria'),
@@ -915,6 +917,26 @@ class ExperienciaController extends Controller
                                 'whatsapp_negocio.required' => __('WhatsApp obligatorio'),
                             ]);
 
+                        // Limpieza del campo Instagram: Extraer handle si pegaron una URL
+                        $instagram = $request->instagram_negocio;
+                        if (!empty($instagram)) {
+                            // Si parece una URL (contiene / o http)
+                            if (strpos($instagram, '/') !== false || strpos($instagram, 'http') !== false) {
+                                // Limpiamos espacios y quitamos la barra final si existe
+                                $instagram = trim($instagram, " /");
+                                // Obtenemos la última parte de la ruta
+                                $partes = explode('/', $instagram);
+                                $instagram = end($partes);
+                                // Quitar posibles parámetros de consulta (?...)
+                                $subPartes = explode('?', $instagram);
+                                $instagram = $subPartes[0];
+                            }
+                            // Asegurarnos de guardar con el arroba para consistencia visual al editar
+                            if (substr($instagram, 0, 1) !== '@') {
+                                $instagram = '@' . $instagram;
+                            }
+                        }
+
                         $ubicacion = [
                             'busqueda_mapa'       => $request->map_search,
                             'longitud'            => $request->longitude,
@@ -927,6 +949,7 @@ class ExperienciaController extends Controller
                             'codigo_postal'       => $request->postal_code,
                             'email_negocio'       => $request->email_negocio,
                             'whatsapp_negocio'    => $request->whatsapp_negocio,
+                            'instagram_negocio'   => $instagram,
                         ];
 
                         $result->ubicacion = $ubicacion;

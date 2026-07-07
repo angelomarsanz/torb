@@ -98,6 +98,13 @@
 										<input type="text" name="whatsapp_negocio" id="whatsapp_negocio" value="{{ data_get($result->ubicacion, 'whatsapp_negocio') }}" class="form-control text-16 mt-2" placeholder="+584120000000">
 										<span class="text-danger">{{ $errors->first('whatsapp_negocio') }}</span>
 									</div>
+
+									<div class="col-md-6 mt-4 pl-5 pr-5">
+										<label>{{ __('Cuenta de Instagram del negocio') }}</label>
+										<input type="text" name="instagram_negocio" id="instagram_negocio" value="{{ data_get($result->ubicacion, 'instagram_negocio') }}" class="form-control text-16 mt-2" placeholder="{{ __('Nombre de usuario o enlace de perfil') }}">
+                                        <small class="text-muted">{{ __('Ej: https://www.instagram.com/mi_negocio/ o también puedes colocar @mi_negocio o mi_negocio') }}</small>
+										<span class="text-danger">{{ $errors->first('instagram_negocio') }}</span>
+									</div>
 								</div>
                             </div>
 
