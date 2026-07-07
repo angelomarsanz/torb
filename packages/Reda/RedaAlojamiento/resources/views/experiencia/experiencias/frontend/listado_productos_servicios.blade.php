@@ -58,38 +58,48 @@
                         <div class="negocio-detalle-contacto" id="contacto_negocio_desktop">
                             <p class="titulo-contacto">{{ __('Contacto:') }}</p>
                             @if(!empty($emailNegocio) || !empty($whatsappNegocio) || !empty($instagramNegocio))
-                                @if(!empty($emailNegocio))
-                                    <div class="contacto-item">
-                                        <div class="contacto-header">
-                                            <i class="fas fa-envelope"></i>
-                                            <span class="label-contacto">{{ __('Correo:') }}</span>
-                                        </div>
-                                        <div class="contacto-valor">
-                                            <a href="mailto:{{ $emailNegocio }}">{{ $emailNegocio }}</a>
-                                        </div>
-                                    </div>
-                                @endif
                                 @if(!empty($whatsappNegocio))
-                                    <div class="contacto-item">
-                                        <div class="contacto-header">
-                                            <i class="fab fa-whatsapp"></i>
-                                            <span class="label-contacto">{{ __('WhatsApp:') }}</span>
+                                    @php
+                                        $mensajeWhatsApp = __('Hola, vi su negocio ":titulo" en Torbian y me gustaría obtener más información.', ['titulo' => $experiencia->titulo]);
+                                        $urlWhatsApp = "https://wa.me/" . preg_replace('/[^0-9]/', '', $whatsappNegocio) . "?text=" . urlencode($mensajeWhatsApp);
+                                    @endphp
+                                    <a href="{{ $urlWhatsApp }}" target="_blank" class="contacto-item-link">
+                                        <div class="contacto-item">
+                                            <div class="contacto-header">
+                                                <i class="fab fa-whatsapp"></i>
+                                                <span class="label-contacto">{{ __('WhatsApp:') }}</span>
+                                            </div>
+                                            <div class="contacto-valor">
+                                                {{ $whatsappNegocio }}
+                                            </div>
                                         </div>
-                                        <div class="contacto-valor">
-                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $whatsappNegocio) }}" target="_blank">{{ $whatsappNegocio }}</a>
+                                    </a>
+                                @endif
+                                @if(!empty($emailNegocio))
+                                    <a href="mailto:{{ $emailNegocio }}" class="contacto-item-link">
+                                        <div class="contacto-item">
+                                            <div class="contacto-header">
+                                                <i class="fas fa-envelope"></i>
+                                                <span class="label-contacto">{{ __('Correo:') }}</span>
+                                            </div>
+                                            <div class="contacto-valor">
+                                                {{ $emailNegocio }}
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 @endif
                                 @if(!empty($instagramNegocio))
-                                    <div class="contacto-item">
-                                        <div class="contacto-header">
-                                            <i class="fab fa-instagram"></i>
-                                            <span class="label-contacto">{{ __('Instagram:') }}</span>
+                                    <a href="https://www.instagram.com/{{ ltrim($instagramNegocio, '@') }}/" target="_blank" class="contacto-item-link">
+                                        <div class="contacto-item">
+                                            <div class="contacto-header">
+                                                <i class="fab fa-instagram"></i>
+                                                <span class="label-contacto">{{ __('Instagram:') }}</span>
+                                            </div>
+                                            <div class="contacto-valor">
+                                                {{ $instagramNegocio }}
+                                            </div>
                                         </div>
-                                        <div class="contacto-valor">
-                                            <a href="https://www.instagram.com/{{ ltrim($instagramNegocio, '@') }}/" target="_blank">{{ $instagramNegocio }}</a>
-                                        </div>
-                                    </div>
+                                    </a>
                                 @endif
                             @else
                                 <p class="text-muted small italic">{{ __('No se han cargado los datos de contacto') }}</p>
@@ -178,38 +188,48 @@
                         <div class="negocio-detalle-contacto" id="contacto_negocio_mobile">
                             <p class="titulo-contacto">{{ __('Contacto:') }}</p>
                             @if(!empty($emailNegocio) || !empty($whatsappNegocio) || !empty($instagramNegocio))
-                                @if(!empty($emailNegocio))
-                                    <div class="contacto-item">
-                                        <div class="contacto-header">
-                                            <i class="fas fa-envelope"></i>
-                                            <span class="label-contacto">{{ __('Correo:') }}</span>
-                                        </div>
-                                        <div class="contacto-valor">
-                                            <a href="mailto:{{ $emailNegocio }}">{{ $emailNegocio }}</a>
-                                        </div>
-                                    </div>
-                                @endif
                                 @if(!empty($whatsappNegocio))
-                                    <div class="contacto-item">
-                                        <div class="contacto-header">
-                                            <i class="fab fa-whatsapp"></i>
-                                            <span class="label-contacto">{{ __('WhatsApp:') }}</span>
+                                    @php
+                                        $mensajeWhatsApp = __('Hola, vi su negocio ":titulo" en Torbian y me gustaría obtener más información.', ['titulo' => $experiencia->titulo]);
+                                        $urlWhatsApp = "https://wa.me/" . preg_replace('/[^0-9]/', '', $whatsappNegocio) . "?text=" . urlencode($mensajeWhatsApp);
+                                    @endphp
+                                    <a href="{{ $urlWhatsApp }}" target="_blank" class="contacto-item-link">
+                                        <div class="contacto-item">
+                                            <div class="contacto-header">
+                                                <i class="fab fa-whatsapp"></i>
+                                                <span class="label-contacto">{{ __('WhatsApp:') }}</span>
+                                            </div>
+                                            <div class="contacto-valor">
+                                                {{ $whatsappNegocio }}
+                                            </div>
                                         </div>
-                                        <div class="contacto-valor">
-                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $whatsappNegocio) }}" target="_blank">{{ $whatsappNegocio }}</a>
+                                    </a>
+                                @endif
+                                @if(!empty($emailNegocio))
+                                    <a href="mailto:{{ $emailNegocio }}" class="contacto-item-link">
+                                        <div class="contacto-item">
+                                            <div class="contacto-header">
+                                                <i class="fas fa-envelope"></i>
+                                                <span class="label-contacto">{{ __('Correo:') }}</span>
+                                            </div>
+                                            <div class="contacto-valor">
+                                                {{ $emailNegocio }}
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 @endif
                                 @if(!empty($instagramNegocio))
-                                    <div class="contacto-item">
-                                        <div class="contacto-header">
-                                            <i class="fab fa-instagram"></i>
-                                            <span class="label-contacto">{{ __('Instagram:') }}</span>
+                                    <a href="https://www.instagram.com/{{ ltrim($instagramNegocio, '@') }}/" target="_blank" class="contacto-item-link">
+                                        <div class="contacto-item">
+                                            <div class="contacto-header">
+                                                <i class="fab fa-instagram"></i>
+                                                <span class="label-contacto">{{ __('Instagram:') }}</span>
+                                            </div>
+                                            <div class="contacto-valor">
+                                                {{ $instagramNegocio }}
+                                            </div>
                                         </div>
-                                        <div class="contacto-valor">
-                                            <a href="https://www.instagram.com/{{ ltrim($instagramNegocio, '@') }}/" target="_blank">{{ $instagramNegocio }}</a>
-                                        </div>
-                                    </div>
+                                    </a>
                                 @endif
                             @else
                                 <p class="text-muted small italic">{{ __('No se han cargado los datos de contacto') }}</p>

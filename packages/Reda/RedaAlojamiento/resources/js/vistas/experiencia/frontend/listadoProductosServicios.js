@@ -274,6 +274,12 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const id = $(this).data('id');
                 if (id) abrirModalActividad(id);
             });
+
+            // Rastreo de clics en contactos para diagnóstico
+            $(document).on('click', '.contacto-item-link', function() {
+                const href = $(this).attr('href');
+                console.log('Clic detectado en contacto:', href);
+            });
         });
 
         async function abrirModalActividad(id) {

@@ -2135,10 +2135,32 @@
         color: #222;
     }
 
+    .contacto-item-link {
+        text-decoration: none !important;
+        display: block;
+        color: inherit;
+        transition: all 0.2s ease;
+        border-radius: 8px;
+        cursor: pointer !important;
+        position: relative;
+        z-index: 5;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+            text-decoration: none !important;
+            
+            .contacto-item {
+                transform: translateX(5px);
+            }
+        }
+    }
+
     .contacto-item {
         display: block; // Cambiado a block para permitir el salto de línea
         margin-bottom: 15px; // Más espacio entre items
+        padding: 8px;
         font-size: 16px;
+        transition: transform 0.2s ease;
 
         .contacto-header {
             display: flex;
