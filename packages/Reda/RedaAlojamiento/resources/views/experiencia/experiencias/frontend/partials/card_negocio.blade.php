@@ -10,8 +10,16 @@
         @endif
 
         {{-- Botón Favorito --}}
-        <button class="btn-favorito" type="button">
-            <i class="far fa-heart"></i>
+        @php
+            $esFavorito = false;
+            if (Auth::check()) {
+                $esFavorito = \Reda\RedaAlojamiento\Models\Experiencia\FavoritoComercio::where('user_id', Auth::id())
+                    ->where('experiencia_id', $experiencia->id)
+                    ->exists();
+            }
+        @endphp
+        <button class="btn-favorito" type="button" data-id="{{ $experiencia->id }}" data-owner-id="{{ $experiencia->user_id }}">
+            <i class="{{ $esFavorito ? 'fas text-success' : 'far' }} fa-heart"></i>
         </button>
 
         <!-- Link Overlay -->

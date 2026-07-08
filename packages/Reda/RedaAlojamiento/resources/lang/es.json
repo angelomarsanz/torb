@@ -476,5 +476,21 @@
     "Cerrado el:": "Cerrado el:",
     "No se detectó sesión de administrador": "No se detectó sesión de administrador",
     "Su sesión de administrador ha expirado o no es válida": "Su sesión de administrador ha expirado o no es válida",
-    "Error al cerrar el ticket": "Error al cerrar el ticket"
+    "Error al cerrar el ticket": "Error al cerrar el ticket",
+    "No puedes agregar tu propio negocio a favoritos": "No puedes agregar tu propio negocio a favoritos",
+    "Negocio eliminado de tus favoritos": "Negocio eliminado de tus favoritos",
+    "Negocio agregado a tus favoritos": "Negocio agregado a tus favoritos",
+    "Error al procesar la solicitud de favoritos": "Error al procesar la solicitud de favoritos",
+    "Favoritos": "Favoritos"
+    "No puedes agregar tu propio negocio a favoritos": "No puedes agregar tu propio negocio a favoritos",
+    "Negocio agregado a tus favoritos": "Negocio agregado a tus favoritos",
+    "Negocio eliminado de tus favoritos": "Negocio eliminado de tus favoritos",
+    "Mis Comercios Favoritos": "Mis Comercios Favoritos",
+    "Aún no tienes comercios favoritos.": "Aún no tienes comercios favoritos.",
+    "Error cargando favoritos": "Error cargando favoritos",
+    "Listado de favoritos recuperado": "Listado de favoritos recuperado",
+    "Ocurrió un error al cargar tus favoritos": "Ocurrió un error al cargar tus favoritos",
+    "Comercios": "Comercios",
+    "Productos y Servicios": "Productos y Servicios",
+    "Mis Favoritos": "Mis Favoritos"
 }

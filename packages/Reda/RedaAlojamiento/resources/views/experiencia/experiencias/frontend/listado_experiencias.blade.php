@@ -9,27 +9,52 @@
 <!-- BARRA DE BÚSQUEDA FLOTANTE (FIXED) -->
 <div class="reda-search-sticky-wrapper py-3" id="search_sticky_bar">
     <div class="container-fluid container-fluid-90">
-        <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
-        <div class="d-lg-none seccion-filtros-movil">
-            <div class="reda-search-trigger-movil reda-cursor-pointer shadow-sm" data-toggle="modal" data-target="#modalBusquedaComercios">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-search text-primary mr-3"></i>
-                    <span class="text-muted reda-font-weight-600">{{ __('¿Qué estás buscando?') }}</span>
+        <div class="d-flex align-items-center justify-content-between">
+            <!-- Trigger de Búsqueda Móvil (Solo visible en < 992px) -->
+            <div class="d-lg-none seccion-filtros-movil flex-grow-1">
+                <div class="reda-search-trigger-movil reda-cursor-pointer shadow-sm" data-toggle="modal" data-target="#modalBusquedaComercios">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-search text-primary mr-3"></i>
+                        <span class="text-muted reda-font-weight-600">{{ __('¿Qué estás buscando?') }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Trigger de Búsqueda Desktop (Solo visible en >= 992px) -->
-        <div class="d-none d-lg-block seccion-filtros-desktop">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 col-xl-5">
-                    <div class="reda-search-trigger-desktop reda-cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
-                        <div class="d-flex align-items-center justify-content-between px-4 py-2 bg-white border rounded-pill shadow-sm">
-                            <span class="text-muted reda-font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center reda-search-icon-circle">
-                                <i class="fas fa-search text-white text-14"></i>
+            <!-- Trigger de Búsqueda Desktop (Solo visible en >= 992px) -->
+            <div class="d-none d-lg-block seccion-filtros-desktop flex-grow-1">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-xl-5">
+                        <div class="reda-search-trigger-desktop reda-cursor-pointer" data-toggle="modal" data-target="#modalBusquedaComercios">
+                            <div class="d-flex align-items-center justify-content-between px-4 py-2 bg-white border rounded-pill shadow-sm">
+                                <span class="text-muted reda-font-weight-600 ml-2">{{ __('¿Qué estás buscando?') }}</span>
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center reda-search-icon-circle">
+                                    <i class="fas fa-search text-white text-14"></i>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menú de Favoritos (Corazón) -->
+            <div class="reda-favoritos-nav-container ml-3">
+                <div class="dropdown">
+                    <button class="btn btn-white border rounded-circle shadow-sm btn-nav-favoritos" 
+                            type="button" id="dropdownFavoritos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-heart text-danger"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right rounded-15 border-0 shadow-lg p-0 mt-2" aria-labelledby="dropdownFavoritos">
+                        <div class="dropdown-header font-weight-700 text-dark border-bottom py-3">
+                            <i class="fas fa-heart mr-2 text-danger"></i>{{ __('Mis Favoritos') }}
+                        </div>
+                        <a class="dropdown-item py-3 d-flex align-items-center btn-abrir-favoritos-comercios" href="javascript:void(0)">
+                            <i class="fas fa-store mr-3 text-primary"></i>
+                            <span>{{ __('Comercios') }}</span>
+                        </a>
+                        <a class="dropdown-item py-3 d-flex align-items-center disabled opacity-05" href="javascript:void(0)" title="{{ __('Próximamente') }}">
+                            <i class="fas fa-shopping-bag mr-3 text-muted"></i>
+                            <span>{{ __('Productos y Servicios') }}</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -212,6 +237,28 @@
 </div>
 
     @include('reda-alojamiento::general.modal_listado_infinito')
+
+    <!-- Modal Listado Favoritos Comercios -->
+    <div class="modal fade" id="modalFavoritosComercios" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content rounded-20 shadow-lg border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title font-weight-700 text-20">{{ __('Mis Comercios Favoritos') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-0 mt-3" id="bodyFavoritosComercios" style="max-height: 70vh; overflow-y: auto;">
+                    <div class="text-center p-5">
+                        <i class="fa fa-spinner fa-spin fa-3x text-primary"></i>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-dark btn-block rounded-pill font-weight-700" data-dismiss="modal">{{ __('Cerrar') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @stop
 

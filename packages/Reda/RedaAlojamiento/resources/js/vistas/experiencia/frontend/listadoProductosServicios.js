@@ -1,4 +1,5 @@
 import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js';
+import { toggleFavoritoComercio } from './toggleFavoritoComercio.js';
 
 (function( $ ) {
     "use strict";
@@ -280,6 +281,121 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                 const href = $(this).attr('href');
                 console.log('Clic detectado en contacto:', href);
             });
+
+            // --- GESTIÓN DE FAVORITOS (COMERCIO) ---
+            $(document).on('click', '.btn-toggle-favorito-comercio', async function(e) {
+                e.preventDefault();
+                const $btn = $(this);
+                const $icono = $btn.find('i');
+                const idComercio = $btn.data('id');
+
+                // Animación de espera
+                window.RedaNotificaciones.esperar();
+
+                const res = await toggleFavoritoComercio(idComercio);
+
+                // Ocultar animación
+                window.RedaNotificaciones.ocultar();
+
+                if (res.success) {
+                    if (res.respuesta.accion === 'agregado') {
+                        $icono.removeClass('far').addClass('fas text-success');
+                    } else {
+                        $icono.removeClass('fas text-success').addClass('far');
+                    }
+
+                    window.RedaNotificaciones.notificar(
+                        window.RedaAlojamientoJson['Favoritos'] || 'Favoritos',
+                        res.mensaje_usuario,
+                        'success'
+                    );
+                } else {
+                    window.RedaNotificaciones.notificar(
+                        window.RedaAlojamientoJson['Error'] || 'Error',
+                        res.mensaje_usuario,
+                        'error'
+                    );
+                }
+            });
+
+            // --- GESTIÓN DE FAVORITOS (MODAL) ---
+
+            $(document).on('click', '.btn-abrir-favoritos-comercios', async function() {
+                const $modalId = '#modalFavoritosComercios';
+                let $modal = $($modalId);
+                
+                if (!$modal.length) {
+                    // Si no existe el modal en esta vista, lo creamos dinámicamente
+                    const modalHtml = `
+                        <div class="modal fade" id="modalFavoritosComercios" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content rounded-20 shadow-lg border-0">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h5 class="modal-title font-weight-700 text-20">${window.RedaAlojamientoJson['Mis Comercios Favoritos'] || 'Mis Comercios Favoritos'}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body p-0 mt-3" id="bodyFavoritosComercios" style="max-height: 70vh; overflow-y: auto;">
+                                        <div class="text-center p-5">
+                                            <i class="fa fa-spinner fa-spin fa-3x text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn btn-outline-dark btn-block rounded-pill font-weight-700" data-dismiss="modal">${window.RedaAlojamientoJson['Cerrar'] || 'Cerrar'}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    $('body').append(modalHtml);
+                    $modal = $($modalId);
+                }
+
+                const $body = $('#bodyFavoritosComercios');
+                $body.html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x text-primary"></i></div>');
+                $modal.modal('show');
+
+                const respuesta = await obtenerFavoritosComercios();
+
+                if (respuesta.success) {
+                    $body.html(respuesta.respuesta.html);
+                } else {
+                    $body.html(`<div class="text-center p-5 text-danger"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><p>${respuesta.mensaje_usuario}</p></div>`);
+                }
+            });
+
+            // Manejar clics en favoritos dentro del modal (Eliminar)
+            $(document).on('click', '#bodyFavoritosComercios .btn-toggle-favorito-comercio', async function(e) {
+                e.preventDefault();
+                const $btn = $(this);
+                const idComercio = $btn.data('id');
+
+                window.RedaNotificaciones.esperar();
+                const res = await toggleFavoritoComercio(idComercio);
+                window.RedaNotificaciones.ocultar();
+
+                if (res.success) {
+                    // Remover de la lista del modal
+                    $btn.closest('.favorito-item').fadeOut(300, function() {
+                        $(this).remove();
+                        if ($('#bodyFavoritosComercios .favorito-item').length === 0) {
+                            $('#bodyFavoritosComercios').html('<div class="text-center p-5"><i class="far fa-heart fa-3x text-muted mb-3 opacity-05"></i><p class="text-muted m-0">' + (window.RedaAlojamientoJson['Aún no tienes comercios favoritos.'] || 'Aún no tienes comercios favoritos.') + '</p></div>');
+                        }
+                    });
+
+                    // Actualizar corazón en la vista principal si es el mismo negocio
+                    const $btnPrincipal = $('.btn-toggle-favorito-comercio').first();
+                    if ($btnPrincipal.data('id') == idComercio) {
+                        $btnPrincipal.find('i').removeClass('fas text-success').addClass('far');
+                    }
+
+                    window.RedaNotificaciones.notificar(
+                        window.RedaAlojamientoJson['Favoritos'] || 'Favoritos',
+                        res.mensaje_usuario,
+                        'success'
+                    );
+                }
+            });
         });
 
         async function abrirModalActividad(id) {
@@ -302,6 +418,42 @@ import { ListadoInfinito } from '../../../general/utilidades/listadoInfinito.js'
                     'error'
                 );
             }
+        }
+
+        /**
+         * Función llamada para obtener el listado de favoritos vía AJAX
+         */
+        const obtenerFavoritosComercios = () => {
+            return new Promise((resolve) => {
+                $.ajax({
+                    url: APP_URL + '/reda/negocios/experiencias/favoritos',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        resolve(data);
+                    },
+                    error: function (x, xs, xt) {
+                        let respuestaServidor = {};
+                        try {
+                            respuestaServidor = JSON.parse(x.responseText);
+                        } catch (e) {
+                            respuestaServidor = {};
+                        }
+
+                        const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                        const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                        let respuesta = {
+                            'success': false,
+                            'message' : window.RedaAlojamientoJson["Error cargando favoritos"] || 'Error cargando favoritos',
+                            'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                            'respuesta': respuestaServidor.respuesta || '',
+                            'code' : x.status !== 0 ? x.status : 504,
+                        };
+                        resolve(respuesta);
+                    }
+                });
+            });
         }
 
         function filtrarActividades(texto, tipo) {

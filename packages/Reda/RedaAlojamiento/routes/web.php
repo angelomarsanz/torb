@@ -193,6 +193,12 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
             Route::get('mis-calificaciones/detalle/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\CalificacionController::class, 'detalleCalificacionesDuenio'])
                 ->name('experiencias.detalle_calificaciones');
 
+            // Favoritos
+            Route::post('experiencias/toggle-favorito/{id}', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\FavoritoController::class, 'toggleFavoritoComercio'])
+                ->name('experiencias.toggle_favorito');
+            Route::get('experiencias/favoritos', [\Reda\RedaAlojamiento\Http\Controllers\Experiencia\FavoritoController::class, 'getFavoritosComercios'])
+                ->name('experiencias.get_favoritos');
+
             Route::delete('experiencias/eliminar-experiencia/{id}', [ExperienciaController::class, 'destroy'])->name('experiencias.destroy');
         });
     });

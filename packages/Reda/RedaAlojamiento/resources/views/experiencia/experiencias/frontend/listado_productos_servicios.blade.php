@@ -5,6 +5,15 @@
 @endpush
 
 @section('main')
+@php
+    $esFavorito = false;
+    if (Auth::check()) {
+        $esFavorito = \Reda\RedaAlojamiento\Models\Experiencia\FavoritoComercio::where('user_id', Auth::id())
+            ->where('experiencia_id', $experiencia->id)
+            ->exists();
+    }
+@endphp
+
 <div id="listado_productos_servicios" class="container-fluid">
     <div class="row m-0">
             <!-- COLUMNA IZQUIERDA: 30% (Escritorio) -->
@@ -20,7 +29,16 @@
                             </div>
                         @endif
 
-                        <h1 class="negocio-detalle-titulo font-weight-700 px-2">{{ $experiencia->titulo }}</h1>
+                        <div class="d-flex align-items-center justify-content-between px-2 mb-2">
+                            <h1 class="negocio-detalle-titulo font-weight-700 m-0">{{ $experiencia->titulo }}</h1>
+                            <button class="btn-favorito-estatico btn-toggle-favorito-comercio" 
+                                    type="button" 
+                                    data-id="{{ $experiencia->id }}" 
+                                    data-owner-id="{{ $experiencia->user_id }}"
+                                    title="{{ __('Favorito') }}">
+                                <i class="{{ $esFavorito ? 'fas text-success' : 'far' }} fa-heart"></i>
+                            </button>
+                        </div>
 
                         <div class="negocio-detalle-desc-wrapper px-2">
                             <p class="negocio-detalle-desc text-muted" id="desc_negocio_fija">{{ $experiencia->descripcion }}</p>
@@ -114,10 +132,35 @@
 
                 <!-- SECCIÓN 2: BARRA DE BÚSQUEDA (Activador de Modal) -->
                 <section class="seccion-busqueda-actividades px-4 mb-4">
-                    <div class="search-bar-actividades d-flex align-items-center justify-content-center" 
-                         data-toggle="modal" data-target="#modalBusquedaActividades"
-                         style="cursor: pointer;">
-                        <span class="text-muted"><i class="fas fa-search mr-2"></i> {{ __('¿Qué estás buscando?') }}</span>
+                    <div class="d-flex align-items-center">
+                        <div class="search-bar-actividades d-flex align-items-center justify-content-center flex-grow-1" 
+                             data-toggle="modal" data-target="#modalBusquedaActividades"
+                             style="cursor: pointer;">
+                            <span class="text-muted"><i class="fas fa-search mr-2"></i> {{ __('¿Qué estás buscando?') }}</span>
+                        </div>
+
+                        <!-- Menú de Favoritos (Corazón) -->
+                        <div class="reda-favoritos-nav-container ml-3">
+                            <div class="dropdown">
+                                <button class="btn btn-white border rounded-circle shadow-sm btn-nav-favoritos" 
+                                        type="button" id="dropdownFavoritos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-heart text-danger"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right rounded-15 border-0 shadow-lg p-0 mt-2" aria-labelledby="dropdownFavoritos">
+                                    <div class="dropdown-header font-weight-700 text-dark border-bottom py-3">
+                                        <i class="fas fa-heart mr-2 text-danger"></i>{{ __('Mis Favoritos') }}
+                                    </div>
+                                    <a class="dropdown-item py-3 d-flex align-items-center btn-abrir-favoritos-comercios" href="javascript:void(0)">
+                                        <i class="fas fa-store mr-3 text-primary"></i>
+                                        <span>{{ __('Comercios') }}</span>
+                                    </a>
+                                    <a class="dropdown-item py-3 d-flex align-items-center disabled opacity-05" href="javascript:void(0)" title="{{ __('Próximamente') }}">
+                                        <i class="fas fa-shopping-bag mr-3 text-muted"></i>
+                                        <span>{{ __('Productos y Servicios') }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
