@@ -49,7 +49,7 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/indexSoporteTecnico.js', 'public/js/reda/admin/general/soporte_tecnico/indexSoporteTecnico.min.js');
     mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/showSoporteTecnico.js', 'public/js/reda/admin/general/soporte_tecnico/showSoporteTecnico.min.js');
 
-    // Js por vistas
+    // Js dashboard usuario
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/createExperiencias.js',
         'public/js/reda/vistas/experiencia/createExperiencias.min.js');
 
@@ -58,6 +58,17 @@ if (buildAlojamiento) {
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js',
         'public/js/reda/vistas/experiencia/indexExperiencias.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js',
+        'public/js/reda/vistas/experiencia/calificacionExperiencia.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js',
+        'public/js/reda/vistas/experiencia/detalleCalificaciones.min.js');
+
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js',
+        'public/js/reda/vistas/experiencia/listadoCalificaciones.min.js');
+
+    // Js Frontend
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js',
         'public/js/reda/vistas/experiencia/frontend/listadoExperiencias.min.js');
@@ -68,18 +79,9 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/productosServiciosEncontrados.js',
         'public/js/reda/vistas/experiencia/frontend/productosServiciosEncontrados.min.js');
 
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js',
-        'public/js/reda/vistas/experiencia/calificacionExperiencia.min.js');
-
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js', 'public/js/reda/vistas/experiencia/frontend/calificacionExperienciaFrontend.min.js');
 
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js',
-        'public/js/reda/vistas/experiencia/detalleCalificaciones.min.js');
-
-    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js',
-        'public/js/reda/vistas/experiencia/listadoCalificaciones.min.js');
     }
-
 
 mix.options({
     manifest: false,

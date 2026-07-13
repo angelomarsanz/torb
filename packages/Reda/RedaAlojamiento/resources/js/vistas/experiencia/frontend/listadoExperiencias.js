@@ -256,15 +256,14 @@ import { toggleFavoritoComercio } from './toggleFavoritoComercio.js';
 
                 const $btn = $(this);
                 const $icono = $btn.find('i');
-                const idComercio = $btn.data('id');
+                const idComercio = $btn.attr('data-id');
+
+                if (!idComercio || idComercio === 'undefined') return;
 
                 // Mostrar animación de espera
                 window.RedaNotificaciones.esperar();
 
                 const res = await toggleFavoritoComercio(idComercio);
-
-                // Ocultar animación
-                window.RedaNotificaciones.ocultar();
 
                 if (res.success) {
                     if (res.respuesta.accion === 'agregado') {
@@ -276,7 +275,7 @@ import { toggleFavoritoComercio } from './toggleFavoritoComercio.js';
                     window.RedaNotificaciones.notificar(
                         window.RedaAlojamientoJson['Favoritos'] || 'Favoritos',
                         res.mensaje_usuario,
-                        'success'
+                        'exito'
                     );
                 } else {
                     window.RedaNotificaciones.notificar(
@@ -536,10 +535,16 @@ import { toggleFavoritoComercio } from './toggleFavoritoComercio.js';
                     const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                     const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
 
+                    let mensajeUsuario = respuestaServidor.mensaje_usuario;
+
+                    if (x.status === 401 && !mensajeUsuario) {
+                        mensajeUsuario = window.RedaAlojamientoJson?.["Debes iniciar sesión para ver tus favoritos"] || "Debes iniciar sesión para ver tus favoritos";
+                    }
+
                     let respuesta = {
                         'success': false,
                         'message' : window.RedaAlojamientoJson["Error cargando favoritos"] || 'Error cargando favoritos',
-                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                        'mensaje_usuario': mensajeUsuario ?? `${mensajeErrorBase}.${detalleError}`,
                         'respuesta': respuestaServidor.respuesta || '',
                         'code' : x.status !== 0 ? x.status : 504,
                     };

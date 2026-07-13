@@ -287,15 +287,14 @@ import { toggleFavoritoComercio } from './toggleFavoritoComercio.js';
                 e.preventDefault();
                 const $btn = $(this);
                 const $icono = $btn.find('i');
-                const idComercio = $btn.data('id');
+                const idComercio = $btn.attr('data-id');
+
+                if (!idComercio || idComercio === 'undefined') return;
 
                 // Animación de espera
                 window.RedaNotificaciones.esperar();
 
                 const res = await toggleFavoritoComercio(idComercio);
-
-                // Ocultar animación
-                window.RedaNotificaciones.ocultar();
 
                 if (res.success) {
                     if (res.respuesta.accion === 'agregado') {
@@ -307,7 +306,7 @@ import { toggleFavoritoComercio } from './toggleFavoritoComercio.js';
                     window.RedaNotificaciones.notificar(
                         window.RedaAlojamientoJson['Favoritos'] || 'Favoritos',
                         res.mensaje_usuario,
-                        'success'
+                        'exito'
                     );
                 } else {
                     window.RedaNotificaciones.notificar(

@@ -18,7 +18,15 @@ class FavoritoController extends Controller
     {
         try {
             $userId = Auth::id();
-            
+
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'mensaje_usuario' => __('Debes iniciar sesión para ver tus favoritos'),
+                    'code' => 401
+                ], 401);
+            }
+
             $favoritos = FavoritoComercio::with(['experiencia.fotos'])
                 ->where('user_id', $userId)
                 ->get()
@@ -27,11 +35,11 @@ class FavoritoController extends Controller
 
             if ($request->ajax()) {
                 $html = view('reda-alojamiento::experiencia.experiencias.frontend.partials.lista_favoritos_comercios', compact('favoritos'))->render();
-                
+
                 $respuesta = [
                     'success' => true,
-                    'message' : 'Favorites retrieved successfully',
-                    'mensaje_usuario': __('Listado de favoritos recuperado'),
+                    'message' => 'Favorites retrieved successfully',
+                    'mensaje_usuario' => __('Listado de favoritos recuperado'),
                     'respuesta' => [
                         'html' => $html,
                         'cantidad' => $favoritos->count()
@@ -47,8 +55,8 @@ class FavoritoController extends Controller
             Log::error("Error en getFavoritosComercios: " . $e->getMessage());
             $respuesta = [
                 'success' => false,
-                'message' : 'Error retrieving favorites',
-                'mensaje_usuario': __('Ocurrió un error al cargar tus favoritos'),
+                'message' => 'Error retrieving favorites',
+                'mensaje_usuario' => __('Ocurrió un error al cargar tus favoritos'),
                 'respuesta' => $e->getMessage(),
                 'code' => 500
             ];
@@ -62,6 +70,17 @@ class FavoritoController extends Controller
     public function toggleFavoritoComercio(Request $request, $id)
     {
         try {
+            // Validación de ID recibido desde el cliente
+            if (!$id || $id === 'undefined' || $id === 'null') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid ID provided',
+                    'mensaje_usuario' => __('Error al identificar el comercio'),
+                    'respuesta' => '',
+                    'code' => 400
+                ], 400);
+            }
+
             $experiencia = Experiencia::findOrFail($id);
             $userId = Auth::id();
 

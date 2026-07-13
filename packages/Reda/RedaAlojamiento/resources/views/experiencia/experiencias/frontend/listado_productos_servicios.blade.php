@@ -31,9 +31,9 @@
 
                         <div class="d-flex align-items-center justify-content-between px-2 mb-2">
                             <h1 class="negocio-detalle-titulo font-weight-700 m-0">{{ $experiencia->titulo }}</h1>
-                            <button class="btn-favorito-estatico btn-toggle-favorito-comercio" 
-                                    type="button" 
-                                    data-id="{{ $experiencia->id }}" 
+                            <button class="btn-favorito-estatico btn-toggle-favorito-comercio"
+                                    type="button"
+                                    data-id="{{ $experiencia->id }}"
                                     data-owner-id="{{ $experiencia->user_id }}"
                                     title="{{ __('Favorito') }}">
                                 <i class="{{ $esFavorito ? 'fas text-success' : 'far' }} fa-heart"></i>

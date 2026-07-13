@@ -12,6 +12,13 @@ class CheckPluginAuth
         $isAuthenticated = Auth::check() || auth()->user() || Auth::guard('web')->check();
 
         if (!$isAuthenticated) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'mensaje_usuario' => __('Debes iniciar sesión para agregar a favoritos'),
+                    'code' => 401
+                ], 401);
+            }
             return redirect()->guest('login');
         }
 

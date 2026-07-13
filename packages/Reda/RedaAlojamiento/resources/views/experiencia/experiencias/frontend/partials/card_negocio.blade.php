@@ -18,8 +18,13 @@
                     ->exists();
             }
         @endphp
-        <button class="btn-favorito" type="button" data-id="{{ $experiencia->id }}" data-owner-id="{{ $experiencia->user_id }}">
-            <i class="{{ $esFavorito ? 'fas text-success' : 'far' }} fa-heart"></i>
+        {{-- Incluimos el ID de forma redundante para asegurar la captura en JS --}}
+        <button class="btn-favorito comercio-id-{{ $experiencia->id }}"
+                type="button"
+                data-id="{{ $experiencia->id }}"
+                data-id-comercio="{{ $experiencia->id }}"
+                data-owner-id="{{ $experiencia->user_id }}">
+            <i class="{{ $esFavorito ? 'fas text-success' : 'far' }} fa-heart" data-id-comercio="{{ $experiencia->id }}"></i>
         </button>
 
         <!-- Link Overlay -->
@@ -32,7 +37,7 @@
                 $foto = $experiencia->foto_portada;
                 $nombreFoto = $foto ? $foto->photo : null;
                 $rutaFoto = asset('public/images/default-image.png');
-                
+
                 if ($nombreFoto) {
                     if (strpos($nombreFoto, '/') !== false) {
                         $rutaFoto = asset('public/images/experiencias/' . $nombreFoto);
@@ -49,10 +54,10 @@
             <h3 class="negocio-titulo">{{ $experiencia->titulo }}</h3>
             <p class="negocio-rating star-rating">
                 @if($experiencia->calificaciones_count > 0)
-                    <i class="fas fa-star text-warning"></i> 
+                    <i class="fas fa-star text-warning"></i>
                     <span class="font-weight-700 text-dark">{{ number_format($experiencia->calificaciones_avg_estrellas, 1, '.', '') }}</span>
                 @else
-                    <i class="fas fa-star text-muted"></i> 
+                    <i class="fas fa-star text-muted"></i>
                     <span class="text-muted small">{{ __('Sin reseñas') }}</span>
                 @endif
             </p>
