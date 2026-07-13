@@ -51,10 +51,12 @@
                             <i class="fas fa-store mr-3 text-primary"></i>
                             <span>{{ __('Comercios') }}</span>
                         </a>
+                        {{-- 
                         <a class="dropdown-item py-3 d-flex align-items-center disabled opacity-05" href="javascript:void(0)" title="{{ __('Próximamente') }}">
                             <i class="fas fa-shopping-bag mr-3 text-muted"></i>
                             <span>{{ __('Productos y Servicios') }}</span>
                         </a>
+                        --}}
                     </div>
                 </div>
             </div>

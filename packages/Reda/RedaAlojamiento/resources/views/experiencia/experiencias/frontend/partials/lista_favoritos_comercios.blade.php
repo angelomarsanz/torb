@@ -20,10 +20,6 @@
                     {{ $experiencia->titulo }}
                 </a>
             </h6>
-            <div class="text-muted small">
-                <i class="fas fa-star text-warning"></i> 
-                {{ number_format($experiencia->calificaciones_avg_estrellas ?? 0, 1, '.', '') }}
-            </div>
         </div>
         <div class="favorito-acciones">
             <button class="btn btn-sm btn-outline-danger btn-toggle-favorito-comercio" 
