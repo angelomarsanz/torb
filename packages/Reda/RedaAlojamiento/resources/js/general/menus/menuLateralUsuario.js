@@ -1,3 +1,5 @@
+import { mediacionSvg } from '../iconos';
+
 export const menuLateralUsuario = () =>
 {
     (function( $ ) {
@@ -18,6 +20,7 @@ export const menuLateralUsuario = () =>
         const textoCalificacionesRealizadas = window.RedaAlojamientoJson["Calificaciones realizadas"] || "Calificaciones realizadas";
         const textoQrCalificaciones = window.RedaAlojamientoJson["QR calificaciones"] || "QR calificaciones";
         const textoListadoCalificaciones = window.RedaAlojamientoJson["Listado de calificaciones"] || "Listado de calificaciones";
+        const textoMediaciones = window.RedaAlojamientoJson["Mediaciones"] || "Mediaciones";
 
         // Función para mostrar la animación de espera
         const mostrarEsperar = () => {
@@ -54,8 +57,8 @@ export const menuLateralUsuario = () =>
                     <a data-toggle="collapse" href="#collapseAlojamientoMain" class="text-color font-weight-500 mt-1 ${isAlojamientoActive ? 'reda-active-option' : ''}" role="button" data-reda-plugin>
                         <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4 mb-0">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-home mr-3 text-18 align-middle"></i>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-home mr-3 text-18"></i>
                                     ${textoAlojamientos}
                                 </div>
                                 <i class="fas ${isAlojamientoActive ? 'fa-angle-down' : 'fa-angle-right'} reda-sub-menu-arrow pr-4"></i>
@@ -106,6 +109,34 @@ export const menuLateralUsuario = () =>
             } else {
                 $(containerSidebar).prepend(bloqueNegociosSidebar);
             }
+
+            // --- OPCIÓN DE MEDIACIONES (ESCRITORIO) ---
+            const isMediacionesActive = path.includes('/reda/disputas');
+            const mediacionHtml = `
+                <a class="text-color font-weight-500 mt-1 ${isMediacionesActive ? 'reda-active-option' : ''}" href="${APP_URL}/reda/disputas" data-reda-plugin>
+                    <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3 d-flex align-items-center reda-icon-svg-18">
+                                ${mediacionSvg}
+                            </div>
+                            ${textoMediaciones}
+                        </div>
+                    </li>
+                </a>
+            `;
+
+            // UBICACIÓN: Debajo de "Transacciones" y antes de "Perfil"
+            const linkTransacciones = $(containerSidebar).find('a[href*="/users/transaction-history"]');
+            const linkPerfil = $(containerSidebar).find('a[href*="/users/profile"]');
+
+            if (linkTransacciones.length) {
+                linkTransacciones.after(mediacionHtml);
+            } else if (linkPerfil.length) {
+                linkPerfil.before(mediacionHtml);
+            } else {
+                $(containerSidebar).append(mediacionHtml);
+            }
+
 
             // --- REESTRUCTURACIÓN DE RESEÑAS (ESCRITORIO) ---
             const reviewsCollapseSidebar = $('#collapseReviews');
@@ -246,6 +277,32 @@ export const menuLateralUsuario = () =>
                 nuevoMenuAlojamientoMobile.after(menuInyectarMobile);
             } else {
                 $(containerMobile).find('li:first').after(menuInyectarMobile);
+            }
+
+            // --- OPCIÓN DE MEDIACIONES (MÓVIL) ---
+            const mediacionHtmlMobile = `
+                <li data-reda-plugin>
+                    <a href="${APP_URL}/reda/disputas">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3 d-flex align-items-center reda-icon-svg-18">
+                                ${mediacionSvg}
+                            </div>
+                            ${textoMediaciones}
+                        </div>
+                    </a>
+                </li>
+            `;
+
+            // UBICACIÓN MÓVIL: Debajo de "Transacciones" y antes de "Perfil"
+            const linkTransaccionesMobile = $(containerMobile).find('a[href*="/users/transaction-history"]').parent('li');
+            const linkPerfilMobile = $(containerMobile).find('a[href*="/users/profile"]').parent('li');
+
+            if (linkTransaccionesMobile.length) {
+                linkTransaccionesMobile.after(mediacionHtmlMobile);
+            } else if (linkPerfilMobile.length) {
+                linkPerfilMobile.before(mediacionHtmlMobile);
+            } else {
+                $(containerMobile).append(mediacionHtmlMobile);
             }
 
             // --- REESTRUCTURACIÓN DE RESEÑAS (MÓVIL) ---

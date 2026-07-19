@@ -198,7 +198,7 @@ export const guardarMediacionReda = (formData) => {
                                 <span class="reda-mediation-label mb-0">${pasoLabel}</span> <span class="text-12 text-dark font-weight-600">${d.paso_actual}</span>
                             </div>
 
-                            <a href="${APP_URL}/reda/disputas" class="btn btn-outline-success btn-block text-14 font-weight-700">
+                            <a href="${APP_URL}/reda/disputas" class="btn btn-outline-success btn-block text-14 font-weight-700" data-reda-plugin>
                                 ${listadoText}
                             </a>
                         </div>
