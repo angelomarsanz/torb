@@ -99,14 +99,14 @@ export const guardarMediacionReda = (formData) => {
     /**
      * Inyecta el cuadro de mediación en la barra lateral de la reserva.
      */
-    const inyectarCajaMediacionReda = async () => {
+    const inyectarCajaMediacionReda = async (force = false) => {
         const containerId = '#booking';
         const targetContainer = $(containerId);
 
         if (targetContainer.length) {
             if ($('#caja-mediacion-reda').length) {
                 const currentBookingId = $('.send-btn').attr('data-booking') || '';
-                if ($('#caja-mediacion-reda').attr('data-booking-id') !== currentBookingId) {
+                if ($('#caja-mediacion-reda').attr('data-booking-id') !== currentBookingId || force) {
                      $('#caja-mediacion-reda').remove();
                 } else {
                     return;
@@ -289,7 +289,7 @@ export const guardarMediacionReda = (formData) => {
                 form[0].reset();
                 form.find('.custom-file-label').html(window.RedaAlojamientoJson["Elegir archivos"] || 'Elegir archivos');
                 
-                inyectarCajaMediacionReda();
+                inyectarCajaMediacionReda(true);
             } else {
                 const errorTitle = window.RedaAlojamientoJson["Error"] || "Error";
                 window.RedaNotificaciones.notificar(errorTitle, response.mensaje_usuario, 'error');

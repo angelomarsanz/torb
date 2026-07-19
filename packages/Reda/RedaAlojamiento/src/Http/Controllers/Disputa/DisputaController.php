@@ -131,21 +131,23 @@ class DisputaController extends Controller
         $disputa->fecha_limite = Carbon::now()->addHours(48);
         $disputa->estado = __('Abierto');
 
-        // Manejo de archivos
+        $disputa->save();
+
+        // Manejo de archivos después de guardar para tener el ID de la disputa
         if ($request->hasFile('documentos')) {
             $paths = [];
-            // Carpeta: public/images/{booking_id}/[documentos_anfitrion|documentos_turista]
+            // Carpeta: public/images/disputas/{disputa_id}/[documentos_anfitrion|documentos_turista]
             $subFolder = $esAnfitrion ? 'documentos_anfitrion' : 'documentos_turista';
-            $destPath = public_path("images/{$request->booking_id}/{$subFolder}");
+            $destPath = public_path("images/disputas/{$disputa->id}/{$subFolder}");
 
             if (!file_exists($destPath)) {
-                mkdir($destPath, 0777, true);
+                mkdir($destPath, 0755, true);
             }
 
             foreach ($request->file('documentos') as $file) {
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $file->move($destPath, $fileName);
-                $paths[] = "images/{$request->booking_id}/{$subFolder}/{$fileName}";
+                $paths[] = "images/disputas/{$disputa->id}/{$subFolder}/{$fileName}";
             }
 
             // Guardar rutas como JSON en la columna correspondiente
@@ -154,9 +156,8 @@ class DisputaController extends Controller
             } else {
                 $disputa->documentos_turista = json_encode($paths);
             }
+            $disputa->save(); // Actualizar con las rutas de documentos
         }
-
-        $disputa->save();
 
         return response()->json([
             'success' => true,
@@ -165,5 +166,5 @@ class DisputaController extends Controller
             'respuesta' => $disputa,
             'code' => 200
         ], 200);
-    }
-}
+        }
+        }
