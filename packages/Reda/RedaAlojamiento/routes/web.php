@@ -140,6 +140,7 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
 
         // Disputas
         Route::get('disputas/get-modal', [DisputaController::class, 'getModal'])->name('reda.disputas.get_modal');
+        Route::get('disputas/check/{booking_id}', [DisputaController::class, 'checkDispute'])->name('reda.disputas.check');
         Route::post('disputas/store', [DisputaController::class, 'store'])->name('reda.disputas.store');
 
         // Media (Se mantienen sin el prefijo 'negocios' en URL y nombre)

@@ -11,7 +11,20 @@ import { mediacionSvg } from './iconos';
         const targetContainer = $(containerId);
 
         if (targetContainer.length) {
-            if ($('#caja-mediacion-reda').length) return;
+            // Si ya existe la caja, no re-inyectamos, pero podríamos querer actualizarla si cambia el booking.
+            // Para simplicidad en el inbox donde el booking puede cambiar al cambiar de chat:
+            if ($('#caja-mediacion-reda').length) {
+                // Si el booking ID en el contenedor no coincide con el de la caja, la quitamos para re-inyectar.
+                const currentBookingId = $('.send-btn').attr('data-booking') || '';
+                if ($('#btn-solicitar-mediacion-reda').attr('data-reservacion-id') !== currentBookingId && 
+                    !$('#caja-mediacion-reda').find('.info-mediacion-activa').length) {
+                    $('#caja-mediacion-reda').remove();
+                } else if ($('#caja-mediacion-reda').attr('data-booking-id') !== currentBookingId) {
+                     $('#caja-mediacion-reda').remove();
+                } else {
+                    return;
+                }
+            }
 
             const paymentText = window.RedaAlojamientoJson["Pago"] || "Pago";
             const paymentHeader = targetContainer.find('h5:contains("' + paymentText + '")');
@@ -21,6 +34,8 @@ import { mediacionSvg } from './iconos';
                 const bookingId = sendBtn.attr('data-booking') || '';
                 const otherUserId = sendBtn.attr('data-receiver') || '';
                 const myUserId = window.USER_ID || '';
+
+                if (!bookingId) return;
 
                 let anfitrionId = '';
                 let turistaId = '';
@@ -46,20 +61,50 @@ import { mediacionSvg } from './iconos';
                 }
 
                 const mediacionText = window.RedaAlojamientoJson["Mediación"] || "Mediación";
-                const sinMediacionText = window.RedaAlojamientoJson["Sin mediación activa"] || "Sin mediación activa";
-                const ayudaText = window.RedaAlojamientoJson["Si tienes problema con esta reserva, puedes solicitar ayuda a nuestro equipo"] || "Si tienes problema con esta reserva, puedes solicitar ayuda a nuestro equipo";
-                const solicitarText = window.RedaAlojamientoJson["Solicitar mediación"] || "Solicitar mediación";
-
+                
+                // Primero inyectamos la caja básica (estado vacío o cargando)
                 const cajaHtml = `
-                    <div id="caja-mediacion-reda" class="row mt-3 mb-1">
+                    <div id="caja-mediacion-reda" class="row mt-3 mb-1" data-booking-id="${bookingId}">
                         <div class="col-md-12">
-                            <div class="border rounded p-3 bg-light shadow-sm">
+                            <div class="border rounded p-3 bg-light shadow-sm content-caja-mediacion">
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="text-success mr-2 d-flex align-items-center">
                                         ${mediacionSvg}
                                     </div>
                                     <h5 class="text-16 font-weight-700 m-0">${mediacionText}</h5>
                                 </div>
+                                <div class="caja-contenido-dinamico">
+                                    <div class="text-center"><div class="spinner-border spinner-border-sm text-success" role="status"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                paymentHeader.closest('.row').before(cajaHtml);
+
+                // Consultar si existe mediación
+                $.ajax({
+                    url: APP_URL + '/reda/disputas/check/' + bookingId,
+                    type: 'GET',
+                    success: function(response) {
+                        const container = $('#caja-mediacion-reda').find('.caja-contenido-dinamico');
+                        if (response.exists) {
+                            const d = response.data;
+                            const htmlActiva = `
+                                <div class="info-mediacion-activa">
+                                    <p class="text-14 mb-1"><strong>Proceso de mediación con ID #${d.id}</strong></p>
+                                    <p class="text-12 mb-1">Fecha: ${d.fecha}</p>
+                                    <p class="text-12 mb-1">Estatus: ${d.estado}</p>
+                                    <p class="text-12 mb-0">Paso: ${d.paso_actual}</p>
+                                </div>
+                            `;
+                            container.html(htmlActiva);
+                        } else {
+                            const sinMediacionText = window.RedaAlojamientoJson["Sin mediación activa"] || "Sin mediación activa";
+                            const ayudaText = window.RedaAlojamientoJson["Si tienes problema con esta reserva, puedes solicitar ayuda a nuestro equipo"] || "Si tienes problema con esta reserva, puedes solicitar ayuda a nuestro equipo";
+                            const solicitarText = window.RedaAlojamientoJson["Solicitar mediación"] || "Solicitar mediación";
+
+                            const htmlSolicitar = `
                                 <h6 class="text-14 font-weight-700 mb-1">${sinMediacionText}</h6>
                                 <p class="text-12 text-muted mb-3">${ayudaText}</p>
                                 <button id="btn-solicitar-mediacion-reda" 
@@ -69,11 +114,14 @@ import { mediacionSvg } from './iconos';
                                     data-turista-id="${turistaId}">
                                     ${solicitarText}
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                paymentHeader.closest('.row').before(cajaHtml);
+                            `;
+                            container.html(htmlSolicitar);
+                        }
+                    },
+                    error: function() {
+                        $('#caja-mediacion-reda').find('.caja-contenido-dinamico').html('<p class="text-12 text-danger">Error al cargar mediación</p>');
+                    }
+                });
             }
         }
     };
@@ -134,6 +182,9 @@ import { mediacionSvg } from './iconos';
                         // Limpiar formulario
                         form[0].reset();
                         form.find('.custom-file-label').html('Elegir archivos');
+                        
+                        // Actualizar la caja de mediación después de crear una exitosamente
+                        inyectarCajaMediacionReda();
                     }
                 },
                 error: function(xhr) {
@@ -179,7 +230,8 @@ import { mediacionSvg } from './iconos';
                 const observer = new MutationObserver((mutationsList) => {
                     for (let mutation of mutationsList) {
                         if (mutation.type === 'childList') {
-                            inyectarCajaMediacionReda();
+                            // Usamos un pequeño delay para asegurar que el contenido se ha actualizado (especialmente send-btn)
+                            setTimeout(inyectarCajaMediacionReda, 100);
                         }
                     }
                 });

@@ -25,6 +25,28 @@ class DisputaController extends Controller
     }
 
     /**
+     * Verifica si existe una disputa para una reservación y retorna sus detalles.
+     */
+    public function checkDispute($booking_id)
+    {
+        $disputa = Disputa::where('booking_id', $booking_id)->first();
+
+        if ($disputa) {
+            return response()->json([
+                'exists' => true,
+                'data' => [
+                    'id'           => $disputa->id,
+                    'fecha'        => $disputa->fecha_apertura ? $disputa->fecha_apertura->format('d/m/Y') : '',
+                    'estado'       => $disputa->estado,
+                    'paso_actual'  => $disputa->paso_actual,
+                ]
+            ]);
+        }
+
+        return response()->json(['exists' => false]);
+    }
+
+    /**
      * Almacena una nueva solicitud de mediación (disputa).
      */
     public function store(Request $request)

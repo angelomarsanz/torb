@@ -12,7 +12,7 @@ class Disputa extends Model
      *
      * @var string
      */
-    protected $table = 'diputas';
+    protected $table = 'disputas';
 
     /**
      * Atributos asignables de forma masiva.
