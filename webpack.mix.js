@@ -68,6 +68,10 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js',
         'public/js/reda/vistas/experiencia/listadoCalificaciones.min.js');
 
+    // Js Disputas
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js',
+        'public/js/reda/vistas/disputa/disputas/indexDisputas.min.js');
+
     // Js Frontend
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js',

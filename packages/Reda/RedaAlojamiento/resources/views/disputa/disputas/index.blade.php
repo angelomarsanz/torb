@@ -1,4 +1,57 @@
+@extends('template')
+
 @section('main')
-<div id='indexDisputas'>
+<div class="margin-top-85">
+    <div class="row m-0">
+        {{-- Sidebar original del proyecto --}}
+        @include('users.sidebar')
+
+        <div class="col-lg-10 p-0 mb-5 min-height">
+            <div class="main-panel">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 p-0 mb-3">
+                            <div class="list-bacground mt-4 rounded-3 p-4 border">
+                                <span class="text-18 pt-4 pb-4 font-weight-700">{{ __('Mediaciones') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Contenedor principal de la vista de Disputas (Dashboard style) --}}
+                    <div id="indexDisputas" class="mt-2">
+                        <div class="row">
+                            {{-- Columna Central: Pestañas y Listado --}}
+                            <div class="col-md-9 p-0">
+                                <div id="disputas-tabs-header" class="mb-4">
+                                    {{-- Se inyecta vía JS --}}
+                                </div>
+                                <div id="disputas-list-container">
+                                    {{-- Se inyecta vía JS --}}
+                                </div>
+                            </div>
+
+                            {{-- Columna Lateral: Información Extra --}}
+                            <div class="col-md-3" id="disputas-info-lateral">
+                                <div class="card border rounded-3 p-3 shadow-sm bg-light">
+                                    <h6 class="font-weight-700 mb-3 text-16">{{ __('Resumen') }}</h6>
+                                    <div id="disputas-info-extra-content">
+                                        <p class="text-14 text-muted">{{ __('Selecciona una mediación para ver más detalles.') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+@endsection
+
+@section('validation_script')
+    <script>
+        window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
+    </script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/vistas/disputa/disputas/indexDisputas.min.js?v=' . time()) }}"></script>
 @endsection

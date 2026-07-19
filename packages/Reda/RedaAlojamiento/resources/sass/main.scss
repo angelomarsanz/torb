@@ -2002,6 +2002,73 @@
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
+/* Pestañas de Navegación (Dashboard Disputas) */
+.reda-tabs-nav {
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+    
+    .disputa-tab-item {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 3px solid transparent;
+        color: #717171;
+        min-width: 100px;
+        
+        .status-icon {
+            color: #717171;
+            transition: color 0.2s ease;
+        }
+
+        .status-counter {
+            font-size: 10px;
+            padding: 2px 6px;
+            background-color: #f0f0f0;
+            color: #484848;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        &:hover {
+            color: #222;
+            .status-icon { color: #222; }
+        }
+
+        &.active {
+            color: #28a745;
+            border-bottom-color: #28a745;
+            font-weight: 700;
+
+            .status-icon {
+                color: #28a745;
+            }
+
+            .status-counter {
+                background-color: #28a745;
+                color: #fff;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .reda-tabs-nav {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        &::-webkit-scrollbar { display: none; }
+        padding-bottom: 5px;
+
+        .disputa-tab-item {
+            flex: 0 0 auto;
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+        }
+    }
+}
+
 .reda-mediation-title {
     font-size: 16px;
     font-weight: 700;

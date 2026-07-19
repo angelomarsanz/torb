@@ -10,7 +10,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"config/app.php"
     #"config/pdf.php"
     #"package.json"
-    #"webpack.mix.js"
+    "webpack.mix.js"
     #"resources/views/admin/common/head.blade.php"
     #"resources/views/admin/common/foot.blade.php"
     #"resources/views/common/head.blade.php"
@@ -168,10 +168,12 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/toggleFavoritoComercio.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
-    "packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/mediacionSvg.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/mediacionSvg.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/iconos/estatusDisputaSvg.js"
 
     #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
