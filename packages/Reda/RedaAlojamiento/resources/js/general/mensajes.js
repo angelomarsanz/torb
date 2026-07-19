@@ -5,38 +5,26 @@ import { mediacionSvg } from './iconos';
 
     /**
      * Inyecta el cuadro de mediación en la barra lateral de la reserva.
-     * Se busca la sección de "Pago" para insertar el cuadro justo antes.
      */
     const inyectarCajaMediacionReda = () => {
         const containerId = '#booking';
         const targetContainer = $(containerId);
 
         if (targetContainer.length) {
-            // Evitar duplicados si ya existe el cuadro
             if ($('#caja-mediacion-reda').length) return;
 
-            // Buscar el encabezado de "Pago" (Payment).
-            // Se usa la traducción del archivo es.json del proyecto original o el fallback.
             const paymentText = window.RedaAlojamientoJson["Pago"] || "Pago";
             const paymentHeader = targetContainer.find('h5:contains("' + paymentText + '")');
 
             if (paymentHeader.length) {
-                // Obtener los IDs dinámicamente de los elementos existentes en la vista original
-                // El botón de enviar mensaje (.send-btn) ya contiene el booking_id y el receiver_id (la otra parte)
                 const sendBtn = $('.send-btn');
                 const bookingId = sendBtn.attr('data-booking') || '';
                 const otherUserId = sendBtn.attr('data-receiver') || '';
                 const myUserId = window.USER_ID || '';
 
-                /**
-                 * Heurística para identificar Anfitrión (host_id) vs Turista (user_id):
-                 * Intentamos determinar el rol del usuario actual basándonos en el menú lateral.
-                 */
                 let anfitrionId = '';
                 let turistaId = '';
 
-                // Miramos si en el sidebar el link activo es Trips o Bookings
-                // vRent logic: data-receiver en el Inbox es siempre la contraparte.
                 const isHostView = $('.active-sidebar:contains("' + (window.RedaAlojamientoJson["Mis Reservas"] || "Bookings") + '")').length > 0;
                 const isTouristView = $('.active-sidebar:contains("' + (window.RedaAlojamientoJson["Mis Viajes"] || "Trips") + '")').length > 0;
 
@@ -47,8 +35,6 @@ import { mediacionSvg } from './iconos';
                     anfitrionId = otherUserId;
                     turistaId = myUserId;
                 } else {
-                    // Fallback si no hay sidebar activo (ej. navegación directa)
-                    // Por ahora los dejamos asignados para que el modal los procese
                     anfitrionId = otherUserId; 
                     turistaId = myUserId;
                 }
@@ -87,16 +73,106 @@ import { mediacionSvg } from './iconos';
                         </div>
                     </div>
                 `;
-                // Insertar antes de la fila que contiene el encabezado de Pago
                 paymentHeader.closest('.row').before(cajaHtml);
             }
         }
     };
 
+    /**
+     * Carga e inyecta el modal de mediación si no existe.
+     */
+    const cargarModalMediacion = () => {
+        if ($('#modal-mediacion-reda').length) return;
+
+        $.ajax({
+            url: APP_URL + '/reda/disputas/get-modal',
+            type: 'GET',
+            success: function(html) {
+                $('body').append(html);
+                configurarEventosModal();
+            }
+        });
+    };
+
+    /**
+     * Configura los eventos del formulario dentro del modal.
+     */
+    const configurarEventosModal = () => {
+        // Manejo de nombre de archivos en el input custom-file
+        $(document).on('change', '#documentos', function() {
+            let files = $(this)[0].files;
+            let label = files.length > 1 ? files.length + ' archivos seleccionados' : files[0].name;
+            $(this).next('.custom-file-label').html(label);
+        });
+
+        // Envío del formulario
+        $(document).on('submit', '#form-mediacion-reda', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const btn = $('#btn-enviar-mediacion');
+            const spinner = btn.find('.spinner-border');
+
+            const formData = new FormData(this);
+
+            btn.prop('disabled', true);
+            spinner.removeClass('d-none');
+
+            $.ajax({
+                url: APP_URL + '/reda/disputas/store',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        $('#modal-mediacion-reda').modal('hide');
+                        if (typeof swal !== 'undefined') {
+                            swal("¡Éxito!", response.message, "success");
+                        } else {
+                            alert(response.message);
+                        }
+                        // Limpiar formulario
+                        form[0].reset();
+                        form.find('.custom-file-label').html('Elegir archivos');
+                    }
+                },
+                error: function(xhr) {
+                    let msg = "Hubo un error al procesar su solicitud.";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    }
+                    if (typeof swal !== 'undefined') {
+                        swal("Error", msg, "error");
+                    } else {
+                        alert(msg);
+                    }
+                },
+                complete: function() {
+                    btn.prop('disabled', false);
+                    spinner.addClass('d-none');
+                }
+            });
+        });
+    };
+
     $(function() {
-        // Verificar si estamos en la vista de bandeja de entrada (inbox)
         if ($('#messages').length && $('#booking').length) {
             inyectarCajaMediacionReda();
+            cargarModalMediacion();
+
+            // Abrir modal al hacer clic
+            $(document).on('click', '#btn-solicitar-mediacion-reda', function() {
+                const btn = $(this);
+                const bookingId = btn.attr('data-reservacion-id');
+                const anfitrionId = btn.attr('data-anfitrion-id');
+                const turistaId = btn.attr('data-turista-id');
+
+                $('#reda-booking-id').val(bookingId);
+                $('#reda-anfitrion-id').val(anfitrionId);
+                $('#reda-turista-id').val(turistaId);
+
+                $('#modal-mediacion-reda').modal('show');
+            });
 
             const targetNode = document.getElementById('booking');
             if (targetNode) {

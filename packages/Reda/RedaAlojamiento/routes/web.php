@@ -138,6 +138,10 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
     // ----------------------------------------------------------------------
     Route::group(['middleware' => ['reda.auth']], function () {
 
+        // Disputas
+        Route::get('disputas/get-modal', [DisputaController::class, 'getModal'])->name('reda.disputas.get_modal');
+        Route::post('disputas/store', [DisputaController::class, 'store'])->name('reda.disputas.store');
+
         // Media (Se mantienen sin el prefijo 'negocios' en URL y nombre)
         Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])->name('reda.upload_photo');
         Route::post('delete-photo', [MediaController::class, 'deletePhoto'])->name('reda.delete_photo');
