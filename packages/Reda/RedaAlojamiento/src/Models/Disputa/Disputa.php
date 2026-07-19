@@ -22,6 +22,7 @@ class Disputa extends Model
     protected $fillable = [
         'booking_id',
         'estado',
+        'paso_actual',
         'ultima_actividad',
         'prioridad',
         'fecha_apertura',
@@ -32,6 +33,9 @@ class Disputa extends Model
         'categoria',
         'motivo',
         'descripcion',
+        'documentos_turista',
+        'documentos_anfitrion',
+        'documentos_agente',
     ];
 
     /**

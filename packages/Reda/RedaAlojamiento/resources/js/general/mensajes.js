@@ -21,6 +21,44 @@ import { mediacionSvg } from './iconos';
             const paymentHeader = targetContainer.find('h5:contains("' + paymentText + '")');
 
             if (paymentHeader.length) {
+                // Obtener los IDs dinámicamente de los elementos existentes en la vista original
+                // El botón de enviar mensaje (.send-btn) ya contiene el booking_id y el receiver_id (la otra parte)
+                const sendBtn = $('.send-btn');
+                const bookingId = sendBtn.attr('data-booking') || '';
+                const otherUserId = sendBtn.attr('data-receiver') || '';
+                const myUserId = window.USER_ID || '';
+
+                /**
+                 * Heurística para identificar Anfitrión (host_id) vs Turista (user_id):
+                 * Intentamos determinar el rol del usuario actual basándonos en el menú lateral.
+                 */
+                let anfitrionId = '';
+                let turistaId = '';
+
+                // Miramos si en el sidebar el link activo es Trips o Bookings
+                // vRent logic: data-receiver en el Inbox es siempre la contraparte.
+                const isHostView = $('.active-sidebar:contains("' + (window.RedaAlojamientoJson["Mis Reservas"] || "Bookings") + '")').length > 0;
+                const isTouristView = $('.active-sidebar:contains("' + (window.RedaAlojamientoJson["Mis Viajes"] || "Trips") + '")').length > 0;
+
+                if (isHostView) {
+                    anfitrionId = myUserId;
+                    turistaId = otherUserId;
+                } else if (isTouristView) {
+                    anfitrionId = otherUserId;
+                    turistaId = myUserId;
+                } else {
+                    // Fallback si no hay sidebar activo (ej. navegación directa)
+                    // Por ahora los dejamos asignados para que el modal los procese
+                    anfitrionId = otherUserId; 
+                    turistaId = myUserId;
+                }
+
+                if (bookingId) {
+                    targetContainer.attr('data-reservacion-id', bookingId);
+                    targetContainer.attr('data-anfitrion-id', anfitrionId);
+                    targetContainer.attr('data-turista-id', turistaId);
+                }
+
                 const mediacionText = window.RedaAlojamientoJson["Mediación"] || "Mediación";
                 const sinMediacionText = window.RedaAlojamientoJson["Sin mediación activa"] || "Sin mediación activa";
                 const ayudaText = window.RedaAlojamientoJson["Si tienes problema con esta reserva, puedes solicitar ayuda a nuestro equipo"] || "Si tienes problema con esta reserva, puedes solicitar ayuda a nuestro equipo";
@@ -38,7 +76,11 @@ import { mediacionSvg } from './iconos';
                                 </div>
                                 <h6 class="text-14 font-weight-700 mb-1">${sinMediacionText}</h6>
                                 <p class="text-12 text-muted mb-3">${ayudaText}</p>
-                                <button class="btn btn-success btn-block text-14 font-weight-700">
+                                <button id="btn-solicitar-mediacion-reda" 
+                                    class="btn btn-success btn-block text-14 font-weight-700"
+                                    data-reservacion-id="${bookingId}"
+                                    data-anfitrion-id="${anfitrionId}"
+                                    data-turista-id="${turistaId}">
                                     ${solicitarText}
                                 </button>
                             </div>
@@ -53,14 +95,9 @@ import { mediacionSvg } from './iconos';
 
     $(function() {
         // Verificar si estamos en la vista de bandeja de entrada (inbox)
-        console.log('Se cargó el archivo javascript mensajes.js')
         if ($('#messages').length && $('#booking').length) {
-            console.log('Dentro de la vista de bandeja de entrada (inbox)');
-            // Primera ejecución al cargar la página
             inyectarCajaMediacionReda();
 
-            // Usamos MutationObserver para detectar cambios en el contenedor #booking
-            // que se actualiza vía AJAX en el archivo original inbox.js
             const targetNode = document.getElementById('booking');
             if (targetNode) {
                 const observer = new MutationObserver((mutationsList) => {
@@ -70,7 +107,6 @@ import { mediacionSvg } from './iconos';
                         }
                     }
                 });
-                // Observamos cambios en los hijos del contenedor #booking
                 observer.observe(targetNode, { childList: true, subtree: true });
             }
         }
