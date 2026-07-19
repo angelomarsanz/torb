@@ -25,14 +25,33 @@ class DisputaController extends Controller
     }
 
     /**
+     * Retorna el HTML del modal de detalle de mediación.
+     */
+    public function getDetailModal($id)
+    {
+        $disputa = Disputa::findOrFail($id);
+        return view('reda-alojamiento::disputa.disputas.modal_detalle', compact('disputa'))->render();
+    }
+
+    /**
      * Verifica si existe una disputa para una reservación y retorna sus detalles.
      */
     public function checkDispute($booking_id)
     {
         $disputa = Disputa::where('booking_id', $booking_id)->first();
 
+        $respuesta = [
+            'success' => true,
+            'message' => __('Verificación de disputa'),
+            'mensaje_usuario' => __('Resultados recuperados con éxito'),
+            'respuesta' => [
+                'exists' => false
+            ],
+            'code' => 200
+        ];
+
         if ($disputa) {
-            return response()->json([
+            $respuesta['respuesta'] = [
                 'exists' => true,
                 'data' => [
                     'id'           => $disputa->id,
@@ -40,10 +59,19 @@ class DisputaController extends Controller
                     'estado'       => $disputa->estado,
                     'paso_actual'  => $disputa->paso_actual,
                 ]
-            ]);
+            ];
         }
 
-        return response()->json(['exists' => false]);
+        return response()->json($respuesta, $respuesta['code']);
+    }
+
+    /**
+     * Muestra el detalle de una mediación.
+     */
+    public function show($id)
+    {
+        $disputa = Disputa::findOrFail($id);
+        return view('reda-alojamiento::disputa.disputas.show', compact('disputa'));
     }
 
     /**
@@ -62,7 +90,13 @@ class DisputaController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'success' => false,
+                'message' => __('Error de validación'),
+                'mensaje_usuario' => __('Por favor complete todos los campos obligatorios'),
+                'respuesta' => $validator->errors(),
+                'code' => 422
+            ], 422);
         }
 
         $booking = Bookings::findOrFail($request->booking_id);
@@ -73,7 +107,13 @@ class DisputaController extends Controller
         $esTurista = ($myUserId == $booking->user_id);
 
         if (!$esAnfitrion && !$esTurista) {
-            return response()->json(['success' => false, 'message' => 'No tienes permiso para iniciar una mediación en esta reserva.'], 403);
+            return response()->json([
+                'success' => false,
+                'message' => __('Usuario no autorizado'),
+                'mensaje_usuario' => __('No tienes permiso para iniciar una mediación en esta reserva.'),
+                'respuesta' => '',
+                'code' => 403
+            ], 403);
         }
 
         // Preparar datos de la disputa
@@ -86,10 +126,10 @@ class DisputaController extends Controller
         $disputa->id_usuario_anfitrion = $booking->host_id;
 
         // Valores por defecto solicitados
-        $disputa->paso_actual = 'Caso creado';
+        $disputa->paso_actual = __('Caso creado');
         $disputa->fecha_apertura = Carbon::now();
         $disputa->fecha_limite = Carbon::now()->addHours(48);
-        $disputa->estado = 'Abierto';
+        $disputa->estado = __('Abierto');
 
         // Manejo de archivos
         if ($request->hasFile('documentos')) {
@@ -120,8 +160,10 @@ class DisputaController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Solicitud de mediación enviada correctamente.',
-            'data'    => $disputa
-        ]);
+            'message' => __('Mediación creada'),
+            'mensaje_usuario' => __('Solicitud de mediación enviada correctamente.'),
+            'respuesta' => $disputa,
+            'code' => 200
+        ], 200);
     }
 }

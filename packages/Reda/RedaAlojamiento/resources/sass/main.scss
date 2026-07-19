@@ -1992,12 +1992,67 @@
     margin-top: 20px;
 }
 
-.pdf-cartel-title {
-    font-size: 56px;
-    font-weight: 900;
-    color: #FF385C; /* Color Torbian Red */
-    margin-bottom: 15px;
-    letter-spacing: -2px;
+/* --- MÓDULO DE MEDIACIÓN --- */
+
+.reda-mediation-box {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.reda-mediation-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.reda-mediation-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.reda-mediation-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.reda-mediation-desc-box {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    font-size: 14px;
+    color: #212529;
+    margin-top: 0.25rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.reda-mediation-badge {
+    padding: 0.5rem 1rem;
+    font-size: 13px;
+    border-radius: 0.25rem;
+}
+
+.reda-btn-ver-detalle {
+    padding: 0.25rem 0.75rem;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.reda-mediation-footer {
+    background-color: #f8f9fa;
+    border-top: none;
+    padding: 1rem;
+}
+
 }
 
 /* --- ESTILOS ADICIONALES PARA BÚSQUEDA DE RESEÑAS --- */
