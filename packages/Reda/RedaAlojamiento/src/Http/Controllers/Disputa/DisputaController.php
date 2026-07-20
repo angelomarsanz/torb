@@ -51,7 +51,10 @@ class DisputaController extends Controller
             return [
                 'id' => $d->id,
                 'estado' => $d->estado,
+                'paso_actual' => $d->paso_actual,
                 'motivo' => $d->motivo,
+                'prioridad' => $d->prioridad,
+                'descripcion' => $d->descripcion,
                 'booking_id' => $d->booking_id,
                 'fecha_apertura' => $d->fecha_apertura ? $d->fecha_apertura->format('d/m/Y H:i') : '',
                 'actualizado_hace' => $d->updated_at->diffForHumans(),

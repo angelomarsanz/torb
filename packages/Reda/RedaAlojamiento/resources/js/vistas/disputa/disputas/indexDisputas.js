@@ -11,6 +11,9 @@ import {
     "use strict";
 
     const containerId = '#indexDisputas';
+    let mediacionesCargadas = [];
+    let mediacionSeleccionadaId = null;
+    let observadorEnfoque = null;
 
     /**
      * Inyecta dinámicamente las pestañas de estatus en la cabecera del listado.
@@ -53,7 +56,237 @@ import {
     };
 
     /**
-     * Renderiza el listado de mediaciones con el diseño de cuatro columnas.
+     * Genera el HTML de la línea de tiempo.
+     */
+    const generarTimelineHtml = (pasoActual) => {
+        const trans = window.RedaAlojamientoJson || {};
+        const pasos = [
+            { id: 1, nombre: trans["Caso creado"] || "Caso creado", icono: 'fas fa-plus' },
+            { id: 2, nombre: trans["Asignación a agente"] || "Asignación a agente", icono: 'fas fa-user-tie' },
+            { id: 3, nombre: trans["En revisión"] || "En revisión", icono: 'fas fa-search' },
+            { id: 4, nombre: trans["Solicitud de información adicional"] || "Solicitud de información adicional", icono: 'fas fa-info-circle' },
+            { id: 5, nombre: trans["Análisis del caso"] || "Análisis del caso", icono: 'fas fa-balance-scale' },
+            { id: 6, nombre: trans["Resuelto o escalado"] || "Resuelto o escalado", icono: 'fas fa-check-double' }
+        ];
+
+        const currentIndex = pasos.findIndex(p => p.nombre === pasoActual);
+        
+        let html = '';
+        pasos.forEach((p, index) => {
+            let statusClass = '';
+            if (index < currentIndex) {
+                statusClass = 'completed';
+            } else if (index === currentIndex) {
+                statusClass = 'active';
+            }
+
+            html += `
+                <div class="timeline-item ${statusClass}" data-index="${index}">
+                    <div class="timeline-icon">
+                        <i class="${p.icono}"></i>
+                    </div>
+                    <span class="timeline-text">${p.nombre}</span>
+                </div>
+            `;
+        });
+
+        return { html, currentIndex };
+    };
+
+    /**
+     * Renderiza la línea de tiempo en un contenedor específico.
+     */
+    const renderizarTimeline = (pasoActual, containerSelector = '#reda-timeline-container') => {
+        const container = $(containerSelector);
+        if (!container.length) return;
+
+        const { html, currentIndex } = generarTimelineHtml(pasoActual);
+        container.html(html);
+
+        if (currentIndex !== -1) {
+            const activeItem = container.find(`.timeline-item[data-index="${currentIndex}"]`);
+            if (activeItem.length) {
+                const scrollPos = activeItem.position().left + container.scrollLeft() - (container.width() / 2) + (activeItem.width() / 2);
+                container.animate({ scrollLeft: scrollPos }, 500);
+            }
+        }
+    };
+
+    /**
+     * Renderiza el detalle de la mediación en el contenedor especificado.
+     */
+    const renderizarResumenMediacion = (item, containerSelector = '#disputas-info-extra-content') => {
+        const container = $(containerSelector);
+        if (!container.length) return;
+        const trans = window.RedaAlojamientoJson || {};
+
+        const agenteFoto = item.agente ? item.agente.foto : `${APP_URL}/public/img/unnamed.png`;
+        const agenteNombre = item.agente ? item.agente.nombre : trans["Pendiente de asignación"] || "Pendiente de asignación";
+        const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
+        const agenteClaseNombre = item.agente ? 'font-weight-700 text-dark' : 'text-muted italic small leading-tight';
+
+        // Prioridad con color
+        let prioridadHtml = '';
+        if (item.prioridad) {
+            let colorClass = 'text-info';
+            if (item.prioridad === 'Alta') colorClass = 'text-danger';
+            else if (item.prioridad === 'Media') colorClass = 'text-warning';
+            prioridadHtml = `<span class="${colorClass} font-weight-700">${item.prioridad}</span>`;
+        }
+
+        let html = `
+            <div class="mediacion-resumen-detalle">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">${trans["Estatus"] || "Estatus"}</span>
+                    <span class="badge badge-success font-weight-700">${item.estado}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">${trans["Prioridad"] || "Prioridad"}</span>
+                    ${prioridadHtml}
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">${trans["ID Mediación"] || "ID Mediación"}</span>
+                    <span class="font-weight-700">#${item.id}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
+                    <span class="font-weight-700">#${item.booking_id}</span>
+                </div>
+                
+                <div class="mt-3 mb-3">
+                    <span class="text-muted small d-block mb-1">${trans["Motivo"] || "Motivo"}</span>
+                    <span class="font-weight-600 text-14 text-dark">${item.motivo}</span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
+                    <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-box-scroll" style="max-height: 120px; overflow-y: auto; border: 1px solid #eee;">
+                        ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mb-2 align-items-center">
+                    <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
+                    <span class="text-muted small">${item.fecha_apertura}</span>
+                </div>
+                
+                <div class="mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="position-relative mr-3">
+                            <img src="${agenteFoto}" 
+                                 class="rounded-circle border" 
+                                 style="width: 45px; height: 45px; object-fit: cover;"
+                                 alt="Agente">
+                            <div class="position-absolute" style="bottom: -2px; right: -2px;">
+                                <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 18px; height: 18px; border: 1px solid #ddd;">
+                                    <i class="${agenteIcono} text-8 text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="text-muted small leading-tight">${trans["Mediador"] || "Mediador"}</span>
+                            <span class="${agenteClaseNombre} text-13">${agenteNombre}</span>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <p class="text-10 text-muted italic mb-0">
+                            <i class="far fa-clock mr-1"></i> ${item.actualizado_hace}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.html(html);
+    };
+
+    /**
+     * Inicializa un observador para detectar qué mediación está en el centro visual del móvil.
+     */
+    const inicializarObservadorEnfoque = () => {
+        if (window.innerWidth >= 768) return;
+        
+        if (observadorEnfoque) {
+            observadorEnfoque.disconnect();
+        }
+
+        const options = {
+            root: null,
+            rootMargin: '-30% 0px -30% 0px', // Área central de detección
+            threshold: 0.6
+        };
+
+        observadorEnfoque = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = $(entry.target).attr('data-id');
+                    if (id && id != mediacionSeleccionadaId) {
+                        seleccionarMediacion(id, false); // No scroll automático en scroll manual
+                    }
+                }
+            });
+        }, options);
+
+        $('.container-mediacion').each(function() {
+            observadorEnfoque.observe(this);
+        });
+    };
+
+    /**
+     * Maneja la selección de una mediación.
+     */
+    const seleccionarMediacion = (id, conScroll = false) => {
+        if (mediacionSeleccionadaId == id && !conScroll) return;
+        
+        mediacionSeleccionadaId = id;
+        const item = mediacionesCargadas.find(m => m.id == id);
+        if (!item) return;
+
+        // 1. Resaltar la tarjeta visualmente
+        $('.card-mediacion').removeClass('active-mediacion');
+        const activeCard = $(`.card-mediacion[data-id="${id}"]`);
+        activeCard.addClass('active-mediacion');
+
+        // 2. Actualizar Sidebar (Escritorio)
+        renderizarTimeline(item.paso_actual, '#reda-timeline-container');
+        renderizarResumenMediacion(item, '#disputas-info-extra-content');
+
+        // 3. Preparar UI Móvil (Tab de Ver Detalle)
+        const trans = window.RedaAlojamientoJson || {};
+        
+        // Limpiar estados previos en móvil
+        $('.mobile-detail-toggle').addClass('d-none');
+        $('.mobile-detail-content').addClass('d-none');
+        
+        // Mostrar el toggle de la activa
+        const currentToggleWrapper = $(`#mobile-detail-${id}`);
+        const currentToggle = currentToggleWrapper.find('.mobile-detail-toggle');
+        currentToggle.removeClass('d-none');
+        
+        // Si estamos en móvil (ancho menor a 768px), expandir automáticamente
+        if (window.innerWidth < 768) {
+            const content = currentToggleWrapper.find('.mobile-detail-content');
+            const icon = currentToggle.find('.toggle-icon');
+            const text = currentToggle.find('.toggle-text');
+
+            content.removeClass('d-none');
+            icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
+
+            // Renderizar datos móviles inmediatamente
+            renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
+            renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
+
+            // Desplazamiento suave si es por interacción manual
+            if (conScroll) {
+                const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+    };
+
+    /**
+     * Renderiza el listado de mediaciones con el diseño de tres columnas optimizado.
      */
     const renderizarLista = (items) => {
         const container = $('#disputas-list-container');
@@ -79,8 +312,8 @@ import {
             const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
 
             html += `
-                <div class="col-md-12 p-0 mb-4">
-                    <div class="card h-100 border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
+                <div class="col-md-12 p-0 mb-4 container-mediacion" data-id="${item.id}">
+                    <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
                         <div class="card-body p-0">
                             <div class="row m-0">
                                 <div class="col-md-3 p-0">
@@ -92,7 +325,7 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-xl-4 p-4 border-right">
+                                <div class="col-md-5 col-xl-5 p-4 border-right">
                                     <div class="mb-2">
                                         <span class="badge bg-orange text-white text-uppercase">${item.estado}</span>
                                         <span class="text-muted small ml-2">ID: #${item.id}</span>
@@ -101,7 +334,7 @@ import {
                                     <h5 class="text-18 font-weight-700 text-color mb-1">${item.motivo}</h5>
                                     
                                     <div class="text-muted small mb-2">
-                                        <i class="fas fa-bookmark mr-1"></i> ${trans["Reservación"] || "Reservación"}: <span class="font-weight-700 text-dark">#${item.booking_id}</span>
+                                        <i class="fas fa-bookmark mr-1"></i> ${trans["ID Reservación"] || "ID Reservación"}: <span class="font-weight-700 text-dark">#${item.booking_id}</span>
                                     </div>
 
                                     <div class="d-flex flex-column mt-3">
@@ -109,12 +342,12 @@ import {
                                             <i class="far fa-calendar-alt mr-1"></i> ${trans["Creado el"] || "Creado el"}: <span class="text-dark">${item.fecha_apertura}</span>
                                         </div>
                                         <div class="text-muted small">
-                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"}: <span class="font-weight-700 text-dark">${item.actualizado_hace}</span>
+                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="font-weight-700 text-dark">${item.actualizado_hace}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 col-xl-3 p-4 d-flex flex-column justify-content-center border-right bg-light-soft">
+                                <div class="col-md-4 col-xl-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
                                     <div class="text-center">
                                         <div class="mb-2 position-relative d-inline-block">
                                             <img src="${agenteFoto}" 
@@ -133,12 +366,24 @@ import {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="col-md-2 col-xl-2 p-4 d-flex flex-row flex-md-column justify-content-center align-items-center">
-                                    <a href="javascript:void(0)" class="btn-list-action btn-edit m-2 btn-ver-detalle" data-id="${item.id}">
-                                        <span class="btn-list-text">${trans["Ver Detalle"] || "Ver Detalle"}</span>
-                                    </a>
-                                </div>
+                    <!-- Mobile Detail Section -->
+                    <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
+                        <div class="mobile-detail-toggle py-2 px-3 border rounded-bottom bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
+                            <span class="text-14 font-weight-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="mobile-detail-content p-3 border rounded-bottom bg-white d-none shadow-sm">
+                            <div class="mobile-timeline-wrapper mb-4">
+                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Estado del Trámite"] || "Estado del Trámite"}</h6>
+                                <div class="reda-timeline-carousel mobile-timeline-container"></div>
+                            </div>
+                            <div class="mobile-resumen-wrapper">
+                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                <div class="mobile-resumen-container"></div>
                             </div>
                         </div>
                     </div>
@@ -147,42 +392,48 @@ import {
         });
         html += '</div>';
         container.html(html);
+
+        // Inicializar el observador de enfoque en móvil
+        setTimeout(inicializarObservadorEnfoque, 300);
     };
 
     /**
      * Carga las mediaciones vía Ajax según el estatus y página seleccionada.
      */
-    const cargarMediaciones = async (status, page = 1) => {
+    const cargarMediaciones = (status, page = 1) => {
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
             window.RedaNotificaciones.esperar();
         }
 
-        console.log(`Cargando mediaciones para el estatus: ${status}, página: ${page}`);
-
         $.ajax({
             url: APP_URL + '/reda/disputas/paginadas',
             type: 'GET',
-            data: { status, page },
-            success: function(data) {
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                    window.RedaNotificaciones.ocultar();
-                }
+            data: { status, page }
+        }).done(function(data) {
+            if (data.success) {
+                mediacionesCargadas = data.respuesta.data;
+                renderizarLista(mediacionesCargadas);
+                $('#disputas-pagination-container').html(data.respuesta.pagination);
 
-                if (data.success) {
-                    renderizarLista(data.respuesta.data);
-                    $('#disputas-pagination-container').html(data.respuesta.pagination);
+                // Seleccionar la primera mediación por defecto
+                if (mediacionesCargadas.length > 0) {
+                    seleccionarMediacion(mediacionesCargadas[0].id, false);
+                } else {
+                    const trans = window.RedaAlojamientoJson || {};
+                    $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
+                    $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
                 }
-            },
-            error: function() {
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                    window.RedaNotificaciones.ocultar();
-                }
-                const trans = window.RedaAlojamientoJson || {};
-                $('#disputas-list-container').html(`
-                    <div class="alert alert-danger mt-4">
-                        ${trans["Error al cargar las mediaciones. Intente de nuevo."] || "Error al cargar las mediaciones. Intente de nuevo."}
-                    </div>
-                `);
+            }
+        }).fail(function() {
+            const trans = window.RedaAlojamientoJson || {};
+            $('#disputas-list-container').html(`
+                <div class="alert alert-danger mt-4">
+                    ${trans["Error al cargar las mediaciones. Intente de nuevo."] || "Error al cargar las mediaciones. Intente de nuevo."}
+                </div>
+            `);
+        }).always(function() {
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                window.RedaNotificaciones.ocultar();
             }
         });
     };
@@ -197,28 +448,29 @@ import {
 
         $.ajax({
             url: APP_URL + '/reda/disputas/get-detail-modal/' + id,
-            type: 'GET',
-            success: function(html) {
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                    window.RedaNotificaciones.ocultar();
-                }
+            type: 'GET'
+        }).done(function(html) {
+            // Primero ocultamos el de espera para limpiar backdrops
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                window.RedaNotificaciones.ocultar();
+            }
 
+            // Pequeño delay para que Bootstrap limpie el body antes de abrir el nuevo modal
+            setTimeout(() => {
                 // Remover modal previo si existe
                 $('#modal-detalle-mediacion-reda').remove();
                 $('body').append(html);
                 $('#modal-detalle-mediacion-reda').modal('show');
-            },
-            error: function() {
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                    window.RedaNotificaciones.ocultar();
-                }
+            }, 150);
+        }).fail(function() {
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                window.RedaNotificaciones.ocultar();
             }
         });
     };
 
     $(function() {
         if ($(containerId).length) {
-            console.log('Script para "Index Disputas" (Dashboard) cargado correctamente.');
             inyectarPestanasEstatus();
 
             // Manejo de clicks en las pestañas
@@ -233,14 +485,60 @@ import {
                 cargarMediaciones(status);
             });
 
-            // Manejo de clicks en los items de la lista para ver detalle
-            $(document).on('click', '.card-mediacion, .btn-ver-detalle', function(e) {
+            // Manejo de clics en los items de la lista para seleccionar
+            $(document).on('click', '.card-mediacion', function(e) {
+                const id = $(this).attr('data-id');
+                seleccionarMediacion(id, true); // Scroll activado al tocar manualmente
+            });
+
+            // Manejo de clics en el toggle de detalle móvil
+            $(document).on('click', '.mobile-detail-toggle', function(e) {
+                e.stopPropagation();
+                const id = $(this).attr('data-id');
+                const content = $(`#mobile-detail-${id} .mobile-detail-content`);
+                const icon = $(this).find('.toggle-icon');
+                const text = $(this).find('.toggle-text');
+                const trans = window.RedaAlojamientoJson || {};
+
+                if (content.hasClass('d-none')) {
+                    // Expandir
+                    content.removeClass('d-none');
+                    icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                    text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
+
+                    // Cargar contenido en los contenedores móviles
+                    const item = mediacionesCargadas.find(m => m.id == id);
+                    if (item) {
+                        renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
+                        renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
+                    }
+                } else {
+                    // Contraer
+                    content.addClass('d-none');
+                    icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                    text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
+                }
+            });
+
+            // Click en botón ver detalle dentro del resumen (sidebar o móvil)
+            $(document).on('click', '.btn-ver-detalle-sidebar', function(e) {
                 e.stopPropagation();
                 const id = $(this).attr('data-id');
                 abrirDetalleMediacion(id);
             });
 
-            // Manejo de paginación (si se inyecta vía Ajax)
+            // Navegación del timeline (Escritorio)
+            $(document).on('click', '#timeline-prev', function() {
+                const container = $('#reda-timeline-container');
+                container.animate({ scrollLeft: container.scrollLeft() - 150 }, 300);
+            });
+
+            $(document).on('click', '#timeline-next', function() {
+                const container = $('#reda-timeline-container');
+                container.animate({ scrollLeft: container.scrollLeft() + 150 }, 300);
+            });
+
+            // Manejo de paginación
             $(document).on('click', '#disputas-pagination-container .pagination a', function(e) {
                 e.preventDefault();
                 const pageUrl = $(this).attr('href');

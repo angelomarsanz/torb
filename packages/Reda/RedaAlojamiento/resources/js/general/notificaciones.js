@@ -91,9 +91,33 @@ window.RedaNotificaciones = {
         (function( $ ) {
             "use strict";
             const $modal = $('#modal-notificacion');
-            if ($modal.length) {
-                $modal.modal('hide');
-            }
+            if (!$modal.length) return;
+
+            // Intentamos ocultar de forma normal
+            $modal.modal('hide');
+
+            // Refuerzo: Si después de un breve momento el modal sigue visible o el backdrop existe, forzamos limpieza.
+            // PERO: Solo si no hay otros modales abiertos (para no romper el modal de detalle que viene después).
+            setTimeout(() => {
+                // Si el modal de notificación sigue teniendo la clase 'show' o hay un backdrop huérfano
+                if ($modal.hasClass('show') || ($('.modal-backdrop').length > 0 && $('.modal.show').length === 0)) {
+                    
+                    // Si el modal de notificación específicamente es el que no cerró
+                    if ($modal.hasClass('show')) {
+                        $modal.removeClass('show').css('display', 'none').attr('aria-hidden', 'true');
+                        if ($modal.data('bs.modal')) {
+                            $modal.data('bs.modal')._isShown = false;
+                            $modal.data('bs.modal')._isTransitioning = false;
+                        }
+                    }
+
+                    // Solo limpiamos el backdrop y el scroll si NO hay ningún otro modal abierto ahora
+                    if ($('.modal.show').length === 0) {
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css('padding-right', '');
+                    }
+                }
+            }, 400); // Aumentamos un poco el tiempo para dar margen a la apertura del siguiente modal
         })(jQuery);
     }
 };

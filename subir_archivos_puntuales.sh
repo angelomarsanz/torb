@@ -98,7 +98,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_18_000000_create_diputas_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_100000_add_paso_actual_to_diputas_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_110000_add_document_columns_to_diputas_table.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_120000_rename_diputas_to_disputas_table.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_120000_rename_diputas_to_disputas_table.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
@@ -178,7 +178,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/utilidades/listadoInfinito.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/indexExperiencias.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
