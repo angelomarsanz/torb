@@ -188,6 +188,8 @@ class DisputaController extends Controller
         $disputa->descripcion = $request->descripcion;
         $disputa->id_usuario_turista = $booking->user_id;
         $disputa->id_usuario_anfitrion = $booking->host_id;
+        $disputa->id_usuario_inicial = $myUserId;
+        $disputa->rol_usuario_inicial = $esAnfitrion ? __('Anfitrión') : __('Turista');
 
         // Valores por defecto solicitados
         $disputa->paso_actual = __('Caso creado');
@@ -200,9 +202,10 @@ class DisputaController extends Controller
         // Manejo de archivos después de guardar para tener el ID de la disputa
         if ($request->hasFile('documentos')) {
             $paths = [];
-            // Carpeta: public/images/disputas/{disputa_id}/[documentos_anfitrion|documentos_turista]
+            // Carpeta: public/images/disputas/{disputa_id}/[documentos_anfitrion|documentos_turista]/{user_id}
             $subFolder = $esAnfitrion ? 'documentos_anfitrion' : 'documentos_turista';
-            $destPath = public_path("images/disputas/{$disputa->id}/{$subFolder}");
+            $userIdFolder = $esAnfitrion ? $booking->host_id : $booking->user_id;
+            $destPath = public_path("images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}");
 
             if (!file_exists($destPath)) {
                 mkdir($destPath, 0755, true);
@@ -211,7 +214,7 @@ class DisputaController extends Controller
             foreach ($request->file('documentos') as $file) {
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $file->move($destPath, $fileName);
-                $paths[] = "images/disputas/{$disputa->id}/{$subFolder}/{$fileName}";
+                $paths[] = "images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}/{$fileName}";
             }
 
             // Guardar rutas como JSON en la columna correspondiente

@@ -6,6 +6,7 @@
                 <input type="hidden" name="booking_id" id="reda-booking-id">
                 <input type="hidden" name="anfitrion_id" id="reda-anfitrion-id">
                 <input type="hidden" name="turista_id" id="reda-turista-id">
+                <input type="hidden" name="id_usuario_inicial" value="{{ Auth::id() }}">
 
                 <div class="modal-header">
                     <h5 class="modal-title reda-mediation-title" id="modalMediacionLabel">{{ __('Solicitar Mediación') }}</h5>

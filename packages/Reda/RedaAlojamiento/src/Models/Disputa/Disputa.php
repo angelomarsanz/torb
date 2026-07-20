@@ -36,6 +36,8 @@ class Disputa extends Model
         'documentos_turista',
         'documentos_anfitrion',
         'documentos_agente',
+        'id_usuario_inicial',
+        'rol_usuario_inicial',
     ];
 
     /**
