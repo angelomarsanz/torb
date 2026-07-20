@@ -193,10 +193,11 @@ import {
                     <span class="font-weight-600 text-14 text-dark">${item.motivo}</span>
                 </div>
 
-                <div class="text-center mb-2">
-                    <span class="text-success pointer font-weight-700 text-12 btn-toggle-detalles-extra" data-id="${item.id}" data-state="less">
+                <div class="text-center mb-3">
+                    <button class="btn btn-sm btn-outline-success btn-toggle-detalles-extra py-0 px-3 text-10 font-weight-700" 
+                            data-id="${item.id}" data-state="less" style="border-radius: 20px;">
                         ${trans["Más..."] || "Más..."}
-                    </span>
+                    </button>
                 </div>
 
                 <div class="detalles-extra-collapsible d-none mb-3 border-bottom pb-2" id="detalles-extra-${item.id}">
