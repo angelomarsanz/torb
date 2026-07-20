@@ -65,4 +65,20 @@ class Disputa extends Model
     {
         return $this->belongsTo(\App\Models\Admin::class, 'id_usuario_agente_asignado');
     }
+
+    /**
+     * Relación con el usuario turista.
+     */
+    public function turista()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'id_usuario_turista');
+    }
+
+    /**
+     * Relación con el usuario anfitrión.
+     */
+    public function anfitrion()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'id_usuario_anfitrion');
+    }
 }

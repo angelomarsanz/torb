@@ -44,7 +44,7 @@ class DisputaController extends Controller
             }
         }
 
-        $disputas = $query->with(['booking.properties', 'agente'])->orderBy('updated_at', 'desc')->paginate(10);
+        $disputas = $query->with(['booking.properties', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
 
         // Formatear los datos para el consumo del frontend via Javascript
         $items = $disputas->getCollection()->map(function($d) {
@@ -62,6 +62,8 @@ class DisputaController extends Controller
                     'nombre' => $d->agente->username,
                     'foto' => $d->agente->profile_src
                 ] : null,
+                'turista_nombre' => $d->turista ? $d->turista->first_name . ' ' . $d->turista->last_name : '',
+                'anfitrion_nombre' => $d->anfitrion ? $d->anfitrion->first_name . ' ' . $d->anfitrion->last_name : '',
                 'propiedad_foto' => $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png')
             ];
         });

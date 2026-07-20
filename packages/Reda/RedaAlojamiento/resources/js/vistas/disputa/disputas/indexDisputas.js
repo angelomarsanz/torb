@@ -163,6 +163,21 @@ import {
                         ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
                     </div>
                 </div>
+
+                <div class="mb-3 pt-2 border-top">
+                    <span class="text-muted small d-block mb-1 font-weight-700">${trans["Usuarios relacionados:"] || "Usuarios relacionados:"}</span>
+                    <div class="d-flex flex-column text-13">
+                        <div class="mb-1">
+                            <span class="text-muted">${trans["Anfitrión:"] || "Anfitrión:"}</span>
+                            <span class="font-weight-600 text-dark">${item.anfitrion_nombre || "---"}</span>
+                        </div>
+                        <div>
+                            <span class="text-muted">${trans["Turista"] || "Turista"}</span>
+                            <span class="font-weight-600 text-dark">${item.turista_nombre || "---"}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between mb-2 align-items-center">
                     <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
                     <span class="text-muted small">${item.fecha_apertura}</span>
@@ -325,7 +340,7 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-5 col-xl-5 p-4 border-right">
+                                <div class="col-md-3 col-xl-3 p-4 border-right">
                                     <div class="mb-2">
                                         <span class="badge bg-orange text-white text-uppercase">${item.estado}</span>
                                         <span class="text-muted small ml-2">ID: #${item.id}</span>
@@ -347,7 +362,21 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-xl-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
+                                <div class="col-md-3 col-xl-3 p-4 border-right d-flex flex-column justify-content-center">
+                                    <span class="text-muted small d-block mb-1 font-weight-700">${trans["Usuarios relacionados:"] || "Usuarios relacionados:"}</span>
+                                    <div class="d-flex flex-column text-13">
+                                        <div class="mb-1">
+                                            <span class="text-muted">${trans["Anfitrión:"] || "Anfitrión:"}</span>
+                                            <span class="font-weight-600 text-dark">${item.anfitrion_nombre || "---"}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-muted">${trans["Turista"] || "Turista"}</span>
+                                            <span class="font-weight-600 text-dark">${item.turista_nombre || "---"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-xl-3 p-4 d-flex flex-column justify-content-center bg-light-soft">
                                     <div class="text-center">
                                         <div class="mb-2 position-relative d-inline-block">
                                             <img src="${agenteFoto}" 
