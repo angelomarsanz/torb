@@ -181,6 +181,23 @@
         z-index: 5;
     }
 
+    .personas-involucradas-block {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .avatar-mini img {
+        transition: transform 0.2s ease;
+    }
+
+    .avatar-mini img:hover {
+        transform: scale(1.1);
+    }
+
+    .leading-tight { line-height: 1.2; }
+    .letter-spacing-1 { letter-spacing: 1px; }
+
     .mobile-detail-wrapper {
         position: relative;
         z-index: 4;

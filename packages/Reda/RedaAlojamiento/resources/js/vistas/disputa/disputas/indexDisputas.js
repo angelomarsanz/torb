@@ -113,17 +113,60 @@ import {
     };
 
     /**
+     * Renderiza el bloque unificado de personas involucradas.
+     */
+    const generarBloquePersonasHtml = (item) => {
+        const trans = window.RedaAlojamientoJson || {};
+        const agenteFoto = item.agente ? item.agente.foto : `${APP_URL}/public/img/unnamed.png`;
+        const agenteNombre = item.agente ? item.agente.nombre : trans["Pendiente de asignación"] || "Pendiente de asignación";
+        const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
+        const agenteClaseNombre = item.agente ? 'font-weight-700 text-dark' : 'text-muted italic small leading-tight';
+
+        return `
+            <div class="personas-involucradas-block">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="avatar-mini mr-2">
+                        <img src="${item.anfitrion_foto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
+                    </div>
+                    <div class="d-flex flex-column overflow-hidden">
+                        <span class="text-muted text-10 leading-tight">${trans["Anfitrión:"] || "Anfitrión:"}</span>
+                        <span class="font-weight-600 text-dark text-12 text-truncate">${item.anfitrion_nombre}</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                    <div class="avatar-mini mr-2">
+                        <img src="${item.turista_foto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
+                    </div>
+                    <div class="d-flex flex-column overflow-hidden">
+                        <span class="text-muted text-10 leading-tight">${trans["Turista:"] || "Turista:"}</span>
+                        <span class="font-weight-600 text-dark text-12 text-truncate">${item.turista_nombre}</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="avatar-mini mr-2 position-relative">
+                        <img src="${agenteFoto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
+                        <div class="position-absolute" style="bottom: -2px; right: -2px;">
+                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 12px; height: 12px; border: 1px solid #ddd;">
+                                <i class="${agenteIcono} text-6 text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column overflow-hidden">
+                        <span class="text-muted text-10 leading-tight">${trans["Agente:"] || "Agente:"}</span>
+                        <span class="${agenteClaseNombre} text-12 text-truncate">${agenteNombre}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    /**
      * Renderiza el detalle de la mediación en el contenedor especificado.
      */
     const renderizarResumenMediacion = (item, containerSelector = '#disputas-info-extra-content') => {
         const container = $(containerSelector);
         if (!container.length) return;
         const trans = window.RedaAlojamientoJson || {};
-
-        const agenteFoto = item.agente ? item.agente.foto : `${APP_URL}/public/img/unnamed.png`;
-        const agenteNombre = item.agente ? item.agente.nombre : trans["Pendiente de asignación"] || "Pendiente de asignación";
-        const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
-        const agenteClaseNombre = item.agente ? 'font-weight-700 text-dark' : 'text-muted italic small leading-tight';
 
         // Prioridad con color
         let prioridadHtml = '';
@@ -164,45 +207,16 @@ import {
                     </div>
                 </div>
 
-                <div class="mb-3 pt-2 border-top">
-                    <span class="text-muted small d-block mb-1 font-weight-700">${trans["Usuarios relacionados:"] || "Usuarios relacionados:"}</span>
-                    <div class="d-flex flex-column text-13">
-                        <div class="mb-1">
-                            <span class="text-muted">${trans["Anfitrión:"] || "Anfitrión:"}</span>
-                            <span class="font-weight-600 text-dark">${item.anfitrion_nombre || "---"}</span>
-                        </div>
-                        <div>
-                            <span class="text-muted">${trans["Turista"] || "Turista"}</span>
-                            <span class="font-weight-600 text-dark">${item.turista_nombre || "---"}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between mb-2 align-items-center">
+                <div class="d-flex justify-content-between mb-3 align-items-center">
                     <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
                     <span class="text-muted small">${item.fecha_apertura}</span>
                 </div>
                 
-                <div class="mt-4 pt-3 border-top">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="position-relative mr-3">
-                            <img src="${agenteFoto}" 
-                                 class="rounded-circle border" 
-                                 style="width: 45px; height: 45px; object-fit: cover;"
-                                 alt="Agente">
-                            <div class="position-absolute" style="bottom: -2px; right: -2px;">
-                                <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 18px; height: 18px; border: 1px solid #ddd;">
-                                    <i class="${agenteIcono} text-8 text-success"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <span class="text-muted small leading-tight">${trans["Mediador"] || "Mediador"}</span>
-                            <span class="${agenteClaseNombre} text-13">${agenteNombre}</span>
-                        </div>
-                    </div>
+                <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
+                    <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas involucradas"] || "Personas involucradas"}</h6>
+                    ${generarBloquePersonasHtml(item)}
 
-                    <div class="text-right">
+                    <div class="text-right mt-3 border-top pt-2">
                         <p class="text-10 text-muted italic mb-0">
                             <i class="far fa-clock mr-1"></i> ${item.actualizado_hace}
                         </p>
@@ -321,11 +335,6 @@ import {
 
         let html = '<div class="row mt-4">';
         items.forEach(item => {
-            // Agente: Foto y nombre o Pendiente
-            const agenteFoto = item.agente ? item.agente.foto : `${APP_URL}/public/img/unnamed.png`;
-            const agenteNombre = item.agente ? item.agente.nombre : trans["Pendiente de asignación"] || "Pendiente de asignación";
-            const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
-
             html += `
                 <div class="col-md-12 p-0 mb-4 container-mediacion" data-id="${item.id}">
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
@@ -340,7 +349,7 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 col-xl-3 p-4 border-right">
+                                <div class="col-md-5 col-xl-5 p-4 border-right">
                                     <div class="mb-2">
                                         <span class="badge bg-orange text-white text-uppercase">${item.estado}</span>
                                         <span class="text-muted small ml-2">ID: #${item.id}</span>
@@ -362,38 +371,8 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 col-xl-3 p-4 border-right d-flex flex-column justify-content-center">
-                                    <span class="text-muted small d-block mb-1 font-weight-700">${trans["Usuarios relacionados:"] || "Usuarios relacionados:"}</span>
-                                    <div class="d-flex flex-column text-13">
-                                        <div class="mb-1">
-                                            <span class="text-muted">${trans["Anfitrión:"] || "Anfitrión:"}</span>
-                                            <span class="font-weight-600 text-dark">${item.anfitrion_nombre || "---"}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-muted">${trans["Turista"] || "Turista"}</span>
-                                            <span class="font-weight-600 text-dark">${item.turista_nombre || "---"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 col-xl-3 p-4 d-flex flex-column justify-content-center bg-light-soft">
-                                    <div class="text-center">
-                                        <div class="mb-2 position-relative d-inline-block">
-                                            <img src="${agenteFoto}" 
-                                                 class="rounded-circle border" 
-                                                 style="width: 65px; height: 65px; object-fit: cover;"
-                                                 alt="Agente">
-                                            <div class="position-absolute" style="bottom: 0; right: 0;">
-                                                <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 24px; height: 24px; border: 1px solid #ddd;">
-                                                    <i class="${agenteIcono} text-10 text-success"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span class="text-muted small d-block mb-1">${trans["Mediador"] || "Mediador"}</span>
-                                            <span class="font-weight-700 text-dark text-14">${agenteNombre}</span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-4 col-xl-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
+                                    ${generarBloquePersonasHtml(item)}
                                 </div>
                             </div>
                         </div>

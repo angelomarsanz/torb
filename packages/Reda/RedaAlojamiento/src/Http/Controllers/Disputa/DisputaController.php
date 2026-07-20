@@ -63,7 +63,9 @@ class DisputaController extends Controller
                     'foto' => $d->agente->profile_src
                 ] : null,
                 'turista_nombre' => $d->turista ? $d->turista->first_name . ' ' . $d->turista->last_name : '',
+                'turista_foto' => $d->turista ? $d->turista->profile_src : asset('public/img/unnamed.png'),
                 'anfitrion_nombre' => $d->anfitrion ? $d->anfitrion->first_name . ' ' . $d->anfitrion->last_name : '',
+                'anfitrion_foto' => $d->anfitrion ? $d->anfitrion->profile_src : asset('public/img/unnamed.png'),
                 'propiedad_foto' => $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png')
             ];
         });
