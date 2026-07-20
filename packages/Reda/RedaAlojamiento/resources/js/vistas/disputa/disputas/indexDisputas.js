@@ -187,31 +187,45 @@ import {
                     <span class="text-muted small">${trans["Prioridad"] || "Prioridad"}</span>
                     ${prioridadHtml}
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted small">${trans["ID Mediación"] || "ID Mediación"}</span>
-                    <span class="font-weight-700">#${item.id}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
-                    <span class="font-weight-700">#${item.booking_id}</span>
-                </div>
                 
-                <div class="mt-3 mb-3">
+                <div class="mt-3 mb-2">
                     <span class="text-muted small d-block mb-1">${trans["Motivo"] || "Motivo"}</span>
                     <span class="font-weight-600 text-14 text-dark">${item.motivo}</span>
                 </div>
+
+                <div class="text-center mb-2">
+                    <span class="text-success pointer font-weight-700 text-12 btn-toggle-detalles-extra" data-id="${item.id}" data-state="less">
+                        ${trans["Más..."] || "Más..."}
+                    </span>
+                </div>
+
+                <div class="detalles-extra-collapsible d-none mb-3 border-bottom pb-2" id="detalles-extra-${item.id}">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">${trans["ID Mediación"] || "ID Mediación"}</span>
+                        <span class="font-weight-700">#${item.id}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
+                        <span class="font-weight-700">#${item.booking_id}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 align-items-center">
+                        <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
+                        <span class="text-muted small">${item.fecha_apertura}</span>
+                    </div>
+                </div>
+                
                 <div class="mb-3">
                     <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                    <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-box-scroll" style="max-height: 120px; overflow-y: auto; border: 1px solid #eee;">
+                    <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
                         ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
+                    </div>
+                    <div class="text-right mt-1">
+                        <span class="text-success pointer font-weight-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
+                            ${trans["Más..."] || "Más..."}
+                        </span>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between mb-3 align-items-center">
-                    <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
-                    <span class="text-muted small">${item.fecha_apertura}</span>
-                </div>
-                
                 <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
                     <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas involucradas"] || "Personas involucradas"}</h6>
                     ${generarBloquePersonasHtml(item)}
@@ -225,6 +239,18 @@ import {
             </div>
         `;
         container.html(html);
+
+        // Detectar si la descripción necesita el botón "Más..."
+        setTimeout(() => {
+            const descBox = document.getElementById(`desc-container-${item.id}`);
+            const btn = document.getElementById(`btn-toggle-desc-${item.id}`);
+            if (descBox && btn) {
+                // Si la altura del contenido es mayor a la altura visible (clamped), mostramos el botón
+                if (descBox.scrollHeight > descBox.clientHeight + 2) { // +2 por seguridad de bordes/paddings
+                    btn.classList.remove('d-none');
+                }
+            }
+        }, 150);
     };
 
     /**
@@ -525,6 +551,40 @@ import {
                     content.addClass('d-none');
                     icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
                     text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
+                }
+            });
+
+            // Manejo de toggle para detalles extra
+            $(document).on('click', '.btn-toggle-detalles-extra', function(e) {
+                e.stopPropagation();
+                const id = $(this).attr('data-id');
+                const state = $(this).attr('data-state');
+                const target = $(`#detalles-extra-${id}`);
+                const trans = window.RedaAlojamientoJson || {};
+
+                if (state === 'less') {
+                    target.removeClass('d-none');
+                    $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
+                } else {
+                    target.addClass('d-none');
+                    $(this).text(trans["Más..."] || "Más...").attr('data-state', 'less');
+                }
+            });
+
+            // Manejo de toggle para descripción larga
+            $(document).on('click', '.btn-toggle-desc-larga', function(e) {
+                e.stopPropagation();
+                const id = $(this).attr('data-id');
+                const state = $(this).attr('data-state');
+                const target = $(`#desc-container-${id}`);
+                const trans = window.RedaAlojamientoJson || {};
+
+                if (state === 'less') {
+                    target.addClass('expanded');
+                    $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
+                } else {
+                    target.removeClass('expanded');
+                    $(this).text(trans["Más..."] || "Más...").attr('data-state', 'less');
                 }
             });
 

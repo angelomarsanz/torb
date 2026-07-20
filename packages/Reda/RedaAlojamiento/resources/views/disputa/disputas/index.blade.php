@@ -198,6 +198,27 @@
     .leading-tight { line-height: 1.2; }
     .letter-spacing-1 { letter-spacing: 1px; }
 
+    /* "More/Less" Styles */
+    .reda-mediation-desc-clamped {
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Initially 1 line as requested */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .reda-mediation-desc-clamped.expanded {
+        -webkit-line-clamp: unset;
+    }
+
+    .detalles-extra-collapsible {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     .mobile-detail-wrapper {
         position: relative;
         z-index: 4;
