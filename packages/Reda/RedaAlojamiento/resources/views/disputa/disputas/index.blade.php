@@ -28,6 +28,11 @@
                                 <div id="disputas-list-container">
                                     {{-- Se inyecta vía JS --}}
                                 </div>
+
+                                {{-- Contenedor para la paginación --}}
+                                <div id="disputas-pagination-container" class="mt-4 mb-5 d-flex justify-content-center">
+                                    {{-- Se inyecta vía JS --}}
+                                </div>
                             </div>
 
                             {{-- Columna Lateral: Información Extra --}}
@@ -35,7 +40,7 @@
                                 <div class="card border rounded-3 p-3 shadow-sm bg-light">
                                     <h6 class="font-weight-700 mb-3 text-16">{{ __('Resumen') }}</h6>
                                     <div id="disputas-info-extra-content">
-                                        <p class="text-14 text-muted">{{ __('Selecciona una mediación para ver más detalles.') }}</p>
+                                        <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de tus mediaciones.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +56,7 @@
 
 @section('validation_script')
     <script>
-        window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
+        window.RedaAlojamientoJson = @json(__('reda-alojamiento::messages'));
     </script>
     <script type="text/javascript" src="{{ asset('public/js/reda/vistas/disputa/disputas/indexDisputas.min.js?v=' . time()) }}"></script>
 @endsection

@@ -2922,6 +2922,111 @@
     }
 }
 
+/* --- DASHBOARD DE DISPUTAS / MEDIACIONES --- */
+
+.card-mediacion {
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0 !important;
+    
+    &.shadow-sm-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+        border-color: #1dbf73 !important;
+    }
+
+    .btn-ver-detalle {
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        &:hover {
+            background-color: #222;
+            color: #fff;
+        }
+    }
+}
+
+.reda-tabs-nav {
+    .disputa-tab-item {
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s ease;
+        opacity: 0.6;
+        
+        &.active {
+            opacity: 1;
+            border-bottom-color: #1dbf73;
+            color: #1dbf73;
+            
+            .status-icon svg {
+                color: #1dbf73;
+                transform: scale(1.1);
+            }
+        }
+        
+        &:hover:not(.active) {
+            opacity: 0.8;
+            background-color: #f8f9fa;
+        }
+
+        .status-icon svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s ease;
+        }
+    }
+}
+
+.w-fit-content {
+    width: fit-content;
+}
+
+.bg-light-soft {
+    background-color: #f9f9f9 !important;
+}
+
+#disputas-info-lateral {
+    .card {
+        position: sticky;
+        top: 100px;
+    }
+}
+
+/* Ajustes Responsivos Dashboard Mediaciones */
+@media (max-width: 767px) {
+    .card-mediacion {
+        .border-right {
+            border-right: none !important;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .col-md-3, .col-md-4, .col-md-2 {
+            width: 100%;
+            max-width: 100%;
+            flex: 0 0 100%;
+        }
+
+        .img-min-150 {
+            min-height: 120px;
+        }
+    }
+
+    #disputas-pagination-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        
+        .mt-4 {
+            margin-top: 1rem !important;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+}
+
 /* Ajustes Responsivos Detalle Inline */
 @media (max-width: 991.98px) {
     .detalle-actividad-inline {

@@ -17,6 +17,67 @@ class DisputaController extends Controller
     }
 
     /**
+     * Obtiene el listado de mediaciones paginado para el dashboard.
+     */
+    public function obtenerDisputasPaginadas(Request $request)
+    {
+        $status = $request->get('status', 'todos');
+        $myUserId = Auth::id();
+
+        $query = Disputa::where(function($q) use ($myUserId) {
+            $q->where('id_usuario_turista', $myUserId)
+              ->orWhere('id_usuario_anfitrion', $myUserId);
+        });
+
+        if ($status !== 'todos') {
+            // Mapeo de estados del frontend a los valores en la base de datos (traducidos)
+            $mapeo = [
+                'abiertos' => __('Abierto'),
+                'revision' => __('En revisión'),
+                'espera'   => __('Esperando respuesta'),
+                'resueltos' => __('Resuelto'),
+                'cerrados' => __('Cerrado')
+            ];
+            
+            if (isset($mapeo[$status])) {
+                $query->where('estado', $mapeo[$status]);
+            }
+        }
+
+        $disputas = $query->with(['booking.properties', 'agente'])->orderBy('updated_at', 'desc')->paginate(10);
+
+        // Formatear los datos para el consumo del frontend via Javascript
+        $items = $disputas->getCollection()->map(function($d) {
+            return [
+                'id' => $d->id,
+                'estado' => $d->estado,
+                'motivo' => $d->motivo,
+                'booking_id' => $d->booking_id,
+                'fecha_apertura' => $d->fecha_apertura ? $d->fecha_apertura->format('d/m/Y H:i') : '',
+                'actualizado_hace' => $d->updated_at->diffForHumans(),
+                'agente' => $d->agente ? [
+                    'nombre' => $d->agente->username,
+                    'foto' => $d->agente->profile_src
+                ] : null,
+                'propiedad_foto' => $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png')
+            ];
+        });
+
+        $respuesta = [
+            'success' => true,
+            'message' => __('Listado de mediaciones'),
+            'mensaje_usuario' => __('Listado recuperado con éxito'),
+            'respuesta' => [
+                'data' => $items,
+                'pagination' => (string) $disputas->appends(request()->except('page'))->links('reda-alojamiento::general.paginacion')
+            ],
+            'code' => 200
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
+    }
+
+    /**
      * Retorna el HTML del modal de mediación.
      */
     public function getModal()

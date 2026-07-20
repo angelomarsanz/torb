@@ -139,6 +139,7 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
     Route::group(['middleware' => ['reda.auth']], function () {
 
         // Disputas
+        Route::get('disputas/paginadas', [DisputaController::class, 'obtenerDisputasPaginadas'])->name('reda.disputas.paginadas');
         Route::get('disputas/get-modal', [DisputaController::class, 'getModal'])->name('reda.disputas.get_modal');
         Route::get('disputas/get-detail-modal/{id}', [DisputaController::class, 'getDetailModal'])->name('reda.disputas.get_detail_modal');
         Route::get('disputas/check/{booking_id}', [DisputaController::class, 'checkDispute'])->name('reda.disputas.check');

@@ -55,4 +55,12 @@ class Disputa extends Model
     {
         return $this->belongsTo(Bookings::class, 'booking_id');
     }
+
+    /**
+     * Relación con el agente asignado (Admin).
+     */
+    public function agente()
+    {
+        return $this->belongsTo(\App\Models\Admin::class, 'id_usuario_agente_asignado');
+    }
 }
