@@ -16,6 +16,51 @@ import {
     let observadorEnfoque = null;
 
     /**
+     * Peticion AJAX para obtener mediaciones paginadas.
+     */
+    const getMediacionesPaginadas = (status, page) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/disputas/paginadas',
+                type: 'GET',
+                data: { status, page },
+                success: (data) => resolve(data),
+                error: (x) => {
+                    let respuestaServidor = {};
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    resolve({
+                        success: false,
+                        mensaje_usuario: respuestaServidor.mensaje_usuario || (window.RedaAlojamientoJson["Error al cargar las mediaciones. Intente de nuevo."] || "Error al cargar las mediaciones. Intente de nuevo."),
+                        code: x.status || 500
+                    });
+                }
+            });
+        });
+    };
+
+    /**
+     * Peticion AJAX para obtener el HTML del modal de detalle.
+     */
+    const getHtmlDetalleMediacion = (id) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/disputas/get-detail-modal/' + id,
+                type: 'GET',
+                success: (data) => resolve(data),
+                error: (x) => {
+                    let respuestaServidor = {};
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    resolve({
+                        success: false,
+                        mensaje_usuario: respuestaServidor.mensaje_usuario || (window.RedaAlojamientoJson["Error al cargar el detalle."] || "Error al cargar el detalle."),
+                        code: x.status || 500
+                    });
+                }
+            });
+        });
+    };
+
+    /**
      * Inyecta dinámicamente las pestañas de estatus en la cabecera del listado.
      */
     const inyectarPestanasEstatus = () => {
@@ -126,7 +171,7 @@ import {
             <div class="personas-relacionadas-block">
                 <div class="d-flex align-items-center mb-2">
                     <div class="avatar-mini mr-2">
-                        <img src="${item.anfitrion_foto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
+                        <img src="${item.anfitrion_foto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Anfitrión:"] || "Anfitrión:"}</span>
@@ -135,7 +180,7 @@ import {
                 </div>
                 <div class="d-flex align-items-center mb-2">
                     <div class="avatar-mini mr-2">
-                        <img src="${item.turista_foto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
+                        <img src="${item.turista_foto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Turista:"] || "Turista:"}</span>
@@ -144,9 +189,9 @@ import {
                 </div>
                 <div class="d-flex align-items-center">
                     <div class="avatar-mini mr-2 position-relative">
-                        <img src="${agenteFoto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
-                        <div class="position-absolute" style="bottom: -2px; right: -2px;">
-                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 12px; height: 12px; border: 1px solid #ddd;">
+                        <img src="${agenteFoto}" class="rounded-circle border reda-avatar-30">
+                        <div class="position-absolute reda-status-badge-pos">
+                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm reda-status-badge-icon">
                                 <i class="${agenteIcono} text-6 text-success"></i>
                             </div>
                         </div>
@@ -158,6 +203,31 @@ import {
                 </div>
             </div>
         `;
+    };
+
+    /**
+     * Genera el HTML de la lista de adjuntos.
+     */
+    const generarListaAdjuntosHtml = (adjuntos) => {
+        const trans = window.RedaAlojamientoJson || {};
+        if (!adjuntos || !adjuntos.length) {
+            return `<p class="text-11 text-muted italic">${trans["Sin archivos adjuntos"] || "Sin archivos adjuntos"}</p>`;
+        }
+
+        let html = '<div class="list-group list-group-flush border-top border-bottom">';
+        adjuntos.forEach(file => {
+            const icon = file.es_imagen ? 'far fa-image' : 'far fa-file-alt';
+            html += `
+                <a href="${file.url}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
+                    <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                        <i class="${icon} text-success text-10"></i>
+                    </div>
+                    <span class="text-11 text-dark font-weight-600 text-truncate" title="${file.nombre}">${file.nombre}</span>
+                </a>
+            `;
+        });
+        html += '</div>';
+        return html;
     };
 
     /**
@@ -194,8 +264,8 @@ import {
                 </div>
 
                 <div class="text-center mb-3">
-                    <button class="btn btn-sm btn-outline-success btn-toggle-detalles-extra py-0 px-3 text-10 font-weight-700" 
-                            data-id="${item.id}" data-state="less" style="border-radius: 20px;">
+                    <button class="btn btn-sm btn-outline-success btn-toggle-detalles-extra py-0 px-3 text-10 font-weight-700 reda-btn-pill-small" 
+                            data-id="${item.id}" data-state="less">
                         ${trans["Más..."] || "Más..."}
                     </button>
                 </div>
@@ -225,6 +295,13 @@ import {
                             <span class="text-success pointer font-weight-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
                                 ${trans["Más..."] || "Más..."}
                             </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="text-12 font-weight-700 mb-2 text-muted text-uppercase letter-spacing-1">${trans["Archivos adjuntos"] || "Archivos adjuntos"}</h6>
+                        <div class="adjuntos-container">
+                            ${generarListaAdjuntosHtml(item.adjuntos)}
                         </div>
                     </div>
 
@@ -378,9 +455,8 @@ import {
                                 <div class="col-md-3 p-0">
                                     <div class="img-container h-100 bg-light d-flex align-items-center justify-content-center border-right">
                                         <img src="${item.propiedad_foto}" 
-                                             class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150" 
-                                             alt="Propiedad"
-                                             style="max-height: 200px;">
+                                             class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150 reda-propiedad-foto-max" 
+                                             alt="Propiedad">
                                     </div>
                                 </div>
 
@@ -443,73 +519,66 @@ import {
     /**
      * Carga las mediaciones vía Ajax según el estatus y página seleccionada.
      */
-    const cargarMediaciones = (status, page = 1) => {
+    const cargarMediaciones = async (status, page = 1) => {
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
             window.RedaNotificaciones.esperar();
         }
 
-        $.ajax({
-            url: APP_URL + '/reda/disputas/paginadas',
-            type: 'GET',
-            data: { status, page }
-        }).done(function(data) {
-            if (data.success) {
-                mediacionesCargadas = data.respuesta.data;
-                renderizarLista(mediacionesCargadas);
-                $('#disputas-pagination-container').html(data.respuesta.pagination);
+        const data = await getMediacionesPaginadas(status, page);
 
-                // Seleccionar la primera mediación por defecto
-                if (mediacionesCargadas.length > 0) {
-                    seleccionarMediacion(mediacionesCargadas[0].id, false);
-                } else {
-                    const trans = window.RedaAlojamientoJson || {};
-                    $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
-                    $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
-                }
+        if (data.success) {
+            mediacionesCargadas = data.respuesta.data;
+            renderizarLista(mediacionesCargadas);
+            $('#disputas-pagination-container').html(data.respuesta.pagination);
+
+            // Seleccionar la primera mediación por defecto
+            if (mediacionesCargadas.length > 0) {
+                seleccionarMediacion(mediacionesCargadas[0].id, false);
+            } else {
+                const trans = window.RedaAlojamientoJson || {};
+                $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
+                $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
             }
-        }).fail(function() {
+        } else {
             const trans = window.RedaAlojamientoJson || {};
             $('#disputas-list-container').html(`
                 <div class="alert alert-danger mt-4">
-                    ${trans["Error al cargar las mediaciones. Intente de nuevo."] || "Error al cargar las mediaciones. Intente de nuevo."}
+                    ${data.mensaje_usuario}
                 </div>
             `);
-        }).always(function() {
-            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                window.RedaNotificaciones.ocultar();
-            }
-        });
+        }
+
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
     };
 
     /**
      * Abre el modal de detalle de la mediación.
      */
-    const abrirDetalleMediacion = (id) => {
+    const abrirDetalleMediacion = async (id) => {
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
             window.RedaNotificaciones.esperar();
         }
 
-        $.ajax({
-            url: APP_URL + '/reda/disputas/get-detail-modal/' + id,
-            type: 'GET'
-        }).done(function(html) {
-            // Primero ocultamos el de espera para limpiar backdrops
-            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                window.RedaNotificaciones.ocultar();
-            }
+        const data = await getHtmlDetalleMediacion(id);
 
+        // Primero ocultamos el de espera para limpiar backdrops
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
+
+        if (data.success) {
             // Pequeño delay para que Bootstrap limpie el body antes de abrir el nuevo modal
             setTimeout(() => {
                 // Remover modal previo si existe
                 $('#modal-detalle-mediacion-reda').remove();
-                $('body').append(html);
+                $('body').append(data.respuesta);
                 $('#modal-detalle-mediacion-reda').modal('show');
             }, 150);
-        }).fail(function() {
-            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                window.RedaNotificaciones.ocultar();
-            }
-        });
+        } else {
+            alert(data.mensaje_usuario);
+        }
     };
 
     $(function() {

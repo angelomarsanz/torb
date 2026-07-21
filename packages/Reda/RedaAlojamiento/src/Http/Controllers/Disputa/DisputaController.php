@@ -47,7 +47,24 @@ class DisputaController extends Controller
         $disputas = $query->with(['booking.properties', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
 
         // Formatear los datos para el consumo del frontend via Javascript
-        $items = $disputas->getCollection()->map(function($d) {
+        $items = $disputas->getCollection()->map(function($d) use ($myUserId) {
+            // Determinar qué documentos mostrar (solo los del usuario actual)
+            $documentosRaw = ($d->id_usuario_turista == $myUserId) ? $d->documentos_turista : $d->documentos_anfitrion;
+            $adjuntos = [];
+            
+            if ($documentosRaw) {
+                $paths = json_decode($documentosRaw, true);
+                if (is_array($paths)) {
+                    foreach ($paths as $path) {
+                        $adjuntos[] = [
+                            'nombre' => basename($path),
+                            'url' => asset($path),
+                            'es_imagen' => in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
+                        ];
+                    }
+                }
+            }
+
             return [
                 'id' => $d->id,
                 'estado' => $d->estado,
@@ -56,6 +73,7 @@ class DisputaController extends Controller
                 'prioridad' => $d->prioridad,
                 'descripcion' => $d->descripcion,
                 'booking_id' => $d->booking_id,
+                'adjuntos' => $adjuntos,
                 'fecha_apertura' => $d->fecha_apertura ? $d->fecha_apertura->format('d/m/Y H:i') : '',
                 'actualizado_hace' => $d->updated_at->diffForHumans(),
                 'agente' => $d->agente ? [
@@ -89,7 +107,14 @@ class DisputaController extends Controller
      */
     public function getModal()
     {
-        return view('reda-alojamiento::disputa.disputas.modal_mediacion')->render();
+        $html = view('reda-alojamiento::disputa.disputas.modal_mediacion')->render();
+        return response()->json([
+            'success' => true,
+            'message' => __('Carga de modal'),
+            'mensaje_usuario' => __('Cargado con éxito'),
+            'respuesta' => $html,
+            'code' => 200
+        ], 200);
     }
 
     /**
@@ -98,7 +123,14 @@ class DisputaController extends Controller
     public function getDetailModal($id)
     {
         $disputa = Disputa::findOrFail($id);
-        return view('reda-alojamiento::disputa.disputas.modal_detalle', compact('disputa'))->render();
+        $html = view('reda-alojamiento::disputa.disputas.modal_detalle', compact('disputa'))->render();
+        return response()->json([
+            'success' => true,
+            'message' => __('Carga de detalle'),
+            'mensaje_usuario' => __('Cargado con éxito'),
+            'respuesta' => $html,
+            'code' => 200
+        ], 200);
     }
 
     /**
