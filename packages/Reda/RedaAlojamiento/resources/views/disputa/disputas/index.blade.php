@@ -56,10 +56,17 @@
                                     </div>
                                 </div>
 
-                                <div class="card border rounded-3 p-3 shadow-sm bg-white">
+                                <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4">
                                     <h6 class="font-weight-700 mb-3 text-16">{{ __('Detalle') }}</h6>
                                     <div id="disputas-info-extra-content">
                                         <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de tus mediaciones.') }}</p>
+                                    </div>
+                                </div>
+
+                                {{-- Nueva Sección: Acciones Rápidas (Conversación) --}}
+                                <div class="card border rounded-3 p-3 shadow-sm bg-white d-none" id="disputas-acciones-sidebar">
+                                    <div id="disputas-conversacion-container">
+                                        {{-- Se inyecta vía JS --}}
                                     </div>
                                 </div>
                             </div>

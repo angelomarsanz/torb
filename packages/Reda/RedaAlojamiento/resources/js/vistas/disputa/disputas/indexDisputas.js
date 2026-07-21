@@ -319,6 +319,29 @@ import {
             </div>
         `;
         container.html(html);
+
+        // Inyectar botón de conversación en la sección independiente (Desktop Sidebar o Mobile Actions)
+        const isDesktop = (containerSelector === '#disputas-info-extra-content');
+        const actionsContainerId = isDesktop 
+            ? '#disputas-conversacion-container' 
+            : `#mobile-acciones-${item.id}`;
+        
+        const actionsContainer = $(actionsContainerId);
+        if (actionsContainer.length) {
+            // Mostrar card de acciones en escritorio
+            if (isDesktop) {
+                $('#disputas-acciones-sidebar').removeClass('d-none');
+            }
+
+            actionsContainer.html(`
+                <div class="mt-2">
+                    <a href="${APP_URL}/inbox?id=${item.booking_id}" class="btn btn-success btn-block font-weight-700 text-14 py-2 reda-btn-inbox-direct">
+                        <i class="far fa-comments mr-2"></i>
+                        ${trans["Ver conversación"] || "Ver conversación"}
+                    </a>
+                </div>
+            `);
+        }
     };
 
     /**
@@ -500,9 +523,12 @@ import {
                                 <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Estado del Trámite"] || "Estado del Trámite"}</h6>
                                 <div class="reda-timeline-carousel mobile-timeline-container"></div>
                             </div>
-                            <div class="mobile-resumen-wrapper">
+                            <div class="mobile-resumen-wrapper mb-3">
                                 <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
                                 <div class="mobile-resumen-container"></div>
+                            </div>
+                            <div class="mobile-acciones-wrapper" id="mobile-acciones-${item.id}">
+                                {{-- Se inyecta vía JS --}}
                             </div>
                         </div>
                     </div>
@@ -538,6 +564,7 @@ import {
                 const trans = window.RedaAlojamientoJson || {};
                 $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
                 $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
+                $('#disputas-acciones-sidebar').addClass('d-none');
             }
         } else {
             const trans = window.RedaAlojamientoJson || {};

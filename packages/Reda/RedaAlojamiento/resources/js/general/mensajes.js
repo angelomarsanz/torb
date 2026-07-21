@@ -418,6 +418,30 @@ const getModalMediacionHtml = () => {
     };
 
     $(function() {
+        // Lógica para posicionar la conversación en el Inbox si viene con un ID en la URL
+        if (window.location.pathname.endsWith('/inbox')) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingId = urlParams.get('id');
+            
+            if (bookingId) {
+                // Pequeño delay para asegurar que el DOM y los eventos de inbox.js estén listos
+                setTimeout(() => {
+                    const targetConversation = $(`.conversassion[data-id="${bookingId}"]`);
+                    if (targetConversation.length) {
+                        // 1. Disparar el click para que la lógica original cargue los mensajes vía AJAX
+                        targetConversation.click();
+                        
+                        // 2. Resaltar visualmente (clase active)
+                        $('.conversassion').removeClass('active');
+                        targetConversation.addClass('active');
+                        
+                        // 3. Desplazar el scroll del sidebar hacia el elemento
+                        targetConversation[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            }
+        }
+
         if ($('#messages').length && $('#booking').length) {
             inyectarCajaMediacionReda();
             cargarModalMediacion();
