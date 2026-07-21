@@ -181,7 +181,7 @@
         z-index: 5;
     }
 
-    .personas-involucradas-block {
+    .personas-relacionadas-block {
         background: rgba(255, 255, 255, 0.5);
         padding: 10px;
         border-radius: 8px;

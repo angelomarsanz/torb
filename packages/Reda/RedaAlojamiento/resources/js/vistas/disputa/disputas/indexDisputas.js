@@ -113,7 +113,7 @@ import {
     };
 
     /**
-     * Renderiza el bloque unificado de personas involucradas.
+     * Renderiza el bloque unificado de personas relacionadas.
      */
     const generarBloquePersonasHtml = (item) => {
         const trans = window.RedaAlojamientoJson || {};
@@ -123,7 +123,7 @@ import {
         const agenteClaseNombre = item.agente ? 'font-weight-700 text-dark' : 'text-muted italic small leading-tight';
 
         return `
-            <div class="personas-involucradas-block">
+            <div class="personas-relacionadas-block">
                 <div class="d-flex align-items-center mb-2">
                     <div class="avatar-mini mr-2">
                         <img src="${item.anfitrion_foto}" class="rounded-circle border" style="width: 30px; height: 30px; object-fit: cover;">
@@ -200,58 +200,66 @@ import {
                     </button>
                 </div>
 
-                <div class="detalles-extra-collapsible d-none mb-3 border-bottom pb-2" id="detalles-extra-${item.id}">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">${trans["ID Mediación"] || "ID Mediación"}</span>
-                        <span class="font-weight-700">#${item.id}</span>
+                <div class="detalles-extra-collapsible d-none mb-3" id="detalles-extra-${item.id}">
+                    <div class="border-bottom pb-2 mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">${trans["ID Mediación"] || "ID Mediación"}</span>
+                            <span class="font-weight-700">#${item.id}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
+                            <span class="font-weight-700">#${item.booking_id}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 align-items-center">
+                            <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
+                            <span class="text-muted small">${item.fecha_apertura}</span>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
-                        <span class="font-weight-700">#${item.booking_id}</span>
+                    
+                    <div class="mb-3">
+                        <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
+                        <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
+                            ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
+                        </div>
+                        <div class="text-right mt-1">
+                            <span class="text-success pointer font-weight-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
+                                ${trans["Más..."] || "Más..."}
+                            </span>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-between mb-2 align-items-center">
-                        <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
-                        <span class="text-muted small">${item.fecha_apertura}</span>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                    <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
-                        ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
-                    </div>
-                    <div class="text-right mt-1">
-                        <span class="text-success pointer font-weight-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
-                            ${trans["Más..."] || "Más..."}
-                        </span>
-                    </div>
-                </div>
 
-                <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
-                    <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas involucradas"] || "Personas involucradas"}</h6>
-                    ${generarBloquePersonasHtml(item)}
+                    <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
+                        <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
+                        ${generarBloquePersonasHtml(item)}
 
-                    <div class="text-right mt-3 border-top pt-2">
-                        <p class="text-10 text-muted italic mb-0">
-                            <i class="far fa-clock mr-1"></i> ${item.actualizado_hace}
-                        </p>
+                        <div class="text-right mt-3 border-top pt-2">
+                            <p class="text-10 text-muted italic mb-0">
+                                <i class="far fa-clock mr-1"></i> ${item.actualizado_hace}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         `;
         container.html(html);
+    };
 
-        // Detectar si la descripción necesita el botón "Más..."
+    /**
+     * Funcion auxiliar para detectar si la descripcion necesita el boton "Mas..."
+     */
+    const chequearTruncadoDescripcion = (id) => {
         setTimeout(() => {
-            const descBox = document.getElementById(`desc-container-${item.id}`);
-            const btn = document.getElementById(`btn-toggle-desc-${item.id}`);
+            const descBox = document.getElementById(`desc-container-${id}`);
+            const btn = document.getElementById(`btn-toggle-desc-${id}`);
             if (descBox && btn) {
                 // Si la altura del contenido es mayor a la altura visible (clamped), mostramos el botón
                 if (descBox.scrollHeight > descBox.clientHeight + 2) { // +2 por seguridad de bordes/paddings
                     btn.classList.remove('d-none');
+                } else {
+                    btn.classList.add('d-none');
                 }
             }
-        }, 150);
+        }, 50);
     };
 
     /**
@@ -566,6 +574,10 @@ import {
                 if (state === 'less') {
                     target.removeClass('d-none');
                     $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
+                    // Re-chequear truncado de descripción cuando se expande el contenedor
+                    if (typeof chequearTruncadoDescripcion === 'function') {
+                        chequearTruncadoDescripcion(id);
+                    }
                 } else {
                     target.addClass('d-none');
                     $(this).text(trans["Más..."] || "Más...").attr('data-state', 'less');
