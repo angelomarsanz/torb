@@ -207,7 +207,7 @@ import {
                         <span class="text-dark text-12 text-truncate">${item.turista_nombre}</span>
                     </div>
                 </div>
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center mb-3">
                     <div class="avatar-mini mr-2 position-relative">
                         <img src="${agenteFoto}" class="rounded-circle border reda-avatar-30">
                         <div class="position-absolute reda-status-badge-pos">
@@ -220,6 +220,13 @@ import {
                         <span class="text-muted text-10 leading-tight">${trans["Agente:"] || "Agente:"}</span>
                         <span class="${agenteClaseNombre} text-12 text-truncate">${agenteNombre}</span>
                     </div>
+                </div>
+
+                <div class="mt-2 d-flex justify-content-center">
+                    <a href="${APP_URL}/inbox?id=${item.booking_id}" class="btn btn-sm btn-outline-success font-weight-700 text-11 px-3 py-1 reda-btn-pill-small">
+                        <i class="far fa-comments mr-1"></i>
+                        ${trans["Ver conversación"] || "Ver conversación"}
+                    </a>
                 </div>
             </div>
         `;
@@ -304,6 +311,54 @@ import {
     };
 
     /**
+     * Renderiza la información de la reservación asociada.
+     */
+    const renderizarReservacionMediacion = (item, containerSelector) => {
+        const container = $(containerSelector);
+        if (!container.length) return;
+        const trans = window.RedaAlojamientoJson || {};
+
+        let html = `
+            <div class="reservacion-detalle-sidebar">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="mr-3">
+                        <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb" style="width: 80px; height: 60px;">
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="text-muted text-10 d-block mb-1">${trans["ID Reservación"] || "ID Reservación"}: #${item.booking_id}</span>
+                        <h6 class="text-13 font-weight-700 text-dark mb-0 text-truncate" title="${item.propiedad_nombre}">${item.propiedad_nombre}</h6>
+                        <p class="text-11 text-muted mb-0 text-truncate"><i class="fas fa-map-marker-alt mr-1"></i>${item.propiedad_ubicacion}</p>
+                    </div>
+                </div>
+                
+                <div class="row no-gutters border-top pt-3">
+                    <div class="col-6 border-right pr-2">
+                        <span class="text-muted text-10 d-block text-uppercase letter-spacing-1">${trans["Llegada"] || "Llegada"}</span>
+                        <span class="text-12 font-weight-600 text-dark">${item.booking_start_date}</span>
+                    </div>
+                    <div class="col-6 pl-2">
+                        <span class="text-muted text-10 d-block text-uppercase letter-spacing-1">${trans["Salida"] || "Salida"}</span>
+                        <span class="text-12 font-weight-600 text-dark">${item.booking_end_date}</span>
+                    </div>
+                </div>
+                
+                <div class="mt-3 pt-2 border-top">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted text-11">${trans["Huéspedes"] || "Huéspedes"}</span>
+                        <span class="text-11 font-weight-600 text-dark">${item.booking_guest}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.html(html);
+        
+        // Mostrar el card si estaba oculto
+        if (containerSelector === '#disputas-reservacion-content') {
+            $('#disputas-reservacion-sidebar').removeClass('d-none');
+        }
+    };
+
+    /**
      * Renderiza el cuerpo del detalle de la mediación (Sección colapsable).
      */
     const renderizarResumenMediacion = (item, containerSelector) => {
@@ -333,6 +388,10 @@ import {
                             <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
                             <span class="text-muted small">${item.fecha_apertura}</span>
                         </div>
+                        <div class="d-flex justify-content-between mb-2 align-items-center">
+                            <span class="text-muted small">${trans["Actualizado"] || "Actualizado"}</span>
+                            <span class="text-muted small">${item.actualizado_hace}</span>
+                        </div>
                     </div>
                     
                     <div class="mb-3 mt-3">
@@ -357,12 +416,6 @@ import {
                     <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
                         <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
                         ${generarBloquePersonasHtml(item)}
-
-                        <div class="text-right mt-3 border-top pt-2">
-                            <p class="text-10 text-muted italic mb-0">
-                                <i class="far fa-clock mr-1"></i> ${item.actualizado_hace}
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -371,28 +424,6 @@ import {
 
         // Re-chequear truncado de descripción inmediatamente al renderizar
         setTimeout(() => chequearTruncadoDescripcion(item.id), 50);
-
-        // Inyectar botón de conversación en la sección independiente
-        const isDesktop = (containerSelector === '#disputas-info-extra-content');
-        const actionsContainerId = isDesktop 
-            ? '#disputas-conversacion-container' 
-            : `#mobile-acciones-${item.id}`;
-        
-        const actionsContainer = $(actionsContainerId);
-        if (actionsContainer.length) {
-            if (isDesktop) {
-                $('#disputas-acciones-sidebar').removeClass('d-none');
-            }
-
-            actionsContainer.html(`
-                <div class="mt-2">
-                    <a href="${APP_URL}/inbox?id=${item.booking_id}" class="btn btn-success btn-block font-weight-700 text-14 py-2 reda-btn-inbox-direct">
-                        <i class="far fa-comments mr-2"></i>
-                        ${trans["Ver conversación"] || "Ver conversación"}
-                    </a>
-                </div>
-            `);
-        }
     };
 
     /**
@@ -463,6 +494,7 @@ import {
         // 2. Actualizar Secciones Laterales (Escritorio)
         renderizarCabeceraMediacion(item, '#disputas-header-content');
         renderizarTimeline(item.paso_actual, '#reda-timeline-container');
+        renderizarReservacionMediacion(item, '#disputas-reservacion-content');
         renderizarResumenMediacion(item, '#disputas-info-extra-content');
 
         // 3. Preparar UI Móvil (Tab de Ver Detalle)
@@ -490,6 +522,7 @@ import {
             // Renderizar datos móviles inmediatamente en el nuevo orden
             renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
             renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
+            renderizarReservacionMediacion(item, `#mobile-detail-${id} .mobile-reservacion-container`);
             renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
 
             // Desplazamiento suave si es por interacción manual
@@ -593,12 +626,13 @@ import {
                             <div class="mobile-timeline-wrapper mb-4">
                                 <div class="reda-timeline-carousel mobile-timeline-container"></div>
                             </div>
+                            <div class="mobile-reservacion-wrapper mb-4">
+                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
+                                <div class="mobile-reservacion-container"></div>
+                            </div>
                             <div class="mobile-resumen-wrapper mb-3">
                                 <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
                                 <div class="mobile-resumen-container"></div>
-                            </div>
-                            <div class="mobile-acciones-wrapper" id="mobile-acciones-${item.id}">
-                                {{-- Se inyecta vía JS --}}
                             </div>
                         </div>
                     </div>
@@ -625,7 +659,9 @@ import {
         if (data.success) {
             mediacionesCargadas = data.respuesta.data;
             renderizarLista(mediacionesCargadas);
-            $('#disputas-pagination-container').html(data.respuesta.pagination);
+            if ($('#disputas-pagination-container').length) {
+                $('#disputas-pagination-container').html(data.respuesta.pagination);
+            }
 
             // Seleccionar la primera mediación por defecto
             if (mediacionesCargadas.length > 0) {
@@ -634,8 +670,8 @@ import {
                 const trans = window.RedaAlojamientoJson || {};
                 $('#disputas-cabecera-lateral').addClass('d-none');
                 $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
+                $('#disputas-reservacion-sidebar').addClass('d-none');
                 $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
-                $('#disputas-acciones-sidebar').addClass('d-none');
             }
         } else {
             const trans = window.RedaAlojamientoJson || {};
@@ -721,6 +757,7 @@ import {
                     if (item) {
                         renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
                         renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
+                        renderizarReservacionMediacion(item, `#mobile-detail-${id} .mobile-reservacion-container`);
                         renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
                     }
                 } else {

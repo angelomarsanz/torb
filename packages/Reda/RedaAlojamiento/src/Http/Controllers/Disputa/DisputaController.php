@@ -44,7 +44,7 @@ class DisputaController extends Controller
             }
         }
 
-        $disputas = $query->with(['booking.properties', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
+        $disputas = $query->with(['booking.properties.property_address', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
 
         // Formatear los datos para el consumo del frontend via Javascript
         $items = $disputas->getCollection()->map(function($d) use ($myUserId) {
@@ -75,6 +75,13 @@ class DisputaController extends Controller
                 $propiedadFoto = asset($propiedadFoto);
             }
 
+            // Datos de ubicación
+            $ubicacion = '';
+            if ($d->booking && $d->booking->properties && $d->booking->properties->property_address) {
+                $addr = $d->booking->properties->property_address;
+                $ubicacion = trim(($addr->city ?? '') . ', ' . ($addr->state ?? ''), ', ');
+            }
+
             return [
                 'id' => $d->id,
                 'estado' => $d->estado,
@@ -83,6 +90,11 @@ class DisputaController extends Controller
                 'prioridad' => $d->prioridad,
                 'descripcion' => $d->descripcion,
                 'booking_id' => $d->booking_id,
+                'booking_start_date' => $d->booking ? date('d/m/Y', strtotime($d->booking->start_date)) : '',
+                'booking_end_date' => $d->booking ? date('d/m/Y', strtotime($d->booking->end_date)) : '',
+                'booking_guest' => $d->booking ? $d->booking->guest : 0,
+                'propiedad_nombre' => $d->booking && $d->booking->properties ? $d->booking->properties->name : '',
+                'propiedad_ubicacion' => $ubicacion,
                 'adjuntos' => $adjuntos,
                 'fecha_apertura' => $d->fecha_apertura ? $d->fecha_apertura->format('d/m/Y H:i') : '',
                 'actualizado_hace' => $d->updated_at->diffForHumans(),
