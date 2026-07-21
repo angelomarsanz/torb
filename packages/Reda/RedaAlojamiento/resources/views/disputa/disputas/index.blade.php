@@ -21,7 +21,7 @@
                     <div id="indexDisputas" class="mt-2">
                         <div class="row">
                             {{-- Columna Central: Pestañas y Listado --}}
-                            <div class="col-md-9 p-0">
+                            <div class="col-md-8 p-0">
                                 <div id="disputas-tabs-header" class="mb-4">
                                     {{-- Se inyecta vía JS --}}
                                 </div>
@@ -36,7 +36,15 @@
                             </div>
 
                             {{-- Columna Lateral: Información Extra --}}
-                            <div class="col-md-3" id="disputas-info-lateral">
+                            <div class="col-md-4" id="disputas-info-lateral">
+                                {{-- Bloque 1: Información Principal (Estatus, ID, Motivo) - SIN MARCO --}}
+                                <div class="mb-4 d-none" id="disputas-cabecera-lateral">
+                                    <div id="disputas-header-content" class="px-2">
+                                        {{-- Inyectado vía JS: Estatus, ID y Motivo --}}
+                                    </div>
+                                </div>
+
+                                {{-- Bloque 2: Estado del Trámite (Cronograma) --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-light mb-4">
                                     <h6 class="font-weight-700 mb-3 text-16">{{ __('Estado del Trámite') }}</h6>
                                     
@@ -56,8 +64,9 @@
                                     </div>
                                 </div>
 
+                                {{-- Bloque 3: Detalle Colapsable --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4">
-                                    <h6 class="font-weight-700 mb-3 text-16">{{ __('Detalle') }}</h6>
+                                    <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">{{ __('Detalles Adicionales') }}</h6>
                                     <div id="disputas-info-extra-content">
                                         <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de tus mediaciones.') }}</p>
                                     </div>

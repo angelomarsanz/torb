@@ -231,9 +231,60 @@ import {
     };
 
     /**
-     * Renderiza el detalle de la mediación en el contenedor especificado.
+     * Funcion auxiliar para detectar si un texto necesita el boton "Mas..."
      */
-    const renderizarResumenMediacion = (item, containerSelector = '#disputas-info-extra-content') => {
+    const chequearTruncadoTexto = (selectorBox, selectorBtn) => {
+        setTimeout(() => {
+            const box = document.querySelector(selectorBox);
+            const btn = document.querySelector(selectorBtn);
+            if (box && btn) {
+                if (box.scrollHeight > box.clientHeight + 2) {
+                    btn.classList.remove('d-none');
+                } else {
+                    btn.classList.add('d-none');
+                }
+            }
+        }, 50);
+    };
+
+    /**
+     * Renderiza la cabecera informativa de la mediación (Estatus, ID, Motivo).
+     */
+    const renderizarCabeceraMediacion = (item, containerSelector) => {
+        const container = $(containerSelector);
+        if (!container.length) return;
+        const trans = window.RedaAlojamientoJson || {};
+
+        let html = `
+            <div class="mediacion-cabecera-principal mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge badge-success font-weight-700 py-2 px-3 text-12 shadow-sm">${item.estado}</span>
+                    <span class="text-muted font-weight-700 text-14">#${item.id}</span>
+                </div>
+                <h5 class="font-weight-800 text-dark text-20 mb-0 leading-tight">${item.motivo}</h5>
+                <div class="text-right mt-1">
+                    <span class="text-success pointer font-weight-700 text-11 btn-toggle-motivo d-none" 
+                          id="btn-toggle-motivo-${item.id}" data-id="${item.id}" data-state="less">
+                        ${trans["Más..."] || "Más..."}
+                    </span>
+                </div>
+            </div>
+        `;
+        container.html(html);
+
+        // Chequear truncado del motivo (si es muy largo)
+        chequearTruncadoTexto(`#motivo-container-${item.id}`, `#btn-toggle-motivo-${item.id}`);
+
+        // Mostrar el card contenedor si estaba oculto
+        if (containerSelector === '#disputas-header-content') {
+            $('#disputas-cabecera-lateral').removeClass('d-none');
+        }
+    };
+
+    /**
+     * Renderiza el cuerpo del detalle de la mediación (Sección colapsable).
+     */
+    const renderizarResumenMediacion = (item, containerSelector) => {
         const container = $(containerSelector);
         if (!container.length) return;
         const trans = window.RedaAlojamientoJson || {};
@@ -249,32 +300,21 @@ import {
 
         let html = `
             <div class="mediacion-resumen-detalle">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted small">${trans["Estatus"] || "Estatus"}</span>
-                    <span class="badge badge-success font-weight-700">${item.estado}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted small">${trans["Prioridad"] || "Prioridad"}</span>
-                    ${prioridadHtml}
-                </div>
-                
-                <div class="mt-3 mb-2">
-                    <span class="text-muted small d-block mb-1">${trans["Motivo"] || "Motivo"}</span>
-                    <span class="font-weight-600 text-14 text-dark">${item.motivo}</span>
-                </div>
-
-                <div class="text-center mb-3">
-                    <button class="btn btn-sm btn-outline-success btn-toggle-detalles-extra py-0 px-3 text-10 font-weight-700 reda-btn-pill-small" 
+                <!-- Botón Ver detalle (alterna el resto de la sección) -->
+                <div class="text-center mb-0">
+                    <button class="btn btn-sm btn-outline-success btn-toggle-detalles-extra py-1 px-4 text-12 font-weight-700 reda-btn-pill-small w-100" 
                             data-id="${item.id}" data-state="less">
-                        ${trans["Más..."] || "Más..."}
+                        <i class="fas fa-eye mr-1"></i>
+                        ${trans["Ver detalle"] || "Ver detalle"}
                     </button>
                 </div>
 
-                <div class="detalles-extra-collapsible d-none mb-3" id="detalles-extra-${item.id}">
-                    <div class="border-bottom pb-2 mb-3">
+                <!-- Sección Oculta (Todo lo demás) -->
+                <div class="detalles-extra-collapsible d-none mb-0" id="detalles-extra-${item.id}">
+                    <div class="border-top pt-3 mt-3">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted small">${trans["ID Mediación"] || "ID Mediación"}</span>
-                            <span class="font-weight-700">#${item.id}</span>
+                            <span class="text-muted small">${trans["Prioridad"] || "Prioridad"}</span>
+                            ${prioridadHtml}
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
@@ -286,7 +326,7 @@ import {
                         </div>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
                         <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
                             ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
@@ -320,7 +360,7 @@ import {
         `;
         container.html(html);
 
-        // Inyectar botón de conversación en la sección independiente (Desktop Sidebar o Mobile Actions)
+        // Inyectar botón de conversación en la sección independiente
         const isDesktop = (containerSelector === '#disputas-info-extra-content');
         const actionsContainerId = isDesktop 
             ? '#disputas-conversacion-container' 
@@ -328,7 +368,6 @@ import {
         
         const actionsContainer = $(actionsContainerId);
         if (actionsContainer.length) {
-            // Mostrar card de acciones en escritorio
             if (isDesktop) {
                 $('#disputas-acciones-sidebar').removeClass('d-none');
             }
@@ -409,7 +448,8 @@ import {
         const activeCard = $(`.card-mediacion[data-id="${id}"]`);
         activeCard.addClass('active-mediacion');
 
-        // 2. Actualizar Sidebar (Escritorio)
+        // 2. Actualizar Secciones Laterales (Escritorio)
+        renderizarCabeceraMediacion(item, '#disputas-header-content');
         renderizarTimeline(item.paso_actual, '#reda-timeline-container');
         renderizarResumenMediacion(item, '#disputas-info-extra-content');
 
@@ -435,7 +475,8 @@ import {
             icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
             text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
 
-            // Renderizar datos móviles inmediatamente
+            // Renderizar datos móviles inmediatamente en el nuevo orden
+            renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
             renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
             renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
 
@@ -460,7 +501,7 @@ import {
             container.html(`
                 <div class="row justify-content-center w-100 p-4 mt-4">
                     <div class="text-center w-100">
-                        <img src="${APP_URL}/public/img/unnamed.png" class="img-fluid" alt="No encontrado" style="max-width: 150px;">
+                        <img src="${APP_URL}/public/img/unnamed.png" class="img-fluid reda-img-empty-state" alt="No encontrado">
                         <p class="text-center mt-3">${trans["No se encontraron mediaciones."] || "No se encontraron mediaciones."}</p>
                     </div>
                 </div>
@@ -475,7 +516,7 @@ import {
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
                         <div class="card-body p-0">
                             <div class="row m-0">
-                                <div class="col-md-3 p-0">
+                                <div class="col-md-4 p-0">
                                     <div class="img-container h-100 bg-light d-flex align-items-center justify-content-center border-right">
                                         <img src="${item.propiedad_foto}" 
                                              class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150 reda-propiedad-foto-max" 
@@ -483,7 +524,7 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-5 col-xl-5 p-4 border-right">
+                                <div class="col-md-4 p-4 border-right">
                                     <div class="mb-2">
                                         <span class="badge bg-orange text-white text-uppercase">${item.estado}</span>
                                         <span class="text-muted small ml-2">ID: #${item.id}</span>
@@ -505,7 +546,7 @@ import {
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-xl-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
+                                <div class="col-md-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
                                     ${generarBloquePersonasHtml(item)}
                                 </div>
                             </div>
@@ -519,6 +560,9 @@ import {
                             <i class="fas fa-chevron-down toggle-icon"></i>
                         </div>
                         <div class="mobile-detail-content p-3 border rounded-bottom bg-white d-none shadow-sm">
+                            <div class="mobile-header-wrapper mb-4">
+                                <div class="mobile-header-container"></div>
+                            </div>
                             <div class="mobile-timeline-wrapper mb-4">
                                 <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Estado del Trámite"] || "Estado del Trámite"}</h6>
                                 <div class="reda-timeline-carousel mobile-timeline-container"></div>
@@ -562,6 +606,7 @@ import {
                 seleccionarMediacion(mediacionesCargadas[0].id, false);
             } else {
                 const trans = window.RedaAlojamientoJson || {};
+                $('#disputas-cabecera-lateral').addClass('d-none');
                 $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
                 $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
                 $('#disputas-acciones-sidebar').addClass('d-none');
@@ -648,6 +693,7 @@ import {
                     // Cargar contenido en los contenedores móviles
                     const item = mediacionesCargadas.find(m => m.id == id);
                     if (item) {
+                        renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
                         renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
                         renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
                     }
@@ -669,13 +715,30 @@ import {
 
                 if (state === 'less') {
                     target.removeClass('d-none');
-                    $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
+                    $(this).html(`<i class="fas fa-eye-slash mr-1"></i> ${trans["Ocultar detalle"] || "Ocultar detalle"}`).attr('data-state', 'more');
                     // Re-chequear truncado de descripción cuando se expande el contenedor
                     if (typeof chequearTruncadoDescripcion === 'function') {
                         chequearTruncadoDescripcion(id);
                     }
                 } else {
                     target.addClass('d-none');
+                    $(this).html(`<i class="fas fa-eye mr-1"></i> ${trans["Ver detalle"] || "Ver detalle"}`).attr('data-state', 'less');
+                }
+            });
+
+            // Manejo de toggle para el motivo
+            $(document).on('click', '.btn-toggle-motivo', function(e) {
+                e.stopPropagation();
+                const id = $(this).attr('data-id');
+                const state = $(this).attr('data-state');
+                const target = $(`#motivo-container-${id}`);
+                const trans = window.RedaAlojamientoJson || {};
+
+                if (state === 'less') {
+                    target.addClass('expanded');
+                    $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
+                } else {
+                    target.removeClass('expanded');
                     $(this).text(trans["Más..."] || "Más...").attr('data-state', 'less');
                 }
             });

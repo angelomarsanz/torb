@@ -3280,6 +3280,15 @@
 .reda-btn-pill-small { border-radius: 20px; }
 .reda-adjunto-icon-box { width: 24px; height: 24px; }
 .reda-propiedad-foto-max { max-height: 200px; }
+.reda-img-empty-state { max-width: 150px; }
+.reda-motivo-clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: none;
+}
 
 @media (max-width: 767.98px) {
     #disputas-info-lateral { display: none; }
