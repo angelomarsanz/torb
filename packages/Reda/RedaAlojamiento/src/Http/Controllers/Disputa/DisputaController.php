@@ -56,13 +56,23 @@ class DisputaController extends Controller
                 $paths = json_decode($documentosRaw, true);
                 if (is_array($paths)) {
                     foreach ($paths as $path) {
+                        // Asegurar que el path tenga el prefijo public/ para evitar 404
+                        $webPath = strpos($path, 'public/') === 0 ? $path : 'public/' . $path;
                         $adjuntos[] = [
                             'nombre' => basename($path),
-                            'url' => asset($path),
+                            'url' => asset($webPath),
                             'es_imagen' => in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
                         ];
                     }
                 }
+            }
+
+            // Asegurar prefijo public/ para la foto de la propiedad si es ruta relativa
+            $propiedadFoto = $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png');
+            if ($d->booking && $d->booking->properties && strpos($propiedadFoto, 'http') === false && strpos($propiedadFoto, 'public/') !== 0) {
+                $propiedadFoto = asset('public/' . $propiedadFoto);
+            } elseif ($d->booking && $d->booking->properties) {
+                $propiedadFoto = asset($propiedadFoto);
             }
 
             return [
@@ -84,7 +94,7 @@ class DisputaController extends Controller
                 'turista_foto' => $d->turista ? $d->turista->profile_src : asset('public/img/unnamed.png'),
                 'anfitrion_nombre' => $d->anfitrion ? $d->anfitrion->first_name . ' ' . $d->anfitrion->last_name : '',
                 'anfitrion_foto' => $d->anfitrion ? $d->anfitrion->profile_src : asset('public/img/unnamed.png'),
-                'propiedad_foto' => $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png')
+                'propiedad_foto' => $propiedadFoto
             ];
         });
 
@@ -250,7 +260,8 @@ class DisputaController extends Controller
             foreach ($request->file('documentos') as $file) {
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $file->move($destPath, $fileName);
-                $paths[] = "images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}/{$fileName}";
+                // Guardar con el prefijo public/ para evitar errores 404 en este entorno
+                $paths[] = "public/images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}/{$fileName}";
             }
 
             // Guardar rutas como JSON en la columna correspondiente

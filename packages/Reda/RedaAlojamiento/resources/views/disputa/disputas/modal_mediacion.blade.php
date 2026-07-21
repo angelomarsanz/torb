@@ -34,12 +34,18 @@
                             <textarea name="descripcion" id="descripcion" class="form-control" rows="4" placeholder="{{ __('Explique detalladamente su situación...') }}" required></textarea>
                         </div>
                         <div class="col-md-12">
-                            <label for="documentos" class="reda-mediation-label">{{ __('Adjuntar Evidencias (Opcional)') }}</label>
-                            <div class="custom-file">
-                                <input type="file" name="documentos[]" id="documentos" class="custom-file-input" multiple>
-                                <label class="custom-file-label" for="documentos">{{ __('Elegir archivos') }}</label>
+                            <label class="reda-mediation-label">{{ __('Adjuntar Evidencias (Opcional)') }}</label>
+                            
+                            <div class="mb-2">
+                                <input type="file" id="documentos" class="d-none" multiple accept=".jpg,.jpeg,.png,.pdf">
+                                <button type="button" id="btn-trigger-documentos" class="btn btn-outline-success font-weight-700 px-4">
+                                    <i class="fas fa-paperclip mr-2"></i>
+                                    <span id="text-btn-adjuntos">{{ __('Adjuntar archivos') }}</span>
+                                </button>
                             </div>
-                            <small class="text-muted">{{ __('Puede seleccionar varios archivos (Imágenes, PDF).') }}</small>
+                            
+                            <small class="text-muted d-block mb-2">{{ __('Puede seleccionar varios archivos (Imágenes, PDF).') }}</small>
+                            
                             <div id="file-list-preview" class="mt-2"></div>
                         </div>
                     </div>

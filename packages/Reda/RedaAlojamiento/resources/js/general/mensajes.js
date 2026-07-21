@@ -1,5 +1,7 @@
 import { mediacionSvg } from './iconos';
 
+let archivosSeleccionados = [];
+
 /**
  * Verifica si existe una disputa para una reservación.
  */
@@ -12,23 +14,20 @@ export const verificarDisputaReda = (bookingId) => {
                 success: function(data) {
                     resolve(data);
                 },
-                error: function (x, xs, xt) {
+                error: function (x) {
                     let respuestaServidor = {};
-                    try {
-                        respuestaServidor = JSON.parse(x.responseText);
-                    } catch (e) {
-                        respuestaServidor = {};
-                    }
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    
                     const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                     const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
-                    let respuesta = {
+                    
+                    resolve({
                         'success': false,
                         'message' : window.RedaAlojamientoJson["Error al cargar mediación"] || 'Error al cargar mediación',
                         'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
                         'respuesta': { exists: false },
                         'code': x.status !== 0 ? x.status : 504,
-                    };
-                    resolve(respuesta);
+                    });
                 }
             })
         })(jQuery);
@@ -44,11 +43,17 @@ export const obtenerModalDetalleMediacionReda = (id) => {
             $.ajax({
                 url: APP_URL + '/reda/disputas/get-detail-modal/' + id,
                 type: 'GET',
-                success: function(html) {
-                    resolve({ success: true, respuesta: html });
+                success: function(data) {
+                    resolve(data);
                 },
-                error: function (x, xs, xt) {
-                    resolve({ success: false, message: 'Error al cargar modal' });
+                error: function (x) {
+                    let respuestaServidor = {};
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    resolve({ 
+                        success: false, 
+                        mensaje_usuario: respuestaServidor.mensaje_usuario || 'Error al cargar modal',
+                        code: x.status || 500
+                    });
                 }
             })
         })(jQuery);
@@ -70,23 +75,46 @@ export const guardarMediacionReda = (formData) => {
                 success: function(data) {
                     resolve(data);
                 },
-                error: function (x, xs, xt) {
+                error: function (x) {
                     let respuestaServidor = {};
-                    try {
-                        respuestaServidor = JSON.parse(x.responseText);
-                    } catch (e) {
-                        respuestaServidor = {};
-                    }
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    
                     const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
                     const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
-                    let respuesta = {
+                    
+                    resolve({
                         'success': false,
                         'message' : window.RedaAlojamientoJson["Error al procesar su solicitud."] || 'Error al procesar su solicitud.',
                         'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
                         'respuesta': respuestaServidor.respuesta || '',
                         'code': x.status !== 0 ? x.status : 504,
-                    };
-                    resolve(respuesta);
+                    });
+                }
+            })
+        })(jQuery);
+    });
+}
+
+/**
+ * Peticion AJAX para obtener el HTML del modal de creacion.
+ */
+const getModalMediacionHtml = () => {
+    return new Promise((resolve) => {
+        (function( $ ) {
+            $.ajax({
+                url: APP_URL + '/reda/disputas/get-modal',
+                type: 'GET',
+                success: function(data) {
+                    resolve(data);
+                },
+                error: function (x) {
+                    let respuestaServidor = {};
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    resolve({ 
+                        success: false, 
+                        mensaje_usuario: respuestaServidor.mensaje_usuario || 'Error al cargar modal',
+                        code: x.status || 500
+                    });
                 }
             })
         })(jQuery);
@@ -95,6 +123,43 @@ export const guardarMediacionReda = (formData) => {
 
 (function($) {
     "use strict";
+
+    /**
+     * Renderiza la lista de archivos seleccionados con boton de eliminar.
+     */
+    const renderizarPrevisualizacionArchivos = () => {
+        const container = $('#file-list-preview');
+        if (!container.length) return;
+
+        const textBtn = $('#text-btn-adjuntos');
+        const trans = window.RedaAlojamientoJson || {};
+
+        if (archivosSeleccionados.length === 0) {
+            container.html('');
+            textBtn.text(trans["Adjuntar archivos"] || "Adjuntar archivos");
+            return;
+        }
+
+        // Cambiar texto del boton si hay archivos
+        textBtn.text(trans["Adjuntar más archivos"] || "Adjuntar más archivos");
+
+        let html = '';
+        archivosSeleccionados.forEach((file, index) => {
+            const icon = file.type.includes('image') ? 'far fa-image' : 'far fa-file-pdf';
+            html += `
+                <div class="reda-file-preview-item" data-index="${index}">
+                    <div class="file-info">
+                        <i class="${icon}"></i>
+                        <span class="file-name">${file.name}</span>
+                    </div>
+                    <button type="button" class="btn-remove-file" data-index="${index}">
+                        <i class="fas fa-times text-danger"></i>
+                    </button>
+                </div>
+            `;
+        });
+        container.html(html);
+    };
 
     /**
      * Inyecta el cuadro de mediación en la barra lateral de la reserva.
@@ -231,26 +296,29 @@ export const guardarMediacionReda = (formData) => {
     /**
      * Carga e inyecta el modal de mediación si no existe.
      */
-    const cargarModalMediacion = () => {
+    const cargarModalMediacion = async () => {
         if ($('#modal-mediacion-reda').length) return;
 
-        $.ajax({
-            url: APP_URL + '/reda/disputas/get-modal',
-            type: 'GET',
-            success: function(html) {
-                $('body').append(html);
-                configurarEventosModal();
-            }
-        });
+        const data = await getModalMediacionHtml();
+        if (data.success) {
+            $('body').append(data.respuesta);
+            configurarEventosModal();
+        }
     };
 
     /**
      * Carga e inyecta el modal de detalle de mediación.
      */
     const cargarModalDetalleMediacion = async (id) => {
-        window.RedaNotificaciones.esperar();
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+            window.RedaNotificaciones.esperar();
+        }
+        
         const response = await obtenerModalDetalleMediacionReda(id);
-        window.RedaNotificaciones.ocultar();
+        
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
 
         if (response.success) {
             $('#modal-detalle-mediacion-reda').remove();
@@ -258,7 +326,11 @@ export const guardarMediacionReda = (formData) => {
             $('#modal-detalle-mediacion-reda').modal('show');
         } else {
             const errorTitle = window.RedaAlojamientoJson["Error"] || "Error";
-            window.RedaNotificaciones.notificar(errorTitle, response.message, 'error');
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.notificar === 'function') {
+                window.RedaNotificaciones.notificar(errorTitle, response.mensaje_usuario, 'error');
+            } else {
+                alert(response.mensaje_usuario);
+            }
         }
     };
 
@@ -266,33 +338,81 @@ export const guardarMediacionReda = (formData) => {
      * Configura los eventos del formulario dentro del modal.
      */
     const configurarEventosModal = () => {
-        $(document).on('change', '#documentos', function() {
-            let files = $(this)[0].files;
-            let label = files.length > 1 ? files.length + ' ' + (window.RedaAlojamientoJson["archivos seleccionados"] || 'archivos seleccionados') : files[0].name;
-            $(this).next('.custom-file-label').html(label);
+        // Trigger para el input oculto
+        $(document).off('click', '#btn-trigger-documentos').on('click', '#btn-trigger-documentos', function() {
+            $('#documentos').click();
         });
 
-        $(document).on('submit', '#form-mediacion-reda', async function(e) {
+        $(document).off('change', '#documentos').on('change', '#documentos', function() {
+            let files = Array.from($(this)[0].files);
+            if (files.length === 0) return;
+            
+            // Acumular archivos
+            archivosSeleccionados = archivosSeleccionados.concat(files);
+            
+            // Limpiar input para permitir seleccionar el mismo archivo de nuevo si se borra
+            $(this).val('');
+            
+            renderizarPrevisualizacionArchivos();
+        });
+
+        $(document).off('click', '.btn-remove-file').on('click', '.btn-remove-file', function(e) {
+            e.preventDefault();
+            const index = $(this).attr('data-index');
+            archivosSeleccionados.splice(index, 1);
+            renderizarPrevisualizacionArchivos();
+        });
+
+        $(document).off('submit', '#form-mediacion-reda').on('submit', '#form-mediacion-reda', async function(e) {
             e.preventDefault();
             const form = $(this);
-            const formData = new FormData(this);
+            
+            // Construir FormData manualmente para incluir los archivos acumulados
+            const formData = new FormData();
+            
+            // Agregar campos normales
+            const serializado = form.serializeArray();
+            $.each(serializado, function(i, field) {
+                formData.append(field.name, field.value);
+            });
 
-            window.RedaNotificaciones.esperar();
+            // Agregar archivos acumulados
+            archivosSeleccionados.forEach(file => {
+                formData.append('documentos[]', file);
+            });
+
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                window.RedaNotificaciones.esperar();
+            }
+            
             const response = await guardarMediacionReda(formData);
-            window.RedaNotificaciones.ocultar();
+            
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                window.RedaNotificaciones.ocultar();
+            }
 
             if (response.success) {
                 $('#modal-mediacion-reda').modal('hide');
                 const exitoTitle = window.RedaAlojamientoJson["¡Éxito!"] || "¡Éxito!";
-                window.RedaNotificaciones.notificar(exitoTitle, response.mensaje_usuario, 'exito');
+                
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.notificar === 'function') {
+                    window.RedaNotificaciones.notificar(exitoTitle, response.mensaje_usuario, 'exito');
+                } else {
+                    alert(response.mensaje_usuario);
+                }
                 
                 form[0].reset();
-                form.find('.custom-file-label').html(window.RedaAlojamientoJson["Elegir archivos"] || 'Elegir archivos');
+                archivosSeleccionados = [];
+                renderizarPrevisualizacionArchivos();
                 
                 inyectarCajaMediacionReda(true);
             } else {
                 const errorTitle = window.RedaAlojamientoJson["Error"] || "Error";
-                window.RedaNotificaciones.notificar(errorTitle, response.mensaje_usuario, 'error');
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.notificar === 'function') {
+                    window.RedaNotificaciones.notificar(errorTitle, response.mensaje_usuario, 'error');
+                } else {
+                    alert(response.mensaje_usuario);
+                }
             }
         });
     };
@@ -311,6 +431,10 @@ export const guardarMediacionReda = (formData) => {
                 $('#reda-booking-id').val(bookingId);
                 $('#reda-anfitrion-id').val(anfitrionId);
                 $('#reda-turista-id').val(turistaId);
+
+                // Limpiar adjuntos previos al abrir
+                archivosSeleccionados = [];
+                renderizarPrevisualizacionArchivos();
 
                 $('#modal-mediacion-reda').modal('show');
             });
