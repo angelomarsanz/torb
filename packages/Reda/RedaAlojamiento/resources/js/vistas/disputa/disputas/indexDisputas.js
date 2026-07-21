@@ -16,6 +16,26 @@ import {
     let observadorEnfoque = null;
 
     /**
+     * Formatea el texto del estatus: Inicial mayúscula, resto minúscula.
+     */
+    const formatStatusText = (text) => {
+        if (!text) return '';
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    };
+
+    /**
+     * Devuelve la clase de color adecuada para el badge según el estatus.
+     */
+    const getStatusBadgeClass = (status) => {
+        const s = status.toLowerCase();
+        if (s.includes('abiert')) return 'bg-orange text-white';
+        if (s.includes('revis')) return 'bg-info text-white';
+        if (s.includes('espera')) return 'bg-warning text-dark';
+        if (s.includes('resuelt') || s.includes('cerrad')) return 'bg-success text-white';
+        return 'bg-secondary text-white';
+    };
+
+    /**
      * Peticion AJAX para obtener mediaciones paginadas.
      */
     const getMediacionesPaginadas = (status, page) => {
@@ -165,7 +185,7 @@ import {
         const agenteFoto = item.agente ? item.agente.foto : `${APP_URL}/public/img/unnamed.png`;
         const agenteNombre = item.agente ? item.agente.nombre : trans["Pendiente de asignación"] || "Pendiente de asignación";
         const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
-        const agenteClaseNombre = item.agente ? 'font-weight-700 text-dark' : 'text-muted italic small leading-tight';
+        const agenteClaseNombre = item.agente ? 'text-dark' : 'text-muted italic small leading-tight';
 
         return `
             <div class="personas-relacionadas-block">
@@ -175,7 +195,7 @@ import {
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Anfitrión:"] || "Anfitrión:"}</span>
-                        <span class="font-weight-600 text-dark text-12 text-truncate">${item.anfitrion_nombre}</span>
+                        <span class="text-dark text-12 text-truncate">${item.anfitrion_nombre}</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center mb-2">
@@ -184,7 +204,7 @@ import {
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Turista:"] || "Turista:"}</span>
-                        <span class="font-weight-600 text-dark text-12 text-truncate">${item.turista_nombre}</span>
+                        <span class="text-dark text-12 text-truncate">${item.turista_nombre}</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
@@ -222,7 +242,7 @@ import {
                     <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
                         <i class="${icon} text-success text-10"></i>
                     </div>
-                    <span class="text-11 text-dark font-weight-600 text-truncate" title="${file.nombre}">${file.nombre}</span>
+                    <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
                 </a>
             `;
         });
@@ -254,14 +274,16 @@ import {
         const container = $(containerSelector);
         if (!container.length) return;
         const trans = window.RedaAlojamientoJson || {};
+        const badgeClass = getStatusBadgeClass(item.estado);
+        const statusText = formatStatusText(item.estado);
 
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge badge-success font-weight-700 py-2 px-3 text-12 shadow-sm">${item.estado}</span>
-                    <span class="text-muted font-weight-700 text-14">#${item.id}</span>
+                    <span class="badge ${badgeClass} font-weight-700 py-2 px-3 text-12 shadow-sm">${statusText}</span>
+                    <span class="text-muted font-weight-700 text-14">ID: #${item.id}</span>
                 </div>
-                <h5 class="font-weight-800 text-dark text-20 mb-0 leading-tight">${item.motivo}</h5>
+                <h5 class="font-weight-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
                 <div class="text-right mt-1">
                     <span class="text-success pointer font-weight-700 text-11 btn-toggle-motivo d-none" 
                           id="btn-toggle-motivo-${item.id}" data-id="${item.id}" data-state="less">
@@ -295,30 +317,17 @@ import {
             let colorClass = 'text-info';
             if (item.prioridad === 'Alta') colorClass = 'text-danger';
             else if (item.prioridad === 'Media') colorClass = 'text-warning';
-            prioridadHtml = `<span class="${colorClass} font-weight-700">${item.prioridad}</span>`;
+            prioridadHtml = `<span class="${colorClass}">${item.prioridad}</span>`;
         }
 
         let html = `
             <div class="mediacion-resumen-detalle">
-                <!-- Botón Ver detalle (alterna el resto de la sección) -->
-                <div class="text-center mb-0">
-                    <button class="btn btn-sm btn-outline-success btn-toggle-detalles-extra py-1 px-4 text-12 font-weight-700 reda-btn-pill-small w-100" 
-                            data-id="${item.id}" data-state="less">
-                        <i class="fas fa-eye mr-1"></i>
-                        ${trans["Ver detalle"] || "Ver detalle"}
-                    </button>
-                </div>
-
-                <!-- Sección Oculta (Todo lo demás) -->
-                <div class="detalles-extra-collapsible d-none mb-0" id="detalles-extra-${item.id}">
-                    <div class="border-top pt-3 mt-3">
+                <!-- Sección de detalle (Visible por defecto) -->
+                <div class="detalles-extra-collapsible mb-0" id="detalles-extra-${item.id}">
+                    <div class="pt-1">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted small">${trans["Prioridad"] || "Prioridad"}</span>
                             ${prioridadHtml}
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted small">${trans["ID Reservación"] || "ID Reservación"}</span>
-                            <span class="font-weight-700">#${item.booking_id}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2 align-items-center">
                             <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
@@ -359,6 +368,9 @@ import {
             </div>
         `;
         container.html(html);
+
+        // Re-chequear truncado de descripción inmediatamente al renderizar
+        setTimeout(() => chequearTruncadoDescripcion(item.id), 50);
 
         // Inyectar botón de conversación en la sección independiente
         const isDesktop = (containerSelector === '#disputas-info-extra-content');
@@ -511,6 +523,18 @@ import {
 
         let html = '<div class="row mt-4">';
         items.forEach(item => {
+            // Prioridad con color
+            let prioridadHtml = '';
+            if (item.prioridad) {
+                let colorClass = 'text-info';
+                if (item.prioridad === 'Alta') colorClass = 'text-danger';
+                else if (item.prioridad === 'Media') colorClass = 'text-warning';
+                prioridadHtml = `<span class="${colorClass}">${item.prioridad}</span>`;
+            }
+
+            const badgeClass = getStatusBadgeClass(item.estado);
+            const statusText = formatStatusText(item.estado);
+
             html += `
                 <div class="col-md-12 p-0 mb-4 container-mediacion" data-id="${item.id}">
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
@@ -526,22 +550,25 @@ import {
 
                                 <div class="col-md-4 p-4 border-right">
                                     <div class="mb-2">
-                                        <span class="badge bg-orange text-white text-uppercase">${item.estado}</span>
-                                        <span class="text-muted small ml-2">ID: #${item.id}</span>
+                                        <span class="badge ${badgeClass}">${statusText}</span>
+                                        <span class="text-muted small ml-2 font-weight-700">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 font-weight-700 text-color mb-1">${item.motivo}</h5>
+                                    <h5 class="text-18 font-weight-700 text-color mb-1 reda-motivo-clamped" title="${item.motivo}">${item.motivo}</h5>
                                     
+                                    ${item.prioridad ? `
+                                        <div class="text-muted small mb-1">
+                                            <i class="fas fa-exclamation-circle mr-1"></i> ${trans["Prioridad"] || "Prioridad"}: ${prioridadHtml}
+                                        </div>
+                                    ` : ''}
+
                                     <div class="text-muted small mb-2">
-                                        <i class="fas fa-bookmark mr-1"></i> ${trans["ID Reservación"] || "ID Reservación"}: <span class="font-weight-700 text-dark">#${item.booking_id}</span>
+                                        <i class="fas fa-bookmark mr-1"></i> ${trans["ID Reservación"] || "ID Reservación"}: <span class="text-dark">#${item.booking_id}</span>
                                     </div>
 
                                     <div class="d-flex flex-column mt-3">
-                                        <div class="text-muted small mb-1">
-                                            <i class="far fa-calendar-alt mr-1"></i> ${trans["Creado el"] || "Creado el"}: <span class="text-dark">${item.fecha_apertura}</span>
-                                        </div>
                                         <div class="text-muted small">
-                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="font-weight-700 text-dark">${item.actualizado_hace}</span>
+                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="text-dark">${item.actualizado_hace}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -564,7 +591,6 @@ import {
                                 <div class="mobile-header-container"></div>
                             </div>
                             <div class="mobile-timeline-wrapper mb-4">
-                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Estado del Trámite"] || "Estado del Trámite"}</h6>
                                 <div class="reda-timeline-carousel mobile-timeline-container"></div>
                             </div>
                             <div class="mobile-resumen-wrapper mb-3">
@@ -702,27 +728,6 @@ import {
                     content.addClass('d-none');
                     icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
                     text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
-                }
-            });
-
-            // Manejo de toggle para detalles extra
-            $(document).on('click', '.btn-toggle-detalles-extra', function(e) {
-                e.stopPropagation();
-                const id = $(this).attr('data-id');
-                const state = $(this).attr('data-state');
-                const target = $(`#detalles-extra-${id}`);
-                const trans = window.RedaAlojamientoJson || {};
-
-                if (state === 'less') {
-                    target.removeClass('d-none');
-                    $(this).html(`<i class="fas fa-eye-slash mr-1"></i> ${trans["Ocultar detalle"] || "Ocultar detalle"}`).attr('data-state', 'more');
-                    // Re-chequear truncado de descripción cuando se expande el contenedor
-                    if (typeof chequearTruncadoDescripcion === 'function') {
-                        chequearTruncadoDescripcion(id);
-                    }
-                } else {
-                    target.addClass('d-none');
-                    $(this).html(`<i class="fas fa-eye mr-1"></i> ${trans["Ver detalle"] || "Ver detalle"}`).attr('data-state', 'less');
                 }
             });
 

@@ -46,8 +46,6 @@
 
                                 {{-- Bloque 2: Estado del Trámite (Cronograma) --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-light mb-4">
-                                    <h6 class="font-weight-700 mb-3 text-16">{{ __('Estado del Trámite') }}</h6>
-                                    
                                     <div class="position-relative px-4">
                                         <div id="timeline-prev" class="timeline-nav-btn timeline-nav-left">
                                             <i class="fas fa-chevron-left"></i>
@@ -66,7 +64,7 @@
 
                                 {{-- Bloque 3: Detalle Colapsable --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4">
-                                    <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">{{ __('Detalles Adicionales') }}</h6>
+                                    <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">{{ __('Detalle') }}</h6>
                                     <div id="disputas-info-extra-content">
                                         <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de tus mediaciones.') }}</p>
                                     </div>
