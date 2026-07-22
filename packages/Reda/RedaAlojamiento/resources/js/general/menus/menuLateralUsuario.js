@@ -116,7 +116,7 @@ export const menuLateralUsuario = () =>
                 <a class="text-color font-weight-500 mt-1 ${isMediacionesActive ? 'reda-active-option' : ''}" href="${APP_URL}/reda/disputas" data-reda-plugin>
                     <li class="list-group-item vbg-default-hover pl-25 border-0 text-15 p-4">
                         <div class="d-flex align-items-center">
-                            <div class="mr-3 d-flex align-items-center reda-icon-svg-18">
+                            <div class="mr-2 d-flex align-items-center reda-icon-svg-20">
                                 ${mediacionSvg}
                             </div>
                             ${textoMediaciones}
@@ -284,7 +284,7 @@ export const menuLateralUsuario = () =>
                 <li data-reda-plugin>
                     <a href="${APP_URL}/reda/disputas">
                         <div class="d-flex align-items-center">
-                            <div class="mr-3 d-flex align-items-center reda-icon-svg-18">
+                            <div class="mr-2 d-flex align-items-center reda-icon-svg-20">
                                 ${mediacionSvg}
                             </div>
                             ${textoMediaciones}
@@ -345,7 +345,7 @@ export const menuLateralUsuario = () =>
                 const linkFavoritosMobile = $(containerMobile).find('a[href*="/user/favourite"]').parent('li');
                 if (linkFavoritosMobile.length) {
                     linkFavoritosMobile.after(reviewsCollapseMobile);
-                    linkFavoritosMobile.after(reviewsToggleMobile);
+                    linkFavoritosMobile.after(reviewsToggleSidebar);
                 }
             }
         }

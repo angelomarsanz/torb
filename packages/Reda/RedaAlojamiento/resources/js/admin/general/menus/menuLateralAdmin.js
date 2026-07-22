@@ -1,3 +1,5 @@
+import { mediacionSvg } from '../../../general/iconos';
+
 export const menuLateralAdmin = () =>
 {
     (function( $ ) {
@@ -68,7 +70,37 @@ export const menuLateralAdmin = () =>
                     });
                 }
 
-                // 2. Inyección de Opción "Soporte Técnico" (Después de Messages)
+                // 2. Inyección de Opción "Mediaciones" (Después de Bookings)
+                const $bookingsMenuItem = $('.sidebar-menu a[href*="admin/bookings"]').closest('li');
+
+                if ($bookingsMenuItem.length) {
+                    const linkMediaciones = `${baseUrl}/reda/disputas`;
+                    const labelMediaciones = window.RedaAlojamientoJson["Mediaciones"] || "Mediaciones";
+
+                    const mediacionMenuHtml = `
+                        <li id="menu-mediaciones">
+                            <a href="${linkMediaciones}" class="btn-menu-mediacion d-flex align-items-center">
+                                <span class="reda-icon-svg-18 me-2">
+                                    ${mediacionSvg}
+                                </span>
+                                <span>${labelMediaciones}</span>
+                            </a>
+                        </li>
+                    `;
+                    $bookingsMenuItem.after(mediacionMenuHtml);
+                    console.log('Opción "Mediaciones" inyectada.');
+
+                    // Animación de espera al hacer clic en Mediaciones
+                    $(document).on('click', '.btn-menu-mediacion', function(e) {
+                        if (this.href && !this.target && !e.ctrlKey && !e.metaKey) {
+                            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                                window.RedaNotificaciones.esperar();
+                            }
+                        }
+                    });
+                }
+
+                // 3. Inyección de Opción "Soporte Técnico" (Después de Messages)
                 const $messagesMenuItem = $('.sidebar-menu a[href*="admin/messages"]').closest('li');
 
                 if ($messagesMenuItem.length) {

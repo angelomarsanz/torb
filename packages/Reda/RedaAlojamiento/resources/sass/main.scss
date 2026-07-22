@@ -3355,3 +3355,37 @@
         }
     }
 }
+
+/* --- UTILIDADES PARA ÍCONOS SVG --- */
+.reda-icon-svg-14 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+        width: 14px !important;
+        height: 14px !important;
+        color: currentColor;
+    }
+}
+
+.reda-icon-svg-18 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+        width: 18px !important;
+        height: 18px !important;
+        color: currentColor;
+    }
+}
+
+.reda-icon-svg-20 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+        width: 20px !important;
+        height: 20px !important;
+        color: currentColor;
+    }
+}
