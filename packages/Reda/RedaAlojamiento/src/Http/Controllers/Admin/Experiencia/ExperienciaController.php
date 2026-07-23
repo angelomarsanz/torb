@@ -222,23 +222,8 @@ class ExperienciaController extends Controller
             return response()->json($respuesta, $respuesta['code']);
         }
 
-        if ($request->has('index')) {
-            $index = (int) $request->index;
-            $planesPago = $plan->planes_pago;
-
-            if (isset($planesPago[$index])) {
-                unset($planesPago[$index]);
-                $planesPago = array_values($planesPago);
-                
-                if (count($planesPago) > 0) {
-                    $plan->update(['planes_pago' => $planesPago]);
-                } else {
-                    $plan->delete();
-                }
-            }
-        } else {
-            $plan->delete();
-        }
+        // Se elimina el plan completo con todas sus opciones de pago y beneficios
+        $plan->delete();
 
         $respuesta = [
             'success'         => true,

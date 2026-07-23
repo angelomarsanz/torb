@@ -6,7 +6,6 @@
         
         // Variables de estado
         let idPlanAEliminar = null;
-        let indexOpcionAEliminar = null;
         let idPlanActualVista = null;
 
         // --- FUNCIONES API (PROMESAS) ---
@@ -102,14 +101,13 @@
             });
         };
 
-        const apiDestroyPlan = (id, index = null) => {
+        const apiDestroyPlan = (id) => {
             return new Promise((resolve) => {
                 $.ajax({
                     url: window.RedaRutas.destroy_plan + '/' + id,
                     type: 'DELETE',
                     data: { 
-                        "_token": $('meta[name="csrf-token"]').attr('content'),
-                        "index": index 
+                        "_token": $('meta[name="csrf-token"]').attr('content')
                     },
                     success: (data) => resolve(data),
                     error: (x) => {
@@ -525,7 +523,6 @@
             $(document).on('click', '.btn-delete-plan', function(e) {
                 e.preventDefault();
                 idPlanAEliminar = $(this).data('id');
-                indexOpcionAEliminar = $(this).data('index');
 
                 const mensaje = window.RedaAlojamientoJson["¿Estás seguro de que deseas eliminar este elemento?"] || "¿Estás seguro de que deseas eliminar este elemento?";
                 
@@ -543,7 +540,7 @@
                 window.RedaNotificaciones?.esperar();
                 $btn.prop('disabled', true).find('.fa-spinner').removeClass('d-none');
                 
-                const res = await apiDestroyPlan(idPlanAEliminar, indexOpcionAEliminar);
+                const res = await apiDestroyPlan(idPlanAEliminar);
                 
                 if (res.success) {
                     $('#modal-confirmacion').modal('hide');
@@ -559,7 +556,6 @@
                 
                 $btn.prop('disabled', false).find('.fa-spinner').addClass('d-none');
                 idPlanAEliminar = null;
-                indexOpcionAEliminar = null;
                 window.RedaNotificaciones?.ocultar();
             });
         });
