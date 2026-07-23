@@ -283,8 +283,9 @@
                 $('.nav-tabs li').removeClass('active');
                 $(this).closest('li').addClass('active');
 
-                $('.tab-pane').hide().removeClass('active show');
-                $(target).show().addClass('active show');
+                // Usamos clases de Bootstrap para ocultar/mostrar en lugar de .hide()/.show() (estilos en línea)
+                $('.tab-pane').addClass('d-none').removeClass('active show');
+                $(target).removeClass('d-none').addClass('active show');
             });
 
             // Al hacer clic en la pestaña "Planes", cargar el listado
@@ -404,7 +405,7 @@
                     const badgeEstatus = plan.estatus 
                         ? `<span class="label label-success">${window.RedaAlojamientoJson["Activo"] || "Activo"}</span>`
                         : `<span class="label label-danger">${window.RedaAlojamientoJson["Inactivo"] || "Inactivo"}</span>`;
-                    const badgeDestacado = plan.destacado ? ` <span class="label label-warning">Destacado</span>` : '';
+                    const badgeDestacado = plan.destacado ? ` <span class="label label-warning">${window.RedaAlojamientoJson["Destacado"] || "Destacado"}</span>` : '';
                     $('#ver_estatus_plan').html(badgeEstatus + badgeDestacado);
 
                     $('#ver_contenedor_planes_pago').empty();

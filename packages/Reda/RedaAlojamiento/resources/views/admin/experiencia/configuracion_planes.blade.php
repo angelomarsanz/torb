@@ -1,121 +1,6 @@
 @extends('admin.template')
 
 @section('main')
-<style>
-    /* Estilos para el listado de planes interactivo */
-    .planes-negocio-selector-container {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-    .planes-negocio-lapsos-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        background: #f1f5f9;
-        padding: 4px;
-        border-radius: 8px;
-        width: fit-content;
-    }
-    .planes-negocio-btn-lapso {
-        border: none;
-        background: transparent;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.2s;
-        cursor: pointer;
-        outline: none !important;
-    }
-    .planes-negocio-btn-lapso:hover {
-        color: #1e293b;
-        background: rgba(255,255,255,0.5);
-    }
-    .planes-negocio-btn-lapso.active {
-        background: white;
-        color: #2563eb;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .planes-negocio-price-display {
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-    }
-    .planes-negocio-price-amount {
-        font-size: 18px;
-        font-weight: 800;
-        color: #1e293b;
-    }
-    .planes-negocio-price-label {
-        font-size: 12px;
-        color: #94a3b8;
-        font-weight: 500;
-    }
-    
-    /* Estilos para el listado de planes anterior (compatibilidad) */
-    .planes-negocio-pills-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-    .planes-negocio-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 10px;
-        background-color: #f0f4f8;
-        border: 1px solid #d1e1e9;
-        border-radius: 50px;
-        color: #2c5282;
-        font-size: 12px;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-    .planes-negocio-pill:hover {
-        background-color: #e2e8f0;
-        border-color: #cbd5e0;
-    }
-    .planes-negocio-card-header {
-        border-bottom: 1px solid #edf2f7;
-        margin-bottom: 12px;
-        padding-bottom: 8px;
-    }
-    .planes-negocio-option-card {
-        background-color: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 10px;
-        flex: 1;
-        min-width: 140px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .planes-negocio-option-price {
-        color: #2b6cb0;
-        font-size: 14px;
-        font-weight: 700;
-        display: block;
-    }
-    .planes-negocio-option-lapso {
-        color: #718096;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-    }
-    /* Ajustes para la tabla en escritorio */
-    .table-planes-v2 th {
-        background-color: #f7fafc !important;
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 0.05em;
-        color: #4a5568;
-    }
-    .table-planes-v2 td {
-        vertical-align: middle !important;
-    }
-</style>
 <div id="configuracion_planes_container"></div>
 <div class="content-wrapper">
 	<section class="content-header">
@@ -152,11 +37,11 @@
                                                         {{-- Antiguedad --}}
                                                         <div class="col-md-3">
                                                             <div class="form-group">
-                                                                <label for="cantidad">{{ __('Antiguedad') }} <span class="text-danger">*</span></label>
+                                                                <label for="cantidad">{{ __('Antigüedad') }} <span class="text-danger">*</span></label>
                                                                 <input type="number" name="cantidad" id="cantidad" class="form-control f-14" step="0.1" min="0" value="{{ $configuracion['cantidad'] ?? 0 }}" required>
                                                             </div>
                                                         </div>
-                                                        {{-- Unidad de tiempo (Sin etiqueta visible, pero ocupando el mismo espacio) --}}
+                                                        {{-- Unidad de tiempo --}}
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label for="unidad_tiempo" class="planes-negocio-label-block">&nbsp;</label>
@@ -177,7 +62,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {{-- Fin Grupo: Planes destacados --}}
 
                                         </div>
                                         <div class="box-footer">
@@ -192,7 +76,7 @@
                         </div>
 
                         {{-- Pestaña 2: Planes --}}
-                        <div class="tab-pane" id="tab_planes" style="display: none;">
+                        <div class="tab-pane d-none" id="tab_planes">
                             <div class="row">
                                 <div class="col-xs-12">
                                     <div class="box box-solid planes-negocio-box-custom">
@@ -219,6 +103,167 @@
 		</div>
 	</section>
 </div>
+
+<!-- Modal para Ver Plan (No modificable) -->
+<div class="modal fade" id="modal-ver-plan" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4 position-relative">
+            <div class="modal-header d-flex align-items-center justify-content-between">
+                <h4 class="modal-title" id="modal-title-ver-plan">{{ __('Detalles del Plan de Negocio') }}</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body planes-negocio-modal-body-scroll">
+                <div class="row">
+                    <div class="col-md-6">
+                        <span class="planes-negocio-label-detalle">{{ __('Nombre del plan') }}</span>
+                        <div id="ver_nombre_plan" class="planes-negocio-valor-detalle mb-3"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="planes-negocio-label-detalle">{{ __('Orden') }}</span>
+                        <div id="ver_orden_plan" class="planes-negocio-valor-detalle mb-3"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="planes-negocio-label-detalle">{{ __('Estatus') }}</span>
+                        <div id="ver_estatus_plan" class="mb-3"></div>
+                    </div>
+                </div>
+
+                <div class="box box-solid planes-negocio-well-ver">
+                    <div class="box-header with-border">
+                        <h5 class="box-title fw-700 f-14">{{ __('Opciones de pago') }}</h5>
+                    </div>
+                    <div class="box-body" id="ver_contenedor_planes_pago">
+                        {{-- Contenido dinámico --}}
+                    </div>
+                </div>
+
+                <div class="box box-solid mt-3 planes-negocio-well-ver">
+                    <div class="box-header with-border">
+                        <h5 class="box-title fw-700 f-14">{{ __('Beneficios incluidos') }}</h5>
+                    </div>
+                    <div class="box-body">
+                        <ul id="ver_contenedor_beneficios" class="list-group list-group-flush bg-transparent">
+                            {{-- Contenido dinámico --}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-flat" data-bs-dismiss="modal">{{ __('Cerrar') }}</button>
+            </div>
+            
+            {{-- Botón Flotante para Editar --}}
+            <button type="button" id="btn-flotante-edit-plan" class="planes-negocio-btn-flotante-editar" title="{{ __('Editar este plan') }}">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Agregar/Editar Plan -->
+<div class="modal fade" id="modal-plan" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="form-plan" method="POST" action="">
+                @csrf
+                <input type="hidden" name="id" id="plan_id">
+                <div class="modal-header d-flex align-items-center justify-content-between">
+                    <h4 class="modal-title" id="modal-title-plan">{{ __('Agregar nuevo plan') }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body planes-negocio-modal-body-scroll">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre_plan">{{ __('Nombre del plan') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="nombre" id="nombre_plan" class="form-control f-14" placeholder="ej: Plan Oro" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="orden_plan">{{ __('Orden') }} <span class="text-danger">*</span></label>
+                                <input type="number" name="orden" id="orden_plan" class="form-control f-14" min="0" value="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group planes-negocio-mt-25">
+                                <label>
+                                    <input type="checkbox" name="destacado" id="destacado_plan" value="1"> {{ __('Destacado') }}
+                                </label>
+                                &nbsp;&nbsp;
+                                <label>
+                                    <input type="checkbox" name="estatus" id="estatus_plan" value="1" checked> {{ __('Activo') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Sección: Opciones de pago --}}
+                    <div class="box box-solid mt-4 planes-negocio-box-custom">
+                        <div class="box-header with-border planes-negocio-box-header-custom">
+                            <h3 class="box-title planes-negocio-box-title-custom">
+                                {{ __('Opciones de pago') }}
+                            </h3>
+                        </div>
+                        <div class="box-body">
+                            <div id="contenedor-planes-pago">
+                                {{-- Aquí se cargarán dinámicamente las filas de opciones de pago --}}
+                            </div>
+                            <button type="button" id="btn-agregar-plan-pago" class="btn btn-sm btn-success btn-flat mt-2">
+                                <i class="fa fa-plus"></i> {{ __('Agregar nueva opción de pago') }}
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Sección: Beneficios del plan --}}
+                    <div class="box box-solid mt-4 planes-negocio-box-custom">
+                        <div class="box-header with-border planes-negocio-box-header-custom">
+                            <h3 class="box-title planes-negocio-box-title-custom">
+                                {{ __('Beneficios del Plan') }}
+                            </h3>
+                        </div>
+                        <div class="box-body">
+                            <div id="contenedor-beneficios">
+                                {{-- Aquí se cargarán dinámicamente los inputs de beneficios --}}
+                            </div>
+                            <button type="button" id="btn-agregar-beneficio" class="btn btn-sm btn-info btn-flat mt-2">
+                                <i class="fa fa-plus"></i> {{ __('Agregar nuevo beneficio') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-flat" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="btn-save-plan" class="btn btn-primary btn-flat">
+                        <span class="btn-text">{{ __('Guardar') }}</span>
+                        <i class="fa fa-spinner fa-spin d-none"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@include('reda-alojamiento::admin.general.modal_confirmacion')
+@stop
+
+@section('validate_script')
+    <script>
+        window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
+        window.RedaAlojamientoJson = @json(__('reda-alojamiento::es'));
+    </script>
+    <script>
+        window.RedaRutas = {
+            store_config_planes: "{{ route('reda.admin.negocios.configuracion_planes.store') }}",
+            index_planes: "{{ route('reda.admin.negocios.configuracion_planes.index_planes') }}",
+            get_plan: "{{ url('admin/reda/negocios/configuracion-planes/get') }}",
+            store_plan: "{{ route('reda.admin.negocios.configuracion_planes.store_plan') }}",
+            update_plan: "{{ route('reda.admin.negocios.configuracion_planes.update_plan') }}",
+            destroy_plan: "{{ url('admin/reda/negocios/configuracion-planes/destroy-plan') }}"
+        };
+    </script>
+    <script type="text/javascript" src="{{ asset('public/js/reda/admin/vistas/experiencia/configuracionPlanes.min.js') }}?v={{ time() }}"></script>
+@endsection
 
 <!-- Modal para Ver Plan (No modificable) -->
 <div class="modal fade" id="modal-ver-plan" role="dialog">
