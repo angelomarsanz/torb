@@ -24,11 +24,11 @@ class DisputaController extends Controller
      */
     public function obtenerDisputasPaginadas(Request $request)
     {
-        $status = $request->get('status', 'todos');
+        $estatus = $request->get('status', 'todos');
 
-        $query = Disputa::query();
+        $consulta = Disputa::query();
 
-        if ($status !== 'todos') {
+        if ($estatus !== 'todos') {
             // Mapeo de estados del frontend a los valores en la base de datos (traducidos)
             $mapeo = [
                 'abiertos' => __('Abierto'),
@@ -38,27 +38,27 @@ class DisputaController extends Controller
                 'cerrados' => __('Cerrado')
             ];
             
-            if (isset($mapeo[$status])) {
-                $query->where('estado', $mapeo[$status]);
+            if (isset($mapeo[$estatus])) {
+                $consulta->where('estado', $mapeo[$estatus]);
             }
         }
 
-        $disputas = $query->with(['booking.properties.property_address', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
+        $disputas = $consulta->with(['booking.properties.property_address', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
 
         // Formatear los datos para el consumo del frontend via Javascript
-        $items = $disputas->getCollection()->map(function($d) {
+        $elementos = $disputas->getCollection()->map(function($d) {
             
             // Adjuntos del Turista
             $adjuntosTurista = [];
             if ($d->documentos_turista) {
-                $paths = json_decode($d->documentos_turista, true);
-                if (is_array($paths)) {
-                    foreach ($paths as $path) {
-                        $webPath = strpos($path, 'public/') === 0 ? $path : 'public/' . $path;
+                $rutas = json_decode($d->documentos_turista, true);
+                if (is_array($rutas)) {
+                    foreach ($rutas as $ruta) {
+                        $rutaWeb = strpos($ruta, 'public/') === 0 ? $ruta : 'public/' . $ruta;
                         $adjuntosTurista[] = [
-                            'nombre' => basename($path),
-                            'url' => asset($webPath),
-                            'es_imagen' => in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
+                            'nombre' => basename($ruta),
+                            'url' => asset($rutaWeb),
+                            'es_imagen' => in_array(strtolower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
                         ];
                     }
                 }
@@ -67,14 +67,14 @@ class DisputaController extends Controller
             // Adjuntos del Anfitrión
             $adjuntosAnfitrion = [];
             if ($d->documentos_anfitrion) {
-                $paths = json_decode($d->documentos_anfitrion, true);
-                if (is_array($paths)) {
-                    foreach ($paths as $path) {
-                        $webPath = strpos($path, 'public/') === 0 ? $path : 'public/' . $path;
+                $rutas = json_decode($d->documentos_anfitrion, true);
+                if (is_array($rutas)) {
+                    foreach ($rutas as $ruta) {
+                        $rutaWeb = strpos($ruta, 'public/') === 0 ? $ruta : 'public/' . $ruta;
                         $adjuntosAnfitrion[] = [
-                            'nombre' => basename($path),
-                            'url' => asset($webPath),
-                            'es_imagen' => in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
+                            'nombre' => basename($ruta),
+                            'url' => asset($rutaWeb),
+                            'es_imagen' => in_array(strtolower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
                         ];
                     }
                 }
@@ -94,8 +94,8 @@ class DisputaController extends Controller
             // Datos de ubicación
             $ubicacion = '';
             if ($d->booking && $d->booking->properties && $d->booking->properties->property_address) {
-                $addr = $d->booking->properties->property_address;
-                $ubicacion = trim(($addr->city ?? '') . ', ' . ($addr->state ?? ''), ', ');
+                $direccion = $d->booking->properties->property_address;
+                $ubicacion = trim(($direccion->city ?? '') . ', ' . ($direccion->state ?? ''), ', ');
             }
 
             return [
@@ -133,7 +133,7 @@ class DisputaController extends Controller
             'message' => __('Listado de mediaciones (Admin)'),
             'mensaje_usuario' => __('Listado recuperado con éxito'),
             'respuesta' => [
-                'data' => $items,
+                'data' => $elementos,
                 'pagination' => (string) $disputas->appends(request()->except('page'))->links('reda-alojamiento::general.paginacion')
             ],
             'code' => 200
@@ -148,16 +148,18 @@ class DisputaController extends Controller
     public function getDetailModal($id)
     {
         $disputa = Disputa::findOrFail($id);
-        // Podemos usar el mismo modal de detalle o uno específico para admin si se requiere.
-        // Por ahora usamos el existente.
-        $html = view('reda-alojamiento::disputa.disputas.modal_detalle', compact('disputa'))->render();
-        return response()->json([
+        // Usamos la vista específica para admin adaptada a Bootstrap 5
+        $html = view('reda-alojamiento::admin.disputa.modal_detalle', compact('disputa'))->render();
+        
+        $respuesta = [
             'success' => true,
             'message' => __('Carga de detalle'),
             'mensaje_usuario' => __('Cargado con éxito'),
             'respuesta' => $html,
             'code' => 200
-        ], 200);
+        ];
+
+        return response()->json($respuesta, $respuesta['code']);
     }
 
 }

@@ -79,6 +79,7 @@
     <script>
         window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
         window.RedaAlojamientoJson = @json(__('reda-alojamiento::es'));
+        window.RedaTrans = @json(__('reda-alojamiento::messages'));
     </script>
     <script type="text/javascript" src="{{ asset('public/js/reda/admin/vistas/disputa/indexDisputas.min.js') }}?v={{ time() }}"></script>
 @endsection

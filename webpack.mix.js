@@ -39,6 +39,9 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/configuracionPlanes.js',
         'public/js/reda/admin/vistas/experiencia/configuracionPlanes.min.js');
 
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/admin/vistas/disputa/indexDisputas.js',
+        'public/js/reda/admin/vistas/disputa/indexDisputas.min.js');
+
     // Js para uso general
     mix.js('packages/Reda/RedaAlojamiento/resources/js/general/main.js', 'public/js/reda/general/reda-general-main.min.js');
 

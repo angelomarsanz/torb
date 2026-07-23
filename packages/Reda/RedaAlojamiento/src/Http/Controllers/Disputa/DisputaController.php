@@ -292,5 +292,5 @@ class DisputaController extends Controller
             'respuesta' => $disputa,
             'code' => 200
         ], 200);
-        }
-        }
+    }
+}

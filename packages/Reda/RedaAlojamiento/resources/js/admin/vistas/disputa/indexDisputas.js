@@ -38,21 +38,32 @@ import {
     /**
      * Peticion AJAX para obtener mediaciones paginadas (Admin).
      */
-    const getMediacionesPaginadas = (status, page) => {
+    const obtenerMediacionesPaginadas = (estatus, pagina) => {
         return new Promise((resolve) => {
             $.ajax({
                 url: APP_URL + '/admin/reda/disputas/get-listado',
                 type: 'GET',
-                data: { status, page },
+                data: { status: estatus, page: pagina },
                 success: (data) => resolve(data),
                 error: (x) => {
                     let respuestaServidor = {};
-                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
-                    resolve({
-                        success: false,
-                        mensaje_usuario: respuestaServidor.mensaje_usuario || (window.RedaAlojamientoJson["Error al cargar las mediaciones. Intente de nuevo."] || "Error al cargar las mediaciones. Intente de nuevo."),
-                        code: x.status || 500
-                    });
+                    try {
+                        respuestaServidor = JSON.parse(x.responseText);
+                    } catch (e) {
+                        respuestaServidor = {};
+                    }
+
+                    const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                    const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                    let respuesta = {
+                        'success': false,
+                        'message' : window.RedaAlojamientoJson["Error al cargar las mediaciones. Intente de nuevo."] || 'Error al cargar las mediaciones. Intente de nuevo.',
+                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                        'respuesta': respuestaServidor.respuesta || '',
+                        'code': x.status !== 0 ? x.status : 504,
+                    };
+                    resolve(respuesta);
                 }
             });
         });
@@ -61,7 +72,7 @@ import {
     /**
      * Peticion AJAX para obtener el HTML del modal de detalle (Admin).
      */
-    const getHtmlDetalleMediacion = (id) => {
+    const obtenerHtmlDetalleMediacion = (id) => {
         return new Promise((resolve) => {
             $.ajax({
                 url: APP_URL + '/admin/reda/disputas/get-detail-modal/' + id,
@@ -69,12 +80,23 @@ import {
                 success: (data) => resolve(data),
                 error: (x) => {
                     let respuestaServidor = {};
-                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
-                    resolve({
-                        success: false,
-                        mensaje_usuario: respuestaServidor.mensaje_usuario || (window.RedaAlojamientoJson["Error al cargar el detalle."] || "Error al cargar el detalle."),
-                        code: x.status || 500
-                    });
+                    try {
+                        respuestaServidor = JSON.parse(x.responseText);
+                    } catch (e) {
+                        respuestaServidor = {};
+                    }
+
+                    const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
+                    const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+
+                    let respuesta = {
+                        'success': false,
+                        'message' : window.RedaAlojamientoJson["Error al cargar el detalle."] || 'Error al cargar el detalle.',
+                        'mensaje_usuario': respuestaServidor.mensaje_usuario ?? `${mensajeErrorBase}.${detalleError}`,
+                        'respuesta': respuestaServidor.respuesta || '',
+                        'code': x.status !== 0 ? x.status : 504,
+                    };
+                    resolve(respuesta);
                 }
             });
         });
@@ -104,13 +126,13 @@ import {
         estatus.forEach((e, index) => {
             const isActive = index === 0 ? 'active' : '';
             html += `
-                <div class="disputa-tab-item px-3 py-2 mr-2 pointer text-center ${isActive}" data-status="${e.id}">
+                <div class="disputa-tab-item px-3 py-2 me-2 pointer text-center ${isActive}" data-status="${e.id}">
                     <div class="d-flex align-items-center justify-content-center mb-1 status-icon">
                         ${e.icono}
                     </div>
                     <div class="d-flex align-items-center justify-content-center">
-                        <span class="text-14 font-weight-600">${e.nombre}</span>
-                        <span class="badge badge-pill badge-success ml-2 text-10 d-none status-counter" id="counter-${e.id}">${e.contador}</span>
+                        <span class="text-14 fw-600">${e.nombre}</span>
+                        <span class="badge rounded-pill bg-success ms-2 text-10 d-none status-counter" id="counter-${e.id}">${e.contador}</span>
                     </div>
                 </div>
             `;
@@ -191,7 +213,7 @@ import {
         return `
             <div class="personas-relacionadas-block">
                 <div class="d-flex align-items-center mb-2">
-                    <div class="avatar-mini mr-2">
+                    <div class="avatar-mini me-2">
                         <img src="${item.anfitrion_foto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
@@ -200,7 +222,7 @@ import {
                     </div>
                 </div>
                 <div class="d-flex align-items-center mb-2">
-                    <div class="avatar-mini mr-2">
+                    <div class="avatar-mini me-2">
                         <img src="${item.turista_foto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
@@ -209,7 +231,7 @@ import {
                     </div>
                 </div>
                 <div class="d-flex align-items-center mb-3">
-                    <div class="avatar-mini mr-2 position-relative">
+                    <div class="avatar-mini me-2 position-relative">
                         <img src="${agenteFoto}" class="rounded-circle border reda-avatar-30">
                         <div class="position-absolute reda-status-badge-pos">
                             <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm reda-status-badge-icon">
@@ -240,7 +262,7 @@ import {
             const icon = file.es_imagen ? 'far fa-image' : 'far fa-file-alt';
             html += `
                 <a href="${file.url}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
-                    <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                    <div class="me-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
                         <i class="${icon} text-success text-10"></i>
                     </div>
                     <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
@@ -281,12 +303,12 @@ import {
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge ${badgeClass} font-weight-700 py-2 px-3 text-12 shadow-sm">${statusText}</span>
-                    <span class="text-muted font-weight-700 text-14">ID: #${item.id}</span>
+                    <span class="badge ${badgeClass} fw-700 py-2 px-3 text-12 shadow-sm">${statusText}</span>
+                    <span class="text-muted fw-700 text-14">ID: #${item.id}</span>
                 </div>
-                <h5 class="font-weight-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
-                <div class="text-right mt-1">
-                    <span class="text-success pointer font-weight-700 text-11 btn-toggle-motivo d-none" 
+                <h5 class="fw-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <div class="text-end mt-1">
+                    <span class="text-success pointer fw-700 text-11 btn-toggle-motivo d-none" 
                           id="btn-toggle-motivo-${item.id}" data-id="${item.id}" data-state="less">
                         ${trans["Más..."] || "Más..."}
                     </span>
@@ -315,31 +337,31 @@ import {
         let html = `
             <div class="reservacion-detalle-sidebar">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="mr-3">
+                    <div class="me-3">
                         <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb reda-reservacion-thumb-size">
                     </div>
                     <div class="overflow-hidden">
                         <span class="text-muted text-10 d-block mb-1">${trans["ID Reservación"] || "ID Reservación"}: #${item.booking_id}</span>
-                        <h6 class="text-13 font-weight-700 text-dark mb-0 text-truncate" title="${item.propiedad_nombre}">${item.propiedad_nombre}</h6>
-                        <p class="text-11 text-muted mb-0 text-truncate"><i class="fas fa-map-marker-alt mr-1"></i>${item.propiedad_ubicacion}</p>
+                        <h6 class="text-13 fw-700 text-dark mb-0 text-truncate" title="${item.propiedad_nombre}">${item.propiedad_nombre}</h6>
+                        <p class="text-11 text-muted mb-0 text-truncate"><i class="fas fa-map-marker-alt me-1"></i>${item.propiedad_ubicacion}</p>
                     </div>
                 </div>
                 
-                <div class="row no-gutters border-top pt-3">
-                    <div class="col-6 border-right pr-2">
+                <div class="row g-0 border-top pt-3">
+                    <div class="col-6 border-end pe-2">
                         <span class="text-muted text-10 d-block text-uppercase letter-spacing-1">${trans["Llegada"] || "Llegada"}</span>
-                        <span class="text-12 font-weight-600 text-dark">${item.booking_start_date}</span>
+                        <span class="text-12 fw-600 text-dark">${item.booking_start_date}</span>
                     </div>
-                    <div class="col-6 pl-2">
+                    <div class="col-6 ps-2">
                         <span class="text-muted text-10 d-block text-uppercase letter-spacing-1">${trans["Salida"] || "Salida"}</span>
-                        <span class="text-12 font-weight-600 text-dark">${item.booking_end_date}</span>
+                        <span class="text-12 fw-600 text-dark">${item.booking_end_date}</span>
                     </div>
                 </div>
                 
                 <div class="mt-3 pt-2 border-top">
                     <div class="d-flex justify-content-between">
                         <span class="text-muted text-11">${trans["Huéspedes"] || "Huéspedes"}</span>
-                        <span class="text-11 font-weight-600 text-dark">${item.booking_guest}</span>
+                        <span class="text-11 fw-600 text-dark">${item.booking_guest}</span>
                     </div>
                 </div>
             </div>
@@ -393,22 +415,22 @@ import {
                         <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
                             ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
                         </div>
-                        <div class="text-right mt-1">
-                            <span class="text-success pointer font-weight-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
+                        <div class="text-end mt-1">
+                            <span class="text-success pointer fw-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
                                 ${trans["Más..."] || "Más..."}
                             </span>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <h6 class="text-12 font-weight-700 mb-2 text-muted text-uppercase letter-spacing-1">${trans["Archivos adjuntos"] || "Archivos adjuntos"}</h6>
+                        <h6 class="text-12 fw-700 mb-2 text-muted text-uppercase letter-spacing-1">${trans["Archivos adjuntos"] || "Archivos adjuntos"}</h6>
                         <div class="adjuntos-container">
                             ${generarListaAdjuntosHtml(item.adjuntos)}
                         </div>
                     </div>
 
                     <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
-                        <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
+                        <h6 class="text-12 fw-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
                         ${generarBloquePersonasHtml(item)}
                     </div>
                 </div>
@@ -566,36 +588,36 @@ import {
                 <div class="col-md-12 p-0 mb-4 container-mediacion" data-id="${item.id}">
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
                         <div class="card-body p-0">
-                            <div class="row m-0">
+                            <div class="row m-0 g-0">
                                 <div class="col-md-4 p-0">
-                                    <div class="img-container h-100 bg-light d-flex align-items-center justify-content-center border-right">
+                                    <div class="img-container h-100 bg-light d-flex align-items-center justify-content-center border-end">
                                         <img src="${item.propiedad_foto}" 
                                              class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150 reda-propiedad-foto-max" 
                                              alt="Propiedad">
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 p-4 border-right">
+                                <div class="col-md-4 p-4 border-end">
                                     <div class="mb-2">
                                         <span class="badge ${badgeClass}">${statusText}</span>
-                                        <span class="text-muted small ml-2 font-weight-700">ID: #${item.id}</span>
+                                        <span class="text-muted small ms-2 fw-700">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 font-weight-700 text-color mb-1 reda-motivo-clamped" title="${item.motivo}">${item.motivo}</h5>
+                                    <h5 class="text-18 fw-700 text-color mb-1 reda-motivo-clamped" title="${item.motivo}">${item.motivo}</h5>
                                     
                                     ${item.prioridad ? `
                                         <div class="text-muted small mb-1">
-                                            <i class="fas fa-exclamation-circle mr-1"></i> ${trans["Prioridad"] || "Prioridad"}: ${prioridadHtml}
+                                            <i class="fas fa-exclamation-circle me-1"></i> ${trans["Prioridad"] || "Prioridad"}: ${prioridadHtml}
                                         </div>
                                     ` : ''}
 
                                     <div class="text-muted small mb-2">
-                                        <i class="fas fa-bookmark mr-1"></i> ${trans["ID Reservación"] || "ID Reservación"}: <span class="text-dark">#${item.booking_id}</span>
+                                        <i class="fas fa-bookmark me-1"></i> ${trans["ID Reservación"] || "ID Reservación"}: <span class="text-dark">#${item.booking_id}</span>
                                     </div>
 
                                     <div class="d-flex flex-column mt-3">
                                         <div class="text-muted small">
-                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="text-dark">${item.actualizado_hace}</span>
+                                            <i class="far fa-clock me-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="text-dark">${item.actualizado_hace}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -610,7 +632,7 @@ import {
                     <!-- Mobile Detail Section -->
                     <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
                         <div class="mobile-detail-toggle py-2 px-3 border rounded-bottom bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
-                            <span class="text-14 font-weight-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
+                            <span class="text-14 fw-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
                             <i class="fas fa-chevron-down toggle-icon"></i>
                         </div>
                         <div class="mobile-detail-content p-3 border rounded-bottom bg-white d-none shadow-sm">
@@ -621,11 +643,11 @@ import {
                                 <div class="reda-timeline-carousel mobile-timeline-container"></div>
                             </div>
                             <div class="mobile-reservacion-wrapper mb-4">
-                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
+                                <h6 class="fw-700 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
                                 <div class="mobile-reservacion-container"></div>
                             </div>
                             <div class="mobile-resumen-wrapper mb-3">
-                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                <h6 class="fw-700 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
                                 <div class="mobile-resumen-container"></div>
                             </div>
                         </div>
@@ -643,12 +665,12 @@ import {
     /**
      * Carga las mediaciones vía Ajax según el estatus y página seleccionada (Admin).
      */
-    const cargarMediaciones = async (status, page = 1) => {
+    const cargarMediaciones = async (estatus, pagina = 1) => {
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
             window.RedaNotificaciones.esperar();
         }
 
-        const data = await getMediacionesPaginadas(status, page);
+        const data = await obtenerMediacionesPaginadas(estatus, pagina);
 
         if (data.success) {
             mediacionesCargadas = data.respuesta.data;
@@ -689,7 +711,7 @@ import {
             window.RedaNotificaciones.esperar();
         }
 
-        const data = await getHtmlDetalleMediacion(id);
+        const data = await obtenerHtmlDetalleMediacion(id);
 
         // Primero ocultamos el de espera para limpiar backdrops
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
@@ -702,7 +724,13 @@ import {
                 // Remover modal previo si existe
                 $('#modal-detalle-mediacion-reda').remove();
                 $('body').append(data.respuesta);
-                $('#modal-detalle-mediacion-reda').modal('show');
+                
+                // Inicializar modal con la API de Bootstrap 5
+                const modalElement = document.getElementById('modal-detalle-mediacion-reda');
+                if (modalElement && window.bootstrap) {
+                    const bsModal = new bootstrap.Modal(modalElement);
+                    bsModal.show();
+                }
             }, 150);
         } else {
             alert(data.mensaje_usuario);
