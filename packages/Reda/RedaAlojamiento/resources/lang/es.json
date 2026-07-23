@@ -577,5 +577,14 @@
     "Promedio de calificaciones": "Promedio de calificaciones",
     "ej: Plan Oro": "ej: Plan Oro",
     "N/A": "N/A",
-    "Orden:": "Orden:"
-    }
+    "Orden:": "Orden:",
+    "Configuración de planes guardada correctamente": "Configuración de planes guardada correctamente",
+    "Plan creado": "Plan creado",
+    "Plan actualizado": "Plan actualizado",
+    "Plan eliminado": "Plan eliminado",
+    "Categoría guardada correctamente": "Categoría guardada correctamente",
+    "Categoría actualizada correctamente": "Categoría actualizada correctamente",
+    "Categoría eliminada correctamente": "Categoría eliminada correctamente",
+    "La categoría no existe": "La categoría no existe",
+    "Configuración no encontrada": "Configuración no encontrada"
+}

@@ -73,7 +73,7 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success'         => true,
-            'message'         => 'Configuración de planes guardada correctamente',
+            'message'         => __('Configuración de planes guardada correctamente'),
             'mensaje_usuario' => __('Configuración de planes guardada con éxito'),
             'respuesta'       => '',
             'code'            => 200
@@ -94,11 +94,13 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success'         => true,
-            'message'         => 'Listado de planes recuperado',
-            'mensaje_usuario' => '',
+            'message'         => __('Listado de planes recuperado'),
+            'mensaje_usuario' => __('Listado de planes recuperado'),
             'respuesta'       => $tablaHtml,
             'code'            => 200
         ];
+
+        Log::info("indexPlanes: " . print_r($respuesta, true));
 
         return response()->json($respuesta, $respuesta['code']);
     }
@@ -110,21 +112,24 @@ class ExperienciaController extends Controller
         if (!$plan) {
             $respuesta = [
                 'success' => false,
-                'message' => 'Plan no encontrado',
+                'message' => __('Plan no encontrado'),
                 'mensaje_usuario' => __('Plan no encontrado'),
                 'respuesta' => '',
                 'code' => 404
             ];
+            Log::error("getPlan (error): " . print_r($respuesta, true));
             return response()->json($respuesta, $respuesta['code']);
         }
 
         $respuesta = [
             'success'         => true,
-            'message'         => 'Plan recuperado',
-            'mensaje_usuario' => '',
+            'message'         => __('Plan recuperado'),
+            'mensaje_usuario' => __('Plan recuperado'),
             'respuesta'       => $plan,
             'code'            => 200
         ];
+
+        Log::info("getPlan: " . print_r($respuesta, true));
 
         return response()->json($respuesta, $respuesta['code']);
     }
@@ -153,11 +158,13 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success'         => true,
-            'message'         => 'Plan creado',
+            'message'         => __('Plan creado'),
             'mensaje_usuario' => __('Plan guardado con éxito'),
             'respuesta'       => $plan,
             'code'            => 200
         ];
+
+        Log::info("storePlan: " . print_r($respuesta, true));
 
         return response()->json($respuesta, $respuesta['code']);
     }
@@ -188,11 +195,13 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success'         => true,
-            'message'         => 'Plan actualizado',
+            'message'         => __('Plan actualizado'),
             'mensaje_usuario' => __('Plan actualizado con éxito'),
             'respuesta'       => $plan,
             'code'            => 200
         ];
+
+        Log::info("updatePlan: " . print_r($respuesta, true));
 
         return response()->json($respuesta, $respuesta['code']);
     }
@@ -204,11 +213,12 @@ class ExperienciaController extends Controller
         if (!$plan) {
             $respuesta = [
                 'success' => false,
-                'message' => 'Plan no encontrado',
+                'message' => __('Plan no encontrado'),
                 'mensaje_usuario' => __('Plan no encontrado'),
                 'respuesta' => '',
                 'code' => 404
             ];
+            Log::error("destroyPlan (error): " . print_r($respuesta, true));
             return response()->json($respuesta, $respuesta['code']);
         }
 
@@ -232,11 +242,13 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success'         => true,
-            'message'         => 'Plan eliminado',
+            'message'         => __('Plan eliminado'),
             'mensaje_usuario' => __('Plan eliminado con éxito'),
             'respuesta'       => '',
             'code'            => 200
         ];
+
+        Log::info("destroyPlan: " . print_r($respuesta, true));
 
         return response()->json($respuesta, $respuesta['code']);
     }
@@ -292,8 +304,8 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success' => true,
-            'message' => 'Categoría guardada correctamente',
-            'mensaje_usuario' => __('reda-alojamiento::messages.general.categoria_guardada_correctamente'),
+            'message' => __('Categoría guardada correctamente'),
+            'mensaje_usuario' => __('Categoría guardada correctamente'),
             'respuesta' => '',
             'code' => 200
         ];
@@ -316,11 +328,15 @@ class ExperienciaController extends Controller
         $setting = DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->first();
 
         if (!$setting || empty($setting->value)) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => 'Configuración no encontrada',
+                'message' => __('Configuración no encontrada'),
+                'mensaje_usuario' => __('Configuración no encontrada'),
+                'respuesta' => '',
                 'code' => 404
-            ], 404);
+            ];
+            Log::error("updateOpcionTipoNegocio (error): " . print_r($respuesta, true));
+            return response()->json($respuesta, 404);
         }
 
         $dataJson = json_decode($setting->value, true);
@@ -342,8 +358,8 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success' => true,
-            'message' => 'Categoría actualizada correctamente',
-            'mensaje_usuario' => __('reda-alojamiento::messages.general.categoria_actualizada_correctamente'),
+            'message' => __('Categoría actualizada correctamente'),
+            'mensaje_usuario' => __('Categoría actualizada correctamente'),
             'respuesta' => '',
             'code' => 200
         ];
@@ -359,11 +375,15 @@ class ExperienciaController extends Controller
         $setting = DB::table('settings')->where('name', 'opciones_tipos_de_negocios')->first();
 
         if (!$setting || empty($setting->value)) {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => 'Configuración no encontrada',
+                'message' => __('Configuración no encontrada'),
+                'mensaje_usuario' => __('Configuración no encontrada'),
+                'respuesta' => '',
                 'code' => 404
-            ], 404);
+            ];
+            Log::error("destroyOpcionTipoNegocio (error): " . print_r($respuesta, true));
+            return response()->json($respuesta, 404);
         }
 
         $dataJson = json_decode($setting->value, true);
@@ -372,12 +392,15 @@ class ExperienciaController extends Controller
         if (isset($dataJson['categorias'][$clave])) {
             unset($dataJson['categorias'][$clave]);
         } else {
-            return response()->json([
+            $respuesta = [
                 'success' => false,
-                'message' => 'La categoría no existe',
-                'mensaje_usuario' => __('reda-alojamiento::messages.general.la_categoria_no_existe'),
+                'message' => __('La categoría no existe'),
+                'mensaje_usuario' => __('La categoría no existe'),
+                'respuesta' => '',
                 'code' => 404
-            ], 404);
+            ];
+            Log::error("destroyOpcionTipoNegocio (error - no existe): " . print_r($respuesta, true));
+            return response()->json($respuesta, 404);
         }
 
         // Guardamos el JSON actualizado
@@ -387,8 +410,8 @@ class ExperienciaController extends Controller
 
         $respuesta = [
             'success' => true,
-            'message' => 'Categoría eliminada correctamente',
-            'mensaje_usuario' => __('reda-alojamiento::messages.general.categoria_eliminada_con_exito'),
+            'message' => __('Categoría eliminada correctamente'),
+            'mensaje_usuario' => __('Categoría eliminada correctamente'),
             'respuesta' => '',
             'code' => 200
         ];

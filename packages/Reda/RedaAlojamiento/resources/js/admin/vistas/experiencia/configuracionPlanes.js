@@ -21,10 +21,13 @@
                     success: (data) => resolve(data),
                     error: (x) => {
                         let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                        const msgBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || "Error en el servidor de Torbian";
                         resolve({
                             success: false,
-                            mensaje_usuario: res.mensaje_usuario || window.RedaAlojamientoJson["Error cargando planes"] || "Error cargando planes",
-                            code: x.status
+                            message: "Error apiCargarPlanes",
+                            mensaje_usuario: res.mensaje_usuario || msgBase,
+                            respuesta: res.respuesta || "",
+                            code: x.status !== 0 ? x.status : 504
                         });
                     }
                 });
@@ -40,10 +43,13 @@
                     success: (data) => resolve(data),
                     error: (x) => {
                         let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                        const msgBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || "Error en el servidor de Torbian";
                         resolve({
                             success: false,
+                            message: "Error apiGetPlan",
                             mensaje_usuario: res.mensaje_usuario || window.RedaAlojamientoJson["Error obteniendo plan"] || "Error obteniendo plan",
-                            code: x.status
+                            respuesta: res.respuesta || "",
+                            code: x.status !== 0 ? x.status : 504
                         });
                     }
                 });
@@ -60,10 +66,13 @@
                     success: (data) => resolve(data),
                     error: (x) => {
                         let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                        const msgBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || "Error en el servidor de Torbian";
                         resolve({
                             success: false,
+                            message: "Error apiStorePlan",
                             mensaje_usuario: res.mensaje_usuario || window.RedaAlojamientoJson["Error guardando plan"] || "Error guardando plan",
-                            code: x.status
+                            respuesta: res.respuesta || "",
+                            code: x.status !== 0 ? x.status : 504
                         });
                     }
                 });
@@ -80,10 +89,13 @@
                     success: (data) => resolve(data),
                     error: (x) => {
                         let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                        const msgBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || "Error en el servidor de Torbian";
                         resolve({
                             success: false,
+                            message: "Error apiUpdatePlan",
                             mensaje_usuario: res.mensaje_usuario || window.RedaAlojamientoJson["Error actualizando plan"] || "Error actualizando plan",
-                            code: x.status
+                            respuesta: res.respuesta || "",
+                            code: x.status !== 0 ? x.status : 504
                         });
                     }
                 });
@@ -102,10 +114,13 @@
                     success: (data) => resolve(data),
                     error: (x) => {
                         let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                        const msgBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || "Error en el servidor de Torbian";
                         resolve({
                             success: false,
+                            message: "Error apiDestroyPlan",
                             mensaje_usuario: res.mensaje_usuario || window.RedaAlojamientoJson["Error eliminando plan"] || "Error eliminando plan",
-                            code: x.status
+                            respuesta: res.respuesta || "",
+                            code: x.status !== 0 ? x.status : 504
                         });
                     }
                 });
@@ -122,10 +137,13 @@
                     success: (data) => resolve(data),
                     error: (x) => {
                         let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                        const msgBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || "Error en el servidor de Torbian";
                         resolve({
                             success: false,
+                            message: "Error apiStoreConfigGenerales",
                             mensaje_usuario: res.mensaje_usuario || window.RedaAlojamientoJson["Error guardando configuración"] || "Error guardando configuración",
-                            code: x.status
+                            respuesta: res.respuesta || "",
+                            code: x.status !== 0 ? x.status : 504
                         });
                     }
                 });

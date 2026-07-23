@@ -23,10 +23,10 @@
                         <div class="table-responsive d-none d-md-block">
                             <table class="table table-bordered table-striped table-hover f-14">
                                 <thead>
-                                    <tr style="background-color: #f4f4f4;">
-                                        <th style="width: 30%">{{ __('reda-alojamiento::messages.general.clave_key') }}</th>
-                                        <th style="width: 50%">{{ __('reda-alojamiento::messages.general.descripcion_opcion') }}</th>
-                                        <th style="width: 20%; text-align: center;">{{ __('reda-alojamiento::messages.general.acciones') }}</th>
+                                    <tr class="planes-negocio-bg-header-table">
+                                        <th class="planes-negocio-w-30">{{ __('reda-alojamiento::messages.general.clave_key') }}</th>
+                                        <th class="planes-negocio-w-50">{{ __('reda-alojamiento::messages.general.descripcion_opcion') }}</th>
+                                        <th class="planes-negocio-w-20-center">{{ __('reda-alojamiento::messages.general.acciones') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -39,7 +39,7 @@
                                                 <td>
                                                     {{ $descripcion }}
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td class="text-center">
                                                     <div class="btn-group">
                                                         <button type="button" class="btn btn-xs btn-primary btn-flat btn-edit-category" data-clave="{{ $clave }}" data-nombre="{{ $descripcion }}" data-toggle="tooltip" title="Editar">
                                                             <i class="fa fa-edit"></i>
@@ -53,7 +53,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="3" class="text-center text-muted" style="padding: 20px;">
+                                            <td colspan="3" class="text-center text-muted planes-negocio-padding-20">
                                                 <i class="fa fa-info-circle"></i> {{ __('reda-alojamiento::messages.general.no_se_encontraron_opciones_de_tipos_de_negocios') }}
                                             </td>
                                         </tr>
@@ -66,12 +66,12 @@
                         <div class="d-md-none">
                             @if(!empty($categorias) && count($categorias) > 0)
                                 @foreach($categorias as $clave => $descripcion)
-                                    <div class="card mb-3 shadow-sm border-light" style="border-radius: 10px; border: 1px solid #eee;">
+                                    <div class="card mb-3 shadow-sm border-light planes-negocio-card-movil">
                                         <div class="card-body p-3">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div style="flex: 1;">
-                                                    <small class="text-muted d-block" style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">{{ __('reda-alojamiento::messages.general.clave_key') }}</small>
-                                                    <strong class="text-blue" style="font-size: 15px;">{{ $clave }}</strong>
+                                                <div class="planes-negocio-flex-1">
+                                                    <small class="text-muted d-block planes-negocio-label-movil">{{ __('reda-alojamiento::messages.general.clave_key') }}</small>
+                                                    <strong class="text-blue f-15">{{ $clave }}</strong>
                                                 </div>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-sm btn-default btn-flat border btn-edit-category" data-clave="{{ $clave }}" data-nombre="{{ $descripcion }}" data-toggle="tooltip" title="Editar">
@@ -84,7 +84,7 @@
                                             </div>
 
                                             <div class="mt-2 pt-2 border-top">
-                                                <small class="text-muted d-block" style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">{{ __('reda-alojamiento::messages.general.descripcion_opcion') }}</small>
+                                                <small class="text-muted d-block planes-negocio-label-movil">{{ __('reda-alojamiento::messages.general.descripcion_opcion') }}</small>
                                                 <p class="mb-0 text-dark f-14">{{ $descripcion }}</p>
                                             </div>
                                         </div>
@@ -92,7 +92,7 @@
                                 @endforeach
                             @else
                                 <div class="text-center text-muted p-5 bg-light rounded">
-                                    <i class="fa fa-info-circle fa-3x mb-3" style="opacity: 0.3;"></i>
+                                    <i class="fa fa-info-circle fa-3x mb-3 planes-negocio-opacity-03"></i>
                                     <p>{{ __('reda-alojamiento::messages.general.no_se_encontraron_opciones_de_tipos_de_negocios') }}</p>
                                 </div>
                             @endif

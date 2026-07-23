@@ -158,9 +158,27 @@
 
 .border-dashed { border-style: dashed !important; }
 
+.text-blue { color: #007bff !important; }
+.text-green { color: #28a745 !important; }
+.shadow-xs { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important; }
+
 .mt-85 { margin-top: 85px !important; }
 
 .reda-admin-menu-hidden { display: none; }
+
+/* Utilidades para modales genéricos */
+.reda-modal-custom {
+    &-confirmacion { z-index: 1070 !important; }
+    &-notificacion { z-index: 1060 !important; }
+    &-content {
+        border-radius: 15px !important;
+        border: none !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+    &-btn-pill {
+        border-radius: 20px !important;
+    }
+}
 
 /* Utilidades para íconos SVG */
 .reda-icon-svg-14 {
@@ -337,9 +355,11 @@
     &-bg-header-table {
         background-color: #f4f4f4;
     }
+    &-w-30 { width: 30%; }
     &-w-40 { width: 40%; }
     &-w-35 { width: 35%; }
     &-w-45 { width: 45%; }
+    &-w-50 { width: 50%; }
     &-w-20 { width: 20%; }
     &-w-20-center { width: 20%; text-align: center; }
     &-text-center { text-align: center; }

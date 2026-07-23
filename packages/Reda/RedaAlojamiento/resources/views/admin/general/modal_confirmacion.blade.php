@@ -1,7 +1,7 @@
 <!-- Modal para Confirmación de Acciones (Eliminar, etc) -->
-<div class="modal fade" id="modal-confirmacion" role="dialog" style="z-index: 1070;">
+<div class="modal fade reda-modal-custom-confirmacion" id="modal-confirmacion" role="dialog">
     <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 15px; border: none; shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <div class="modal-content reda-modal-custom-content">
             <div class="modal-header border-0 pb-0">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -13,10 +13,10 @@
                 <p id="confirmacion-mensaje" class="text-muted f-14 mb-0"></p>
             </div>
             <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
-                <button type="button" class="btn btn-default btn-flat px-4" style="border-radius: 20px;" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-default btn-flat px-4 reda-modal-custom-btn-pill" data-bs-dismiss="modal">
                     {{ __('reda-alojamiento::messages.general.cancelar') }}
                 </button>
-                <button type="button" id="btn-confirmar-si" class="btn btn-danger btn-flat px-4" style="border-radius: 20px;">
+                <button type="button" id="btn-confirmar-si" class="btn btn-danger btn-flat px-4 reda-modal-custom-btn-pill">
                     <span class="btn-text">{{ __('reda-alojamiento::messages.general.eliminar') }}</span>
                     <i class="fa fa-spinner fa-spin d-none"></i>
                 </button>
