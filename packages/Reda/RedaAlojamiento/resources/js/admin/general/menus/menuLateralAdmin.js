@@ -74,7 +74,7 @@ export const menuLateralAdmin = () =>
                 const $bookingsMenuItem = $('.sidebar-menu a[href*="admin/bookings"]').closest('li');
 
                 if ($bookingsMenuItem.length) {
-                    const linkMediaciones = `${baseUrl}/reda/disputas`;
+                    const linkMediaciones = `${baseUrl}/admin/reda/disputas`;
                     const labelMediaciones = window.RedaAlojamientoJson["Mediaciones"] || "Mediaciones";
 
                     const mediacionMenuHtml = `

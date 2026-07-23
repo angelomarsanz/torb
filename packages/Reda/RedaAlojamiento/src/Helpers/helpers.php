@@ -44,3 +44,19 @@ if (!function_exists('reda_currency_symbol_position')) {
         return !empty($position) ? $position : 'after';
     }
 }
+
+if (!function_exists('reda_get_inbox_unread_count')) {
+    /**
+     * Obtiene el conteo de mensajes no leídos de forma segura.
+     * @return int
+     */
+    function reda_get_inbox_unread_count()
+    {
+        if (!Auth::check()) {
+            return 0;
+        }
+        return DB::table(DB::raw("(SELECT * from messages where receiver_id=".Auth()->id()." and `read`=0 ORDER by id DESC) as msg"))
+            ->groupBy('booking_id')
+            ->get()->count();
+    }
+}
