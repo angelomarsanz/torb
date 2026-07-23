@@ -316,7 +316,7 @@ import {
             <div class="reservacion-detalle-sidebar">
                 <div class="d-flex align-items-center mb-3">
                     <div class="mr-3">
-                        <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb" style="width: 80px; height: 60px;">
+                        <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb reda-reservacion-thumb-size">
                     </div>
                     <div class="overflow-hidden">
                         <span class="text-muted text-10 d-block mb-1">${trans["ID Reservación"] || "ID Reservación"}: #${item.booking_id}</span>

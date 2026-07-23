@@ -586,5 +586,13 @@
     "Categoría actualizada correctamente": "Categoría actualizada correctamente",
     "Categoría eliminada correctamente": "Categoría eliminada correctamente",
     "La categoría no existe": "La categoría no existe",
-    "Configuración no encontrada": "Configuración no encontrada"
+    "Configuración no encontrada": "Configuración no encontrada",
+    "Aquí aparecerá información relevante sobre el estado general de las mediaciones.": "Aquí aparecerá información relevante sobre el estado general de las mediaciones.",
+    "Error al cargar el detalle.": "Error al cargar el detalle.",
+    "Llegada": "Llegada",
+    "Salida": "Salida",
+    "Huéspedes": "Huéspedes",
+    "Listado de mediaciones (Admin)": "Listado de mediaciones (Admin)",
+    "Carga de detalle": "Carga de detalle",
+    "Cargado con éxito": "Cargado con éxito"
 }

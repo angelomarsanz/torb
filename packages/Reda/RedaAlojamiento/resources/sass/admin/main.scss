@@ -517,6 +517,18 @@
     }
 }
 
+/* Estilos para el módulo de Mediaciones (Disputas) */
+.reda-admin-disputas {
+    .reda-reservacion-thumb-size {
+        width: 80px !important;
+        height: 60px !important;
+    }
+
+    .reda-propiedad-foto-max {
+        max-height: 200px;
+    }
+}
+
 /* Corrección para que el autocompletado de Google Places sea visible en modales */
 .pac-container {
     z-index: 110000000 !important;
