@@ -230,6 +230,9 @@
         .symbol-label {
             border-radius: 50%;
         }
+        img {
+            border-radius: 50%;
+        }
     }
 
     &.symbol-30px {
@@ -543,8 +546,8 @@
     }
 
     .reda-avatar-30 { width: 30px; height: 30px; object-fit: cover; }
-    .reda-status-badge-pos { bottom: -2px; right: -2px; }
-    .reda-status-badge-icon { width: 12px; height: 12px; border: 1px solid #ddd; }
+    .reda-status-badge-pos { bottom: -2px; right: -2px; z-index: 1; }
+    .reda-status-badge-icon { width: 16px; height: 16px; border: 1px solid #ddd; }
 
     /* Pestañas de Navegación */
     .reda-tabs-nav {

@@ -214,7 +214,7 @@ import {
             <div class="personas-relacionadas-block">
                 <div class="d-flex align-items-center mb-2">
                     <div class="symbol symbol-30px symbol-circle me-2">
-                        <img src="${item.anfitrion_foto}">
+                        <img src="${item.anfitrion_foto}" class="rounded-circle">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Anfitrión:"] || "Anfitrión:"}</span>
@@ -223,7 +223,7 @@ import {
                 </div>
                 <div class="d-flex align-items-center mb-2">
                     <div class="symbol symbol-30px symbol-circle me-2">
-                        <img src="${item.turista_foto}">
+                        <img src="${item.turista_foto}" class="rounded-circle">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Turista:"] || "Turista:"}</span>
@@ -232,7 +232,7 @@ import {
                 </div>
                 <div class="d-flex align-items-center mb-3">
                     <div class="symbol symbol-30px symbol-circle me-2 position-relative">
-                        <img src="${agenteFoto}" alt="Agente">
+                        <img src="${agenteFoto}" alt="Agente" class="rounded-circle">
                         <div class="position-absolute reda-status-badge-pos">
                             <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm reda-status-badge-icon">
                                 <i class="${agenteIcono} f-10 text-success"></i>

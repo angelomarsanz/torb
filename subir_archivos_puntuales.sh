@@ -104,7 +104,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_footer.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/views/admin/general/main_head.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/admin/general/main_head.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_confirmacion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/modal_notificaciones.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/admin/general/soporte_tecnico/index.blade.php"
