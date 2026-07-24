@@ -657,6 +657,7 @@ import {
         const data = await getMediacionesPaginadas(status, page);
 
         if (data.success) {
+            mediacionSeleccionadaId = null; // Reset selection state for new results
             mediacionesCargadas = data.respuesta.data;
             renderizarLista(mediacionesCargadas);
             if ($('#disputas-pagination-container').length) {
