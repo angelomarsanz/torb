@@ -80,6 +80,16 @@
         window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
         window.RedaAlojamientoJson = @json(__('reda-alojamiento::es'));
         window.RedaTrans = @json(__('reda-alojamiento::messages'));
+        @php
+            $adminId = Auth::guard('admin')->id();
+            $isFullAdmin = \DB::table('role_admin')
+                ->where('admin_id', $adminId)
+                ->where('role_id', 1)
+                ->exists();
+        @endphp
+        window.RedaAdminAccess = {
+            isFullAdmin: @json($isFullAdmin)
+        };
     </script>
     <script type="text/javascript" src="{{ asset('public/js/reda/admin/vistas/disputa/indexDisputas.min.js') }}?v={{ time() }}"></script>
 @endsection

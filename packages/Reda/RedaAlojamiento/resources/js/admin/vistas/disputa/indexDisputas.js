@@ -742,6 +742,12 @@ import {
         if ($(containerId).length) {
             inyectarPestanasEstatus();
 
+            // Ajustar título si no es super admin
+            if (window.RedaAdminAccess && !window.RedaAdminAccess.isFullAdmin) {
+                const trans = window.RedaAlojamientoJson || {};
+                $('.content-header h1').text(trans["Mis Mediaciones"] || "Mis Mediaciones");
+            }
+
             // Manejo de clicks en las pestañas
             $(document).on('click', '.disputa-tab-item', function() {
                 const item = $(this);

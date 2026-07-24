@@ -25,8 +25,28 @@ class DisputaController extends Controller
     public function obtenerDisputasPaginadas(Request $request)
     {
         $estatus = $request->get('status', 'todos');
+        
+        // Obtenemos el ID del administrador activo
+        $adminId = auth()->guard('admin')->id();
+        
+        // Verificación directa en BD para evitar problemas de caché o modelos sin PK
+        $isFullAdmin = false;
+        if ($adminId) {
+            $isFullAdmin = \DB::table('role_admin')
+                ->where('admin_id', $adminId)
+                ->where('role_id', 1)
+                ->exists();
+        }
 
         $consulta = Disputa::query();
+
+        // Si no es Super Admin (ID de rol 1), aplicamos filtro estricto
+        if (!$isFullAdmin) {
+            // IMPORTANTE: Si adminId es null por error de sesión, evitamos mostrar
+            // las disputas que tengan id_usuario_agente_asignado en NULL (que suelen ser las nuevas).
+            // Al usar '=' forzamos la comparación de valor numérico.
+            $consulta->where('id_usuario_agente_asignado', '=', $adminId ?? -1);
+        }
 
         if ($estatus !== 'todos') {
             // Mapeo de estados del frontend a los valores en la base de datos (traducidos)
@@ -131,6 +151,10 @@ class DisputaController extends Controller
         $respuesta = [
             'success' => true,
             'message' => __('Listado de mediaciones (Admin)'),
+            'debug' => [
+                'admin_id' => $adminId,
+                'is_full_admin' => $isFullAdmin
+            ],
             'mensaje_usuario' => __('Listado recuperado con éxito'),
             'respuesta' => [
                 'data' => $elementos,
@@ -147,7 +171,27 @@ class DisputaController extends Controller
      */
     public function getDetailModal($id)
     {
+        $adminId = auth()->guard('admin')->id();
+        $isFullAdmin = false;
+        if ($adminId) {
+            $isFullAdmin = \DB::table('role_admin')
+                ->where('admin_id', $adminId)
+                ->where('role_id', 1)
+                ->exists();
+        }
+
         $disputa = Disputa::findOrFail($id);
+
+        // Seguridad: Si no es admin total y no es el agente asignado, no puede ver el detalle
+        if (!$isFullAdmin && $disputa->id_usuario_agente_asignado != $adminId) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Acceso denegado'),
+                'mensaje_usuario' => __('No tiene permisos para ver el detalle de esta mediación.'),
+                'code' => 403
+            ], 403);
+        }
+
         // Usamos la vista específica para admin adaptada a Bootstrap 5
         $html = view('reda-alojamiento::admin.disputa.modal_detalle', compact('disputa'))->render();
         
