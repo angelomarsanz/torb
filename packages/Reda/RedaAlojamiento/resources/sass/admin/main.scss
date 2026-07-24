@@ -131,14 +131,16 @@
 }
 
 /* Utilidades adicionales para el admin */
-.f-10 { font-size: 10px !important; }
-.f-12 { font-size: 12px !important; }
-.f-14 { font-size: 14px !important; }
-.f-15 { font-size: 15px !important; }
-.f-16 { font-size: 16px !important; }
-.f-18 { font-size: 18px !important; }
-.f-20 { font-size: 20px !important; }
-.f-24 { font-size: 24px !important; }
+.f-10, .text-10 { font-size: 10px !important; }
+.f-11, .text-11 { font-size: 11px !important; }
+.f-12, .text-12 { font-size: 12px !important; }
+.f-13, .text-13 { font-size: 13px !important; }
+.f-14, .text-14 { font-size: 14px !important; }
+.f-15, .text-15 { font-size: 15px !important; }
+.f-16, .text-16 { font-size: 16px !important; }
+.f-18, .text-18 { font-size: 18px !important; }
+.f-20, .text-20 { font-size: 20px !important; }
+.f-24, .text-24 { font-size: 24px !important; }
 
 .fw-500 { font-weight: 500 !important; }
 .fw-600 { font-weight: 600 !important; }
@@ -149,6 +151,8 @@
 .fs-9 { font-size: 0.75rem !important; }
 
 .italic { font-style: italic !important; }
+
+.leading-tight { line-height: 1.25 !important; }
 
 .opacity-05 { opacity: 0.5 !important; }
 
@@ -541,6 +545,159 @@
     .reda-avatar-30 { width: 30px; height: 30px; object-fit: cover; }
     .reda-status-badge-pos { bottom: -2px; right: -2px; }
     .reda-status-badge-icon { width: 12px; height: 12px; border: 1px solid #ddd; }
+
+    /* Pestañas de Navegación */
+    .reda-tabs-nav {
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 1.5rem;
+        
+        .disputa-tab-item {
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            opacity: 0.6;
+            
+            &.active {
+                opacity: 1;
+                border-bottom-color: #1dbf73;
+                color: #1dbf73;
+                
+                .status-icon svg {
+                    color: #1dbf73;
+                    transform: scale(1.1);
+                }
+            }
+            
+            &:hover:not(.active) {
+                opacity: 0.8;
+                background-color: #f8f9fa;
+            }
+
+            .status-icon svg {
+                width: 24px;
+                height: 24px;
+                transition: transform 0.2s ease;
+            }
+        }
+    }
+
+    /* Card Mediación */
+    .card-mediacion {
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0 !important;
+
+        &.shadow-sm-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+            border-color: #1dbf73 !important;
+        }
+
+        &.active-mediacion {
+            border: 2px solid #1dbf73 !important;
+            box-shadow: 0 0 15px rgba(29, 191, 115, 0.2);
+            z-index: 5;
+        }
+    }
+
+    /* Línea de tiempo (Timeline) */
+    .reda-timeline-carousel {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px 0;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        &::-webkit-scrollbar { display: none; }
+    }
+
+    .timeline-item {
+        min-width: 120px;
+        text-align: center;
+        position: relative;
+        padding: 0 5px;
+        flex-shrink: 0;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        &:last-child::after { display: none; }
+
+        .timeline-icon {
+            width: 24px;
+            height: 24px;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            font-size: 10px;
+            color: #adb5bd;
+        }
+
+        &.active {
+            .timeline-icon {
+                border-color: #1dbf73;
+                background: #1dbf73;
+                color: #fff;
+                box-shadow: 0 0 10px rgba(29, 191, 115, 0.4);
+            }
+            .timeline-text {
+                color: #1dbf73;
+                font-weight: 700;
+            }
+        }
+
+        &.completed {
+            .timeline-icon {
+                border-color: #1dbf73;
+                background: #e8f5e9;
+                color: #1dbf73;
+            }
+            &::after { background: #1dbf73; }
+        }
+
+        .timeline-text {
+            font-size: 10px;
+            line-height: 1.2;
+            font-weight: 600;
+            color: #6c757d;
+            display: block;
+            word-wrap: break-word;
+        }
+    }
+
+    .timeline-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+        &:hover { background: #f8f9fa; color: #1dbf73; }
+    }
+
+    .timeline-nav-left { left: 5px; }
+    .timeline-nav-right { right: 5px; }
 }
 
 /* Corrección para que el autocompletado de Google Places sea visible en modales */

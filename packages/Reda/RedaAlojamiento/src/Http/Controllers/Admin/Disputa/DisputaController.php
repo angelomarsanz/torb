@@ -134,7 +134,7 @@ class DisputaController extends Controller
             'mensaje_usuario' => __('Listado recuperado con éxito'),
             'respuesta' => [
                 'data' => $elementos,
-                'pagination' => (string) $disputas->appends(request()->except('page'))->links('reda-alojamiento::general.paginacion')
+                'pagination' => (string) $disputas->appends(request()->except('page'))->links('reda-alojamiento::admin.general.paginacion')
             ],
             'code' => 200
         ];
