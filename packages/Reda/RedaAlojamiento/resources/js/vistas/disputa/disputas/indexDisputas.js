@@ -1,10 +1,10 @@
-import { 
-    todosSvg, 
-    abiertosSvg, 
-    enRevisionSvg, 
-    esperandoRespuestaSvg, 
-    resueltosSvg, 
-    cerradosSvg 
+import {
+    todosSvg,
+    abiertosSvg,
+    enRevisionSvg,
+    esperandoRespuestaSvg,
+    resueltosSvg,
+    cerradosSvg
 } from '../../../general/iconos';
 
 (function($) {
@@ -100,7 +100,7 @@ import {
         ];
 
         let html = `<div class="d-flex flex-wrap border-bottom pb-2 reda-tabs-nav">`;
-        
+
         estatus.forEach((e, index) => {
             const isActive = index === 0 ? 'active' : '';
             html += `
@@ -135,7 +135,7 @@ import {
         ];
 
         const currentIndex = pasos.findIndex(p => p.nombre === pasoActual);
-        
+
         let html = '';
         pasos.forEach((p, index) => {
             let statusClass = '';
@@ -292,7 +292,7 @@ import {
                 </div>
                 <h5 class="font-weight-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
                 <div class="text-right mt-1">
-                    <span class="text-success pointer font-weight-700 text-11 btn-toggle-motivo d-none" 
+                    <span class="text-success pointer font-weight-700 text-11 btn-toggle-motivo d-none"
                           id="btn-toggle-motivo-${item.id}" data-id="${item.id}" data-state="less">
                         ${trans["Más..."] || "Más..."}
                     </span>
@@ -330,7 +330,7 @@ import {
                         <p class="text-11 text-muted mb-0 text-truncate"><i class="fas fa-map-marker-alt mr-1"></i>${item.propiedad_ubicacion}</p>
                     </div>
                 </div>
-                
+
                 <div class="row no-gutters border-top pt-3">
                     <div class="col-6 border-right pr-2">
                         <span class="text-muted text-10 d-block text-uppercase letter-spacing-1">${trans["Llegada"] || "Llegada"}</span>
@@ -341,7 +341,7 @@ import {
                         <span class="text-12 font-weight-600 text-dark">${item.booking_end_date}</span>
                     </div>
                 </div>
-                
+
                 <div class="mt-3 pt-2 border-top">
                     <div class="d-flex justify-content-between">
                         <span class="text-muted text-11">${trans["Huéspedes"] || "Huéspedes"}</span>
@@ -351,7 +351,7 @@ import {
             </div>
         `;
         container.html(html);
-        
+
         // Mostrar el card si estaba oculto
         if (containerSelector === '#disputas-reservacion-content') {
             $('#disputas-reservacion-sidebar').removeClass('d-none');
@@ -393,7 +393,7 @@ import {
                             <span class="text-muted small">${item.actualizado_hace}</span>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
                         <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
@@ -449,7 +449,7 @@ import {
      */
     const inicializarObservadorEnfoque = () => {
         if (window.innerWidth >= 768) return;
-        
+
         if (observadorEnfoque) {
             observadorEnfoque.disconnect();
         }
@@ -481,7 +481,7 @@ import {
      */
     const seleccionarMediacion = (id, conScroll = false) => {
         if (mediacionSeleccionadaId == id && !conScroll) return;
-        
+
         mediacionSeleccionadaId = id;
         const item = mediacionesCargadas.find(m => m.id == id);
         if (!item) return;
@@ -499,16 +499,16 @@ import {
 
         // 3. Preparar UI Móvil (Tab de Ver Detalle)
         const trans = window.RedaAlojamientoJson || {};
-        
+
         // Limpiar estados previos en móvil
         $('.mobile-detail-toggle').addClass('d-none');
         $('.mobile-detail-content').addClass('d-none');
-        
+
         // Mostrar el toggle de la activa
         const currentToggleWrapper = $(`#mobile-detail-${id}`);
         const currentToggle = currentToggleWrapper.find('.mobile-detail-toggle');
         currentToggle.removeClass('d-none');
-        
+
         // Si estamos en móvil (ancho menor a 768px), expandir automáticamente
         if (window.innerWidth < 768) {
             const content = currentToggleWrapper.find('.mobile-detail-content');
@@ -575,8 +575,8 @@ import {
                             <div class="row m-0">
                                 <div class="col-md-4 p-0">
                                     <div class="img-container h-100 bg-light d-flex align-items-center justify-content-center border-right">
-                                        <img src="${item.propiedad_foto}" 
-                                             class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150 reda-propiedad-foto-max" 
+                                        <img src="${item.propiedad_foto}"
+                                             class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150 reda-propiedad-foto-max"
                                              alt="Propiedad">
                                     </div>
                                 </div>
@@ -587,8 +587,11 @@ import {
                                         <span class="text-muted small ml-2 font-weight-700">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 font-weight-700 text-color mb-1 reda-motivo-clamped" title="${item.motivo}">${item.motivo}</h5>
-                                    
+                                    <h5 class="text-18 font-weight-700 text-color mb-1 reda-motivo-clamped motivo-lista-expandible"
+                                        title="${item.motivo}">
+                                        ${item.motivo}
+                                    </h5>
+
                                     ${item.prioridad ? `
                                         <div class="text-muted small mb-1">
                                             <i class="fas fa-exclamation-circle mr-1"></i> ${trans["Prioridad"] || "Prioridad"}: ${prioridadHtml}
@@ -718,6 +721,7 @@ import {
 
     $(function() {
         if ($(containerId).length) {
+            console.log('Se está ejecutando indexDisputas.js en el frontend');
             inyectarPestanasEstatus();
 
             // Manejo de clicks en las pestañas
@@ -734,8 +738,19 @@ import {
 
             // Manejo de clics en los items de la lista para seleccionar
             $(document).on('click', '.card-mediacion', function(e) {
+                // Si el clic fue en el motivo expandible, no procesamos la selección de la tarjeta
+                if ($(e.target).closest('.motivo-lista-expandible').length) {
+                    return;
+                }
                 const id = $(this).attr('data-id');
                 seleccionarMediacion(id, true); // Scroll activado al tocar manualmente
+            });
+
+            // Manejo de toggle para el motivo en el listado (especialmente para móvil)
+            $(document).on('click', '.motivo-lista-expandible', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).toggleClass('expanded');
             });
 
             // Manejo de clics en el toggle de detalle móvil

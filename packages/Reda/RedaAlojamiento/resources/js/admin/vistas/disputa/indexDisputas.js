@@ -552,6 +552,19 @@ import {
     };
 
     /**
+     * Trunca un texto al límite de caracteres indicado sin cortar palabras.
+     */
+    const truncarMotivo = (texto, limite = 65) => {
+        if (!texto || texto.length <= limite) return texto;
+        let truncado = texto.substring(0, limite);
+        const ultimoEspacio = truncado.lastIndexOf(' ');
+        if (ultimoEspacio > 0) {
+            truncado = truncado.substring(0, ultimoEspacio);
+        }
+        return truncado + '...';
+    };
+
+    /**
      * Renderiza el listado de mediaciones con el diseño de tres columnas optimizado.
      */
     const renderizarLista = (items) => {
@@ -603,7 +616,10 @@ import {
                                         <span class="text-muted small ms-2 fw-700">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 fw-700 text-color mb-1 reda-motivo-clamped" title="${item.motivo}">${item.motivo}</h5>
+                                    <h5 class="text-18 fw-700 text-color mb-1 reda-motivo-clamped motivo-lista-expandible" 
+                                        title="${item.motivo}">
+                                        ${item.motivo}
+                                    </h5>
 
                                     ${item.prioridad ? `
                                         <div class="text-muted small mb-1">
@@ -762,8 +778,19 @@ import {
 
             // Manejo de clics en los items de la lista para seleccionar
             $(document).on('click', '.card-mediacion', function(e) {
+                // Si el clic fue en el motivo expandible, no procesamos la selección de la tarjeta
+                if ($(e.target).closest('.motivo-lista-expandible').length) {
+                    return;
+                }
                 const id = $(this).attr('data-id');
                 seleccionarMediacion(id, true); // Scroll activado al tocar manualmente
+            });
+
+            // Manejo de toggle para el motivo en el listado (especialmente para móvil)
+            $(document).on('click', '.motivo-lista-expandible', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).toggleClass('expanded');
             });
 
             // Manejo de clics en el toggle de detalle móvil

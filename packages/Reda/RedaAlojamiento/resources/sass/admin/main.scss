@@ -601,6 +601,22 @@
         }
     }
 
+    .reda-motivo-clamped {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer; /* Indicar que es cliqueable */
+        
+        &.expanded {
+            -webkit-line-clamp: unset !important;
+            display: block !important;
+            overflow: visible !important;
+            white-space: normal !important;
+        }
+    }
+
     /* Línea de tiempo (Timeline) */
     .reda-timeline-carousel {
         display: flex;

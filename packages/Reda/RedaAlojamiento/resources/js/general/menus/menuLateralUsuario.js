@@ -345,7 +345,7 @@ export const menuLateralUsuario = () =>
                 const linkFavoritosMobile = $(containerMobile).find('a[href*="/user/favourite"]').parent('li');
                 if (linkFavoritosMobile.length) {
                     linkFavoritosMobile.after(reviewsCollapseMobile);
-                    linkFavoritosMobile.after(reviewsToggleSidebar);
+                    linkFavoritosMobile.after(reviewsToggleMobile);
                 }
             }
         }
@@ -390,43 +390,6 @@ export const menuLateralUsuario = () =>
                 dashboardRow.append(cardNegociosHtml);
             }
         }
-
-        // --- GESTIÓN MANUAL DE ESTADO ACTIVO (MÓVIL) ---
-        // Deshabilitado por requerimiento: Se busca que el menú inicie "frío" (todo verde normal y colapsado)
-        /*
-        const gestionarActivoMovil = () => {
-            const path = window.location.pathname;
-            $('.mobile-side a').each(function() {
-                const href = $(this).attr('href');
-                if (!href || href === '#' || href === 'javascript:void(0)') return;
-
-                // Normalizar href para comparación (quitar dominio si existe)
-                const urlObj = new URL(href, window.location.origin);
-                const linkPath = urlObj.pathname;
-
-                // Coincidencia exacta o parcial (para rutas con parámetros)
-                const isMatch = (path === linkPath) || (path.startsWith(linkPath) && linkPath !== '/');
-
-                if (isMatch) {
-                    $(this).addClass('active reda-active-option');
-                    $(this).closest('li').addClass('active reda-active-option');
-                    
-                    // Si está dentro de un colapsable, abrirlo y marcar el padre
-                    const parentCollapse = $(this).closest('.collapse');
-                    if (parentCollapse.length) {
-                        parentCollapse.addClass('show');
-                        const toggle = parentCollapse.prev('.reda-sub-menu-toggle, [data-toggle="collapse"]');
-                        toggle.addClass('active reda-active-option');
-                        toggle.find('.reda-sub-menu-arrow').removeClass('fa-angle-right').addClass('fa-angle-down');
-                    }
-                }
-            });
-        };
-
-        // Ejecutar al cargar y cuando se abre el modal por si acaso
-        gestionarActivoMovil();
-        $(document).on('shown.bs.modal', '#left_modal', gestionarActivoMovil);
-        */
 
     })(jQuery);
 }
