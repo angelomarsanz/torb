@@ -100,7 +100,7 @@
                 padding: 5px 10px;
                 font-size: 13px;
                 box-shadow: none !important;
-                
+
                 &:hover {
                     background-color: #f1faff;
                     color: #00a1ff;
@@ -553,23 +553,23 @@
     .reda-tabs-nav {
         border-bottom: 1px solid #e0e0e0;
         margin-bottom: 1.5rem;
-        
+
         .disputa-tab-item {
             border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
             opacity: 0.6;
-            
+
             &.active {
                 opacity: 1;
                 border-bottom-color: #1dbf73;
                 color: #1dbf73;
-                
+
                 .status-icon svg {
                     color: #1dbf73;
                     transform: scale(1.1);
                 }
             }
-            
+
             &:hover:not(.active) {
                 opacity: 0.8;
                 background-color: #f8f9fa;
@@ -605,14 +605,15 @@
     .reda-timeline-carousel {
         display: flex;
         overflow-x: auto;
-        padding: 10px 0;
+        padding: 15px 0 30px 0; /* Altura reducida */
+        min-height: 95px; /* Altura mínima ajustada */
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
         &::-webkit-scrollbar { display: none; }
     }
 
     .timeline-item {
-        min-width: 120px;
+        min-width: 140px; /* Un poco más de ancho para evitar saltos de línea excesivos */
         text-align: center;
         position: relative;
         padding: 0 5px;
@@ -677,15 +678,16 @@
             color: #6c757d;
             display: block;
             word-wrap: break-word;
+            padding: 0 5px;
         }
     }
 
     .timeline-nav-btn {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 30px;
-        height: 30px;
+        top: 100%;
+        transform: translateY(-80%); /* Subidos para quedar mejor integrados */
+        width: 32px;
+        height: 32px;
         background: #fff;
         border: 1px solid #e0e0e0;
         border-radius: 50%;
@@ -696,7 +698,12 @@
         z-index: 10;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         transition: all 0.2s ease;
-        &:hover { background: #f8f9fa; color: #1dbf73; }
+        &:hover { 
+            background: #1dbf73; 
+            color: #fff; 
+            border-color: #1dbf73;
+            box-shadow: 0 4px 8px rgba(29, 191, 115, 0.3);
+        }
     }
 
     .timeline-nav-left { left: 5px; }
@@ -707,3 +714,4 @@
 .pac-container {
     z-index: 110000000 !important;
 }
+
