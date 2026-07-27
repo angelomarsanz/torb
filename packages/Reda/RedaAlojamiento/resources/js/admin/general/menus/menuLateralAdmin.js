@@ -126,6 +126,12 @@ export const menuLateralAdmin = () =>
                         }
                     });
                 }
+
+                // 4. Corrección de compatibilidad FontAwesome (FA4 a FA5/6) para iconos del sistema original
+                $('.sidebar-menu i.fa-paypal').removeClass('fa').addClass('fab');
+                $('.sidebar-menu i.fa-newspaper-o').removeClass('fa fa-newspaper-o').addClass('far fa-newspaper');
+                $('.sidebar-menu i.fa-bar-chart-o').removeClass('fa fa-bar-chart-o').addClass('far fa-chart-bar');
+                $('.sidebar-menu i.fa-trash-o').removeClass('fa fa-trash-o').addClass('far fa-trash-alt');
             });
         }
     })(jQuery);
