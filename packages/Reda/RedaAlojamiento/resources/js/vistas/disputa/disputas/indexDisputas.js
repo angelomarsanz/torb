@@ -370,11 +370,12 @@ import {
 
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                        <div class="text-13 text-muted p-3 bg-light rounded reda-mediation-desc-clamped motivo-lista-expandible cursor-pointer" id="desc-container-${item.id}">
-                            ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
+                        <div class="bg-light rounded motivo-lista-expandible cursor-pointer p-3" id="desc-container-${item.id}">
+                            <div class="text-13 text-muted reda-mediation-desc-clamped">
+                                ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
+                            </div>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <h6 class="text-12 font-weight-700 mb-2 text-muted text-uppercase letter-spacing-1">${trans["Archivos adjuntos"] || "Archivos adjuntos"}</h6>
                         <div class="adjuntos-container">

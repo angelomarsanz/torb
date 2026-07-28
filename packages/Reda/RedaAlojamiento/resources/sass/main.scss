@@ -3226,15 +3226,6 @@
     &:hover { transform: scale(1.1); }
 }
 
-.reda-mediation-desc-clamped {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    &.expanded { -webkit-line-clamp: unset; }
-}
-
 .detalles-extra-collapsible {
     animation: fadeIn 0.3s ease-out;
 }
@@ -3287,20 +3278,31 @@
 .reda-propiedad-foto-max { max-height: 200px; }
 .reda-img-empty-state { max-width: 150px; }
 .reda-motivo-clamped, .reda-mediation-desc-clamped {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
     cursor: pointer;
     font-weight: 500 !important;
     color: #484848 !important;
+    line-height: 1.5 !important;
+    max-height: 3em !important; /* Estrictamente 2 líneas (1.5 * 2) */
     
     &.expanded {
         -webkit-line-clamp: unset !important;
         display: block !important;
+        max-height: none !important;
         overflow: visible !important;
         white-space: normal !important;
+    }
+}
+
+.reda-mediation-desc-clamped {
+    min-height: 3em; /* Asegura que el cuadro gris tenga al menos 2 líneas de alto */
+    
+    &.expanded {
+        min-height: 0; 
     }
 }
 

@@ -627,23 +627,32 @@
         -webkit-line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
         overflow: hidden !important;
+        text-overflow: ellipsis !important;
         cursor: pointer;
         line-height: 1.5 !important;
-        max-height: 3em !important; /* Estrictamente 2 líneas (1.5 * 2) */
         
         &.expanded {
             display: block !important;
             max-height: none !important;
             overflow: visible !important;
             -webkit-line-clamp: unset !important;
+            white-space: normal !important;
         }
     }
 
+    .reda-motivo-clamped {
+        max-height: 3em !important; /* Estrictamente 2 líneas (1.5 * 2) */
+    }
+
     .reda-mediation-desc-clamped {
-        min-height: 4.5em; /* Espacio extra hacia abajo solo para la descripción */
+        /* La descripción ahora está dentro de un div con padding.
+           Sincronizamos max-height y min-height para 2 líneas exactas. */
+        max-height: 3em !important; 
+        min-height: 3em; 
         
         &.expanded {
             min-height: 0; 
+            max-height: none !important;
         }
     }
 
