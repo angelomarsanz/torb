@@ -289,7 +289,7 @@ import {
                     <span class="badge ${badgeClass} fw-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
                     <span class="text-muted fw-600 text-14">ID: #${item.id}</span>
                 </div>
-                <h5 class="fw-600 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <h5 class="fw-600 text-dark text-20 mb-0 reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
             </div>
         `;
         container.html(html);
@@ -386,7 +386,7 @@ import {
 
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                        <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped motivo-lista-expandible cursor-pointer" id="desc-container-${item.id}">
+                        <div class="text-13 text-muted p-3 bg-light rounded reda-mediation-desc-clamped motivo-lista-expandible cursor-pointer" id="desc-container-${item.id}">
                             ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
                         </div>
                     </div>
@@ -816,5 +816,4 @@ import {
             cargarMediaciones('todos');
         }
     });
-
 })(jQuery);

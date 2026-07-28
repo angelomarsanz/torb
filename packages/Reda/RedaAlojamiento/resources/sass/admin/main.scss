@@ -602,18 +602,27 @@
     }
 
     .reda-motivo-clamped, .reda-mediation-desc-clamped {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        cursor: pointer; /* Indicar que es cliqueable */
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        cursor: pointer;
+        line-height: 1.5 !important;
+        max-height: 3em !important; /* Estrictamente 2 líneas (1.5 * 2) */
         
         &.expanded {
-            -webkit-line-clamp: unset !important;
             display: block !important;
+            max-height: none !important;
             overflow: visible !important;
-            white-space: normal !important;
+            -webkit-line-clamp: unset !important;
+        }
+    }
+
+    .reda-mediation-desc-clamped {
+        min-height: 4.5em; /* Espacio extra hacia abajo solo para la descripción */
+        
+        &.expanded {
+            min-height: 0; 
         }
     }
 
@@ -730,4 +739,3 @@
 .pac-container {
     z-index: 110000000 !important;
 }
-
