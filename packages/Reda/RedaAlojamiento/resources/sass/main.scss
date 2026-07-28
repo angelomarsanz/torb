@@ -3155,7 +3155,7 @@
         }
         .timeline-text {
             color: #28a745;
-            font-weight: 700;
+            font-weight: 600;
         }
     }
 
@@ -3293,6 +3293,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
+    font-weight: 500 !important;
+    color: #484848 !important;
     
     &.expanded {
         -webkit-line-clamp: unset !important;

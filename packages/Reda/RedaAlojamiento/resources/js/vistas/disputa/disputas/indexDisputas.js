@@ -223,7 +223,7 @@ import {
                 </div>
 
                 <div class="mt-2 d-flex justify-content-center">
-                    <a href="${APP_URL}/inbox?id=${item.booking_id}" class="btn btn-sm btn-outline-success font-weight-700 text-11 px-3 py-1 reda-btn-pill-small">
+                    <a href="${APP_URL}/inbox?id=${item.booking_id}" class="btn btn-sm btn-outline-success font-weight-600 text-11 px-3 py-1 reda-btn-pill-small">
                         <i class="far fa-comments mr-1"></i>
                         ${trans["Ver conversación"] || "Ver conversación"}
                     </a>
@@ -270,10 +270,10 @@ import {
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge ${badgeClass} font-weight-700 py-2 px-3 text-12 shadow-sm">${statusText}</span>
-                    <span class="text-muted font-weight-700 text-14">ID: #${item.id}</span>
+                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
+                    <span class="text-muted font-weight-600 text-14">ID: #${item.id}</span>
                 </div>
-                <h5 class="font-weight-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <h5 class="font-weight-500 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
             </div>
         `;
         container.html(html);
@@ -545,10 +545,10 @@ import {
                                 <div class="col-md-4 p-4 border-right">
                                     <div class="mb-2">
                                         <span class="badge ${badgeClass}">${statusText}</span>
-                                        <span class="text-muted small ml-2 font-weight-700">ID: #${item.id}</span>
+                                        <span class="text-muted small ml-2 font-weight-600">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 font-weight-700 text-color mb-1 reda-motivo-clamped motivo-lista-expandible"
+                                    <h5 class="text-18 font-weight-500 text-color mb-1 reda-motivo-clamped motivo-lista-expandible"
                                         title="${item.motivo}">
                                         ${item.motivo}
                                     </h5>
@@ -591,11 +591,11 @@ import {
                                 <div class="reda-timeline-carousel mobile-timeline-container"></div>
                             </div>
                             <div class="mobile-reservacion-wrapper mb-4">
-                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
+                                <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
                                 <div class="mobile-reservacion-container"></div>
                             </div>
                             <div class="mobile-resumen-wrapper mb-3">
-                                <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
                                 <div class="mobile-resumen-container"></div>
                             </div>
                         </div>

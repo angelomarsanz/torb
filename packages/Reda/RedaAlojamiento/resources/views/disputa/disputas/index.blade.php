@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-md-12 p-0 mb-3">
                             <div class="list-bacground mt-4 rounded-3 p-4 border">
-                                <span class="text-18 pt-4 pb-4 font-weight-700">{{ __('Mediaciones') }}</span>
+                                <span class="text-18 pt-4 pb-4 font-weight-500">{{ __('Mediaciones') }}</span>
                             </div>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
 
                                 {{-- Bloque NUEVO: Información de la Reservación --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4 d-none" id="disputas-reservacion-sidebar">
-                                    <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">{{ __('Reservación') }}</h6>
+                                    <h6 class="font-weight-500 mb-3 text-14 border-bottom pb-2">{{ __('Reservación') }}</h6>
                                     <div id="disputas-reservacion-content">
                                         {{-- Se inyecta vía JS --}}
                                     </div>
@@ -72,7 +72,7 @@
 
                                 {{-- Bloque 3: Detalle Colapsable --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4">
-                                    <h6 class="font-weight-700 mb-3 text-14 border-bottom pb-2">{{ __('Detalle') }}</h6>
+                                    <h6 class="font-weight-500 mb-3 text-14 border-bottom pb-2">{{ __('Detalle') }}</h6>
                                     <div id="disputas-info-extra-content">
                                         <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de tus mediaciones.') }}</p>
                                     </div>
