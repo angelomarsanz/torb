@@ -739,6 +739,15 @@ import {
                 e.preventDefault();
                 e.stopPropagation();
                 $(this).toggleClass('expanded');
+
+                // Si el elemento está dentro de una tarjeta del listado, actualizamos la selección
+                const card = $(this).closest('.card-mediacion');
+                if (card.length) {
+                    const id = card.attr('data-id');
+                    if (id) {
+                        seleccionarMediacion(id, false); // false para no forzar scroll y permitir lectura fluida
+                    }
+                }
             });
 
             // Manejo de clics en el toggle de detalle móvil

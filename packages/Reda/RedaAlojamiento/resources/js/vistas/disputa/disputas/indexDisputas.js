@@ -258,23 +258,6 @@ import {
     };
 
     /**
-     * Funcion auxiliar para detectar si un texto necesita el boton "Mas..."
-     */
-    const chequearTruncadoTexto = (selectorBox, selectorBtn) => {
-        setTimeout(() => {
-            const box = document.querySelector(selectorBox);
-            const btn = document.querySelector(selectorBtn);
-            if (box && btn) {
-                if (box.scrollHeight > box.clientHeight + 2) {
-                    btn.classList.remove('d-none');
-                } else {
-                    btn.classList.add('d-none');
-                }
-            }
-        }, 50);
-    };
-
-    /**
      * Renderiza la cabecera informativa de la mediación (Estatus, ID, Motivo).
      */
     const renderizarCabeceraMediacion = (item, containerSelector) => {
@@ -290,19 +273,10 @@ import {
                     <span class="badge ${badgeClass} font-weight-700 py-2 px-3 text-12 shadow-sm">${statusText}</span>
                     <span class="text-muted font-weight-700 text-14">ID: #${item.id}</span>
                 </div>
-                <h5 class="font-weight-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
-                <div class="text-right mt-1">
-                    <span class="text-success pointer font-weight-700 text-11 btn-toggle-motivo d-none"
-                          id="btn-toggle-motivo-${item.id}" data-id="${item.id}" data-state="less">
-                        ${trans["Más..."] || "Más..."}
-                    </span>
-                </div>
+                <h5 class="font-weight-700 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
             </div>
         `;
         container.html(html);
-
-        // Chequear truncado del motivo (si es muy largo)
-        chequearTruncadoTexto(`#motivo-container-${item.id}`, `#btn-toggle-motivo-${item.id}`);
 
         // Mostrar el card contenedor si estaba oculto
         if (containerSelector === '#disputas-header-content') {
@@ -322,7 +296,7 @@ import {
             <div class="reservacion-detalle-sidebar">
                 <div class="d-flex align-items-center mb-3">
                     <div class="mr-3">
-                        <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb" style="width: 80px; height: 60px;">
+                        <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb reda-reservacion-thumb-size">
                     </div>
                     <div class="overflow-hidden">
                         <span class="text-muted text-10 d-block mb-1">${trans["ID Reservación"] || "ID Reservación"}: #${item.booking_id}</span>
@@ -396,13 +370,8 @@ import {
 
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                        <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped" id="desc-container-${item.id}">
+                        <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped motivo-lista-expandible cursor-pointer" id="desc-container-${item.id}">
                             ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
-                        </div>
-                        <div class="text-right mt-1">
-                            <span class="text-success pointer font-weight-700 text-11 btn-toggle-desc-larga d-none" id="btn-toggle-desc-${item.id}" data-id="${item.id}" data-state="less">
-                                ${trans["Más..."] || "Más..."}
-                            </span>
                         </div>
                     </div>
 
@@ -421,27 +390,6 @@ import {
             </div>
         `;
         container.html(html);
-
-        // Re-chequear truncado de descripción inmediatamente al renderizar
-        setTimeout(() => chequearTruncadoDescripcion(item.id), 50);
-    };
-
-    /**
-     * Funcion auxiliar para detectar si la descripcion necesita el boton "Mas..."
-     */
-    const chequearTruncadoDescripcion = (id) => {
-        setTimeout(() => {
-            const descBox = document.getElementById(`desc-container-${id}`);
-            const btn = document.getElementById(`btn-toggle-desc-${id}`);
-            if (descBox && btn) {
-                // Si la altura del contenido es mayor a la altura visible (clamped), mostramos el botón
-                if (descBox.scrollHeight > descBox.clientHeight + 2) { // +2 por seguridad de bordes/paddings
-                    btn.classList.remove('d-none');
-                } else {
-                    btn.classList.add('d-none');
-                }
-            }
-        }, 50);
     };
 
     /**
@@ -533,6 +481,19 @@ import {
                 }
             }
         }
+    };
+
+    /**
+     * Trunca un texto al límite de caracteres indicado sin cortar palabras.
+     */
+    const truncarMotivo = (texto, limite = 65) => {
+        if (!texto || texto.length <= limite) return texto;
+        let truncado = texto.substring(0, limite);
+        const ultimoEspacio = truncado.lastIndexOf(' ');
+        if (ultimoEspacio > 0) {
+            truncado = truncado.substring(0, ultimoEspacio);
+        }
+        return truncado + '...';
     };
 
     /**
@@ -751,6 +712,15 @@ import {
                 e.preventDefault();
                 e.stopPropagation();
                 $(this).toggleClass('expanded');
+
+                // Si el elemento está dentro de una tarjeta del listado, actualizamos la selección
+                const card = $(this).closest('.card-mediacion');
+                if (card.length) {
+                    const id = card.attr('data-id');
+                    if (id) {
+                        seleccionarMediacion(id, false); // false para no forzar scroll y permitir lectura fluida
+                    }
+                }
             });
 
             // Manejo de clics en el toggle de detalle móvil
@@ -781,40 +751,6 @@ import {
                     content.addClass('d-none');
                     icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
                     text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
-                }
-            });
-
-            // Manejo de toggle para el motivo
-            $(document).on('click', '.btn-toggle-motivo', function(e) {
-                e.stopPropagation();
-                const id = $(this).attr('data-id');
-                const state = $(this).attr('data-state');
-                const target = $(`#motivo-container-${id}`);
-                const trans = window.RedaAlojamientoJson || {};
-
-                if (state === 'less') {
-                    target.addClass('expanded');
-                    $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
-                } else {
-                    target.removeClass('expanded');
-                    $(this).text(trans["Más..."] || "Más...").attr('data-state', 'less');
-                }
-            });
-
-            // Manejo de toggle para descripción larga
-            $(document).on('click', '.btn-toggle-desc-larga', function(e) {
-                e.stopPropagation();
-                const id = $(this).attr('data-id');
-                const state = $(this).attr('data-state');
-                const target = $(`#desc-container-${id}`);
-                const trans = window.RedaAlojamientoJson || {};
-
-                if (state === 'less') {
-                    target.addClass('expanded');
-                    $(this).text(trans["...Menos"] || "...Menos").attr('data-state', 'more');
-                } else {
-                    target.removeClass('expanded');
-                    $(this).text(trans["Más..."] || "Más...").attr('data-state', 'less');
                 }
             });
 
