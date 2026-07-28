@@ -464,37 +464,28 @@ import {
         // 3. Preparar UI Móvil (Tab de Ver Detalle)
         const trans = window.RedaAlojamientoJson || {};
 
-        // Limpiar estados previos en móvil
+        // Limpiar estados previos en móvil: ocultamos todos los toggles y contenidos
         $('.mobile-detail-toggle').addClass('d-none');
         $('.mobile-detail-content').addClass('d-none');
 
-        // Mostrar el toggle de la activa
+        // Mostrar solo el toggle de la mediación activa
         const currentToggleWrapper = $(`#mobile-detail-${id}`);
         const currentToggle = currentToggleWrapper.find('.mobile-detail-toggle');
         currentToggle.removeClass('d-none');
 
-        // Si estamos en móvil (ancho menor a 768px), expandir automáticamente
-        if (window.innerWidth < 768) {
-            const content = currentToggleWrapper.find('.mobile-detail-content');
-            const icon = currentToggle.find('.toggle-icon');
-            const text = currentToggle.find('.toggle-text');
+        // Resetear el estado del icono y texto a "Mostrar" (cerrado)
+        const icon = currentToggle.find('.toggle-icon');
+        const text = currentToggle.find('.toggle-text');
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
 
-            content.removeClass('d-none');
-            icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-            text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
+        // NO EXPANDIR AUTOMÁTICAMENTE (Requerimiento del usuario)
 
-            // Renderizar datos móviles inmediatamente en el nuevo orden
-            renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
-            renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
-            renderizarReservacionMediacion(item, `#mobile-detail-${id} .mobile-reservacion-container`);
-            renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
-
-            // Desplazamiento suave si es por interacción manual
-            if (conScroll) {
-                const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+        // Desplazamiento suave si es por interacción manual
+        if (conScroll && window.innerWidth < 768) {
+            const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     };
@@ -590,29 +581,29 @@ import {
                                     ${generarBloquePersonasHtml(item)}
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Mobile Detail Section -->
-                    <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
-                        <div class="mobile-detail-toggle py-2 px-3 border rounded-bottom bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
-                            <span class="text-14 fw-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
-                            <i class="fas fa-chevron-down toggle-icon"></i>
-                        </div>
-                        <div class="mobile-detail-content p-3 border rounded-bottom bg-white d-none shadow-sm">
-                            <div class="mobile-header-wrapper mb-4">
-                                <div class="mobile-header-container"></div>
-                            </div>
-                            <div class="mobile-timeline-wrapper mb-4">
-                                <div class="reda-timeline-carousel mobile-timeline-container"></div>
-                            </div>
-                            <div class="mobile-reservacion-wrapper mb-4">
-                                <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
-                                <div class="mobile-reservacion-container"></div>
-                            </div>
-                            <div class="mobile-resumen-wrapper mb-3">
-                                <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
-                                <div class="mobile-resumen-container"></div>
+                            <!-- Mobile Detail Section (Inside Card Body) -->
+                            <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
+                                <div class="mobile-detail-toggle py-3 px-4 border-top bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
+                                    <span class="text-14 fw-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </div>
+                                <div class="mobile-detail-content p-4 border-top bg-white d-none">
+                                    <div class="mobile-header-wrapper mb-4">
+                                        <div class="mobile-header-container"></div>
+                                    </div>
+                                    <div class="mobile-timeline-wrapper mb-4">
+                                        <div class="reda-timeline-carousel mobile-timeline-container"></div>
+                                    </div>
+                                    <div class="mobile-reservacion-wrapper mb-4">
+                                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
+                                        <div class="mobile-reservacion-container"></div>
+                                    </div>
+                                    <div class="mobile-resumen-wrapper mb-3">
+                                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                        <div class="mobile-resumen-container"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

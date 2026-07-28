@@ -99,7 +99,7 @@ import {
             { id: 'cerrados', nombre: trans["Cerrados"] || "Cerrados", icono: cerradosSvg, contador: 0 }
         ];
 
-        let html = `<div class="d-flex flex-wrap border-bottom pb-2 reda-tabs-nav">`;
+        let html = `<div class="d-flex flex-nowrap border-bottom pb-2 reda-tabs-nav overflow-x-auto">`;
 
         estatus.forEach((e, index) => {
             const isActive = index === 0 ? 'active' : '';
@@ -370,7 +370,7 @@ import {
 
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                        <div class="text-13 text-muted p-2 bg-light rounded reda-mediation-desc-clamped motivo-lista-expandible cursor-pointer" id="desc-container-${item.id}">
+                        <div class="text-13 text-muted p-3 bg-light rounded reda-mediation-desc-clamped motivo-lista-expandible cursor-pointer" id="desc-container-${item.id}">
                             ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
                         </div>
                     </div>
@@ -457,28 +457,19 @@ import {
         const currentToggle = currentToggleWrapper.find('.mobile-detail-toggle');
         currentToggle.removeClass('d-none');
 
-        // Si estamos en móvil (ancho menor a 768px), expandir automáticamente
-        if (window.innerWidth < 768) {
-            const content = currentToggleWrapper.find('.mobile-detail-content');
-            const icon = currentToggle.find('.toggle-icon');
-            const text = currentToggle.find('.toggle-text');
+        // Asegurar que el icono y texto estén en estado cerrado
+        const icon = currentToggle.find('.toggle-icon');
+        const text = currentToggle.find('.toggle-text');
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
 
-            content.removeClass('d-none');
-            icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-            text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
+        // NO EXPANDIR AUTOMÁTICAMENTE (Requerimiento del usuario)
 
-            // Renderizar datos móviles inmediatamente en el nuevo orden
-            renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
-            renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
-            renderizarReservacionMediacion(item, `#mobile-detail-${id} .mobile-reservacion-container`);
-            renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
-
-            // Desplazamiento suave si es por interacción manual
-            if (conScroll) {
-                const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+        // Desplazamiento suave si es por interacción manual
+        if (conScroll && window.innerWidth < 768) {
+            const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     };
@@ -505,7 +496,7 @@ import {
 
         if (!items || !items.length) {
             container.html(`
-                <div class="row justify-content-center w-100 p-4 mt-4">
+                <div class="row justify-content-center w-100 p-4 mt-4 m-0">
                     <div class="text-center w-100">
                         <img src="${APP_URL}/public/img/unnamed.png" class="img-fluid reda-img-empty-state" alt="No encontrado">
                         <p class="text-center mt-3">${trans["No se encontraron mediaciones."] || "No se encontraron mediaciones."}</p>
@@ -515,7 +506,7 @@ import {
             return;
         }
 
-        let html = '<div class="row mt-4">';
+        let html = '<div class="row mt-4 m-0">';
         items.forEach(item => {
             // Prioridad con color
             let prioridadHtml = '';
@@ -530,7 +521,7 @@ import {
             const statusText = formatStatusText(item.estado);
 
             html += `
-                <div class="col-md-12 p-0 mb-4 container-mediacion" data-id="${item.id}">
+                <div class="col-md-12 px-3 mb-4 container-mediacion" data-id="${item.id}">
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
                         <div class="card-body p-0">
                             <div class="row m-0">
@@ -574,29 +565,29 @@ import {
                                     ${generarBloquePersonasHtml(item)}
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Mobile Detail Section -->
-                    <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
-                        <div class="mobile-detail-toggle py-2 px-3 border rounded-bottom bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
-                            <span class="text-14 font-weight-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
-                            <i class="fas fa-chevron-down toggle-icon"></i>
-                        </div>
-                        <div class="mobile-detail-content p-3 border rounded-bottom bg-white d-none shadow-sm">
-                            <div class="mobile-header-wrapper mb-4">
-                                <div class="mobile-header-container"></div>
-                            </div>
-                            <div class="mobile-timeline-wrapper mb-4">
-                                <div class="reda-timeline-carousel mobile-timeline-container"></div>
-                            </div>
-                            <div class="mobile-reservacion-wrapper mb-4">
-                                <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
-                                <div class="mobile-reservacion-container"></div>
-                            </div>
-                            <div class="mobile-resumen-wrapper mb-3">
-                                <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
-                                <div class="mobile-resumen-container"></div>
+                            <!-- Mobile Detail Section (Inside Card Body) -->
+                            <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
+                                <div class="mobile-detail-toggle py-3 px-4 border-top bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
+                                    <span class="text-14 font-weight-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </div>
+                                <div class="mobile-detail-content p-4 border-top bg-white d-none shadow-sm">
+                                    <div class="mobile-header-wrapper mb-4">
+                                        <div class="mobile-header-container"></div>
+                                    </div>
+                                    <div class="mobile-timeline-wrapper mb-4">
+                                        <div class="reda-timeline-carousel mobile-timeline-container"></div>
+                                    </div>
+                                    <div class="mobile-reservacion-wrapper mb-4">
+                                        <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
+                                        <div class="mobile-reservacion-container"></div>
+                                    </div>
+                                    <div class="mobile-resumen-wrapper mb-3">
+                                        <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                        <div class="mobile-resumen-container"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

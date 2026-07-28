@@ -3406,3 +3406,18 @@
     width: 80px !important;
     height: 60px !important;
 }
+
+/* Detalle Móvil Integrado */
+.mobile-detail-wrapper {
+    .mobile-detail-toggle {
+        transition: background-color 0.2s ease;
+        &:active { background-color: #e9ecef !important; }
+        .toggle-icon { transition: transform 0.3s ease; }
+    }
+
+    .mobile-detail-content {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+}
+
