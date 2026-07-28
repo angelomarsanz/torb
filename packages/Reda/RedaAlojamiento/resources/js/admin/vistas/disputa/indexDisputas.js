@@ -121,7 +121,7 @@ import {
             { id: 'cerrados', nombre: trans["Cerrados"] || "Cerrados", icono: cerradosSvg, contador: 0 }
         ];
 
-        let html = `<div class="d-flex flex-wrap border-bottom pb-2 reda-tabs-nav">`;
+        let html = `<div class="d-flex flex-nowrap border-bottom pb-2 reda-tabs-nav overflow-x-auto">`;
 
         estatus.forEach((e, index) => {
             const isActive = index === 0 ? 'active' : '';
