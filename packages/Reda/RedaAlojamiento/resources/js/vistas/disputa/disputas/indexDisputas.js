@@ -703,10 +703,15 @@ import {
             $(document).on('click', '.motivo-lista-expandible', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).toggleClass('expanded');
+                
+                const $el = $(this);
+                $el.toggleClass('expanded');
+                
+                // Si el clic fue en el contenedor gris de la descripción, expandimos también el hijo
+                $el.find('.reda-mediation-desc-clamped, .reda-motivo-clamped').toggleClass('expanded');
 
                 // Si el elemento está dentro de una tarjeta del listado, actualizamos la selección
-                const card = $(this).closest('.card-mediacion');
+                const card = $el.closest('.card-mediacion');
                 if (card.length) {
                     const id = card.attr('data-id');
                     if (id) {
