@@ -55,7 +55,7 @@
 
                     {{-- Bloque: Información de la Reservación --}}
                     <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4 d-none" id="disputas-reservacion-sidebar">
-                        <h6 class="fw-700 mb-3 text-14 border-bottom pb-2">{{ __('Reservación') }}</h6>
+                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">{{ __('Reservación') }}</h6>
                         <div id="disputas-reservacion-content">
                             {{-- Se inyecta vía JS --}}
                         </div>
@@ -63,7 +63,7 @@
 
                     {{-- Bloque 3: Detalle Colapsable --}}
                     <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4">
-                        <h6 class="fw-700 mb-3 text-14 border-bottom pb-2">{{ __('Detalle') }}</h6>
+                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">{{ __('Detalle') }}</h6>
                         <div id="disputas-info-extra-content">
                             <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de las mediaciones.') }}</p>
                         </div>
