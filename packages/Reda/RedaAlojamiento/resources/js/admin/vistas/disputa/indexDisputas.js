@@ -546,7 +546,7 @@ import {
             const statusText = formatStatusText(item.estado);
 
             html += `
-                <div class="col-md-12 p-0 mb-4 container-mediacion" data-id="${item.id}">
+                <div class="col-md-12 px-3 mb-4 container-mediacion" data-id="${item.id}">
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
                         <div class="card-body p-0">
                             <div class="row m-0 g-0">
