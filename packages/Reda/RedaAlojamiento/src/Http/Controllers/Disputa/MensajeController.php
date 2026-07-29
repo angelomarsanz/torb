@@ -32,6 +32,7 @@ class MensajeController extends Controller
         // Identificar IDs de administradores para cargar sus nombres
         $adminIds = [];
         foreach ($messages as $message) {
+            // Previsión: Si no hay metadata, default a 'user'
             $message->sender_type = isset($metadata[$message->id]) ? $metadata[$message->id]->sender_type : 'user';
             if ($message->sender_type === 'admin') {
                 $adminIds[] = $message->sender_id;
@@ -45,6 +46,7 @@ class MensajeController extends Controller
                 $admin = $admins->get($message->sender_id);
                 $message->sender_name = $admin ? $admin->username : __('Administrador');
             } else {
+                // Previsión para mensajes sin metadata o antiguos
                 $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
             }
         }
@@ -98,11 +100,7 @@ class MensajeController extends Controller
         $message->read        = 0;
         $message->save();
 
-        // Guardar metadata para identificar que este mensaje fue enviado por un User
-        MensajeMetadata::create([
-            'message_id' => $message->id,
-            'sender_type' => 'user'
-        ]);
+        // Nota: La metadata se crea automáticamente mediante MensajeObserver
 
         return response()->json([
             'success' => true,

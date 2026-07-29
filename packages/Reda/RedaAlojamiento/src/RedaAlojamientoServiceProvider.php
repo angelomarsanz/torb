@@ -30,6 +30,9 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Registrar observadores
+        \App\Models\Messages::observe(\Reda\RedaAlojamiento\Observers\MensajeObserver::class);
+
         $router = $this->app['router'];
 
         // Esto registra tu middleware con una prioridad alta

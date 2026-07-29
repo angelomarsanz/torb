@@ -317,7 +317,8 @@ import {
 
         let html = '';
         mensajes.forEach(m => {
-            // Determinar si es "mio" (del admin) basándonos en el sender_type devuelto por el servidor
+            // Previsión: Determinar si es "mio" (del admin) basándonos en el sender_type.
+            // Si no hay metadata, m.sender_type será undefined, lo cual es correcto tratar como 'user'.
             const esMio = (m.sender_type === 'admin');
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Administrador"] || "Administrador");
