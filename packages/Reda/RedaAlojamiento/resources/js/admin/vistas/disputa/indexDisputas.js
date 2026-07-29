@@ -317,11 +317,10 @@ import {
 
         let html = '';
         mensajes.forEach(m => {
-            // Determinar si es "mio" (del admin) o de otro
-            // Nota: El admin no está en la tabla users. Si sender_id no coincide con host o guest, asumimos admin.
-            const esMio = (m.sender_id != booking.user_id && m.sender_id != booking.host_id);
+            // Determinar si es "mio" (del admin) basándonos en el sender_type devuelto por el servidor
+            const esMio = (m.sender_type === 'admin');
             const claseMe = esMio ? 'me' : '';
-            const nombreSender = m.sender ? (m.sender.first_name + ' ' + m.sender.last_name) : (trans["Administrador"] || "Administrador");
+            const nombreSender = m.sender_name || (trans["Administrador"] || "Administrador");
 
             html += `
                 <div class="message-list-admin ${claseMe}">

@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Messages;
 use App\Models\Bookings;
 use App\Models\User;
+use App\Models\Admin;
 use Reda\RedaAlojamiento\Models\Disputa\Disputa;
+use Reda\RedaAlojamiento\Models\Disputa\MensajeMetadata;
 use Auth;
 use Validator;
 
@@ -22,6 +24,30 @@ class MensajeController extends Controller
             ->where('booking_id', $booking_id)
             ->orderBy('created_at', 'asc')
             ->get();
+
+        // Obtener metadatos de los mensajes para diferenciar admins de users
+        $messageIds = $messages->pluck('id');
+        $metadata = MensajeMetadata::whereIn('message_id', $messageIds)->get()->keyBy('message_id');
+
+        // Identificar IDs de administradores para cargar sus nombres
+        $adminIds = [];
+        foreach ($messages as $message) {
+            $message->sender_type = isset($metadata[$message->id]) ? $metadata[$message->id]->sender_type : 'user';
+            if ($message->sender_type === 'admin') {
+                $adminIds[] = $message->sender_id;
+            }
+        }
+
+        $admins = Admin::whereIn('id', array_unique($adminIds))->get()->keyBy('id');
+
+        foreach ($messages as $message) {
+            if ($message->sender_type === 'admin') {
+                $admin = $admins->get($message->sender_id);
+                $message->sender_name = $admin ? $admin->username : __('Administrador');
+            } else {
+                $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
+            }
+        }
 
         $booking = Bookings::with(['users', 'host'])->find($booking_id);
         $disputa = Disputa::where('booking_id', $booking_id)->first();
@@ -38,16 +64,13 @@ class MensajeController extends Controller
 
     /**
      * Guarda un nuevo mensaje enviado por el administrador.
-     * Como los admins no están en la tabla users, se usará un sender_id especial o se registrará de forma que el sistema lo entienda.
-     * En este caso, para no romper la integridad referencial si existiera, se usará el ID del agente si éste es un User, 
-     * o se marcará como enviado por el sistema.
      */
     public function store(Request $request)
     {
         $rules = [
             'booking_id'  => 'required|exists:bookings,id',
             'message'     => 'required|string',
-            'receiver_id' => 'required' // ID del usuario que recibirá el mensaje (Turista o Anfitrión)
+            'receiver_id' => 'required' 
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -64,26 +87,24 @@ class MensajeController extends Controller
 
         $booking = Bookings::findOrFail($request->booking_id);
         
-        // El admin envía el mensaje. 
-        // Para que sea visible en el inbox del receptor, sender_id debe ser alguien.
-        // Como el admin no es un User, usaremos el ID del admin pero esto puede causar conflictos.
-        // Una alternativa es usar el ID de la otra parte como sender (impersonación) o un ID de sistema.
-        // El usuario solicitó que "se guarden en la tabla correspondiente".
-        
         $message = new Messages;
         $message->property_id = $booking->property_id;
         $message->booking_id  = $request->booking_id;
         $message->receiver_id = $request->receiver_id;
         
-        // Usamos el ID del admin actual. Si el sistema original no maneja admins en sender_id, 
-        // es posible que no aparezca el nombre en el inbox, pero el mensaje se guardará.
         $adminId = Auth::guard('admin')->id();
-        $message->sender_id   = $adminId; // Nota: Esto asume que no hay conflicto de IDs o que el sistema lo tolera
+        $message->sender_id   = $adminId; 
         
         $message->message     = $request->message;
         $message->type_id     = 1; // Tipo query/chat
         $message->read        = 0;
         $message->save();
+
+        // Guardar metadata para identificar que este mensaje fue enviado por un Admin
+        MensajeMetadata::create([
+            'message_id' => $message->id,
+            'sender_type' => 'admin'
+        ]);
 
         return response()->json([
             'success' => true,

@@ -296,10 +296,10 @@ import {
 
         let html = '';
         mensajes.forEach(m => {
-            // El usuario actual es el que envió el mensaje si m.sender_id coincide con el ID devuelto por el servidor
-            const esMio = (m.sender_id == currentUserId);
+            // El usuario actual es el que envió el mensaje si m.sender_type es 'user' y m.sender_id coincide con el ID de la sesión
+            const esMio = (m.sender_type === 'user' && m.sender_id == currentUserId);
             const claseMe = esMio ? 'me' : '';
-            const nombreSender = m.sender ? (m.sender.first_name + ' ' + m.sender.last_name) : (trans["Sistema"] || "Sistema");
+            const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
 
             html += `
                 <div class="message-list-reda ${claseMe}">
@@ -914,7 +914,7 @@ import {
                     // Recargar mensajes
                     const data = await obtenerMensajesMediacion(bookingId);
                     if (data.success) {
-                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking);
+                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
                     }
                 } else {
                     alert(response.mensaje_usuario || 'Error al enviar mensaje');

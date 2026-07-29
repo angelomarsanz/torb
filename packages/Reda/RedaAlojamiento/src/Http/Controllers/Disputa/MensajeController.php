@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Messages;
 use App\Models\Bookings;
 use App\Models\User;
+use App\Models\Admin;
 use Reda\RedaAlojamiento\Models\Disputa\Disputa;
+use Reda\RedaAlojamiento\Models\Disputa\MensajeMetadata;
 use Auth;
 use Validator;
 
@@ -22,6 +24,30 @@ class MensajeController extends Controller
             ->where('booking_id', $booking_id)
             ->orderBy('created_at', 'asc')
             ->get();
+
+        // Obtener metadatos de los mensajes para diferenciar admins de users
+        $messageIds = $messages->pluck('id');
+        $metadata = MensajeMetadata::whereIn('message_id', $messageIds)->get()->keyBy('message_id');
+
+        // Identificar IDs de administradores para cargar sus nombres
+        $adminIds = [];
+        foreach ($messages as $message) {
+            $message->sender_type = isset($metadata[$message->id]) ? $metadata[$message->id]->sender_type : 'user';
+            if ($message->sender_type === 'admin') {
+                $adminIds[] = $message->sender_id;
+            }
+        }
+
+        $admins = Admin::whereIn('id', array_unique($adminIds))->get()->keyBy('id');
+
+        foreach ($messages as $message) {
+            if ($message->sender_type === 'admin') {
+                $admin = $admins->get($message->sender_id);
+                $message->sender_name = $admin ? $admin->username : __('Administrador');
+            } else {
+                $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
+            }
+        }
 
         $booking = Bookings::with(['users', 'host'])->find($booking_id);
         $disputa = Disputa::where('booking_id', $booking_id)->first();
@@ -71,6 +97,12 @@ class MensajeController extends Controller
         $message->type_id     = 1; // Tipo query/chat
         $message->read        = 0;
         $message->save();
+
+        // Guardar metadata para identificar que este mensaje fue enviado por un User
+        MensajeMetadata::create([
+            'message_id' => $message->id,
+            'sender_type' => 'user'
+        ]);
 
         return response()->json([
             'success' => true,
