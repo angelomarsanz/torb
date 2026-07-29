@@ -164,6 +164,14 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
         Route::get('disputas/ver/{id}', [DisputaController::class, 'show'])->name('reda.disputas.show');
         Route::post('disputas/store', [DisputaController::class, 'store'])->name('reda.disputas.store');
 
+        // Subgrupo para Mensajes de Disputas (Frontend)
+        Route::prefix('disputas/mensajes')->as('reda.disputas.mensajes.')->group(function () {
+            Route::controller(\Reda\RedaAlojamiento\Http\Controllers\Disputa\MensajeController::class)->group(function () {
+                Route::get('{booking_id}', 'getMessages')->name('get');
+                Route::post('store', 'store')->name('store');
+            });
+        });
+
         // Media (Se mantienen sin el prefijo 'negocios' en URL y nombre)
         Route::post('upload-photo/{id}', [MediaController::class, 'uploadPhoto'])->name('reda.upload_photo');
         Route::post('delete-photo', [MediaController::class, 'deletePhoto'])->name('reda.delete_photo');

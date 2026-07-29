@@ -237,13 +237,116 @@ import {
                 </div>
 
                 <div class="mt-2 d-flex justify-content-center">
-                    <a href="${APP_URL}/inbox?id=${item.booking_id}" class="btn btn-sm btn-outline-success font-weight-600 text-11 px-3 py-1 reda-btn-pill-small">
+                    <button class="btn btn-sm btn-outline-success font-weight-600 text-11 px-3 py-1 reda-btn-pill-small btn-ver-mensajes-mediacion" 
+                            data-booking-id="${item.booking_id}" 
+                            data-id="${item.id}">
                         <i class="far fa-comments mr-1"></i>
                         ${trans["Ver conversación"] || "Ver conversación"}
-                    </a>
+                    </button>
                 </div>
             </div>
         `;
+    };
+
+    /**
+     * Obtiene los mensajes de la mediación vía Ajax.
+     */
+    const obtenerMensajesMediacion = (bookingId) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/disputas/mensajes/' + bookingId,
+                type: 'GET',
+                success: (data) => resolve(data),
+                error: (x) => resolve({ success: false, mensaje_usuario: 'Error al cargar mensajes' })
+            });
+        });
+    };
+
+    /**
+     * Envía un mensaje como usuario.
+     */
+    const enviarMensajeHuesped = (bookingId, message, receiverId) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/disputas/mensajes/store',
+                type: 'POST',
+                data: {
+                    booking_id: bookingId,
+                    message: message,
+                    receiver_id: receiverId,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: (data) => resolve(data),
+                error: (x) => resolve({ success: false, mensaje_usuario: 'Error al enviar mensaje' })
+            });
+        });
+    };
+
+    /**
+     * Renderiza la lista de mensajes en el modal.
+     */
+    const renderizarMensajes = (mensajes, booking, currentUserId) => {
+        const container = $('#reda-mensajes-container');
+        const trans = window.RedaAlojamientoJson || {};
+        
+        if (!mensajes || !mensajes.length) {
+            container.html(`<div class="text-center py-5 text-muted italic">${trans["No hay mensajes en esta conversación."] || "No hay mensajes en esta conversación."}</div>`);
+            return;
+        }
+
+        let html = '';
+        mensajes.forEach(m => {
+            // El usuario actual es el que envió el mensaje si m.sender_id coincide con el ID devuelto por el servidor
+            const esMio = (m.sender_id == currentUserId);
+            const claseMe = esMio ? 'me' : '';
+            const nombreSender = m.sender ? (m.sender.first_name + ' ' + m.sender.last_name) : (trans["Sistema"] || "Sistema");
+
+            html += `
+                <div class="message-list-reda ${claseMe}">
+                    <div class="msg-reda shadow-sm p-3">
+                        ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
+                        <p class="m-0 text-13">${m.message}</p>
+                    </div>
+                    <div class="time-reda text-10 mt-1 opacity-50">${m.created_time || ''}</div>
+                </div>
+            `;
+        });
+        container.html(html);
+        
+        // Scroll al final
+        container.scrollTop(container[0].scrollHeight);
+    };
+
+    /**
+     * Abre el modal de mensajes.
+     */
+    const abrirMensajesMediacion = async (bookingId, disputaId) => {
+        const modalElement = $('#modal-mensajes-mediacion-reda');
+        const container = $('#reda-mensajes-container');
+        const trans = window.RedaAlojamientoJson || {};
+
+        // Reset UI
+        container.html('<div class="text-center py-5"><div class="spinner-border text-success" role="status"><span class="sr-only">Loading...</span></div></div>');
+        $('#btn-enviar-mensaje-reda').attr('data-booking-id', bookingId);
+        $('#input-mensaje-reda').val('');
+
+        modalElement.modal('show');
+
+        const data = await obtenerMensajesMediacion(bookingId);
+        if (data.success) {
+            const b = data.respuesta.booking;
+            
+            // Configurar receptores en el dropdown
+            $('#send-to-turista').attr('data-id', b.user_id);
+            $('#label-send-turista').text(`${trans["Turista"] || "Turista"}: ${b.users.first_name}`);
+            
+            $('#send-to-anfitrion').attr('data-id', b.host_id);
+            $('#label-send-anfitrion').text(`${trans["Anfitrión"] || "Anfitrión"}: ${b.host.first_name}`);
+
+            renderizarMensajes(data.respuesta.messages, b, data.respuesta.current_user_id);
+        } else {
+            container.html(`<div class="alert alert-danger">${data.mensaje_usuario}</div>`);
+        }
     };
 
     /**
@@ -706,7 +809,7 @@ import {
             // Manejo de clics en los items de la lista para seleccionar
             $(document).on('click', '.card-mediacion', function(e) {
                 // Si el clic fue en el motivo expandible, no procesamos la selección de la tarjeta
-                if ($(e.target).closest('.motivo-lista-expandible').length) {
+                if ($(e.target).closest('.motivo-lista-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) {
                     return;
                 }
                 const id = $(this).attr('data-id');
@@ -770,6 +873,52 @@ import {
                 e.stopPropagation();
                 const id = $(this).attr('data-id');
                 abrirDetalleMediacion(id);
+            });
+
+            // Click en "Ver mensajes"
+            $(document).on('click', '.btn-ver-mensajes-mediacion', function(e) {
+                e.stopPropagation();
+                const bookingId = $(this).attr('data-booking-id');
+                const disputaId = $(this).attr('data-id');
+                abrirMensajesMediacion(bookingId, disputaId);
+            });
+
+            // Enviar mensaje al presionar Enter
+            $(document).on('keypress', '#input-mensaje-reda', function(e) {
+                if (e.which === 13) {
+                    $('#btn-enviar-mensaje-reda').dropdown('toggle');
+                }
+            });
+
+            // Seleccionar receptor y enviar
+            $(document).on('click', '.btn-send-to-user', async function(e) {
+                e.preventDefault();
+                const receiverId = $(this).attr('data-id');
+                const bookingId = $('#btn-enviar-mensaje-reda').attr('data-booking-id');
+                const message = $('#input-mensaje-reda').val().trim();
+
+                if (!message) return;
+
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                    window.RedaNotificaciones.esperar();
+                }
+
+                const response = await enviarMensajeHuesped(bookingId, message, receiverId);
+
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                    window.RedaNotificaciones.ocultar();
+                }
+
+                if (response.success) {
+                    $('#input-mensaje-reda').val('');
+                    // Recargar mensajes
+                    const data = await obtenerMensajesMediacion(bookingId);
+                    if (data.success) {
+                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking);
+                    }
+                } else {
+                    alert(response.mensaje_usuario || 'Error al enviar mensaje');
+                }
             });
 
             // Navegación del timeline (Escritorio)

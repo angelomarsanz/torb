@@ -86,6 +86,56 @@
         </div>
     </div>
 </div>
+
+{{-- Modal de Mensajes de Mediación --}}
+<div class="modal fade reda-modal-messages" id="modal-mensajes-mediacion-reda" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title font-weight-700 text-18" id="modal-mensajes-titulo">{{ __('Mensajes de la Mediación') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="container-inbox-reda">
+                    <div class="message-wrap-reda" id="reda-mensajes-container">
+                        {{-- Mensajes inyectados vía JS --}}
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="message-footer-reda mt-3 border-top pt-3">
+                        <div class="form-row align-items-center">
+                            <div class="col">
+                                <input type="text" class="form-control cht_msg_reda" id="input-mensaje-reda" placeholder="{{ __('Escribe un mensaje...') }}" />
+                            </div>
+                            <div class="col-auto">
+                                <div class="dropdown">
+                                    <button class="btn btn-success send-btn-reda" type="button" id="btn-enviar-mensaje-reda" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ __('Enviar mensaje') }}">
+                                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right shadow-lg border-0" id="select-receptor-reda" aria-labelledby="btn-enviar-mensaje-reda">
+                                        <h6 class="dropdown-header text-10 text-uppercase letter-spacing-1">{{ __('Enviar a:') }}</h6>
+                                        <button class="dropdown-item btn-send-to-user" data-id="" id="send-to-turista">
+                                            <span class="text-13" id="label-send-turista">{{ __('Turista') }}</span>
+                                        </button>
+                                        <button class="dropdown-item btn-send-to-user" data-id="" id="send-to-anfitrion">
+                                            <span class="text-13" id="label-send-anfitrion">{{ __('Anfitrión') }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('validation_script')

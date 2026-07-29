@@ -205,4 +205,5 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Middleware/CheckPluginAuth.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/SoporteTecnicoController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/FavoritoController.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Disputa/MensajeController.php"
 )

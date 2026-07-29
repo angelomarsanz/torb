@@ -3423,3 +3423,123 @@
     }
 }
 
+
+/* --- MÓDULO DE MENSAJES DE MEDIACIÓN (FRONTEND BS4) --- */
+.container-inbox-reda {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+}
+
+.message-wrap-reda {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+}
+
+.message-list-reda {
+    margin-bottom: 15px;
+    max-width: 85%;
+    align-self: flex-start;
+
+    &.me {
+        align-self: flex-end;
+        .msg-reda {
+            background-color: #1dbf73;
+            color: #fff;
+            border-radius: 15px 15px 0 15px;
+        }
+        .time-reda {
+            text-align: right;
+        }
+    }
+
+    .msg-reda {
+        background-color: #fff;
+        color: #333;
+        border-radius: 15px 15px 15px 0;
+        word-wrap: break-word;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .time-reda {
+        font-size: 10px;
+        color: #999;
+        margin-top: 4px;
+    }
+}
+
+.message-footer-reda {
+    .cht_msg_reda {
+        border-radius: 25px;
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        &:focus {
+            border-color: #1dbf73;
+            box-shadow: 0 0 0 0.2rem rgba(29, 191, 115, 0.15);
+            outline: none;
+        }
+    }
+    
+    .send-btn-reda {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        background-color: #1dbf73;
+        color: #fff;
+        border: none;
+        &:hover {
+            transform: scale(1.05);
+            background-color: #17a665;
+        }
+    }
+}
+
+#select-receptor-reda {
+    min-width: 220px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    padding: 10px;
+    
+    .dropdown-header {
+        font-weight: 700;
+        color: #666;
+        padding-bottom: 8px;
+    }
+    
+    .dropdown-item {
+        border-radius: 8px;
+        padding: 8px 12px;
+        transition: all 0.2s;
+        &:hover {
+            background-color: #f1faff;
+            color: #1dbf73;
+        }
+    }
+}
+
+.reda-modal-messages {
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+    }
+    .modal-header {
+        padding: 20px 25px;
+        .close {
+            margin: -1rem -1rem -1rem auto;
+            opacity: 0.5;
+            &:hover { opacity: 1; }
+        }
+    }
+}
