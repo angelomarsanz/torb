@@ -27,7 +27,7 @@
                 </div>
 
                 {{-- Columna Lateral: Información Extra --}}
-                <div class="col-md-4" id="disputas-info-lateral">
+                <div class="col-md-4 d-none d-md-block" id="disputas-info-lateral">
                     {{-- Bloque 1: Información Principal (Estatus, ID, Motivo) - SIN MARCO --}}
                     <div class="mb-4 d-none" id="disputas-cabecera-lateral">
                         <div id="disputas-header-content" class="px-2">

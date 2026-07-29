@@ -457,11 +457,13 @@ import {
         const activeCard = $(`.card-mediacion[data-id="${id}"]`);
         activeCard.addClass('active-mediacion');
 
-        // 2. Actualizar Secciones Laterales (Escritorio)
-        renderizarCabeceraMediacion(item, '#disputas-header-content');
-        renderizarTimeline(item.paso_actual, '#reda-timeline-container');
-        renderizarReservacionMediacion(item, '#disputas-reservacion-content');
-        renderizarResumenMediacion(item, '#disputas-info-extra-content');
+        // 2. Actualizar Secciones Laterales (Solo en Escritorio >= 768px)
+        if (window.innerWidth >= 768) {
+            renderizarCabeceraMediacion(item, '#disputas-header-content');
+            renderizarTimeline(item.paso_actual, '#reda-timeline-container');
+            renderizarReservacionMediacion(item, '#disputas-reservacion-content');
+            renderizarResumenMediacion(item, '#disputas-info-extra-content');
+        }
 
         // 3. Preparar UI Móvil (Tab de Ver Detalle)
         const trans = window.RedaAlojamientoJson || {};
