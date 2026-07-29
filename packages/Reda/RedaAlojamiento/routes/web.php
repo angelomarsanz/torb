@@ -48,6 +48,14 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
             Route::get('get-listado', 'obtenerDisputasPaginadas')->name('paginadas');
             Route::get('get-detail-modal/{id}', 'getDetailModal')->name('get_detail_modal');
         });
+
+        // Subgrupo para Mensajes de Disputas (Admin)
+        Route::prefix('mensajes')->as('mensajes.')->group(function () {
+            Route::controller(\Reda\RedaAlojamiento\Http\Controllers\Admin\Disputa\MensajeController::class)->group(function () {
+                Route::get('{booking_id}', 'getMessages')->name('get');
+                Route::post('store', 'store')->name('store');
+            });
+        });
     });
 
     // Subgrupo para Negocios (Admin)

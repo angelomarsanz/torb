@@ -73,6 +73,52 @@
         </div>
 	</section>
 </div>
+
+{{-- Modal de Mensajes de Mediación --}}
+<div class="modal fade" id="modal-mensajes-mediacion-reda" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content reda-modal-custom-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-700 text-18" id="modal-mensajes-titulo">{{ __('Mensajes de la Mediación') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="container-inbox-admin p-0">
+                    <div class="message-wrap-admin" id="reda-mensajes-container">
+                        {{-- Mensajes inyectados vía JS --}}
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-success" role="status"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="message-footer-admin mt-3 border-top pt-3">
+                        <div class="row g-2 align-items-center">
+                            <div class="col">
+                                <input type="text" class="form-control cht_msg_admin" id="input-mensaje-admin" placeholder="{{ __('Escribe un mensaje...') }}" />
+                            </div>
+                            <div class="col-auto">
+                                <div class="dropdown">
+                                    <button class="btn btn-success rounded-circle send-btn-admin p-2" type="button" id="btn-enviar-mensaje-admin" title="{{ __('Enviar mensaje') }}">
+                                        <i class="fa fa-paper-plane px-1" aria-hidden="true"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end p-2 shadow" id="select-receptor-admin">
+                                        <h6 class="dropdown-header text-10 text-uppercase letter-spacing-1">{{ __('Enviar a:') }}</h6>
+                                        <button class="dropdown-item rounded btn-send-to-user" data-id="" id="send-to-turista">
+                                            <span class="text-12" id="label-send-turista">{{ __('Turista') }}</span>
+                                        </button>
+                                        <button class="dropdown-item rounded btn-send-to-user" data-id="" id="send-to-anfitrion">
+                                            <span class="text-12" id="label-send-anfitrion">{{ __('Anfitrión') }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('validate_script')
