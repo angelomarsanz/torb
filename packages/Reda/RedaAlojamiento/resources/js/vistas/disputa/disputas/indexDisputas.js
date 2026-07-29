@@ -187,6 +187,20 @@ import {
         const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
         const agenteClaseNombre = item.agente ? 'text-dark' : 'text-muted italic small leading-tight';
 
+        // Identificación del demandante basada en ID y Rol inicial
+        const demandanteLabel = ` (${trans["demandante"] || "demandante"})`;
+        
+        const esDemandanteAnfitrion = item.id_usuario_anfitrion == item.id_usuario_inicial && 
+                                     item.rol_usuario_inicial && 
+                                     item.rol_usuario_inicial.toLowerCase().includes('anfitr');
+                                     
+        const esDemandanteTurista = item.id_usuario_turista == item.id_usuario_inicial && 
+                                   item.rol_usuario_inicial && 
+                                   item.rol_usuario_inicial.toLowerCase().includes('turist');
+
+        const labelAnfitrion = (trans["Anfitrión"] || "Anfitrión") + (esDemandanteAnfitrion ? demandanteLabel : '') + ':';
+        const labelTurista = (trans["Turista"] || "Turista") + (esDemandanteTurista ? demandanteLabel : '') + ':';
+
         return `
             <div class="personas-relacionadas-block">
                 <div class="d-flex align-items-center mb-2">
@@ -194,8 +208,8 @@ import {
                         <img src="${item.anfitrion_foto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
-                        <span class="text-muted text-10 leading-tight">${trans["Anfitrión:"] || "Anfitrión:"}</span>
-                        <span class="text-dark text-12 text-truncate">${item.anfitrion_nombre}</span>
+                        <span class="text-muted text-10 leading-tight">${labelAnfitrion}</span>
+                        <span class="text-dark text-12 text-truncate" title="${item.anfitrion_nombre}">${item.anfitrion_nombre}</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center mb-2">
@@ -203,8 +217,8 @@ import {
                         <img src="${item.turista_foto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
-                        <span class="text-muted text-10 leading-tight">${trans["Turista:"] || "Turista:"}</span>
-                        <span class="text-dark text-12 text-truncate">${item.turista_nombre}</span>
+                        <span class="text-muted text-10 leading-tight">${labelTurista}</span>
+                        <span class="text-dark text-12 text-truncate" title="${item.turista_nombre}">${item.turista_nombre}</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center mb-3">
@@ -218,7 +232,7 @@ import {
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${trans["Agente:"] || "Agente:"}</span>
-                        <span class="${agenteClaseNombre} text-12 text-truncate">${agenteNombre}</span>
+                        <span class="${agenteClaseNombre} text-12 text-truncate" title="${agenteNombre}">${agenteNombre}</span>
                     </div>
                 </div>
 

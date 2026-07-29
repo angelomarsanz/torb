@@ -144,7 +144,11 @@ class DisputaController extends Controller
                 'turista_foto' => $d->turista ? $d->turista->profile_src : asset('public/img/unnamed.png'),
                 'anfitrion_nombre' => $d->anfitrion ? $d->anfitrion->first_name . ' ' . $d->anfitrion->last_name : '',
                 'anfitrion_foto' => $d->anfitrion ? $d->anfitrion->profile_src : asset('public/img/unnamed.png'),
-                'propiedad_foto' => $propiedadFoto
+                'propiedad_foto' => $propiedadFoto,
+                'id_usuario_inicial' => $d->id_usuario_inicial,
+                'rol_usuario_inicial' => $d->rol_usuario_inicial,
+                'id_usuario_turista' => $d->id_usuario_turista,
+                'id_usuario_anfitrion' => $d->id_usuario_anfitrion,
             ];
         });
 
