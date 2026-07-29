@@ -54,10 +54,30 @@
                             <span class="reda-mediation-value">{{ $disputa->motivo }}</span>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-0">
+                    <div class="col-md-12 mb-4">
                         <div class="d-flex flex-column">
                             <span class="reda-mediation-label">{{ __('Descripción Detallada') }}</span>
                             <div class="reda-mediation-desc-box">{{ $disputa->descripcion }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-0">
+                        <div class="d-flex flex-column">
+                            <span class="reda-mediation-label">{{ __('Archivos adjuntos') }}</span>
+                            @if(isset($adjuntos) && count($adjuntos) > 0)
+                                <div class="list-group list-group-flush border rounded mt-1 overflow-hidden">
+                                    @foreach($adjuntos as $file)
+                                        <a href="{{ $file['url'] }}" target="_blank" class="list-group-item list-group-item-action py-2 d-flex align-items-center border-bottom-0 border-left-0 border-right-0">
+                                            <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                                                <i class="{{ $file['es_imagen'] ? 'far fa-image' : 'far fa-file-alt' }} text-success text-10"></i>
+                                            </div>
+                                            <span class="text-11 text-dark text-truncate" title="{{ $file['nombre'] }}">{{ $file['nombre'] }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-11 text-muted italic mt-1">{{ __('Sin archivos adjuntos') }}</p>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -149,7 +149,27 @@ class DisputaController extends Controller
     public function getDetailModal($id)
     {
         $disputa = Disputa::findOrFail($id);
-        $html = view('reda-alojamiento::disputa.disputas.modal_detalle', compact('disputa'))->render();
+        $myUserId = Auth::id();
+
+        // Determinar qué documentos mostrar (solo los del usuario actual)
+        $documentosRaw = ($disputa->id_usuario_turista == $myUserId) ? $disputa->documentos_turista : $disputa->documentos_anfitrion;
+        $adjuntos = [];
+        
+        if ($documentosRaw) {
+            $paths = json_decode($documentosRaw, true);
+            if (is_array($paths)) {
+                foreach ($paths as $path) {
+                    $webPath = strpos($path, 'public/') === 0 ? $path : 'public/' . $path;
+                    $adjuntos[] = [
+                        'nombre' => basename($path),
+                        'url' => asset($webPath),
+                        'es_imagen' => in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
+                    ];
+                }
+            }
+        }
+
+        $html = view('reda-alojamiento::disputa.disputas.modal_detalle', compact('disputa', 'adjuntos'))->render();
         return response()->json([
             'success' => true,
             'message' => __('Carga de detalle'),
