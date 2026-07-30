@@ -213,13 +213,13 @@ import {
 
         // Identificación del demandante basada en ID y Rol inicial
         const demandanteLabel = ` (${trans["demandante"] || "demandante"})`;
-        
-        const esDemandanteAnfitrion = item.id_usuario_anfitrion == item.id_usuario_inicial && 
-                                     item.rol_usuario_inicial && 
+
+        const esDemandanteAnfitrion = item.id_usuario_anfitrion == item.id_usuario_inicial &&
+                                     item.rol_usuario_inicial &&
                                      item.rol_usuario_inicial.toLowerCase().includes('anfitr');
-                                     
-        const esDemandanteTurista = item.id_usuario_turista == item.id_usuario_inicial && 
-                                   item.rol_usuario_inicial && 
+
+        const esDemandanteTurista = item.id_usuario_turista == item.id_usuario_inicial &&
+                                   item.rol_usuario_inicial &&
                                    item.rol_usuario_inicial.toLowerCase().includes('turist');
 
         const labelAnfitrion = (trans["Anfitrión"] || "Anfitrión") + (esDemandanteAnfitrion ? demandanteLabel : '') + ':';
@@ -260,8 +260,8 @@ import {
                     </div>
                 </div>
                 <div class="mt-2 border-top pt-2">
-                    <button class="btn btn-outline-success btn-sm w-100 border-0 text-12 btn-ver-mensajes-mediacion" 
-                            data-booking-id="${item.booking_id}" 
+                    <button class="btn btn-outline-success btn-sm w-100 border-0 text-12 btn-ver-mensajes-mediacion"
+                            data-booking-id="${item.booking_id}"
                             data-id="${item.id}">
                         <i class="far fa-comments me-1"></i> ${trans["Ver conversación"] || "Ver conversación"}
                     </button>
@@ -310,7 +310,7 @@ import {
     const renderizarMensajes = (mensajes, booking, currentUserId) => {
         const container = $('#reda-mensajes-container');
         const trans = window.RedaAlojamientoJson || {};
-        
+
         if (!mensajes || !mensajes.length) {
             container.html(`<div class="text-center py-5 text-muted italic">${trans["No hay mensajes en esta conversación."] || "No hay mensajes en esta conversación."}</div>`);
             return;
@@ -326,10 +326,10 @@ import {
 
             html += `
                 <div class="message-list-admin ${claseMe} d-flex align-items-start mb-3">
-                    <div class="symbol symbol-35px symbol-circle me-2 flex-shrink-0">
+                    <div class="symbol symbol-35px symbol-circle me-2 flex-shrink-0 shadow-xs">
                         <img src="${fotoSender}" class="rounded-circle shadow-xs border">
                     </div>
-                    
+
                     <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-admin p-2 px-3">
                             ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
@@ -341,7 +341,7 @@ import {
             `;
         });
         container.html(html);
-        
+
         // Función interna para scroll robusto
         const scrollToBottom = () => {
             if (container.length) {
@@ -386,11 +386,11 @@ import {
         const data = await obtenerMensajesMediacion(bookingId);
         if (data.success) {
             const b = data.respuesta.booking;
-            
+
             // Configurar receptores en el dropdown
             $('#send-to-turista').attr('data-id', b.user_id);
             $('#label-send-turista').text(`${trans["Turista"] || "Turista"}: ${b.users.first_name}`);
-            
+
             $('#send-to-anfitrion').attr('data-id', b.host_id);
             $('#label-send-anfitrion').text(`${trans["Anfitrión"] || "Anfitrión"}: ${b.host.first_name}`);
 
@@ -711,7 +711,7 @@ import {
                                         <span class="text-muted small ms-2 fw-600">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 fw-600 text-color mb-1 reda-motivo-clamped motivo-lista-expandible" 
+                                    <h5 class="text-18 fw-600 text-color mb-1 reda-motivo-clamped motivo-lista-expandible"
                                         title="${item.motivo}">
                                         ${item.motivo}
                                     </h5>
@@ -889,10 +889,10 @@ import {
             $(document).on('click', '.motivo-lista-expandible', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const $el = $(this);
                 $el.toggleClass('expanded');
-                
+
                 // Si el clic fue en el contenedor gris de la descripción, expandimos también el hijo
                 $el.find('.reda-mediation-desc-clamped, .reda-motivo-clamped').toggleClass('expanded');
 
