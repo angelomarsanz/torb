@@ -343,7 +343,8 @@ import {
             const esMio = (m.sender_type === 'admin' && m.sender_id == currentUserId);
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Usuario"] || "Usuario");
-            const fotoSender = m.sender_foto || `${APP_URL}/public/img/unnamed.png`;
+            const fotoSender = getFullUrl(m.sender_foto);
+            const roleSender = m.sender_role ? ` (${m.sender_role})` : '';
 
             html += `
                 <div class="message-list-admin ${claseMe} d-flex align-items-start mb-3">
@@ -353,7 +354,7 @@ import {
 
                     <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-admin p-2 px-3">
-                            ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
+                            ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}${roleSender}</span>` : ''}
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-admin text-10 mt-1 opacity-50">${m.created_time}</div>

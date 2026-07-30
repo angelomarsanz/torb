@@ -41,20 +41,30 @@ class MensajeController extends Controller
 
         $admins = Admin::whereIn('id', array_unique($adminIds))->get()->keyBy('id');
 
+        $booking = Bookings::with(['users', 'host'])->find($booking_id);
+        $disputa = Disputa::where('booking_id', $booking_id)->first();
+
         foreach ($messages as $message) {
             if ($message->sender_type === 'admin') {
                 $admin = $admins->get($message->sender_id);
                 $message->sender_name = $admin ? $admin->username : __('Administrador');
                 $message->sender_foto = reda_get_profile_src($admin, 'admin');
+                $message->sender_role = __('agente');
             } else {
                 // Previsión para mensajes sin metadata o antiguos
                 $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
                 $message->sender_foto = reda_get_profile_src($message->sender);
+
+                // Determinar rol basado en el booking
+                if ($booking && $message->sender_id == $booking->host_id) {
+                    $message->sender_role = __('anfitrión');
+                } elseif ($booking && $message->sender_id == $booking->user_id) {
+                    $message->sender_role = __('turista');
+                } else {
+                    $message->sender_role = __('usuario');
+                }
             }
         }
-
-        $booking = Bookings::with(['users', 'host'])->find($booking_id);
-        $disputa = Disputa::where('booking_id', $booking_id)->first();
 
         return response()->json([
             'success' => true,

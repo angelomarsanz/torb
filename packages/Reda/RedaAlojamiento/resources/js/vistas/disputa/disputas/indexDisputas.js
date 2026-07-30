@@ -323,6 +323,7 @@ import {
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
             const fotoSender = getFullUrl(m.sender_foto);
+            const roleSender = m.sender_role ? ` (${m.sender_role})` : '';
 
             html += `
                 <div class="message-list-reda ${claseMe} d-flex align-items-start mb-3">
@@ -332,7 +333,8 @@ import {
 
                     <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-reda shadow-sm p-3">
-                            ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
+                            ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender}${roleSender}</span>` : ''}
+
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-reda text-10 mt-1 opacity-50">${m.created_time || ''}</div>
