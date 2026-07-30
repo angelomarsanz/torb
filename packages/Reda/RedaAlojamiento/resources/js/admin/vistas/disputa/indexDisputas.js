@@ -325,26 +325,18 @@ import {
             const fotoSender = m.sender_foto || `${APP_URL}/public/img/unnamed.png`;
 
             html += `
-                <div class="message-list-admin ${claseMe} d-flex align-items-end mb-2">
-                    ${!esMio ? `
-                        <div class="symbol symbol-30px symbol-circle me-2 mb-4">
-                            <img src="${fotoSender}" class="rounded-circle shadow-xs">
-                        </div>
-                    ` : ''}
+                <div class="message-list-admin ${claseMe} d-flex align-items-start mb-3">
+                    <div class="symbol symbol-35px symbol-circle me-2 flex-shrink-0">
+                        <img src="${fotoSender}" class="rounded-circle shadow-xs border">
+                    </div>
                     
-                    <div class="d-flex flex-column ${esMio ? 'align-items-end' : 'align-items-start'}">
+                    <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-admin p-2 px-3">
                             ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-admin text-10 mt-1 opacity-50">${m.created_time}</div>
                     </div>
-
-                    ${esMio ? `
-                        <div class="symbol symbol-30px symbol-circle ms-2 mb-4">
-                            <img src="${fotoSender}" class="rounded-circle shadow-xs">
-                        </div>
-                    ` : ''}
                 </div>
             `;
         });

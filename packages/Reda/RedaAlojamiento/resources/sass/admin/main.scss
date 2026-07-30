@@ -793,7 +793,7 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 12px; /* Mayor separación entre grupos de mensajes */
 
     /* Estilo barra desplazamiento siempre visible */
     &::-webkit-scrollbar {
@@ -815,39 +815,65 @@
 }
 
 .message-list-admin {
-    margin-bottom: 8px;
-    max-width: 80%;
+    margin-bottom: 5px;
+    max-width: 85%;
     display: flex;
-    flex-direction: column;
-    align-self: flex-start;
+    align-self: flex-start; /* Casi todos a la izquierda */
 
     &.me {
         align-self: flex-end !important;
+        /* El avatar sigue a la izquierda del globo incluso si el grupo está a la derecha */
         .msg-admin {
             background-color: #dcf8c6 !important;
-            color: #000;
-            border-radius: 12px 12px 0 12px;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
         }
         .time-admin {
             text-align: right;
         }
     }
 
-    .msg-admin {
-        background-color: #fff;
-        color: #000;
-        padding: 8px 12px;
-        border-radius: 12px 12px 12px 0;
-        word-wrap: break-word;
-        box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+    .symbol {
+        margin-top: auto; /* Alinea el avatar con la parte inferior/hora */
+    }
+
+    .msg-bubble-container {
         position: relative;
+        
+        .msg-admin {
+            background-color: #fff;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 8px; /* Bordes más rectos estilo WA */
+            word-wrap: break-word;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            position: relative;
+            min-width: 60px;
+
+            /* La "puntita" del mensaje apuntando al avatar (izquierda) */
+            &:before {
+                content: "";
+                position: absolute;
+                left: -8px;
+                bottom: 10px;
+                width: 0;
+                height: 0;
+                border-top: 8px solid transparent;
+                border-bottom: 0px solid transparent;
+                border-right: 10px solid #fff; /* Por defecto blanco */
+                z-index: 1;
+            }
+        }
+    }
+
+    /* Ajuste de color de la punta para mis mensajes */
+    &.me .msg-bubble-container .msg-admin:before {
+        border-right-color: #dcf8c6 !important;
     }
 
     .time-admin {
         font-size: 10px;
         color: #999;
         margin-top: 2px;
+        padding: 0 4px;
     }
 }
 
