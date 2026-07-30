@@ -296,18 +296,34 @@ import {
 
         let html = '';
         mensajes.forEach(m => {
-            // El usuario actual es el que envió el mensaje si m.sender_type es 'user' y m.sender_id coincide con el ID de la sesión
-            const esMio = (m.sender_type === 'user' && m.sender_id == currentUserId);
+            // El usuario actual es el que envió el mensaje si m.sender_id coincide con el ID de la sesión
+            // Independientemente de si es 'admin' o 'user', lo que importa es si soy yo
+            const esMio = (m.sender_id == currentUserId && m.sender_type !== 'admin'); 
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
+            const fotoSender = m.sender_foto || `${APP_URL}/public/img/unnamed.png`;
 
             html += `
-                <div class="message-list-reda ${claseMe}">
-                    <div class="msg-reda shadow-sm p-3">
-                        ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
-                        <p class="m-0 text-13">${m.message}</p>
+                <div class="message-list-reda ${claseMe} d-flex align-items-end mb-3">
+                    ${!esMio ? `
+                        <div class="reda-avatar-container me-2 mb-4">
+                            <img src="${fotoSender}" class="rounded-circle reda-avatar-30 shadow-sm border">
+                        </div>
+                    ` : ''}
+
+                    <div class="d-flex flex-column ${esMio ? 'align-items-end' : 'align-items-start'}">
+                        <div class="msg-reda shadow-sm p-3">
+                            ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
+                            <p class="m-0 text-13">${m.message}</p>
+                        </div>
+                        <div class="time-reda text-10 mt-1 opacity-50">${m.created_time || ''}</div>
                     </div>
-                    <div class="time-reda text-10 mt-1 opacity-50">${m.created_time || ''}</div>
+
+                    ${esMio ? `
+                        <div class="reda-avatar-container ms-2 mb-4">
+                            <img src="${fotoSender}" class="rounded-circle reda-avatar-30 shadow-sm border">
+                        </div>
+                    ` : ''}
                 </div>
             `;
         });

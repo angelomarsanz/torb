@@ -263,7 +263,7 @@ import {
                     <button class="btn btn-outline-success btn-sm w-100 border-0 text-12 btn-ver-mensajes-mediacion" 
                             data-booking-id="${item.booking_id}" 
                             data-id="${item.id}">
-                        <i class="far fa-comments me-1"></i> ${trans["Ver mensajes"] || "Ver mensajes"}
+                        <i class="far fa-comments me-1"></i> ${trans["Ver conversación"] || "Ver conversación"}
                     </button>
                 </div>
             </div>
@@ -322,14 +322,29 @@ import {
             const esMio = (m.sender_type === 'admin' && m.sender_id == currentUserId);
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Usuario"] || "Usuario");
+            const fotoSender = m.sender_foto || `${APP_URL}/public/img/unnamed.png`;
 
             html += `
-                <div class="message-list-admin ${claseMe}">
-                    <div class="msg-admin p-2 px-3">
-                        ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
-                        <p class="m-0 text-13">${m.message}</p>
+                <div class="message-list-admin ${claseMe} d-flex align-items-end mb-2">
+                    ${!esMio ? `
+                        <div class="symbol symbol-30px symbol-circle me-2 mb-4">
+                            <img src="${fotoSender}" class="rounded-circle shadow-xs">
+                        </div>
+                    ` : ''}
+                    
+                    <div class="d-flex flex-column ${esMio ? 'align-items-end' : 'align-items-start'}">
+                        <div class="msg-admin p-2 px-3">
+                            ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
+                            <p class="m-0 text-13">${m.message}</p>
+                        </div>
+                        <div class="time-admin text-10 mt-1 opacity-50">${m.created_time}</div>
                     </div>
-                    <div class="time-admin text-10 mt-1 opacity-50">${m.created_time}</div>
+
+                    ${esMio ? `
+                        <div class="symbol symbol-30px symbol-circle ms-2 mb-4">
+                            <img src="${fotoSender}" class="rounded-circle shadow-xs">
+                        </div>
+                    ` : ''}
                 </div>
             `;
         });

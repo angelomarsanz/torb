@@ -45,9 +45,11 @@ class MensajeController extends Controller
             if ($message->sender_type === 'admin') {
                 $admin = $admins->get($message->sender_id);
                 $message->sender_name = $admin ? $admin->username : __('Administrador');
+                $message->sender_foto = $admin ? $admin->profile_src : asset('public/img/unnamed.png');
             } else {
                 // Previsión para mensajes sin metadata o antiguos
                 $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
+                $message->sender_foto = $message->sender ? $message->sender->profile_src : asset('public/img/unnamed.png');
             }
         }
 
