@@ -57,7 +57,7 @@
                                                     @php
                                                         $logo = null;
                                                         if ($experiencia->ruta_imagenes) {
-                                                            $logo = asset('public/images/logos_negocios/' . $experiencia->ruta_imagenes);
+                                                            $logo = '/public/images/logos_negocios/' . $experiencia->ruta_imagenes;
                                                         } else {
                                                             $fotoPortada = $experiencia->fotos->where('cover_photo', 1)->first();
                                                             if (!$fotoPortada) {
@@ -65,7 +65,7 @@
                                                             }
 
                                                             if ($fotoPortada) {
-                                                                $logo = asset('public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo);
+                                                                $logo = '/public/images/experiencias/' . $experiencia->id . '/' . $fotoPortada->photo;
                                                             }
                                                         }
                                                     @endphp
@@ -125,10 +125,7 @@
                                                         <small class="text-muted">{{ __('Cliente') }}</small>
                                                     </div>
                                                     @php
-                                                        $fotoUsuario = $calificacion->usuario->profile_image;
-                                                        $rutaFotoUsuario = $fotoUsuario
-                                                            ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
-                                                            : asset('public/images/default-profile.png');
+                                                        $rutaFotoUsuario = reda_get_profile_src($calificacion->usuario);
                                                     @endphp
                                                     <img src="{{ $rutaFotoUsuario }}" class="img-profile-list shadow-sm">
                                                 </div>

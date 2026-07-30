@@ -100,12 +100,12 @@ class DisputaController extends Controller
                 'actualizado_hace' => $d->updated_at->diffForHumans(),
                 'agente' => $d->agente ? [
                     'nombre' => $d->agente->username,
-                    'foto' => $d->agente->profile_src
+                    'foto' => reda_get_profile_src($d->agente, 'admin')
                 ] : null,
                 'turista_nombre' => $d->turista ? $d->turista->first_name . ' ' . $d->turista->last_name : '',
-                'turista_foto' => $d->turista ? $d->turista->profile_src : asset('public/img/unnamed.png'),
+                'turista_foto' => reda_get_profile_src($d->turista),
                 'anfitrion_nombre' => $d->anfitrion ? $d->anfitrion->first_name . ' ' . $d->anfitrion->last_name : '',
-                'anfitrion_foto' => $d->anfitrion ? $d->anfitrion->profile_src : asset('public/img/unnamed.png'),
+                'anfitrion_foto' => reda_get_profile_src($d->anfitrion),
                 'propiedad_foto' => $propiedadFoto,
                 'id_usuario_inicial' => $d->id_usuario_inicial,
                 'rol_usuario_inicial' => $d->rol_usuario_inicial,

@@ -60,3 +60,27 @@ if (!function_exists('reda_get_inbox_unread_count')) {
             ->get()->count();
     }
 }
+
+if (!function_exists('reda_get_profile_src')) {
+    /**
+     * Obtiene la ruta de la imagen de perfil a partir del directorio public/.
+     * @param mixed $model Modelo User o Admin
+     * @param string $type Tipo de usuario ('user' o 'admin')
+     * @return string Ruta de la imagen
+     */
+    function reda_get_profile_src($model, $type = 'user')
+    {
+        if (!$model) return '/public/img/unnamed.png';
+        
+        $profileImage = $model->profile_image ?? '';
+        $id = $model->id;
+        
+        if ($profileImage == '') {
+            return ($type == 'admin') 
+                ? '/public/images/user_pic.jpg' 
+                : '/public/images/default-profile.png';
+        }
+        
+        return '/public/images/profile/' . $id . '/' . $profileImage;
+    }
+}

@@ -16,6 +16,17 @@ import {
     let observadorEnfoque = null;
 
     /**
+     * Obtiene la URL completa para una imagen.
+     */
+    const getFullUrl = (path) => {
+        if (!path) return `${APP_URL}/public/img/unnamed.png`;
+        if (path.startsWith('http')) return path;
+        // Eliminar slash inicial si existe para evitar doble slash al unir con APP_URL
+        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+        return `${APP_URL}/${cleanPath}`;
+    };
+
+    /**
      * Formatea el texto del estatus: Inicial mayúscula, resto minúscula.
      */
     const formatStatusText = (text) => {
@@ -182,7 +193,17 @@ import {
      */
     const generarBloquePersonasHtml = (item) => {
         const trans = window.RedaAlojamientoJson || {};
-        const agenteFoto = item.agente ? item.agente.foto : `${APP_URL}/public/img/unnamed.png`;
+
+        const getFullUrl = (path) => {
+            if (!path) return `${APP_URL}/public/img/unnamed.png`;
+            if (path.startsWith('http')) return path;
+            return `${APP_URL}/${path.startsWith('/') ? path.substring(1) : path}`;
+        };
+
+        const agenteFoto = item.agente ? getFullUrl(item.agente.foto) : `${APP_URL}/public/img/unnamed.png`;
+        const anfitrionFoto = getFullUrl(item.anfitrion_foto);
+        const turistaFoto = getFullUrl(item.turista_foto);
+
         const agenteNombre = item.agente ? item.agente.nombre : trans["Pendiente de asignación"] || "Pendiente de asignación";
         const agenteIcono = item.agente ? 'fas fa-user-tie' : 'fas fa-user-clock';
         const agenteClaseNombre = item.agente ? 'text-dark' : 'text-muted italic small leading-tight';
@@ -205,7 +226,7 @@ import {
             <div class="personas-relacionadas-block">
                 <div class="d-flex align-items-center mb-2">
                     <div class="avatar-mini mr-2">
-                        <img src="${item.anfitrion_foto}" class="rounded-circle border reda-avatar-30">
+                        <img src="${anfitrionFoto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${labelAnfitrion}</span>
@@ -214,7 +235,7 @@ import {
                 </div>
                 <div class="d-flex align-items-center mb-2">
                     <div class="avatar-mini mr-2">
-                        <img src="${item.turista_foto}" class="rounded-circle border reda-avatar-30">
+                        <img src="${turistaFoto}" class="rounded-circle border reda-avatar-30">
                     </div>
                     <div class="d-flex flex-column overflow-hidden">
                         <span class="text-muted text-10 leading-tight">${labelTurista}</span>
@@ -301,7 +322,7 @@ import {
             const esMio = (m.sender_id == currentUserId && m.sender_type !== 'admin'); 
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
-            const fotoSender = m.sender_foto || `${APP_URL}/public/img/unnamed.png`;
+            const fotoSender = getFullUrl(m.sender_foto);
 
             html += `
                 <div class="message-list-reda ${claseMe} d-flex align-items-start mb-3">

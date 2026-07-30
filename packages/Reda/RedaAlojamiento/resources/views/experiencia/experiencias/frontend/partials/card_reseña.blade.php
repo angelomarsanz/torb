@@ -1,8 +1,5 @@
 @php
-    $fotoUsuario = $calificacion->usuario->profile_image;
-    $rutaFotoUsuario = $fotoUsuario
-        ? asset('public/images/profile/' . $calificacion->usuario->id . '/' . $fotoUsuario)
-        : asset('public/images/default-profile.png');
+    $rutaFotoUsuario = reda_get_profile_src($calificacion->usuario);
 
     $primerNombre = explode(' ', trim($calificacion->usuario->first_name))[0];
     $primerApellido = explode(' ', trim($calificacion->usuario->last_name))[0];

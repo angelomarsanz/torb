@@ -5,19 +5,16 @@
     if (!$esReseña) {
         foreach($items->take(3) as $item) {
             if (isset($item->foto_actividad)) {
-                $fotosCollage[] = asset('public/images/actividades_experiencias/' . $item->foto_actividad);
+                $fotosCollage[] = '/public/images/actividades_experiencias/' . $item->foto_actividad;
             } elseif (isset($item->usuario)) {
-                $fotoUsuario = $item->usuario->profile_image;
-                $fotosCollage[] = $fotoUsuario
-                    ? asset('public/images/profile/' . $item->usuario->id . '/' . $fotoUsuario)
-                    : asset('public/images/default-profile.png');
+                $fotosCollage[] = reda_get_profile_src($item->usuario);
             } else {
-                $fotosCollage[] = asset('public/images/default-image.png');
+                $fotosCollage[] = '/public/images/default-image.png';
             }
         }
         // Rellenar si hay menos de 3
         while(count($fotosCollage) < 3) {
-            $fotosCollage[] = asset('public/images/default-image.png');
+            $fotosCollage[] = '/public/images/default-image.png';
         }
     }
 @endphp
