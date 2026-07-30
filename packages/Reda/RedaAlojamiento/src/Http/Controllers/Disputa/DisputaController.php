@@ -56,23 +56,21 @@ class DisputaController extends Controller
                 $paths = json_decode($documentosRaw, true);
                 if (is_array($paths)) {
                     foreach ($paths as $path) {
-                        // Asegurar que el path tenga el prefijo public/ para evitar 404
-                        $webPath = strpos($path, 'public/') === 0 ? $path : 'public/' . $path;
+                        // Asegurar que el path tenga el prefijo /public/ para evitar 404
+                        $webPath = (strpos($path, 'public/') === 0) ? '/' . $path : '/public/' . $path;
                         $adjuntos[] = [
                             'nombre' => basename($path),
-                            'url' => asset($webPath),
+                            'url' => $webPath,
                             'es_imagen' => in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
                         ];
                     }
                 }
             }
 
-            // Asegurar prefijo public/ para la foto de la propiedad si es ruta relativa
-            $propiedadFoto = $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png');
-            if ($d->booking && $d->booking->properties && strpos($propiedadFoto, 'http') === false && strpos($propiedadFoto, 'public/') !== 0) {
-                $propiedadFoto = asset('public/' . $propiedadFoto);
-            } elseif ($d->booking && $d->booking->properties) {
-                $propiedadFoto = asset($propiedadFoto);
+            // Asegurar prefijo /public/ para la foto de la propiedad si es ruta relativa
+            $propiedadFoto = $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : '/public/img/unnamed.png';
+            if ($d->booking && $d->booking->properties && strpos($propiedadFoto, 'http') === false) {
+                $propiedadFoto = (strpos($propiedadFoto, 'public/') === 0) ? '/' . $propiedadFoto : '/public/' . $propiedadFoto;
             }
 
             // Datos de ubicación

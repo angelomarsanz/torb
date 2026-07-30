@@ -74,10 +74,10 @@ class DisputaController extends Controller
                 $rutas = json_decode($d->documentos_turista, true);
                 if (is_array($rutas)) {
                     foreach ($rutas as $ruta) {
-                        $rutaWeb = strpos($ruta, 'public/') === 0 ? $ruta : 'public/' . $ruta;
+                        $webPath = (strpos($ruta, 'public/') === 0) ? '/' . $ruta : '/public/' . $ruta;
                         $adjuntosTurista[] = [
                             'nombre' => basename($ruta),
-                            'url' => asset($rutaWeb),
+                            'url' => $webPath,
                             'es_imagen' => in_array(strtolower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
                         ];
                     }
@@ -90,10 +90,10 @@ class DisputaController extends Controller
                 $rutas = json_decode($d->documentos_anfitrion, true);
                 if (is_array($rutas)) {
                     foreach ($rutas as $ruta) {
-                        $rutaWeb = strpos($ruta, 'public/') === 0 ? $ruta : 'public/' . $ruta;
+                        $webPath = (strpos($ruta, 'public/') === 0) ? '/' . $ruta : '/public/' . $ruta;
                         $adjuntosAnfitrion[] = [
                             'nombre' => basename($ruta),
-                            'url' => asset($rutaWeb),
+                            'url' => $webPath,
                             'es_imagen' => in_array(strtolower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])
                         ];
                     }
@@ -103,12 +103,10 @@ class DisputaController extends Controller
             // Combinar adjuntos para el resumen general del admin (o mostrar por separado)
             $adjuntos = array_merge($adjuntosTurista, $adjuntosAnfitrion);
 
-            // Asegurar prefijo public/ para la foto de la propiedad si es ruta relativa
-            $propiedadFoto = $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : asset('public/img/unnamed.png');
-            if ($d->booking && $d->booking->properties && strpos($propiedadFoto, 'http') === false && strpos($propiedadFoto, 'public/') !== 0) {
-                $propiedadFoto = asset('public/' . $propiedadFoto);
-            } elseif ($d->booking && $d->booking->properties) {
-                $propiedadFoto = asset($propiedadFoto);
+            // Asegurar prefijo /public/ para la foto de la propiedad si es ruta relativa
+            $propiedadFoto = $d->booking && $d->booking->properties ? $d->booking->properties->cover_photo : '/public/img/unnamed.png';
+            if ($d->booking && $d->booking->properties && strpos($propiedadFoto, 'http') === false) {
+                $propiedadFoto = (strpos($propiedadFoto, 'public/') === 0) ? '/' . $propiedadFoto : '/public/' . $propiedadFoto;
             }
 
             // Datos de ubicación
