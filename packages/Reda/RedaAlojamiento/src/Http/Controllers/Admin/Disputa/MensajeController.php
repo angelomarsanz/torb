@@ -59,7 +59,8 @@ class MensajeController extends Controller
             'respuesta' => [
                 'messages' => $messages,
                 'booking' => $booking,
-                'disputa' => $disputa
+                'disputa' => $disputa,
+                'current_user_id' => Auth::guard('admin')->id()
             ]
         ]);
     }

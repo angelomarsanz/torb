@@ -27,6 +27,7 @@ import {
      * Devuelve la clase de color adecuada para el badge según el estatus.
      */
     const getStatusBadgeClass = (status) => {
+        if (!status) return 'bg-secondary text-white';
         const s = status.toLowerCase();
         if (s.includes('abiert')) return 'bg-orange text-white';
         if (s.includes('revis')) return 'bg-info text-white';
@@ -306,7 +307,7 @@ import {
     /**
      * Renderiza la lista de mensajes en el modal.
      */
-    const renderizarMensajes = (mensajes, booking) => {
+    const renderizarMensajes = (mensajes, booking, currentUserId) => {
         const container = $('#reda-mensajes-container');
         const trans = window.RedaAlojamientoJson || {};
         
@@ -317,27 +318,47 @@ import {
 
         let html = '';
         mensajes.forEach(m => {
-            // Previsión: Determinar si es "mio" (del admin) basándonos en el sender_type.
-            // Si no hay metadata, m.sender_type será undefined, lo cual es correcto tratar como 'user'.
-            const esMio = (m.sender_type === 'admin');
+            // El usuario actual es el admin si sender_type es 'admin' y el ID coincide
+            const esMio = (m.sender_type === 'admin' && m.sender_id == currentUserId);
             const claseMe = esMio ? 'me' : '';
-            const nombreSender = m.sender_name || (trans["Administrador"] || "Administrador");
+            const nombreSender = m.sender_name || (trans["Usuario"] || "Usuario");
 
             html += `
                 <div class="message-list-admin ${claseMe}">
-                    <div class="msg-admin shadow-sm p-3">
+                    <div class="msg-admin p-2 px-3">
                         ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender}</span>` : ''}
                         <p class="m-0 text-13">${m.message}</p>
                     </div>
-                    <div class="time-admin text-10 mt-1 opacity-50 text-end">${m.created_time}</div>
+                    <div class="time-admin text-10 mt-1 opacity-50">${m.created_time}</div>
                 </div>
             `;
         });
         container.html(html);
         
-        // Scroll al final
-        container.scrollTop(container[0].scrollHeight);
+        // Función interna para scroll robusto
+        const scrollToBottom = () => {
+            if (container.length) {
+                container.scrollTop(container[0].scrollHeight);
+                // Respaldo con JS nativo
+                container[0].scrollTop = container[0].scrollHeight;
+            }
+        };
+
+        // Múltiples intentos para asegurar que el DOM esté listo y el modal visible
+        scrollToBottom();
+        setTimeout(scrollToBottom, 50);
+        setTimeout(scrollToBottom, 200);
+        setTimeout(scrollToBottom, 500);
     };
+
+    // Escuchar cuando el modal se termina de mostrar para asegurar el scroll
+    $(document).on('shown.bs.modal', '#modal-mensajes-mediacion-reda', function () {
+        const container = $('#reda-mensajes-container');
+        if (container.length) {
+            container.scrollTop(container[0].scrollHeight);
+        }
+        $('#input-mensaje-admin').focus();
+    });
 
     /**
      * Abre el modal de mensajes.
@@ -366,7 +387,7 @@ import {
             $('#send-to-anfitrion').attr('data-id', b.host_id);
             $('#label-send-anfitrion').text(`${trans["Anfitrión"] || "Anfitrión"}: ${b.host.first_name}`);
 
-            renderizarMensajes(data.respuesta.messages, b);
+            renderizarMensajes(data.respuesta.messages, b, data.respuesta.current_user_id);
         } else {
             container.html(`<div class="alert alert-danger">${data.mensaje_usuario}</div>`);
         }
@@ -753,37 +774,41 @@ import {
             window.RedaNotificaciones.esperar();
         }
 
-        const data = await obtenerMediacionesPaginadas(estatus, pagina);
+        try {
+            const data = await obtenerMediacionesPaginadas(estatus, pagina);
 
-        if (data.success) {
-            mediacionSeleccionadaId = null; // Reset selection state for new results
-            mediacionesCargadas = data.respuesta.data;
-            renderizarLista(mediacionesCargadas);
-            if ($('#disputas-pagination-container').length) {
-                $('#disputas-pagination-container').html(data.respuesta.pagination);
-            }
+            if (data.success) {
+                mediacionSeleccionadaId = null; // Reset selection state for new results
+                mediacionesCargadas = data.respuesta.data;
+                renderizarLista(mediacionesCargadas);
+                if ($('#disputas-pagination-container').length) {
+                    $('#disputas-pagination-container').html(data.respuesta.pagination);
+                }
 
-            // Seleccionar la primera mediación por defecto
-            if (mediacionesCargadas.length > 0) {
-                seleccionarMediacion(mediacionesCargadas[0].id, false);
+                // Seleccionar la primera mediación por defecto
+                if (mediacionesCargadas.length > 0) {
+                    seleccionarMediacion(mediacionesCargadas[0].id, false);
+                } else {
+                    const trans = window.RedaAlojamientoJson || {};
+                    $('#disputas-cabecera-lateral').addClass('d-none');
+                    $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
+                    $('#disputas-reservacion-sidebar').addClass('d-none');
+                    $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
+                }
             } else {
                 const trans = window.RedaAlojamientoJson || {};
-                $('#disputas-cabecera-lateral').addClass('d-none');
-                $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
-                $('#disputas-reservacion-sidebar').addClass('d-none');
-                $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
+                $('#disputas-list-container').html(`
+                    <div class="alert alert-danger mt-4">
+                        ${data.mensaje_usuario}
+                    </div>
+                `);
             }
-        } else {
-            const trans = window.RedaAlojamientoJson || {};
-            $('#disputas-list-container').html(`
-                <div class="alert alert-danger mt-4">
-                    ${data.mensaje_usuario}
-                </div>
-            `);
-        }
-
-        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-            window.RedaNotificaciones.ocultar();
+        } catch (error) {
+            console.error('Error al cargar mediaciones:', error);
+        } finally {
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                window.RedaNotificaciones.ocultar();
+            }
         }
     };
 
@@ -952,7 +977,7 @@ import {
                     // Recargar mensajes
                     const data = await obtenerMensajesMediacion(bookingId);
                     if (data.success) {
-                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking);
+                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
                     }
                 } else {
                     alert(response.mensaje_usuario || 'Error al enviar mensaje');
