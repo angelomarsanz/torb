@@ -114,20 +114,9 @@
                                 <input type="text" class="form-control cht_msg_reda" id="input-mensaje-reda" placeholder="{{ __('Escribe un mensaje...') }}" />
                             </div>
                             <div class="col-auto">
-                                <div class="dropdown">
-                                    <button class="btn btn-success send-btn-reda" type="button" id="btn-enviar-mensaje-reda" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ __('Enviar mensaje') }}">
-                                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right shadow-lg border-0" id="select-receptor-reda" aria-labelledby="btn-enviar-mensaje-reda">
-                                        <h6 class="dropdown-header text-10 text-uppercase letter-spacing-1">{{ __('Enviar a:') }}</h6>
-                                        <button class="dropdown-item btn-send-to-user" data-id="" id="send-to-turista">
-                                            <span class="text-13" id="label-send-turista">{{ __('Turista') }}</span>
-                                        </button>
-                                        <button class="dropdown-item btn-send-to-user" data-id="" id="send-to-anfitrion">
-                                            <span class="text-13" id="label-send-anfitrion">{{ __('Anfitrión') }}</span>
-                                        </button>
-                                    </div>
-                                </div>
+                                <button class="btn btn-success send-btn-reda" type="button" id="btn-enviar-mensaje-reda" title="{{ __('Enviar mensaje') }}">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                </button>
                             </div>
                         </div>
                     </div>

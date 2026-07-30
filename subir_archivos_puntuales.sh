@@ -23,7 +23,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    "packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
 
     "packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
@@ -45,6 +46,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Models/Admin/SoporteTecnico.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/PlanNegocio.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/FavoritoComercio.php"
+    "packages/Reda/RedaAlojamiento/src/Models/Disputa/MensajeMetadata.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: MIGRACIONES ---
     #"packages/Reda/RedaAlojamiento/database/migrations/2025_10_26_225134_create_actividades_experiencias_table.php"
@@ -100,6 +102,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_110000_add_document_columns_to_diputas_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_120000_rename_diputas_to_disputas_table.php"
     #"database/migrations/2026_07_20_000000_add_initial_user_columns_to_disputas_table.php"
+    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_29_100000_create_reda_mensajes_metadata_table.php"
+    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_29_110000_add_disputas_message_type.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"

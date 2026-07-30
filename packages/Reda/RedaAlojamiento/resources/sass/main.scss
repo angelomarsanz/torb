@@ -3429,6 +3429,7 @@
     display: flex;
     flex-direction: column;
     height: 500px;
+    max-height: 70vh; /* Para que se adapte mejor a pantallas pequeñas */
 }
 
 .message-wrap-reda {
@@ -3501,6 +3502,62 @@
         &:hover {
             transform: scale(1.05);
             background-color: #17a665;
+        }
+    }
+}
+
+/* --- MÓDULO DE MENSAJES DE MEDIACIÓN (ADMIN BS5) --- */
+.container-inbox-admin {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    max-height: 70vh;
+}
+
+.message-wrap-admin {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f0f2f5;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-list-admin {
+    margin-bottom: 12px;
+    max-width: 80%;
+    align-self: flex-start;
+
+    &.me {
+        align-self: flex-end;
+        .msg-admin {
+            background-color: #dcf8c6;
+            color: #333;
+            border-radius: 10px 10px 0 10px;
+        }
+    }
+
+    .msg-admin {
+        background-color: #fff;
+        color: #333;
+        border-radius: 10px 10px 10px 0;
+        word-wrap: break-word;
+    }
+}
+
+.message-footer-admin {
+    .send-btn-admin {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        border: none;
+        &:hover {
+            transform: scale(1.1);
+            filter: brightness(1.1);
         }
     }
 }

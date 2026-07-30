@@ -72,7 +72,7 @@ class MensajeController extends Controller
         $rules = [
             'booking_id'  => 'required|exists:bookings,id',
             'message'     => 'required|string',
-            'receiver_id' => 'required' 
+            'receiver_id' => 'nullable' 
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -92,7 +92,7 @@ class MensajeController extends Controller
         $message = new Messages;
         $message->property_id = $booking->property_id;
         $message->booking_id  = $request->booking_id;
-        $message->receiver_id = $request->receiver_id;
+        $message->receiver_id = $request->receiver_id ?? 0; // 0 indica broadcast/grupo para mediaciones
         
         $adminId = Auth::guard('admin')->id();
         $message->sender_id   = $adminId; 

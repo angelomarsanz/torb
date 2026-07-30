@@ -97,20 +97,9 @@
                                 <input type="text" class="form-control cht_msg_admin" id="input-mensaje-admin" placeholder="{{ __('Escribe un mensaje...') }}" />
                             </div>
                             <div class="col-auto">
-                                <div class="dropdown">
-                                    <button class="btn btn-success rounded-circle send-btn-admin p-2" type="button" id="btn-enviar-mensaje-admin" title="{{ __('Enviar mensaje') }}">
-                                        <i class="fa fa-paper-plane px-1" aria-hidden="true"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end p-2 shadow" id="select-receptor-admin">
-                                        <h6 class="dropdown-header text-10 text-uppercase letter-spacing-1">{{ __('Enviar a:') }}</h6>
-                                        <button class="dropdown-item rounded btn-send-to-user" data-id="" id="send-to-turista">
-                                            <span class="text-12" id="label-send-turista">{{ __('Turista') }}</span>
-                                        </button>
-                                        <button class="dropdown-item rounded btn-send-to-user" data-id="" id="send-to-anfitrion">
-                                            <span class="text-12" id="label-send-anfitrion">{{ __('Anfitrión') }}</span>
-                                        </button>
-                                    </div>
-                                </div>
+                                <button class="btn btn-success rounded-circle send-btn-admin p-2" type="button" id="btn-enviar-mensaje-admin" title="{{ __('Enviar mensaje') }}">
+                                    <i class="fa fa-paper-plane px-1" aria-hidden="true"></i>
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -335,14 +335,6 @@ import {
         const data = await obtenerMensajesMediacion(bookingId);
         if (data.success) {
             const b = data.respuesta.booking;
-            
-            // Configurar receptores en el dropdown
-            $('#send-to-turista').attr('data-id', b.user_id);
-            $('#label-send-turista').text(`${trans["Turista"] || "Turista"}: ${b.users.first_name}`);
-            
-            $('#send-to-anfitrion').attr('data-id', b.host_id);
-            $('#label-send-anfitrion').text(`${trans["Anfitrión"] || "Anfitrión"}: ${b.host.first_name}`);
-
             renderizarMensajes(data.respuesta.messages, b, data.respuesta.current_user_id);
         } else {
             container.html(`<div class="alert alert-danger">${data.mensaje_usuario}</div>`);
@@ -886,16 +878,17 @@ import {
             // Enviar mensaje al presionar Enter
             $(document).on('keypress', '#input-mensaje-reda', function(e) {
                 if (e.which === 13) {
-                    $('#btn-enviar-mensaje-reda').dropdown('toggle');
+                    e.preventDefault();
+                    $('#btn-enviar-mensaje-reda').click();
                 }
             });
 
-            // Seleccionar receptor y enviar
-            $(document).on('click', '.btn-send-to-user', async function(e) {
+            // Acción del botón enviar (Directo)
+            $(document).on('click', '#btn-enviar-mensaje-reda', async function(e) {
                 e.preventDefault();
-                const receiverId = $(this).attr('data-id');
-                const bookingId = $('#btn-enviar-mensaje-reda').attr('data-booking-id');
+                const bookingId = $(this).attr('data-booking-id');
                 const message = $('#input-mensaje-reda').val().trim();
+                const receiverId = 0; // Para mediaciones, enviamos al "grupo" (broadcast)
 
                 if (!message) return;
 

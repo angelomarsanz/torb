@@ -923,18 +923,17 @@ import {
             // Enviar mensaje al presionar Enter
             $(document).on('keypress', '#input-mensaje-admin', function(e) {
                 if (e.which === 13) {
-                    const dropdown = new bootstrap.Dropdown($('#btn-enviar-mensaje-admin')[0]);
-                    dropdown.show();
+                    e.preventDefault();
+                    $('#btn-enviar-mensaje-admin').click();
                 }
             });
 
-            // Seleccionar receptor y enviar
-            $(document).on('click', '.btn-send-to-user', async function(e) {
+            // Acción del botón enviar (Directo)
+            $(document).on('click', '#btn-enviar-mensaje-admin', async function(e) {
                 e.preventDefault();
-                const receiverId = $(this).attr('data-id');
-                const bookingId = $('#btn-enviar-mensaje-admin').attr('data-booking-id');
+                const bookingId = $(this).attr('data-booking-id');
                 const message = $('#input-mensaje-admin').val().trim();
-                const trans = window.RedaAlojamientoJson || {};
+                const receiverId = 0; // Para mediaciones, enviamos al "grupo" (broadcast)
 
                 if (!message) return;
 
