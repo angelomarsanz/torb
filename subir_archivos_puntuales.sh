@@ -177,7 +177,7 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/mediacionSvg.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"

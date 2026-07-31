@@ -45,6 +45,8 @@ class MensajeController extends Controller
         $disputa = Disputa::where('booking_id', $booking_id)->first();
 
         foreach ($messages as $message) {
+            $message->created_at_humans = $message->created_at->diffForHumans();
+
             if ($message->sender_type === 'admin') {
                 $admin = $admins->get($message->sender_id);
                 $message->sender_name = $admin ? $admin->username : __('Administrador');

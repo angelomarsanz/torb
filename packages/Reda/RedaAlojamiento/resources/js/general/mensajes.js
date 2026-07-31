@@ -162,6 +162,96 @@ const getModalMediacionHtml = () => {
     };
 
     /**
+     * Obtiene los mensajes enriquecidos de una mediación/reservación.
+     */
+    const obtenerMensajesEnriquecidosReda = (bookingId) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/disputas/mensajes/' + bookingId,
+                type: 'GET',
+                success: (data) => resolve(data),
+                error: (x) => resolve({ success: false, mensaje_usuario: 'Error al cargar mensajes' })
+            });
+        });
+    };
+
+    /**
+     * Renderiza los mensajes enriquecidos en el inbox original.
+     */
+    const renderizarMensajesEnriquecidosInbox = (mensajes, booking, currentUserId) => {
+        const container = $('.message-wrap');
+        const trans = window.RedaAlojamientoJson || {};
+
+        if (!container.length) return;
+
+        if (!mensajes || !mensajes.length) {
+            container.html(`<div class="text-center py-5 text-muted italic">${trans["No hay mensajes en esta conversación."] || "No hay mensajes en esta conversación."}</div>`);
+            return;
+        }
+
+        let html = '';
+        mensajes.forEach(m => {
+            const esMio = (m.sender_id == currentUserId && m.sender_type !== 'admin');
+            const claseMe = esMio ? 'me' : '';
+            const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
+            
+            const getFullUrl = (path) => {
+                if (!path) return `${APP_URL}/public/img/unnamed.png`;
+                if (path.startsWith('http')) return path;
+                return `${APP_URL}/${path.startsWith('/') ? path.substring(1) : path}`;
+            };
+            
+            const fotoSender = getFullUrl(m.sender_foto);
+            let roleSender = m.sender_role ? m.sender_role : '';
+            
+            // Quitar etiqueta demandante para el chat general (Inbox)
+            const labelDemandante = trans["demandante"] || "demandante";
+            roleSender = roleSender.replace(` - ${labelDemandante}`, "");
+
+            html += `
+                <div class="message-list-reda ${claseMe} d-flex align-items-start mb-3">
+                    <div class="reda-avatar-container mr-2 flex-shrink-0">
+                        <img src="${fotoSender}" class="rounded-circle reda-avatar-30 shadow-sm border">
+                    </div>
+
+                    <div class="d-flex flex-column msg-bubble-container">
+                        <div class="msg-reda shadow-sm p-2 px-3">
+                            <span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>
+                            <p class="m-0 text-13">${m.message}</p>
+                        </div>
+                        <div class="time-reda text-10 mt-1 opacity-50">${m.created_at_humans || m.created_time || ''}</div>
+                    </div>
+                </div>
+            `;
+        });
+        container.html(html);
+
+        // Auto-scroll al final
+        container.scrollTop(container[0].scrollHeight);
+    };
+
+    /**
+     * Inyecta los mensajes enriquecidos en el inbox original al seleccionar una conversación.
+     */
+    const inyectarMensajesEnriquecidosReda = async (bookingId) => {
+        const container = $('.message-wrap');
+        if (!container.length) return;
+
+        // Mostrar spinner sutil si no hay mensajes aún (evitar parpadeo si ya hay contenido)
+        if (container.children().length < 2) {
+            container.html('<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div></div>');
+        }
+
+        const data = await obtenerMensajesEnriquecidosReda(bookingId);
+        if (data.success) {
+            renderizarMensajesEnriquecidosInbox(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+        } else {
+            // No reemplazamos por error si ya hay contenido, solo notificamos
+            console.error('Error al enriquecer mensajes:', data.mensaje_usuario);
+        }
+    };
+
+    /**
      * Inyecta el cuadro de mediación en la barra lateral de la reserva.
      */
     const inyectarCajaMediacionReda = async (force = false) => {
@@ -440,6 +530,26 @@ const getModalMediacionHtml = () => {
                     }
                 }, 500);
             }
+
+            // Lógica para enriquecer el inbox original
+            $(document).on('click', '.conversassion', function() {
+                const bookingId = $(this).attr('data-id');
+                // Esperar un momento para que el script original termine su carga inicial
+                setTimeout(() => inyectarMensajesEnriquecidosReda(bookingId), 150);
+            });
+
+            // Si hay un booking inicial cargado en la vista blade
+            const initialBookingId = $('.send-btn').attr('data-booking');
+            if (initialBookingId) {
+                setTimeout(() => inyectarMensajesEnriquecidosReda(initialBookingId), 600);
+            }
+            
+            // También necesitamos interceptar el envío de mensajes para refrescar la vista enriquecida
+            $(document).on('click', '.send-btn', function() {
+                const bookingId = $(this).attr('data-booking');
+                // Refrescar después de un breve delay para que el mensaje se guarde en BD
+                setTimeout(() => inyectarMensajesEnriquecidosReda(bookingId), 1500);
+            });
         }
 
         if ($('#messages').length && $('#booking').length) {

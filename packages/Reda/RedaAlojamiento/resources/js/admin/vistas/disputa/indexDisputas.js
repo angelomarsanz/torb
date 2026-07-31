@@ -356,7 +356,7 @@ import {
                             <span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
-                        <div class="time-admin text-10 mt-1 opacity-50">${m.created_time}</div>
+                        <div class="time-admin text-10 mt-1 opacity-50">${m.created_at_humans || m.created_time || ''}</div>
                     </div>
                 </div>
             `;
