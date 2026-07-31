@@ -323,7 +323,7 @@ import {
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
             const fotoSender = getFullUrl(m.sender_foto);
-            const roleSender = m.sender_role ? ` (${m.sender_role})` : '';
+            const roleSender = m.sender_role ? m.sender_role : '';
 
             html += `
                 <div class="message-list-reda ${claseMe} d-flex align-items-start mb-3">
@@ -332,9 +332,8 @@ import {
                     </div>
 
                     <div class="d-flex flex-column msg-bubble-container">
-                        <div class="msg-reda shadow-sm p-3">
-                            ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender}${roleSender}</span>` : ''}
-
+                        <div class="msg-reda shadow-sm p-2 px-3">
+                            <span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-reda text-10 mt-1 opacity-50">${m.created_time || ''}</div>
@@ -344,8 +343,20 @@ import {
         });
         container.html(html);
         
-        // Scroll al final
-        container.scrollTop(container[0].scrollHeight);
+        // Función interna para scroll robusto
+        const scrollToBottom = () => {
+            if (container.length) {
+                container.scrollTop(container[0].scrollHeight);
+                // Respaldo con JS nativo
+                container[0].scrollTop = container[0].scrollHeight;
+            }
+        };
+
+        // Múltiples intentos para asegurar que el DOM esté listo y el modal visible
+        scrollToBottom();
+        setTimeout(scrollToBottom, 50);
+        setTimeout(scrollToBottom, 200);
+        setTimeout(scrollToBottom, 500);
     };
 
     /**

@@ -55,11 +55,15 @@ class MensajeController extends Controller
                 $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
                 $message->sender_foto = reda_get_profile_src($message->sender);
                 
-                // Determinar rol basado en el booking
+                // Determinar rol basado en el booking y si es demandante
+                $demandanteLabel = ' (' . __('demandante') . ')';
+                
                 if ($booking && $message->sender_id == $booking->host_id) {
-                    $message->sender_role = __('anfitrión');
+                    $esDemandante = ($disputa && $disputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'anfitr'));
+                    $message->sender_role = __('anfitrión') . ($esDemandante ? $demandanteLabel : '');
                 } elseif ($booking && $message->sender_id == $booking->user_id) {
-                    $message->sender_role = __('turista');
+                    $esDemandante = ($disputa && $disputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'turist'));
+                    $message->sender_role = __('turista') . ($esDemandante ? $demandanteLabel : '');
                 } else {
                     $message->sender_role = __('usuario');
                 }
