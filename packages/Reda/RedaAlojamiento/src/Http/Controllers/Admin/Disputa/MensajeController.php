@@ -56,7 +56,7 @@ class MensajeController extends Controller
                 $message->sender_foto = reda_get_profile_src($message->sender);
                 
                 // Determinar rol basado en el booking y si es demandante
-                $demandanteLabel = ' (' . __('demandante') . ')';
+                $demandanteLabel = ' - ' . __('demandante');
                 
                 if ($booking && $message->sender_id == $booking->host_id) {
                     $esDemandante = ($disputa && $disputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'anfitr'));

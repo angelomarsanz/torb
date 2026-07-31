@@ -209,9 +209,9 @@ import {
         const agenteClaseNombre = item.agente ? 'text-dark' : 'text-muted italic small leading-tight';
 
         // Identificación del demandante basada en ID y Rol inicial
-        const demandanteLabel = ` (${trans["demandante"] || "demandante"})`;
-        
-        const esDemandanteAnfitrion = item.id_usuario_anfitrion == item.id_usuario_inicial && 
+        const demandanteLabel = ` - ${trans["demandante"] || "demandante"}`;
+
+        const esDemandanteAnfitrion = item.id_usuario_anfitrion == item.id_usuario_inicial &&
                                      item.rol_usuario_inicial && 
                                      item.rol_usuario_inicial.toLowerCase().includes('anfitr');
                                      

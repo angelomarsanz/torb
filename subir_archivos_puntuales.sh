@@ -46,7 +46,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Models/Admin/SoporteTecnico.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/PlanNegocio.php"
     #"packages/Reda/RedaAlojamiento/src/Models/Experiencia/FavoritoComercio.php"
-    "packages/Reda/RedaAlojamiento/src/Models/Disputa/MensajeMetadata.php"
+    #"packages/Reda/RedaAlojamiento/src/Models/Disputa/MensajeMetadata.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: MIGRACIONES ---
     #"packages/Reda/RedaAlojamiento/database/migrations/2025_10_26_225134_create_actividades_experiencias_table.php"
@@ -102,8 +102,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_110000_add_document_columns_to_diputas_table.php"
     #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_19_120000_rename_diputas_to_disputas_table.php"
     #"database/migrations/2026_07_20_000000_add_initial_user_columns_to_disputas_table.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_29_100000_create_reda_mensajes_metadata_table.php"
-    "packages/Reda/RedaAlojamiento/database/migrations/2026_07_29_110000_add_disputas_message_type.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_29_100000_create_reda_mensajes_metadata_table.php"
+    #"packages/Reda/RedaAlojamiento/database/migrations/2026_07_29_110000_add_disputas_message_type.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (ADMIN) ---
     #"packages/Reda/RedaAlojamiento/resources/views/admin/experiencia/tipos_de_negocios/opciones_tipos_de_negocios.blade.php"
@@ -125,8 +125,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/productos_servicios_encontrados.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/listado_productos_servicios.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_cards.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_ver_todos_negocios.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_reseña.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_ver_todos_negocios.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_reseña.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/card_producto_servicio.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/detalle_actividad_inline.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_favoritos_comercios.blade.php"
@@ -144,14 +144,14 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/billetera_huesped/billeteras_huespedes/index.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/modal_mediacion.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/modal_detalle.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/modal_detalle.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/show.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/calificacion_experiencia.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/cartel_calificacion_pdf.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/create.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/listado_calificaciones.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/detalle_calificaciones.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/detalle_calificaciones.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/descripcion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/actividades.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/ubicacion.blade.php"
@@ -196,7 +196,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/General/SoporteTecnicoController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Disputa/DisputaController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Disputa/DisputaController.php"
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Disputa/MensajeController.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES ---
