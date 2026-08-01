@@ -13,3 +13,4 @@
 
 {{-- 3. Scripts de uso general del plugin --}}
 <script src="{{ asset('public/js/reda/general/reda-general-main.min.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('public/js/reda/vistas/pago/frontend/pagos.min.js') }}?v={{ time() }}"></script>

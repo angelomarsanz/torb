@@ -10,7 +10,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"config/app.php"
     #"config/pdf.php"
     #"package.json"
-    #"webpack.mix.js"
+    "webpack.mix.js"
     #"resources/views/admin/common/head.blade.php"
     #"resources/views/admin/common/foot.blade.php"
     #"resources/views/common/head.blade.php"
@@ -23,10 +23,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
-    "packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
+    #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    #"packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
 
-    "packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
+    #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
@@ -132,7 +132,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_favoritos_comercios.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FUERA DE CARPETAS FRONTEND) ---
-    #"packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/main_head.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_confirmacion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_crop.blade.php"
@@ -177,8 +177,9 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/pago/frontend/pagos.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/mediacionSvg.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/estatusDisputaSvg.js"

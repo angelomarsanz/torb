@@ -88,6 +88,9 @@ if (buildAlojamiento) {
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js', 'public/js/reda/vistas/experiencia/frontend/calificacionExperienciaFrontend.min.js');
 
+    // Js Pago por transferencia bancaria
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/pago/frontend/pagos.js', 'public/js/reda/vistas/pago/frontend/pagos.min.js');
+
     }
 
 mix.options({

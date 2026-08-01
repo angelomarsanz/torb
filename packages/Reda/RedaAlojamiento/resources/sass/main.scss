@@ -3608,3 +3608,37 @@
         }
     }
 }
+
+/* --- ESTILOS PARA EL MODAL DE NOTIFICACIONES (FRONTEND) --- */
+#modal-notificacion {
+    .modal-content {
+        border-radius: 20px !important; // Más redondeado estilo Airbnb
+        border: none !important;
+    }
+    
+    #notificacion-titulo {
+        color: #222222;
+        font-size: 1.25rem;
+        margin-top: 10px;
+    }
+
+    #notificacion-mensaje {
+        color: #717171; // Color de texto secundario Airbnb
+        font-size: 0.95rem;
+        padding: 0 10px;
+    }
+
+    // Clase específica para estados de procesamiento/espera
+    &.modal-procesando {
+        #notificacion-icono {
+            .fa-spinner {
+                color: #1dbf73 !important; // Verde del proyecto
+                margin-bottom: 15px;
+            }
+        }
+        #notificacion-mensaje {
+            font-weight: 500;
+            color: #222; // Un poco más oscuro para que se lea mejor durante la espera
+        }
+    }
+}
