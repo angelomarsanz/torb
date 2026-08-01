@@ -23,10 +23,11 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
     #"packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
-
     #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
+
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
@@ -174,6 +175,8 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/productosServiciosEncontrados.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/calificacionExperienciaFrontend.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/toggleFavoritoComercio.js"
+    "packages/Reda/RedaAlojamiento/resources/js/chat_injection.js"
+    "public/js/reda/general/chat-injection.min.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
@@ -211,4 +214,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/SoporteTecnicoController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/FavoritoController.php"
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Disputa/MensajeController.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/ChatController.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaInboxController.php"
+
 )

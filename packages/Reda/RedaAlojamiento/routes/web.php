@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Reda\RedaAlojamiento\Http\Controllers\General\RedaInboxController;
 
 // ----------------------------------------------------------------------
 // IMPORTACIÓN DE CONTROLADORES
@@ -23,6 +24,16 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\InformacionExperienciaCont
 use Reda\RedaAlojamiento\Http\Controllers\Experiencia\ReservacionExperienciaController;
 use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaController;
 
+/*
+|--------------------------------------------------------------------------
+| Assets del Plugin
+|--------------------------------------------------------------------------
+*/
+Route::get('reda/assets/chat-injection.js', function() {
+    $path = __DIR__.'/../resources/js/chat_injection.js';
+    if (!file_exists($path)) abort(404);
+    return response(file_get_contents($path), 200, ['Content-Type' => 'application/javascript']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +44,13 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaContro
 | Se agrupan bajo el prefijo 'reda' para mantener la estructura de URL original.
 |
 */
+
+// Sobrescribir Inbox original con la lógica de agrupación por participantes
+Route::group(['middleware' => ['web', 'locale', 'auth']], function () {
+    Route::match(['get', 'post'], 'inbox', [RedaInboxController::class, 'index'])->name('inbox');
+    Route::post('messaging/booking', [RedaInboxController::class, 'message']);
+    Route::post('messaging/reply', [RedaInboxController::class, 'messageReply']);
+});
 
 // ----------------------------------------------------------------------
 // RUTAS DE ADMINISTRACIÓN (PLUGIN REDA ALOJAMIENTO)
@@ -177,6 +195,9 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
         Route::post('delete-photo', [MediaController::class, 'deletePhoto'])->name('reda.delete_photo');
         Route::post('make-default-photo', [MediaController::class, 'makeDefaultPhoto'])->name('reda.make_default_photo');
         Route::post('crop-photo', [MediaController::class, 'cropPhoto'])->name('reda.crop_photo');
+
+        // Chat
+        Route::get('pago/iniciar-chat/{property_id}', [\Reda\RedaAlojamiento\Http\Controllers\General\ChatController::class, 'iniciarChat'])->name('reda.chat.iniciar');
 
         // Rutas de Negocios (Con login)
         Route::prefix('negocios')->as('reda.negocios.')->group(function () {

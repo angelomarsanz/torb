@@ -4,6 +4,8 @@
 namespace Reda\RedaAlojamiento;
 
 use Illuminate\Support\ServiceProvider;
+use Reda\RedaAlojamiento\Http\Controllers\General\RedaInboxController;
+use Illuminate\Support\Facades\Route;
 
 // CAMBIO 2: Nuevo nombre de la clase
 class RedaAlojamientoServiceProvider extends ServiceProvider
@@ -38,11 +40,15 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         // Esto registra tu middleware con una prioridad alta
         $router->aliasMiddleware('reda.auth', \Reda\RedaAlojamiento\Http\Middleware\CheckPluginAuth::class);
 
-        // Carga las rutas
+        // Inyectar assets del plugin en todas las páginas web
+        if (!$this->app->runningInConsole()) {
+            $this->app->make(\Illuminate\Contracts\Http\Kernel::class)->prependMiddlewareToGroup('web', \Reda\RedaAlojamiento\Http\Middleware\InjectPluginAssets::class);
+        }
+
+        // Carga las rutas base
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
-        // Carga las vistas con el nuevo namespace 'reda-alojamiento-js'
-        // Esto permite referencias como: 'reda-alojamiento-js::experiencia.index'
+        // Carga las vistas con el nuevo namespace 'reda-alojamiento'
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'reda-alojamiento');
 
         // Colocamos el alias 'pasos' apuntando a la carpeta específica de los formularios
@@ -54,7 +60,6 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         // PUBLICACIÓN DE CONFIGURACIÓN
         $this->publishes([
             __DIR__.'/../config/reda-alojamiento.php' => config_path('reda-alojamiento.php'),
-        // Nueva etiqueta
         ], 'reda-alojamiento-config');
 
         // Traducciones
@@ -68,37 +73,32 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../resources/lang' => resource_path('lang/vendor/reda-alojamiento'),
-        ], 'reda-alojamiento-translations'); // Añadido un tag para orden
+        ], 'reda-alojamiento-translations');
 
         /**
-         * GANCHO PARA RUTAS ORIGINALES
-         * Una vez que Laravel ha cargado todas las rutas (incluyendo las del proyecto original),
-         * buscamos las de login y les asignamos nombre para que los middleware funcionen
-         * sin tener que modificar el archivo routes/web.php original.
+         * SOBRESCRITURA DE RUTAS ORIGINALES
+         * Usamos el evento 'booted' para asegurar que nuestras rutas se registren AL FINAL,
+         * ganando la prioridad sobre las rutas del archivo routes/web.php original.
          */
         $this->app->booted(function () {
+            // Re-registramos las rutas del Inbox con nuestro controlador del plugin
+            Route::middleware(['web', 'locale', 'auth'])->group(function () {
+                Route::match(['get', 'post'], 'inbox', [RedaInboxController::class, 'index'])->name('inbox');
+                Route::post('messaging/booking', [RedaInboxController::class, 'message']);
+                Route::post('messaging/reply', [RedaInboxController::class, 'messageReply']);
+            });
+
+            // Asignamos nombres a rutas de login si no los tienen
             $router = $this->app['router'];
             $routes = $router->getRoutes();
-
             foreach ($routes as $route) {
-                // Asignamos 'login' a la ruta de usuario (evita error 500)
                 if ($route->uri() === 'login' && !$route->getName()) {
                     $route->name('login');
                 }
-                // Asignamos 'admin.login' a la ruta de admin (para uso futuro)
                 if ($route->uri() === 'admin/login' && !$route->getName()) {
                     $route->name('admin.login');
                 }
             }
         });
-
-        /* PUBLICACIÓN DE ASSETS ESTÁTICOS
-        // Ejemplo
-        $this->publishes([
-            __DIR__.'/../resources/img' => public_path('vendor/reda-alojamiento/img'),
-        ], 'reda-alojamiento-static-assets');
-        // El usuario ejecutaría: php artisan vendor:publish --tag=reda-alojamiento-static-assets
-        */
-
     }
 }
