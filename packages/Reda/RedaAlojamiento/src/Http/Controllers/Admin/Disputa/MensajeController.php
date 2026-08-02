@@ -20,10 +20,32 @@ class MensajeController extends Controller
      */
     public function getMessages($booking_id)
     {
+        $booking = Bookings::with(['users', 'host'])->find($booking_id);
+        if (!$booking) {
+            return response()->json([
+                'success' => false,
+                'mensaje_usuario' => __('Reservación no encontrada')
+            ], 404);
+        }
+
+        // Cargamos todos los mensajes entre el huésped y el anfitrión de esta reservación
+        // para tener la historia completa (consultas previas + reservación actual)
         $messages = Messages::with(['sender', 'receiver'])
-            ->where('booking_id', $booking_id)
+            ->where(function($query) use ($booking) {
+                $query->where(function($q) use ($booking) {
+                    $q->where('sender_id', $booking->user_id)->where('receiver_id', $booking->host_id);
+                })->orWhere(function($q) use ($booking) {
+                    $q->where('sender_id', $booking->host_id)->where('receiver_id', $booking->user_id);
+                });
+            })
             ->orderBy('created_at', 'asc')
             ->get();
+
+        // Virtualización de booking_id: forzamos a que todos los mensajes pertenezcan 
+        // a la reservación actual para que el frontend no los filtre o ignore.
+        $messages->each(function($msg) use ($booking_id) {
+            $msg->booking_id = (int) $booking_id;
+        });
 
         // Obtener metadatos de los mensajes para diferenciar admins de users
         $messageIds = $messages->pluck('id');
@@ -41,7 +63,6 @@ class MensajeController extends Controller
 
         $admins = Admin::whereIn('id', array_unique($adminIds))->get()->keyBy('id');
 
-        $booking = Bookings::with(['users', 'host'])->find($booking_id);
         $disputa = Disputa::where('booking_id', $booking_id)->first();
 
         foreach ($messages as $message) {

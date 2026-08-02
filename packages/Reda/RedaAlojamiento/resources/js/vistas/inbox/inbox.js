@@ -52,7 +52,7 @@
     }
 
     // --- RUTAS EXCLUSIVAS REDA ---
-    $(document).on('click', '.conversassion', function() {
+    $(document).off('click', '.conversassion').on('click', '.conversassion', function() {
         var id = $(this).data('id');
         var dataURL = APP_URL + '/reda/messaging/booking'; // RUTA ÚNICA
         $.ajax({
@@ -76,7 +76,7 @@
         });
     });
 
-    $(document).on('click', '.chat', function() {
+    $(document).off('click', '.chat').on('click', '.chat', function() {
         var msg = $('.cht_msg').val();
         if (!msg.trim()) return;
 

@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Log;
 class RedaInboxController extends Controller
 {
     /**
-    * Inbox Page - Unified Participant Chat
-    */
+     * Inbox Page - Unified Participant Chat
+     */
     public function index(Request $request)
     {
         $userId = Auth::id();
@@ -34,6 +34,9 @@ class RedaInboxController extends Controller
         // 3. Generar lista del Sidebar
         $data['sidebar_messages'] = $allMessages->unique('chat_partner_id')->values();
 
+        $data['messages'] = [];
+        $data['conversation'] = [];
+
         if (count($data['sidebar_messages']) > 0) {
             $targetBookingId = $request->id;
             $selectedPartnerId = null;
@@ -53,29 +56,33 @@ class RedaInboxController extends Controller
                 $targetBookingId = $first->booking_id;
             }
 
-            // 4. Cargar HISTORIA UNIFICADA
-            $unifiedHistory = Messages::where(function($query) use ($userId, $selectedPartnerId) {
-                $query->where(function($q) use ($userId, $selectedPartnerId) {
-                    $q->where('sender_id', $userId)->where('receiver_id', $selectedPartnerId);
-                })->orWhere(function($q) use ($userId, $selectedPartnerId) {
-                    $q->where('sender_id', $selectedPartnerId)->where('receiver_id', $userId);
-                });
-            })->orderBy('id', 'asc')->get();
+            // 4. Cargar HISTORIA UNIFICADA con carga ansiosa de remitentes
+            $unifiedHistory = Messages::with(['sender', 'receiver'])
+                ->where(function($query) use ($userId, $selectedPartnerId) {
+                    $query->where(function($q) use ($userId, $selectedPartnerId) {
+                        $q->where('sender_id', $userId)->where('receiver_id', $selectedPartnerId);
+                    })->orWhere(function($q) use ($userId, $selectedPartnerId) {
+                        $q->where('sender_id', $selectedPartnerId)->where('receiver_id', $userId);
+                    });
+                })->orderBy('id', 'asc')->get();
 
-            // --- VIRTUALIZACIÓN DE BOOKING ID (Tu gran idea) ---
+            // --- VIRTUALIZACIÓN DE BOOKING ID (Estrategia Clave) ---
             // Forzamos a que todos los mensajes parezcan pertenecer a la reserva activa en la vista
+            // para evitar que el JS los filtre por booking_id discrepante.
             $unifiedHistory->each(function($msg) use ($targetBookingId) {
-                $msg->booking_id = $targetBookingId;
+                $msg->booking_id = (int) $targetBookingId;
             });
 
-            // Sincronización de nombres para las vistas
+            // Sincronización de nombres para las vistas originales
             $data['messages'] = $unifiedHistory; 
             $data['conversation'] = $unifiedHistory;
             
             Log::info("REDA Inbox: Historia unificada virtualizada para Partner $selectedPartnerId. Total: " . $unifiedHistory->count());
 
-            if ($data['booking']) {
+            if (isset($data['booking']) && $data['booking']) {
                 $data['symbol'] = Currency::getAll()->firstWhere('code', $data['booking']->currency_code)->symbol ?? '$';
+            } else {
+                $data['symbol'] = '$';
             }
          }
         
@@ -95,18 +102,19 @@ class RedaInboxController extends Controller
         // Marcar como leídos todos los mensajes con este partner
         Messages::where('receiver_id', $userId)->where('sender_id', $partnerId)->update(['read' => 1]);
 
-        // Cargar HISTORIA UNIFICADA para el AJAX
-        $unifiedHistory = Messages::where(function($query) use ($userId, $partnerId) {
-            $query->where(function($q) use ($userId, $partnerId) {
-                $q->where('sender_id', $userId)->where('receiver_id', $partnerId);
-            })->orWhere(function($q) use ($userId, $partnerId) {
-                $q->where('sender_id', $partnerId)->where('receiver_id', $userId);
-            });
-        })->orderBy('id', 'asc')->get();
+        // Cargar HISTORIA UNIFICADA para el AJAX con carga ansiosa
+        $unifiedHistory = Messages::with(['sender', 'receiver'])
+            ->where(function($query) use ($userId, $partnerId) {
+                $query->where(function($q) use ($userId, $partnerId) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $partnerId);
+                })->orWhere(function($q) use ($userId, $partnerId) {
+                    $q->where('sender_id', $partnerId)->where('receiver_id', $userId);
+                });
+            })->orderBy('id', 'asc')->get();
 
         // --- VIRTUALIZACIÓN DE BOOKING ID PARA AJAX ---
         $unifiedHistory->each(function($msg) use ($booking_id) {
-            $msg->booking_id = $booking_id;
+            $msg->booking_id = (int) $booking_id;
         });
 
         $data['messages'] = $unifiedHistory;

@@ -30,21 +30,20 @@ class ChatController extends Controller
                 return request()->ajax() ? response()->json($respuesta, 400) : redirect()->back()->with('error', $respuesta['mensaje_usuario']);
             }
 
-            // 1. Check if there is already a conversation with this host
-            $existingMessage = Messages::where(function($query) use ($user_id, $host_id) {
-                    $query->where('sender_id', $user_id)->where('receiver_id', $host_id);
-                })
-                ->orWhere(function($query) use ($user_id, $host_id) {
-                    $query->where('sender_id', $host_id)->where('receiver_id', $user_id);
+            // 1. Buscamos la LATEST BOOKING (Reserva o Consulta) entre este huésped y este anfitrión para esta propiedad
+            // Preferimos buscar por Booking en lugar de por mensaje para asegurarnos de caer en la más reciente
+            $latestBooking = Bookings::where('property_id', $property_id)
+                ->where(function($query) use ($user_id, $host_id) {
+                    $query->where('user_id', $user_id)->where('host_id', $host_id);
                 })
                 ->orderBy('id', 'desc')
                 ->first();
 
-            if ($existingMessage) {
-                $booking_id = $existingMessage->booking_id;
-                Log::info("REDA Chat: Reusing existing conversation with Booking ID: $booking_id");
+            if ($latestBooking) {
+                $booking_id = $latestBooking->id;
+                Log::info("REDA Chat: Reusing existing Booking ID: $booking_id");
             } else {
-                Log::info("REDA Chat: First time chat with this host. Creating Inquiry...");
+                Log::info("REDA Chat: First time chat with this host for this property. Creating Inquiry...");
                 
                 // 2. No previous conversation, create a new Inquiry booking
                 $booking = new Bookings;
