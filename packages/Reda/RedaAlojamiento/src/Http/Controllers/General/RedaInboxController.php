@@ -19,7 +19,7 @@ class RedaInboxController extends Controller
         $userId = Auth::id();
         
         // 1. Get all messages involving the user or linked to their bookings
-        // We include messages with receiver_id=0 if they are part of the user's bookings
+        // Ordenamos por ID desc para que el unique() tome el mensaje más reciente
         $allMessages = Messages::with(['bookings', 'properties:id,name', 'sender', 'receiver'])
             ->where(function($q) use ($userId) {
                 $q->where('sender_id', $userId)
@@ -35,21 +35,29 @@ class RedaInboxController extends Controller
         $allMessages->transform(function ($message) use ($userId) {
             $partnerId = null;
             
-            // If message has a booking, the partner is the OTHER person in that booking
-            if ($message->bookings) {
+            // Prioridad 1: Si es mensaje directo (no sistema/admin), el otro es el partner
+            if ($message->sender_id != $userId && $message->sender_id != 0 && $message->sender_id != 1) {
+                $partnerId = $message->sender_id;
+            } elseif ($message->receiver_id != $userId && $message->receiver_id != 0 && $message->receiver_id != 1) {
+                $partnerId = $message->receiver_id;
+            } 
+            
+            // Prioridad 2: Si es mensaje de sistema/admin o no se resolvió, usar el booking
+            if (!$partnerId && $message->bookings) {
                 $partnerId = ($message->bookings->user_id == $userId) ? $message->bookings->host_id : $message->bookings->user_id;
-            } else {
-                // If no booking, just use the sender/receiver that isn't the current user
+            }
+
+            // Fallback: Si sigue sin partner (raro), usar el receiver/sender literal
+            if (!$partnerId) {
                 $partnerId = ($message->sender_id == $userId) ? $message->receiver_id : $message->sender_id;
             }
             
-            // Fallback: If partner is still system (0) or admin (1), try to keep it but 
-            // usually bookings resolve this.
             $message->chat_partner_id = $partnerId;
             return $message;
         });
 
         // 3. Group by the resolved Chat Partner
+        // Esto crea un sidebar con una entrada por persona
         $data['messages'] = $allMessages->unique('chat_partner_id')->values();
 
         if (count($data['messages']) > 0) {
@@ -68,22 +76,25 @@ class RedaInboxController extends Controller
                 }
             }
 
+            // Si no hay booking específico en la URL, tomar el primero del sidebar
             if (!$selectedPartnerId) {
                 $first = $data['messages']->first();
                 $selectedPartnerId = $first->chat_partner_id;
+                // Intentamos cargar el booking real si existe, sino el de consulta
                 $data['booking'] = Bookings::where('id', $first->booking_id)->with('users', 'properties')->first();
             }
 
-            // 4. Load the ENTIRE history with this partner
-            // Includes: direct messages, messages from admin (1) to either, or system (0) messages in shared bookings
-            $data['conversation'] = Messages::where(function($query) use ($userId, $selectedPartnerId) {
-                // Direct messages
+            // 4. Load the ENTIRE history with this partner (UNIFIED)
+            // Usamos el mismo nombre de variable que en el AJAX para consistencia ($messages)
+            // Pero también pasamos $conversation para compatibilidad con la vista index
+            $data['messages_unified'] = Messages::where(function($query) use ($userId, $selectedPartnerId) {
+                // Mensajes directos entre ambos
                 $query->where(function($q) use ($userId, $selectedPartnerId) {
                     $q->where('sender_id', $userId)->where('receiver_id', $selectedPartnerId);
                 })->orWhere(function($q) use ($userId, $selectedPartnerId) {
                     $q->where('sender_id', $selectedPartnerId)->where('receiver_id', $userId);
                 })
-                // OR messages linked to shared bookings (handles admin ID 1 and system ID 0)
+                // O mensajes vinculados a CUALQUIER reserva que compartan
                 ->orWhereHas('bookings', function($q) use ($userId, $selectedPartnerId) {
                     $q->where(function($sub) use ($userId, $selectedPartnerId) {
                         $sub->where('user_id', $userId)->where('host_id', $selectedPartnerId);
@@ -93,8 +104,9 @@ class RedaInboxController extends Controller
                 });
             })->orderBy('id', 'asc')->get();
 
-            // Log for debugging
-            Log::info("REDA Inbox: User $userId chatting with Partner $selectedPartnerId. Messages found: " . $data['conversation']->count());
+            $data['conversation'] = $data['messages_unified'];
+            
+            Log::info("REDA Inbox Index: User $userId with Partner $selectedPartnerId. Unified history: " . $data['conversation']->count());
 
             if ($data['booking']) {
                 $data['symbol'] = Currency::getAll()->firstWhere('code', $data['booking']->currency_code)->symbol ?? '$';
@@ -115,6 +127,8 @@ class RedaInboxController extends Controller
         
         $partnerId = ($targetBooking->user_id == $userId) ? $targetBooking->host_id : $targetBooking->user_id;
 
+        Log::info("REDA Inbox AJAX Trace: User $userId, Booking $booking_id, Partner $partnerId");
+
         // Mark all related messages as read
         Messages::whereHas('bookings', function($q) use ($userId, $partnerId) {
             $q->where(function($sub) use ($userId, $partnerId) {
@@ -124,8 +138,8 @@ class RedaInboxController extends Controller
             });
         })->where('receiver_id', $userId)->update(['read' => 1]);
 
-        // Load unified history
-        $data['messages'] = Messages::where(function($query) use ($userId, $partnerId) {
+        // Cargar historia unificada
+        $messages_query = Messages::where(function($query) use ($userId, $partnerId) {
                 $query->where(function($q) use ($userId, $partnerId) {
                     $q->where('sender_id', $userId)->where('receiver_id', $partnerId);
                 })->orWhere(function($q) use ($userId, $partnerId) {
@@ -138,7 +152,11 @@ class RedaInboxController extends Controller
                         $sub->where('user_id', $partnerId)->where('host_id', $userId);
                     });
                 });
-            })->orderBy('id', 'asc')->get();
+            })->orderBy('id', 'asc');
+
+        $data['messages'] = $messages_query->get();
+
+        Log::info("REDA Inbox AJAX Trace: Messages found count: " . $data['messages']->count() . ". SQL: " . $messages_query->toSql() . " - Bindings: " . json_encode($messages_query->getBindings()));
 
         $data['booking'] = $targetBooking->load('host', 'users', 'properties');
         $data['symbol'] = Currency::getAll()->firstWhere('code', $data['booking']->currency_code)->symbol ?? '$';
@@ -167,7 +185,11 @@ class RedaInboxController extends Controller
             $message->type_id = 1;
             $message->save();
 
-            Messages::where([['booking_id', '=', $request->booking_id], ['receiver_id', '=', Auth::id()]])->update(['read' => 1]);
+            // Marcar como leídos los recibidos en este contexto
+            Messages::where('booking_id', $request->booking_id)
+                   ->where('receiver_id', Auth::id())
+                   ->update(['read' => 1]);
+                   
             return 1;
         }
         return 0;
