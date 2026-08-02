@@ -38,15 +38,12 @@
 
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'mt-2 reda-chat-btn';
-        buttonWrapper.style.width = '100%';
-        buttonWrapper.style.padding = '5px 10px 10px 10px';
-        buttonWrapper.style.boxSizing = 'border-box';
         
         // Use relative URL to avoid origin issues
         const chatUrl = '/reda/pago/iniciar-chat/' + propertyId;
         
         buttonWrapper.innerHTML = `
-            <a href="${chatUrl}" class="btn vbtn-success text-14 font-weight-700 w-100" style="background-color: #1dbf73 !important; color: white !important; border: none; display: block; text-align: center; padding: 10px; border-radius: 4px; text-decoration: none; width: 100%;">
+            <a href="${chatUrl}" class="reda-chat-btn-link">
                 <i class="far fa-paper-plane"></i> Enviar mensaje
             </a>
         `;

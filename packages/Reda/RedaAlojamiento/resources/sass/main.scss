@@ -3642,3 +3642,24 @@
         }
     }
 }
+
+/* --- BOTÓN ENVIAR MENSAJE (INYECCIÓN) --- */
+.reda-chat-btn {
+    width: 100%;
+    padding: 5px 10px 10px 10px;
+    box-sizing: border-box;
+}
+
+.reda-chat-btn-link {
+    background-color: #1dbf73 !important;
+    color: white !important;
+    border: none !important;
+    display: block !important;
+    text-align: center !important;
+    padding: 10px !important;
+    border-radius: 4px !important;
+    text-decoration: none !important;
+    width: 100% !important;
+    font-size: 14px;
+    font-weight: 700;
+}
