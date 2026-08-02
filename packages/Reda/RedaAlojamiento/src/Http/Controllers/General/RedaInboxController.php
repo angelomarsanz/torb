@@ -57,7 +57,11 @@ class RedaInboxController extends Controller
             $selectedPartnerId = null;
 
             if ($targetBookingId) {
-                $targetBooking = Bookings::find($targetBookingId);
+                $targetBooking = Bookings::where('id', $targetBookingId)
+                    ->where(function($query) use ($userId) {
+                        $query->where('user_id', $userId)->orWhere('host_id', $userId);
+                    })->first();
+
                 if ($targetBooking) {
                     $selectedPartnerId = ($targetBooking->user_id == $userId) ? $targetBooking->host_id : $targetBooking->user_id;
                     $data['booking'] = $targetBooking->load('users', 'properties');

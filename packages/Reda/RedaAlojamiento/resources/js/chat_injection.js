@@ -42,8 +42,11 @@
         buttonWrapper.style.padding = '5px 10px 10px 10px';
         buttonWrapper.style.boxSizing = 'border-box';
         
+        // Use relative URL to avoid origin issues
+        const chatUrl = '/reda/pago/iniciar-chat/' + propertyId;
+        
         buttonWrapper.innerHTML = `
-            <a href="${window.location.origin}/reda/pago/iniciar-chat/${propertyId}" class="btn vbtn-success text-14 font-weight-700 w-100" style="background-color: #1dbf73 !important; color: white !important; border: none; display: block; text-align: center; padding: 10px; border-radius: 4px; text-decoration: none; width: 100%;">
+            <a href="${chatUrl}" class="btn vbtn-success text-14 font-weight-700 w-100" style="background-color: #1dbf73 !important; color: white !important; border: none; display: block; text-align: center; padding: 10px; border-radius: 4px; text-decoration: none; width: 100%;">
                 <i class="far fa-paper-plane"></i> Enviar mensaje
             </a>
         `;
@@ -52,11 +55,36 @@
         console.log('REDA Chat Injection: Botón inyectado en propiedad ID: ' + propertyId);
     }
 
+    function highlightActiveChat() {
+        if (!window.location.pathname.includes('/inbox')) return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeId = urlParams.get('id');
+        if (!activeId) return;
+
+        console.log('REDA Chat Injection: Resaltando chat activo ID: ' + activeId);
+
+        // Find all conversation items in sidebar
+        const conversations = document.querySelectorAll('.conversassion');
+        conversations.forEach(conv => {
+            if (conv.getAttribute('data-id') === activeId) {
+                conv.classList.add('active');
+                // Ensure it's visible in scroll
+                conv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                conv.classList.remove('active');
+            }
+        });
+    }
+
     function scan() {
         // Broad selectors to catch home cards, search results, and variants
         const cardSelectors = '.card, .card-shadow, .card-1, .row.border.p-2.rounded-3, .col-md-6.col-lg-4.col-xl-3';
         const cards = document.querySelectorAll(cardSelectors);
         cards.forEach(addChatButton);
+
+        // Also check if we need to highlight chat
+        highlightActiveChat();
     }
 
     function init() {
