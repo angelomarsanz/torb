@@ -79,19 +79,7 @@
 	<script type="text/javascript">
 		'use strict'
 		var token = "{{ csrf_token() }}";
-
-        // Bloqueo de emergencia para evitar que el script original de vRent se ejecute
-        // Si el script viejo intenta definir variables globales, nosotros las "congelamos"
         window.vRentInboxDisabled = true;
 	</script>
 	<script src="{{ asset('public/js/reda/vistas/inbox/inbox.min.js') }}?v={{ time() }}"></script>
-
-    <script>
-        // Si detectamos que el script original inyectó su evento de clic, lo neutralizamos
-        $(document).ready(function() {
-            // Esperamos un poco a que el DOM esté listo y removemos handlers viejos si existen
-            $('.conversassion').off('click');
-            // Y volvemos a vincular SOLO el nuestro (que ya está vinculado en inbox.js)
-        });
-    </script>
 @endpush

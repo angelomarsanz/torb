@@ -966,49 +966,74 @@ import {
             });
 
             // Click en "Ver mensajes"
-            $(document).on('click', '.btn-ver-mensajes-mediacion', function(e) {
+            $(document).off('click', '.btn-ver-mensajes-mediacion').on('click', '.btn-ver-mensajes-mediacion', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                const bookingId = $(this).attr('data-booking-id');
-                const disputaId = $(this).attr('data-id');
+                const bookingId = $(this).attr('data-booking-id') || $(this).data('booking-id');
+                const disputaId = $(this).attr('data-id') || $(this).data('id');
+                
+                console.log('REDA Admin: Abriendo mensajes para booking:', bookingId);
                 abrirMensajesMediacion(bookingId, disputaId);
             });
 
             // Enviar mensaje al presionar Enter
-            $(document).on('keypress', '#input-mensaje-admin', function(e) {
+            $(document).off('keyup', '#input-mensaje-admin').on('keyup', '#input-mensaje-admin', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    $('#btn-enviar-mensaje-admin').click();
+                    console.log('REDA Admin: Enter presionado en input de mensajes');
+                    $('#btn-enviar-mensaje-admin').trigger('click');
                 }
             });
 
             // Acción del botón enviar (Directo)
-            $(document).on('click', '#btn-enviar-mensaje-admin', async function(e) {
+            $(document).off('click', '#btn-enviar-mensaje-admin').on('click', '#btn-enviar-mensaje-admin', async function(e) {
                 e.preventDefault();
-                const bookingId = $(this).attr('data-booking-id');
+                e.stopImmediatePropagation();
+                
+                const $btn = $(this);
+                const bookingId = $btn.attr('data-booking-id') || $btn.data('booking-id');
                 const message = $('#input-mensaje-admin').val().trim();
                 const receiverId = 0; // Para mediaciones, enviamos al "grupo" (broadcast)
 
+                console.log('REDA Admin: Intentando enviar mensaje para booking:', bookingId);
+
                 if (!message) return;
+                if (!bookingId) {
+                    console.error('REDA Admin: Error - booking_id no encontrado en el botón');
+                    return;
+                }
 
                 if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
                     window.RedaNotificaciones.esperar();
                 }
 
-                const response = await enviarMensajeAdmin(bookingId, message, receiverId);
+                try {
+                    const response = await enviarMensajeAdmin(bookingId, message, receiverId);
 
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                    window.RedaNotificaciones.ocultar();
-                }
-
-                if (response.success) {
-                    $('#input-mensaje-admin').val('');
-                    // Recargar mensajes
-                    const data = await obtenerMensajesMediacion(bookingId);
-                    if (data.success) {
-                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                        window.RedaNotificaciones.ocultar();
                     }
-                } else {
-                    alert(response.mensaje_usuario || 'Error al enviar mensaje');
+
+                    if (response.success) {
+                        $('#input-mensaje-admin').val('');
+                        // Recargar mensajes
+                        const data = await obtenerMensajesMediacion(bookingId);
+                        if (data.success) {
+                            renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+                        }
+                    } else {
+                        const msgErr = response.mensaje_usuario || 'Error al enviar mensaje';
+                        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.error === 'function') {
+                            window.RedaNotificaciones.error(msgErr);
+                        } else {
+                            alert(msgErr);
+                        }
+                    }
+                } catch (err) {
+                    console.error('REDA Admin: Excepción al enviar mensaje:', err);
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+                        window.RedaNotificaciones.ocultar();
+                    }
                 }
             });
 

@@ -1,12 +1,31 @@
 "use strict";
 
 (function($) {
+    // Flag global para evitar duplicidad de carga
+    if (window.RedaInboxBound) return;
+    window.RedaInboxBound = true;
+
+    // NEUTRALIZACIÓN INMEDIATA (Document Level)
+    $(document).off('click', '.conversassion');
+    $(document).off('click', '.chat');
+    $(document).off('keyup', '.cht_msg');
+
     var ls = localStorage.getItem("selected_reda");
     var selected = false;
-    var list = document.querySelectorAll(".list");
-    var open = document.querySelector(".open a");
+    var list = [];
+    var open = null;
+    var isSending = false;
 
     function process() {
+        console.log('REDA Inbox: Vinculando eventos...');
+        list = document.querySelectorAll(".list");
+        open = document.querySelector(".open a");
+
+        // Neutralización Directa
+        $('.conversassion').off('click');
+        $('.chat').off('click');
+        $('.cht_msg').off('keyup');
+
         if (ls != null && list[ls]) {
             selected = true;
             click(list[ls], ls);
@@ -16,17 +35,14 @@
         }
 
         list.forEach((l, i) => {
-            l.addEventListener("click", function() {
+            $(l).on("click", function() {
                 click(l, i);
             });
         });
-
-        try {
-            document.querySelector(".list.active").scrollIntoView(false);
-        } catch (e) {}
     }
 
     function click(l, index) {
+        list = document.querySelectorAll(".list");
         list.forEach(x => { x.classList.remove("active"); });
         if (l) {
             l.classList.add("active");
@@ -40,23 +56,27 @@
         }
     }
 
-    if (open) {
-        open.addEventListener("click", (e) => {
-            const sidebar = document.querySelector("sidebar");
+    $(document).on('click', '.open a', function(e) {
+        const sidebar = document.querySelector("sidebar");
+        if (sidebar) {
             sidebar.classList.toggle("opened");
             if (sidebar.classList.contains('opened'))
-                e.target.innerText = "DOWN";
+                $(this).text("DOWN");
             else
-                e.target.innerText = "UP";
-        });
-    }
+                $(this).text("UP");
+        }
+    });
 
-    // --- RUTAS EXCLUSIVAS REDA ---
-    $(document).off('click', '.conversassion').on('click', '.conversassion', function() {
+    // --- MANEJO DE EVENTOS CON CONTROL DE PROPAGACIÓN ---
+    
+    $(document).on('click', '.conversassion', function(e) {
+        e.stopImmediatePropagation(); // Evita ejecución de scripts originales (vRent)
+        
         var id = $(this).data('id');
-        var dataURL = APP_URL + '/reda/messaging/booking'; // RUTA ÚNICA
+        console.log('REDA Inbox: Cargando conversation ID:', id);
+        
         $.ajax({
-            url: dataURL,
+            url: APP_URL + '/reda/messaging/booking',
             data: {
                 "_token": $('meta[name="csrf-token"]').attr('content'),
                 'id': id,
@@ -67,7 +87,7 @@
                 $('#msg-' + id).removeClass('text-success');
                 $('#messages').empty().html(data['inbox']);
                 $('#booking').empty().html(data['booking']);
-                // Auto scroll al final después de cargar
+                
                 setTimeout(() => {
                     const wrap = document.querySelector(".message-wrap");
                     if (wrap) wrap.scrollTop = wrap.scrollHeight;
@@ -76,13 +96,20 @@
         });
     });
 
-    $(document).off('click', '.chat').on('click', '.chat', function() {
+    $(document).on('click', '.chat', function(e) {
+        e.stopImmediatePropagation();
+        
+        if (isSending) return; // Evita doble envío accidental
+        
         var msg = $('.cht_msg').val();
-        if (!msg.trim()) return;
+        if (!msg || !msg.trim()) return;
 
         var booking_id = $(this).data('booking');
         var receiver_id = $(this).data('receiver');
         var property_id = $(this).data('property');
+
+        isSending = true;
+        console.log('REDA Inbox: Enviando mensaje...');
 
         var result = '<div class="message-list me">' +
             '<div class="msg pl-2 pr-2 pb-2 pt-2 mb-2">' +
@@ -91,9 +118,8 @@
             '<div class="time">just now</div>' +
             '</div>';
 
-        var dataURL = APP_URL + '/reda/messaging/reply'; // RUTA ÚNICA
         $.ajax({
-            url: dataURL,
+            url: APP_URL + '/reda/messaging/reply',
             data: {
                 "_token": $('meta[name="csrf-token"]').attr('content'),
                 'msg': msg,
@@ -104,17 +130,29 @@
             type: 'post',
             dataType: 'json',
             success: function(data) {
-                $('.message-wrap').append(result);
-                $('.cht_msg').val("");
-                const wrap = document.querySelector(".message-wrap");
-                if (wrap) wrap.scrollTop = wrap.scrollHeight;
+                if (data == 1) {
+                    $('.message-wrap').append(result);
+                    $('.cht_msg').val("");
+                    const wrap = document.querySelector(".message-wrap");
+                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
+                }
+                isSending = false;
+            },
+            error: function() {
+                isSending = false;
             }
         });
     });
 
+    // Manejo de Enter muy específico para evitar burbujeo hacia otros scripts
     $(document).on('keyup', '.cht_msg', function(event) {
         if (event.which === 13) {
-            $('.chat').trigger("click");
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            console.log('REDA Inbox: Enter detectado');
+            $('.chat').first().trigger("click");
+            return false;
         }
     });
 

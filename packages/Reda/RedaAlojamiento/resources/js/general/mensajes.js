@@ -545,10 +545,15 @@ const getModalMediacionHtml = () => {
             }
             
             // También necesitamos interceptar el envío de mensajes para refrescar la vista enriquecida
-            $(document).on('click', '.send-btn', function() {
-                const bookingId = $(this).attr('data-booking');
+            $(document).off('click', '.send-btn').on('click', '.send-btn', function() {
+                const bookingId = $(this).attr('data-booking') || $(this).data('booking');
+                if (!bookingId) return;
+                
                 // Refrescar después de un breve delay para que el mensaje se guarde en BD
-                setTimeout(() => inyectarMensajesEnriquecidosReda(bookingId), 1500);
+                // Solo si estamos en la vista de inbox
+                if (window.location.pathname.endsWith('/inbox')) {
+                    setTimeout(() => inyectarMensajesEnriquecidosReda(bookingId), 1500);
+                }
             });
         }
 

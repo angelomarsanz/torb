@@ -25,13 +25,21 @@ class RedaInboxController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        // 2. Identificar al "Chat Partner" único
+        // 2. Identificar al "Chat Partner" único (Estrategia de Identidad de Hilo)
+        // Agrupamos por los participantes del booking para que directos y mediaciones caigan en el mismo saco
         $allMessages->transform(function ($message) use ($userId) {
-            $message->chat_partner_id = ($message->sender_id == $userId) ? $message->receiver_id : $message->sender_id;
+            $booking = $message->bookings;
+            if ($booking) {
+                // El partner es siempre la "otra" persona de la reservación
+                $message->chat_partner_id = ($booking->user_id == $userId) ? $booking->host_id : $booking->user_id;
+            } else {
+                // Fallback para mensajes sin booking (poco probable en este sistema)
+                $message->chat_partner_id = ($message->sender_id == $userId) ? $message->receiver_id : $message->sender_id;
+            }
             return $message;
         });
 
-        // 3. Generar lista del Sidebar
+        // 3. Generar lista del Sidebar: un item por cada compañero de chat real
         $data['sidebar_messages'] = $allMessages->unique('chat_partner_id')->values();
 
         $data['messages'] = [];
@@ -63,12 +71,19 @@ class RedaInboxController extends Controller
                         $q->where('sender_id', $userId)->where('receiver_id', $selectedPartnerId);
                     })->orWhere(function($q) use ($userId, $selectedPartnerId) {
                         $q->where('sender_id', $selectedPartnerId)->where('receiver_id', $userId);
+                    })->orWhere(function($q) use ($selectedPartnerId) {
+                        // Incluimos mensajes de mediación (receiver_id 0) asociados a bookings entre estas personas
+                        $q->where('receiver_id', 0)->whereHas('bookings', function($bq) use ($selectedPartnerId) {
+                            $bq->where(function($qq) use ($selectedPartnerId) {
+                                $qq->where('user_id', Auth::id())->where('host_id', $selectedPartnerId);
+                            })->orWhere(function($qq) use ($selectedPartnerId) {
+                                $qq->where('host_id', Auth::id())->where('user_id', $selectedPartnerId);
+                            });
+                        });
                     });
                 })->orderBy('id', 'asc')->get();
 
             // --- VIRTUALIZACIÓN DE BOOKING ID (Estrategia Clave) ---
-            // Forzamos a que todos los mensajes parezcan pertenecer a la reserva activa en la vista
-            // para evitar que el JS los filtre por booking_id discrepante.
             $unifiedHistory->each(function($msg) use ($targetBookingId) {
                 $msg->booking_id = (int) $targetBookingId;
             });
@@ -102,13 +117,21 @@ class RedaInboxController extends Controller
         // Marcar como leídos todos los mensajes con este partner
         Messages::where('receiver_id', $userId)->where('sender_id', $partnerId)->update(['read' => 1]);
 
-        // Cargar HISTORIA UNIFICADA para el AJAX con carga ansiosa
+        // Cargar HISTORIA UNIFICADA incluyendo mediaciones
         $unifiedHistory = Messages::with(['sender', 'receiver'])
             ->where(function($query) use ($userId, $partnerId) {
                 $query->where(function($q) use ($userId, $partnerId) {
                     $q->where('sender_id', $userId)->where('receiver_id', $partnerId);
                 })->orWhere(function($q) use ($userId, $partnerId) {
                     $q->where('sender_id', $partnerId)->where('receiver_id', $userId);
+                })->orWhere(function($q) use ($partnerId) {
+                    $q->where('receiver_id', 0)->whereHas('bookings', function($bq) use ($partnerId) {
+                         $bq->where(function($qq) use ($partnerId) {
+                            $qq->where('user_id', Auth::id())->where('host_id', $partnerId);
+                        })->orWhere(function($qq) use ($partnerId) {
+                            $qq->where('host_id', Auth::id())->where('user_id', $partnerId);
+                        });
+                    });
                 });
             })->orderBy('id', 'asc')->get();
 

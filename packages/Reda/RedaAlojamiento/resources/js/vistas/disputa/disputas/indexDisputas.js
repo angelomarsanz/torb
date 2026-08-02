@@ -194,12 +194,6 @@ import {
     const generarBloquePersonasHtml = (item) => {
         const trans = window.RedaAlojamientoJson || {};
 
-        const getFullUrl = (path) => {
-            if (!path) return `${APP_URL}/public/img/unnamed.png`;
-            if (path.startsWith('http')) return path;
-            return `${APP_URL}/${path.startsWith('/') ? path.substring(1) : path}`;
-        };
-
         const agenteFoto = item.agente ? getFullUrl(item.agente.foto) : `${APP_URL}/public/img/unnamed.png`;
         const anfitrionFoto = getFullUrl(item.anfitrion_foto);
         const turistaFoto = getFullUrl(item.turista_foto);
@@ -318,7 +312,6 @@ import {
         let html = '';
         mensajes.forEach(m => {
             // El usuario actual es el que envió el mensaje si m.sender_id coincide con el ID de la sesión
-            // Independientemente de si es 'admin' o 'user', lo que importa es si soy yo
             const esMio = (m.sender_id == currentUserId && m.sender_type !== 'admin'); 
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
@@ -343,44 +336,39 @@ import {
         });
         container.html(html);
         
-        // Función interna para scroll robusto
         const scrollToBottom = () => {
             if (container.length) {
                 container.scrollTop(container[0].scrollHeight);
-                // Respaldo con JS nativo
-                container[0].scrollTop = container[0].scrollHeight;
             }
         };
 
-        // Múltiples intentos para asegurar que el DOM esté listo y el modal visible
         scrollToBottom();
-        setTimeout(scrollToBottom, 50);
-        setTimeout(scrollToBottom, 200);
-        setTimeout(scrollToBottom, 500);
+        setTimeout(scrollToBottom, 100);
     };
 
     /**
      * Abre el modal de mensajes.
      */
-    const abrirMensajesMediacion = async (bookingId, disputaId) => {
+    const abrirMensajesMediacion = (bookingId, disputaId) => {
         const modalElement = $('#modal-mensajes-mediacion-reda');
         const container = $('#reda-mensajes-container');
-        const trans = window.RedaAlojamientoJson || {};
 
         // Reset UI
-        container.html('<div class="text-center py-5"><div class="spinner-border text-success" role="status"><span class="sr-only">Loading...</span></div></div>');
+        container.html('<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div></div>');
+        
+        // Asignar ID al botón de envío para recuperarlo después
         $('#btn-enviar-mensaje-reda').attr('data-booking-id', bookingId);
         $('#input-mensaje-reda').val('');
 
         modalElement.modal('show');
 
-        const data = await obtenerMensajesMediacion(bookingId);
-        if (data.success) {
-            const b = data.respuesta.booking;
-            renderizarMensajes(data.respuesta.messages, b, data.respuesta.current_user_id);
-        } else {
-            container.html(`<div class="alert alert-danger">${data.mensaje_usuario}</div>`);
-        }
+        obtenerMensajesMediacion(bookingId).then((data) => {
+            if (data.success) {
+                renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+            } else {
+                container.html(`<div class="alert alert-danger">${data.mensaje_usuario}</div>`);
+            }
+        });
     };
 
     /**
@@ -414,7 +402,6 @@ import {
     const renderizarCabeceraMediacion = (item, containerSelector) => {
         const container = $(containerSelector);
         if (!container.length) return;
-        const trans = window.RedaAlojamientoJson || {};
         const badgeClass = getStatusBadgeClass(item.estado);
         const statusText = formatStatusText(item.estado);
 
@@ -429,7 +416,6 @@ import {
         `;
         container.html(html);
 
-        // Mostrar el card contenedor si estaba oculto
         if (containerSelector === '#disputas-header-content') {
             $('#disputas-cabecera-lateral').removeClass('d-none');
         }
@@ -477,7 +463,6 @@ import {
         `;
         container.html(html);
 
-        // Mostrar el card si estaba oculto
         if (containerSelector === '#disputas-reservacion-content') {
             $('#disputas-reservacion-sidebar').removeClass('d-none');
         }
@@ -491,7 +476,6 @@ import {
         if (!container.length) return;
         const trans = window.RedaAlojamientoJson || {};
 
-        // Prioridad con color
         let prioridadHtml = '';
         if (item.prioridad) {
             let colorClass = 'text-info';
@@ -502,7 +486,6 @@ import {
 
         let html = `
             <div class="mediacion-resumen-detalle">
-                <!-- Sección de detalle (Visible por defecto) -->
                 <div class="detalles-extra-collapsible mb-0" id="detalles-extra-${item.id}">
                     <div class="pt-1">
                         <div class="d-flex justify-content-between mb-2">
@@ -513,29 +496,17 @@ import {
                             <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
                             <span class="text-muted small">${item.fecha_apertura}</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2 align-items-center">
-                            <span class="text-muted small">${trans["Actualizado"] || "Actualizado"}</span>
-                            <span class="text-muted small">${item.actualizado_hace}</span>
-                        </div>
                     </div>
-
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                        <div class="bg-light rounded motivo-lista-expandible cursor-pointer p-3" id="desc-container-${item.id}">
-                            <div class="text-13 text-muted reda-mediation-desc-clamped">
-                                ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
+                        <div class="bg-light rounded p-3">
+                            <div class="text-13 text-muted">
+                                ${item.descripcion || "<i>Sin descripción</i>"}
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <h6 class="text-12 font-weight-700 mb-2 text-muted text-uppercase letter-spacing-1">${trans["Archivos adjuntos"] || "Archivos adjuntos"}</h6>
-                        <div class="adjuntos-container">
-                            ${generarListaAdjuntosHtml(item.adjuntos)}
-                        </div>
-                    </div>
-
                     <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
-                        <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase letter-spacing-1">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
+                        <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
                         ${generarBloquePersonasHtml(item)}
                     </div>
                 </div>
@@ -544,131 +515,35 @@ import {
         container.html(html);
     };
 
-    /**
-     * Inicializa un observador para detectar qué mediación está en el centro visual del móvil.
-     */
-    const inicializarObservadorEnfoque = () => {
-        if (window.innerWidth >= 768) return;
-
-        if (observadorEnfoque) {
-            observadorEnfoque.disconnect();
-        }
-
-        const options = {
-            root: null,
-            rootMargin: '-30% 0px -30% 0px', // Área central de detección
-            threshold: 0.6
-        };
-
-        observadorEnfoque = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = $(entry.target).attr('data-id');
-                    if (id && id != mediacionSeleccionadaId) {
-                        seleccionarMediacion(id, false); // No scroll automático en scroll manual
-                    }
-                }
-            });
-        }, options);
-
-        $('.container-mediacion').each(function() {
-            observadorEnfoque.observe(this);
-        });
-    };
-
-    /**
-     * Maneja la selección de una mediación.
-     */
     const seleccionarMediacion = (id, conScroll = false) => {
         if (mediacionSeleccionadaId == id && !conScroll) return;
-
         mediacionSeleccionadaId = id;
         const item = mediacionesCargadas.find(m => m.id == id);
         if (!item) return;
 
-        // 1. Resaltar la tarjeta visualmente
         $('.card-mediacion').removeClass('active-mediacion');
-        const activeCard = $(`.card-mediacion[data-id="${id}"]`);
-        activeCard.addClass('active-mediacion');
+        $(`.card-mediacion[data-id="${id}"]`).addClass('active-mediacion');
 
-        // 2. Actualizar Secciones Laterales (Escritorio)
         renderizarCabeceraMediacion(item, '#disputas-header-content');
         renderizarTimeline(item.paso_actual, '#reda-timeline-container');
         renderizarReservacionMediacion(item, '#disputas-reservacion-content');
         renderizarResumenMediacion(item, '#disputas-info-extra-content');
 
-        // 3. Preparar UI Móvil (Tab de Ver Detalle)
-        const trans = window.RedaAlojamientoJson || {};
-
-        // Limpiar estados previos en móvil
-        $('.mobile-detail-toggle').addClass('d-none');
-        $('.mobile-detail-content').addClass('d-none');
-
-        // Mostrar el toggle de la activa
-        const currentToggleWrapper = $(`#mobile-detail-${id}`);
-        const currentToggle = currentToggleWrapper.find('.mobile-detail-toggle');
-        currentToggle.removeClass('d-none');
-
-        // Asegurar que el icono y texto estén en estado cerrado
-        const icon = currentToggle.find('.toggle-icon');
-        const text = currentToggle.find('.toggle-text');
-        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
-
-        // NO EXPANDIR AUTOMÁTICAMENTE (Requerimiento del usuario)
-
-        // Desplazamiento suave si es por interacción manual
         if (conScroll && window.innerWidth < 768) {
             const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     };
 
-    /**
-     * Trunca un texto al límite de caracteres indicado sin cortar palabras.
-     */
-    const truncarMotivo = (texto, limite = 65) => {
-        if (!texto || texto.length <= limite) return texto;
-        let truncado = texto.substring(0, limite);
-        const ultimoEspacio = truncado.lastIndexOf(' ');
-        if (ultimoEspacio > 0) {
-            truncado = truncado.substring(0, ultimoEspacio);
-        }
-        return truncado + '...';
-    };
-
-    /**
-     * Renderiza el listado de mediaciones con el diseño de tres columnas optimizado.
-     */
     const renderizarLista = (items) => {
         const container = $('#disputas-list-container');
-        const trans = window.RedaAlojamientoJson || {};
-
         if (!items || !items.length) {
-            container.html(`
-                <div class="row justify-content-center w-100 p-4 mt-4 m-0">
-                    <div class="text-center w-100">
-                        <img src="${APP_URL}/public/img/unnamed.png" class="img-fluid reda-img-empty-state" alt="No encontrado">
-                        <p class="text-center mt-3">${trans["No se encontraron mediaciones."] || "No se encontraron mediaciones."}</p>
-                    </div>
-                </div>
-            `);
+            container.html(`<div class="text-center p-5"><img src="${APP_URL}/public/img/unnamed.png" class="img-fluid reda-img-empty-state"><p class="mt-3">No hay mediaciones</p></div>`);
             return;
         }
 
         let html = '<div class="row mt-4 m-0">';
         items.forEach(item => {
-            // Prioridad con color
-            let prioridadHtml = '';
-            if (item.prioridad) {
-                let colorClass = 'text-info';
-                if (item.prioridad === 'Alta') colorClass = 'text-danger';
-                else if (item.prioridad === 'Media') colorClass = 'text-warning';
-                prioridadHtml = `<span class="${colorClass}">${item.prioridad}</span>`;
-            }
-
             const badgeClass = getStatusBadgeClass(item.estado);
             const statusText = formatStatusText(item.estado);
 
@@ -679,66 +554,16 @@ import {
                             <div class="row m-0">
                                 <div class="col-md-4 p-0">
                                     <div class="img-container h-100 bg-light d-flex align-items-center justify-content-center border-right">
-                                        <img src="${item.propiedad_foto}"
-                                             class="img-fluid w-100 h-100 object-fit-cover rounded-start img-min-150 reda-propiedad-foto-max"
-                                             alt="Propiedad">
+                                        <img src="${item.propiedad_foto}" class="img-fluid w-100 h-100 object-fit-cover rounded-start">
                                     </div>
                                 </div>
-
                                 <div class="col-md-4 p-4 border-right">
-                                    <div class="mb-2">
-                                        <span class="badge ${badgeClass}">${statusText}</span>
-                                        <span class="text-muted small ml-2 font-weight-600">ID: #${item.id}</span>
-                                    </div>
-
-                                    <h5 class="text-18 font-weight-500 text-color mb-1 reda-motivo-clamped motivo-lista-expandible"
-                                        title="${item.motivo}">
-                                        ${item.motivo}
-                                    </h5>
-
-                                    ${item.prioridad ? `
-                                        <div class="text-muted small mb-1">
-                                            <i class="fas fa-exclamation-circle mr-1"></i> ${trans["Prioridad"] || "Prioridad"}: ${prioridadHtml}
-                                        </div>
-                                    ` : ''}
-
-                                    <div class="text-muted small mb-2">
-                                        <i class="fas fa-bookmark mr-1"></i> ${trans["ID Reservación"] || "ID Reservación"}: <span class="text-dark">#${item.booking_id}</span>
-                                    </div>
-
-                                    <div class="d-flex flex-column mt-3">
-                                        <div class="text-muted small">
-                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="text-dark">${item.actualizado_hace}</span>
-                                        </div>
-                                    </div>
+                                    <div class="mb-2"><span class="badge ${badgeClass}">${statusText}</span></div>
+                                    <h5 class="text-18 font-weight-500 text-color mb-1">${item.motivo}</h5>
+                                    <div class="text-muted small"><i class="fas fa-bookmark mr-1"></i> ID: #${item.id}</div>
                                 </div>
-
                                 <div class="col-md-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
                                     ${generarBloquePersonasHtml(item)}
-                                </div>
-                            </div>
-
-                            <!-- Mobile Detail Section (Inside Card Body) -->
-                            <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
-                                <div class="mobile-detail-toggle py-3 px-4 border-top bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
-                                    <span class="text-14 font-weight-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
-                                    <i class="fas fa-chevron-down toggle-icon"></i>
-                                </div>
-                                <div class="mobile-detail-content p-4 border-top bg-white d-none shadow-sm">
-                                    <div class="mobile-header-wrapper mb-4">
-                                        <div class="mobile-header-container"></div>
-                                    </div>
-                                    <div class="mobile-timeline-wrapper mb-4">
-                                        <div class="reda-timeline-carousel mobile-timeline-container"></div>
-                                    </div>
-                                    <div class="mobile-reservacion-wrapper mb-4">
-                                        <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
-                                        <div class="mobile-reservacion-container"></div>
-                                    </div>
-                                    <div class="mobile-resumen-wrapper mb-3">
-                                        <h6 class="font-weight-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
-                                        <div class="mobile-resumen-container"></div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -748,239 +573,75 @@ import {
         });
         html += '</div>';
         container.html(html);
-
-        // Inicializar el observador de enfoque en móvil
-        setTimeout(inicializarObservadorEnfoque, 300);
     };
 
-    /**
-     * Carga las mediaciones vía Ajax según el estatus y página seleccionada.
-     */
-    const cargarMediaciones = async (status, page = 1) => {
-        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
-            window.RedaNotificaciones.esperar();
-        }
+    const cargarMediaciones = (status, page = 1) => {
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') window.RedaNotificaciones.esperar();
 
-        const data = await getMediacionesPaginadas(status, page);
-
-        if (data.success) {
-            mediacionSeleccionadaId = null; // Reset selection state for new results
-            mediacionesCargadas = data.respuesta.data;
-            renderizarLista(mediacionesCargadas);
-            if ($('#disputas-pagination-container').length) {
-                $('#disputas-pagination-container').html(data.respuesta.pagination);
+        getMediacionesPaginadas(status, page).then((data) => {
+            if (data.success) {
+                mediacionesCargadas = data.respuesta.data;
+                renderizarLista(mediacionesCargadas);
+                if (mediacionesCargadas.length > 0) seleccionarMediacion(mediacionesCargadas[0].id, false);
             }
-
-            // Seleccionar la primera mediación por defecto
-            if (mediacionesCargadas.length > 0) {
-                seleccionarMediacion(mediacionesCargadas[0].id, false);
-            } else {
-                const trans = window.RedaAlojamientoJson || {};
-                $('#disputas-cabecera-lateral').addClass('d-none');
-                $('#reda-timeline-container').html(`<p class="text-center text-muted small w-100">${trans["Selecciona una mediación para ver su progreso."] || "Selecciona una mediación para ver su progreso."}</p>`);
-                $('#disputas-reservacion-sidebar').addClass('d-none');
-                $('#disputas-info-extra-content').html(`<p class="text-14 text-muted">${trans["Aquí aparecerá información relevante sobre el estado general de tus mediaciones."] || "Aquí aparecerá información relevante sobre el estado general de tus mediaciones."}</p>`);
-            }
-        } else {
-            const trans = window.RedaAlojamientoJson || {};
-            $('#disputas-list-container').html(`
-                <div class="alert alert-danger mt-4">
-                    ${data.mensaje_usuario}
-                </div>
-            `);
-        }
-
-        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-            window.RedaNotificaciones.ocultar();
-        }
-    };
-
-    /**
-     * Abre el modal de detalle de la mediación.
-     */
-    const abrirDetalleMediacion = async (id) => {
-        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
-            window.RedaNotificaciones.esperar();
-        }
-
-        const data = await getHtmlDetalleMediacion(id);
-
-        // Primero ocultamos el de espera para limpiar backdrops
-        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-            window.RedaNotificaciones.ocultar();
-        }
-
-        if (data.success) {
-            // Pequeño delay para que Bootstrap limpie el body antes de abrir el nuevo modal
-            setTimeout(() => {
-                // Remover modal previo si existe
-                $('#modal-detalle-mediacion-reda').remove();
-                $('body').append(data.respuesta);
-                $('#modal-detalle-mediacion-reda').modal('show');
-            }, 150);
-        } else {
-            alert(data.mensaje_usuario);
-        }
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') window.RedaNotificaciones.ocultar();
+        });
     };
 
     $(function() {
         if ($(containerId).length) {
-            console.log('Se está ejecutando indexDisputas.js en el frontend');
             inyectarPestanasEstatus();
 
-            // Manejo de clicks en las pestañas
             $(document).on('click', '.disputa-tab-item', function() {
-                const item = $(this);
-                if (item.hasClass('active')) return;
-
                 $('.disputa-tab-item').removeClass('active');
-                item.addClass('active');
-
-                const status = item.attr('data-status');
-                cargarMediaciones(status);
+                $(this).addClass('active');
+                cargarMediaciones($(this).attr('data-status'));
             });
 
-            // Manejo de clics en los items de la lista para seleccionar
-            $(document).on('click', '.card-mediacion', function(e) {
-                // Si el clic fue en el motivo expandible, no procesamos la selección de la tarjeta
-                if ($(e.target).closest('.motivo-lista-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) {
-                    return;
-                }
-                const id = $(this).attr('data-id');
-                seleccionarMediacion(id, true); // Scroll activado al tocar manualmente
+            $(document).on('click', '.card-mediacion', function() {
+                seleccionarMediacion($(this).attr('data-id'), true);
             });
 
-            // Manejo de toggle para el motivo en el listado (especialmente para móvil)
-            $(document).on('click', '.motivo-lista-expandible', function(e) {
+            $(document).off('click', '.btn-ver-mensajes-mediacion').on('click', '.btn-ver-mensajes-mediacion', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
-                const $el = $(this);
-                $el.toggleClass('expanded');
-                
-                // Si el clic fue en el contenedor gris de la descripción, expandimos también el hijo
-                $el.find('.reda-mediation-desc-clamped, .reda-motivo-clamped').toggleClass('expanded');
-
-                // Si el elemento está dentro de una tarjeta del listado, actualizamos la selección
-                const card = $el.closest('.card-mediacion');
-                if (card.length) {
-                    const id = card.attr('data-id');
-                    if (id) {
-                        seleccionarMediacion(id, false); // false para no forzar scroll y permitir lectura fluida
-                    }
-                }
+                const bookingId = $(this).attr('data-booking-id') || $(this).data('booking-id');
+                abrirMensajesMediacion(bookingId);
             });
 
-            // Manejo de clics en el toggle de detalle móvil
-            $(document).on('click', '.mobile-detail-toggle', function(e) {
-                e.stopPropagation();
-                const id = $(this).attr('data-id');
-                const content = $(`#mobile-detail-${id} .mobile-detail-content`);
-                const icon = $(this).find('.toggle-icon');
-                const text = $(this).find('.toggle-text');
-                const trans = window.RedaAlojamientoJson || {};
-
-                if (content.hasClass('d-none')) {
-                    // Expandir
-                    content.removeClass('d-none');
-                    icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-                    text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
-
-                    // Cargar contenido en los contenedores móviles
-                    const item = mediacionesCargadas.find(m => m.id == id);
-                    if (item) {
-                        renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
-                        renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
-                        renderizarReservacionMediacion(item, `#mobile-detail-${id} .mobile-reservacion-container`);
-                        renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
-                    }
-                } else {
-                    // Contraer
-                    content.addClass('d-none');
-                    icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-                    text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
-                }
-            });
-
-            // Click en botón ver detalle dentro del resumen (sidebar o móvil)
-            $(document).on('click', '.btn-ver-detalle-sidebar', function(e) {
-                e.stopPropagation();
-                const id = $(this).attr('data-id');
-                abrirDetalleMediacion(id);
-            });
-
-            // Click en "Ver mensajes"
-            $(document).on('click', '.btn-ver-mensajes-mediacion', function(e) {
-                e.stopPropagation();
-                const bookingId = $(this).attr('data-booking-id');
-                const disputaId = $(this).attr('data-id');
-                abrirMensajesMediacion(bookingId, disputaId);
-            });
-
-            // Enviar mensaje al presionar Enter
-            $(document).on('keypress', '#input-mensaje-reda', function(e) {
+            $(document).off('keyup', '#input-mensaje-reda').on('keyup', '#input-mensaje-reda', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    $('#btn-enviar-mensaje-reda').click();
+                    $('#btn-enviar-mensaje-reda').trigger('click');
                 }
             });
 
-            // Acción del botón enviar (Directo)
-            $(document).on('click', '#btn-enviar-mensaje-reda', async function(e) {
+            $(document).off('click', '#btn-enviar-mensaje-reda').on('click', '#btn-enviar-mensaje-reda', function(e) {
                 e.preventDefault();
-                const bookingId = $(this).attr('data-booking-id');
+                e.stopImmediatePropagation();
+                
+                const $btn = $(this);
+                const bookingId = $btn.attr('data-booking-id') || $btn.data('booking-id');
                 const message = $('#input-mensaje-reda').val().trim();
-                const receiverId = 0; // Para mediaciones, enviamos al "grupo" (broadcast)
 
-                if (!message) return;
+                if (!message || !bookingId) return;
 
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
-                    window.RedaNotificaciones.esperar();
-                }
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') window.RedaNotificaciones.esperar();
 
-                const response = await enviarMensajeHuesped(bookingId, message, receiverId);
+                enviarMensajeHuesped(bookingId, message, 0).then((response) => {
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') window.RedaNotificaciones.ocultar();
 
-                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
-                    window.RedaNotificaciones.ocultar();
-                }
-
-                if (response.success) {
-                    $('#input-mensaje-reda').val('');
-                    // Recargar mensajes
-                    const data = await obtenerMensajesMediacion(bookingId);
-                    if (data.success) {
-                        renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+                    if (response.success) {
+                        $('#input-mensaje-reda').val('');
+                        obtenerMensajesMediacion(bookingId).then((data) => {
+                            if (data.success) renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+                        });
+                    } else {
+                        alert(response.mensaje_usuario || 'Error');
                     }
-                } else {
-                    alert(response.mensaje_usuario || 'Error al enviar mensaje');
-                }
+                });
             });
 
-            // Navegación del timeline (Escritorio)
-            $(document).on('click', '#timeline-prev', function() {
-                const container = $('#reda-timeline-container');
-                container.animate({ scrollLeft: container.scrollLeft() - 150 }, 300);
-            });
-
-            $(document).on('click', '#timeline-next', function() {
-                const container = $('#reda-timeline-container');
-                container.animate({ scrollLeft: container.scrollLeft() + 150 }, 300);
-            });
-
-            // Manejo de paginación
-            $(document).on('click', '#disputas-pagination-container .pagination a', function(e) {
-                e.preventDefault();
-                const pageUrl = $(this).attr('href');
-                if (!pageUrl) return;
-
-                const urlParams = new URLSearchParams(new URL(pageUrl).search);
-                const page = urlParams.get('page');
-                const status = $('.disputa-tab-item.active').attr('data-status') || 'todos';
-
-                cargarMediaciones(status, page);
-            });
-
-            // Carga inicial (Todos)
             cargarMediaciones('todos');
         }
     });
