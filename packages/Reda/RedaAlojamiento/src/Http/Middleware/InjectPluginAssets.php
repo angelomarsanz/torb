@@ -27,8 +27,8 @@ class InjectPluginAssets
             // Check if it's not an admin page and script not already there
             if (!$request->is('admin*') && !str_contains($content, 'chat-injection.min.js')) {
                 
-                // User confirmed that /public prefix is required on this server
-                $scriptUrl = '/public/js/reda/general/chat-injection.min.js';
+                // Added ?v= parameter to force browser refresh after compilation
+                $scriptUrl = '/public/js/reda/general/chat-injection.min.js?v=' . time();
                 $scriptTag = '<!-- REDA PLUGIN --><script src="' . $scriptUrl . '"></script>';
 
                 // Inject before </body>

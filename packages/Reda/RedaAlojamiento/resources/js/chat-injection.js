@@ -1,7 +1,9 @@
-(function() {
+import { iniciarChat } from './general/iniciarChat.js';
+
+(function( $ ) {
     'use strict';
 
-    console.log('REDA Chat Injection: Iniciando script en ' + window.location.href);
+    console.log('REDA Chat Injection: VERSION 2.0 - Iniciando script en ' + window.location.href);
 
     function addChatButton(card) {
         if (card.querySelector('.reda-chat-btn')) return;
@@ -39,17 +41,13 @@
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'mt-2 reda-chat-btn';
         
-        // Use relative URL to avoid origin issues
-        const chatUrl = '/reda/pago/iniciar-chat/' + propertyId;
-        
         buttonWrapper.innerHTML = `
-            <a href="${chatUrl}" class="reda-chat-btn-link">
-                <i class="far fa-paper-plane"></i> Enviar mensaje
-            </a>
+            <button type="button" class="btn-reda-chat-soft-v2 btn-reda-iniciar-chat" data-id="${propertyId}">
+                <i class="far fa-paper-plane"></i> ${window.RedaAlojamientoJson["Enviar mensaje"] || "Enviar mensaje"}
+            </button>
         `;
 
         container.appendChild(buttonWrapper);
-        console.log('REDA Chat Injection: Botón inyectado en propiedad ID: ' + propertyId);
     }
 
     function highlightActiveChat() {
@@ -58,8 +56,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const activeId = urlParams.get('id');
         if (!activeId) return;
-
-        console.log('REDA Chat Injection: Resaltando chat activo ID: ' + activeId);
 
         // Find all conversation items in sidebar
         const conversations = document.querySelectorAll('.conversassion');
@@ -75,24 +71,42 @@
     }
 
     function scan() {
-        // Broad selectors to catch home cards, search results, and variants
         const cardSelectors = '.card, .card-shadow, .card-1, .row.border.p-2.rounded-3, .col-md-6.col-lg-4.col-xl-3';
         const cards = document.querySelectorAll(cardSelectors);
         cards.forEach(addChatButton);
 
-        // Also check if we need to highlight chat
         highlightActiveChat();
     }
 
     function init() {
-        console.log('REDA Chat Injection: DOM listo, iniciando escaneo...');
         scan();
 
         const observer = new MutationObserver(() => scan());
         observer.observe(document.body, { childList: true, subtree: true });
 
-        // Absolute persistence interval
         setInterval(scan, 2000);
+
+        // Event handler for initiating chat
+        $(document).on('click', '.btn-reda-iniciar-chat', async function(e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+
+            if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+                window.RedaNotificaciones.esperar();
+            }
+
+            const respuesta = await iniciarChat(id);
+
+            if (respuesta.success) {
+                window.location.href = respuesta.respuesta;
+            } else {
+                if (window.RedaNotificaciones && typeof window.RedaNotificaciones.error === 'function') {
+                    window.RedaNotificaciones.error(respuesta.mensaje_usuario);
+                } else {
+                    alert(respuesta.mensaje_usuario);
+                }
+            }
+        });
     }
 
     if (document.readyState === 'loading') {
@@ -100,4 +114,4 @@
     } else {
         init();
     }
-})();
+})(jQuery);

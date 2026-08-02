@@ -20,7 +20,14 @@ class ChatController extends Controller
             Log::info("REDA Chat: User $user_id starting chat for Property $property_id (Host $host_id)");
 
             if ($user_id == $host_id) {
-                return redirect()->back()->with('error', __('No puedes enviarte un mensaje a ti mismo.'));
+                $respuesta = [
+                    'success' => false,
+                    'message' => 'Host cannot message themselves',
+                    'mensaje_usuario' => __('No puedes enviarte un mensaje a ti mismo.'),
+                    'respuesta' => '',
+                    'code' => 400
+                ];
+                return request()->ajax() ? response()->json($respuesta, 400) : redirect()->back()->with('error', $respuesta['mensaje_usuario']);
             }
 
             // 1. Check if there is already a conversation with this host
@@ -56,7 +63,14 @@ class ChatController extends Controller
                 
                 if (!$booking->save()) {
                     Log::error("REDA Chat: Failed to save booking Inquiry.");
-                    return redirect()->back()->with('error', __('No se pudo iniciar el chat. Por favor intente más tarde.'));
+                    $respuesta = [
+                        'success' => false,
+                        'message' => 'Failed to save booking inquiry',
+                        'mensaje_usuario' => __('No se pudo iniciar el chat. Por favor intente más tarde.'),
+                        'respuesta' => '',
+                        'code' => 500
+                    ];
+                    return request()->ajax() ? response()->json($respuesta, 500) : redirect()->back()->with('error', $respuesta['mensaje_usuario']);
                 }
 
                 $booking_id = $booking->id;
@@ -76,11 +90,27 @@ class ChatController extends Controller
             }
 
             // Redirect to inbox focusing on this conversation
-            return redirect('inbox?id=' . $booking_id);
+            $inboxUrl = url('inbox?id=' . $booking_id);
+            $respuesta = [
+                'success' => true,
+                'message' => 'Chat initiated successfully',
+                'mensaje_usuario' => __('Iniciando chat...'),
+                'respuesta' => $inboxUrl,
+                'code' => 200
+            ];
+            
+            return request()->ajax() ? response()->json($respuesta, 200) : redirect($inboxUrl);
 
         } catch (\Exception $e) {
             Log::error("REDA Chat Error: " . $e->getMessage());
-            return redirect()->back()->with('error', __('Error al iniciar chat: ') . $e->getMessage());
+            $respuesta = [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Error al iniciar chat: ') . $e->getMessage(),
+                'respuesta' => '',
+                'code' => 500
+            ];
+            return request()->ajax() ? response()->json($respuesta, 500) : redirect()->back()->with('error', $respuesta['mensaje_usuario']);
         }
     }
 }

@@ -30,7 +30,7 @@ use Reda\RedaAlojamiento\Http\Controllers\Experiencia\AnfitrionExperienciaContro
 |--------------------------------------------------------------------------
 */
 Route::get('reda/assets/chat-injection.js', function() {
-    $path = __DIR__.'/../resources/js/chat_injection.js';
+    $path = __DIR__.'/../resources/js/chat-injection.js';
     if (!file_exists($path)) abort(404);
     return response(file_get_contents($path), 200, ['Content-Type' => 'application/javascript']);
 });

@@ -60,7 +60,7 @@ Los archivos de javascript se agregan al proyecto principal en:
 "packages/Reda/RedaAlojamiento/resources/views/admin/general/main_footer.blade.php"
 "packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
 
-Los peticiones ajax tendrán esta estructura:
+Las peticiones ajax tendrán esta estructura:
     Función llamadora:
         import { eliminarExperiencia } from './eliminarExperiencia.js';
 
@@ -127,6 +127,7 @@ Los peticiones ajax tendrán esta estructura:
             });
         }
 Siempre que se haga una petición ajax se debe mostrar una animación "Espera" hasta que responda el servidor
+Esas reglas de las peticiones ajax son solo para los archivos nuevos que se creen en el plugin packages/Reda/RedaAlojamiento. Si los archivos originales del proyecto no cumplen con esas reglas se dejan como están ya que ellos fueron creados de acuerdo a las directrices del autor del proyecto original
 
 ## Herramienta de desarrollo
 webpack.mix.js
