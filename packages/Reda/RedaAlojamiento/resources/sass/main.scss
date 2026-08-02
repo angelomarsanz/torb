@@ -3648,7 +3648,8 @@
     width: 100%;
     padding: 0 15px 15px 15px;
     box-sizing: border-box;
-    display: block !important;
+    display: flex !important; /* Cambiado a flex para centrar contenido */
+    justify-content: center !important; /* Centrado horizontal */
     clear: both;
 }
 
@@ -3670,7 +3671,7 @@
     cursor: pointer;
     outline: none !important;
     width: auto !important;
-    margin: 0;
+    margin: 0 auto; /* Refuerzo de centrado */
     box-shadow: none !important;
 
     i {
