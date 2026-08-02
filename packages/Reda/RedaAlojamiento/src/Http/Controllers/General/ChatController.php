@@ -20,7 +20,7 @@ class ChatController extends Controller
             Log::info("REDA Chat: User $user_id starting chat for Property $property_id (Host $host_id)");
 
             if ($user_id == $host_id) {
-                return redirect()->back()->with('error', 'You cannot send a message to yourself.');
+                return redirect()->back()->with('error', __('No puedes enviarte un mensaje a ti mismo.'));
             }
 
             // 1. Check if there is already a conversation with this host
@@ -56,7 +56,7 @@ class ChatController extends Controller
                 
                 if (!$booking->save()) {
                     Log::error("REDA Chat: Failed to save booking Inquiry.");
-                    return redirect()->back()->with('error', 'No se pudo iniciar el chat. Por favor intente más tarde.');
+                    return redirect()->back()->with('error', __('No se pudo iniciar el chat. Por favor intente más tarde.'));
                 }
 
                 $booking_id = $booking->id;
@@ -68,7 +68,7 @@ class ChatController extends Controller
                 $message->booking_id = $booking_id;
                 $message->receiver_id = $host_id;
                 $message->sender_id = $user_id;
-                $message->message = "Hola, estoy interesado en tu propiedad: " . $property->name;
+                $message->message = __('Hola, estoy interesado en tu propiedad: ') . $property->name;
                 $message->type_id = 1; // Standard message
                 $message->save();
                 
@@ -80,7 +80,7 @@ class ChatController extends Controller
 
         } catch (\Exception $e) {
             Log::error("REDA Chat Error: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Error al iniciar chat: ' . $e->getMessage());
+            return redirect()->back()->with('error', __('Error al iniciar chat: ') . $e->getMessage());
         }
     }
 }

@@ -596,5 +596,10 @@
     "Listado de mediaciones (Admin)": "Listado de mediaciones (Admin)",
     "Carga de detalle": "Carga de detalle",
     "Cargado con éxito": "Cargado con éxito",
-    "Su reserva está siendo procesada": "Su reserva está siendo procesada"
+    "Su reserva está siendo procesada": "Su reserva está siendo procesada",
+    "Enviar mensaje": "Enviar mensaje",
+    "No puedes enviarte un mensaje a ti mismo.": "No puedes enviarte un mensaje a ti mismo.",
+    "No se pudo iniciar el chat. Por favor intente más tarde.": "No se pudo iniciar el chat. Por favor intente más tarde.",
+    "Hola, estoy interesado en tu propiedad: ": "Hola, estoy interesado en tu propiedad: ",
+    "Error al iniciar chat: ": "Error al iniciar chat: "
 }
