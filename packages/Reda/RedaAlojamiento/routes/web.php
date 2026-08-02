@@ -48,6 +48,13 @@ Route::get('reda/assets/chat-injection.js', function() {
 // Sobrescribir Inbox original con la lógica de agrupación por participantes
 Route::group(['middleware' => ['web', 'locale', 'auth']], function () {
     Route::match(['get', 'post'], 'inbox', [RedaInboxController::class, 'index'])->name('inbox');
+    
+    // Rutas exclusivas REDA para AJAX del Inbox
+    Route::post('reda/messaging/booking', [RedaInboxController::class, 'message']);
+    Route::post('reda/messaging/reply', [RedaInboxController::class, 'messageReply']);
+
+    // Mantenemos las originales por si algún otro script las usa, 
+    // pero nuestro nuevo JS usará las de arriba.
     Route::post('messaging/booking', [RedaInboxController::class, 'message']);
     Route::post('messaging/reply', [RedaInboxController::class, 'messageReply']);
 });

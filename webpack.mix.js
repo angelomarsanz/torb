@@ -77,6 +77,10 @@ if (buildAlojamiento) {
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js',
         'public/js/reda/vistas/disputa/disputas/indexDisputas.min.js');
 
+    // Js Inbox Unificado REDA
+    mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js', 
+        'public/js/reda/vistas/inbox/inbox.min.js');
+
     // Js Frontend
 
     mix.js('packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoExperiencias.js',
