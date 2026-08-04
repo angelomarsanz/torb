@@ -1,19 +1,24 @@
-	<header>
+	<header class="d-flex align-items-center p-2 border-bottom">
 		@php 
 			$users = ($booking->host_id == Auth::id()) ? 'users' : 'host';
+            $partner = $booking->$users;
 		@endphp
-		<a href="{{ url('users/show/' . $booking->$users->id) }}">
-			<img src="{{ $booking->$users->profile_src }}" alt="img" class="img-40x40">
+        
+        <div class="btn-back-to-list d-md-none mr-3 ml-1 pointer">
+            <i class="fas fa-arrow-left text-20"></i>
+        </div>
+
+		<a href="{{ url('users/show/' . ($partner->id ?? '')) }}" class="flex-shrink-0">
+			<img src="{{ reda_get_profile_src($partner) }}" alt="img" class="img-40x40 rounded-circle border">
 		</a>
 		
-		<div class="info">
-			<div class="d-flex justify-content-between">
-				<div>
-					<span class="user">{{ $booking->$users->full_name }}</span>
-				</div>
+		<div class="info ml-3 flex-grow-1 overflow-hidden">
+			<div class="d-flex flex-column">
+				<span class="user font-weight-700 text-truncate text-16">{{ ($partner->first_name ?? '') . ' ' . ($partner->last_name ?? '') }}</span>
 			</div>
 		</div>
-		<div class="open">
+
+		<div class="open d-none" style="display: none !important;">
 			<i class="fas fa-inbox"></i>
 			<a href="javascript:;">UP</a>
 		</div>
@@ -70,4 +75,4 @@
             role: "{{ ($booking->host_id == Auth::id()) ? __('anfitrión') : __('turista') }}"
         };
     </script>
-	<script src="{{ asset('js/inboxEnterEvent.min.js') }}"></script>
+	<script src="{{ asset('public/js/inboxEnterEvent.min.js') }}"></script>

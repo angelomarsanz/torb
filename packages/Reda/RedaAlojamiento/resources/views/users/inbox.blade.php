@@ -19,7 +19,7 @@
 					@if (isset($booking))
 						<div class="row">
 							<div class="col-md-9 p-0">
-								<div class="container-inbox">
+								<div class="container-inbox reda-inbox-wrapper">
 									<sidebar>
 										<div class="list-wrap overflow-hidden-x">
 											@forelse ($sidebar_messages as $sideMsg)
@@ -27,7 +27,7 @@
                                                     $user = $sideMsg->chat_partner;
 												@endphp
 												<div class="list p-2 conversassion" data-id="{{ $sideMsg->booking_id }}">
-													<img src="{{ $user->profile_src ?? asset('public/images/default-profile.png') }}" alt="user" />
+													<img src="{{ reda_get_profile_src($user) }}" alt="user" />
 													<div class="info">
 														<h3 class="font-weight-700 "  >{{ $user->first_name ?? 'Usuario' }} <span class="text-muted text-12 text-right"> {{ $sideMsg->created_at->diffForHumans() }}</span></h3>
 														<div class="d-flex justify-content-between">

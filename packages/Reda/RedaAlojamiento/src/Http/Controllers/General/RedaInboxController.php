@@ -79,14 +79,14 @@ class RedaInboxController extends Controller
                 $targetBooking = Bookings::find($targetBookingId);
                 if ($targetBooking) {
                     $selectedPartnerId = ($targetBooking->user_id == $userId) ? $targetBooking->host_id : $targetBooking->user_id;
-                    $data['booking'] = $targetBooking->load('users', 'properties');
+                    $data['booking'] = $targetBooking->load('users', 'host', 'properties');
                 }
             }
 
             if (!$selectedPartnerId) {
                 $first = $data['sidebar_messages']->first();
                 $selectedPartnerId = $first->chat_partner_id;
-                $data['booking'] = Bookings::find($first->booking_id)->load('users', 'properties');
+                $data['booking'] = Bookings::find($first->booking_id)->load('users', 'host', 'properties');
                 $targetBookingId = $first->booking_id;
             }
 

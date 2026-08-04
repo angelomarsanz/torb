@@ -80,27 +80,30 @@
 
         if (ls != null && list[ls]) {
             selected = true;
-            click(list[ls], ls);
+            // No activar vista de chat automáticamente en móvil al cargar (isManual = false)
+            click(list[ls], ls, false);
         }
         if (!selected && list[0]) {
-            click(list[0], 0);
+            click(list[0], 0, false);
         }
 
         list.forEach((l, i) => {
             $(l).on("click", function() {
-                click(l, i);
+                // Al hacer clic manualmente, sí activamos la vista de chat (isManual = true)
+                click(l, i, true);
             });
         });
     }
 
-    function click(l, index) {
+    function click(l, index, isManual = true) {
         list = document.querySelectorAll(".list");
         list.forEach(x => { x.classList.remove("active"); });
         if (l) {
             l.classList.add("active");
-            const sidebar = document.querySelector("sidebar");
-            if (sidebar) sidebar.classList.remove("opened");
-            if (open) open.innerText = "UP";
+            // WhatsApp Style: Mostrar el chat en móvil solo si es clic manual
+            if (isManual && window.innerWidth < 768) {
+                $('.reda-inbox-wrapper').addClass('chat-active');
+            }
             
             const wrap = document.querySelector(".message-wrap-reda");
             if (wrap) wrap.scrollTop = wrap.scrollHeight;
@@ -108,15 +111,14 @@
         }
     }
 
+    // Botón de regresar en móvil (WhatsApp Style)
+    $(document).on('click', '.btn-back-to-list', function() {
+        $('.reda-inbox-wrapper').removeClass('chat-active');
+    });
+
     $(document).on('click', '.open a', function(e) {
-        const sidebar = document.querySelector("sidebar");
-        if (sidebar) {
-            sidebar.classList.toggle("opened");
-            if (sidebar.classList.contains('opened'))
-                $(this).text("DOWN");
-            else
-                $(this).text("UP");
-        }
+        // Desactivado logic antigua UP/DOWN
+        return false;
     });
 
     // --- MANEJO DE EVENTOS CON CONTROL DE PROPAGACIÓN ---

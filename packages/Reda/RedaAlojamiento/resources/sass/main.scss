@@ -3459,6 +3459,127 @@
     }
 }
 
+/* Modernización del Chat (WhatsApp Style) */
+.reda-inbox-wrapper {
+    &.chat-active {
+        sidebar {
+            @media (max-width: 767px) {
+                display: none !important;
+            }
+        }
+        .content-inbox {
+            @media (max-width: 767px) {
+                display: flex !important;
+            }
+        }
+    }
+
+    sidebar {
+        @media (max-width: 767px) {
+            width: 100% !important;
+            min-width: 100% !important;
+            border-right: none !important;
+        }
+
+        .list-wrap {
+            .list {
+                padding: 12px 15px !important;
+                transition: background 0.2s ease;
+                border-bottom: 1px solid #f0f0f0 !important;
+                
+                &:hover { background: #f5f6f6 !important; }
+                &.active { background: #eff2f5 !important; }
+
+                img {
+                    width: 45px !important;
+                    height: 45px !important;
+                    box-shadow: none !important;
+                    border: 1px solid #eee;
+                }
+
+                .info {
+                    h3 {
+                        font-size: 15px !important;
+                        color: #111b21 !important;
+                        margin-bottom: 2px !important;
+                    }
+                    p {
+                        font-size: 13px !important;
+                        color: #667781 !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .content-inbox {
+        @media (max-width: 767px) {
+            display: none;
+            width: 100% !important;
+        }
+
+        header {
+            background-color: #f0f2f5 !important;
+            height: auto !important;
+            min-height: 60px;
+            padding: 10px 15px !important;
+            border-top: none !important;
+
+            .btn-back-to-list {
+                color: #54656f;
+                font-size: 18px;
+                &:hover { color: #000; }
+            }
+
+            img {
+                width: 40px !important;
+                height: 40px !important;
+                box-shadow: none !important;
+            }
+
+            .info {
+                .user {
+                    font-size: 16px !important;
+                    color: #111b21 !important;
+                }
+            }
+
+            .open {
+                display: none !important;
+            }
+        }
+
+        .message-wrap-reda {
+            background-color: #e5ddd5 !important; /* Color de fondo WhatsApp */
+            padding: 20px 5% !important;
+        }
+
+        .message-footer {
+            background: #f0f2f5 !important;
+            padding: 10px 15px !important;
+            border-top: 1px solid #d1d7db !important;
+
+            .cht_msg {
+                border-radius: 20px !important;
+                border: none !important;
+                padding: 9px 12px !important;
+                font-size: 14px !important;
+                background: #fff !important;
+            }
+
+            .send-btn {
+                background: transparent !important;
+                color: #54656f !important;
+                border: none !important;
+                box-shadow: none !important;
+                font-size: 20px !important;
+                padding: 0 10px !important;
+                &:hover { color: #1dbf73 !important; }
+            }
+        }
+    }
+}
+
 .message-list-reda {
     margin-bottom: 5px;
     max-width: 90%;
