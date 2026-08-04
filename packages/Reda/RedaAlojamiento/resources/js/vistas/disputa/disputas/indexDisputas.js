@@ -292,7 +292,14 @@ import {
                     _token: $('meta[name="csrf-token"]').attr('content')
                 },
                 success: (data) => resolve(data),
-                error: (x) => resolve({ success: false, mensaje_usuario: 'Error al enviar mensaje' })
+                error: (x) => {
+                    let respuestaServidor = {};
+                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    resolve({ 
+                        success: false, 
+                        mensaje_usuario: respuestaServidor.mensaje_usuario || 'Error al enviar mensaje' 
+                    });
+                }
             });
         });
     };
@@ -312,7 +319,8 @@ import {
         let html = '';
         mensajes.forEach(m => {
             // El usuario actual es el que envió el mensaje si m.sender_id coincide con el ID de la sesión
-            const esMio = (m.sender_id == currentUserId && m.sender_type !== 'admin'); 
+            // Y m.sender_type no es admin
+            const esMio = (m.sender_id == currentUserId && (m.sender_type === 'user' || !m.sender_type)); 
             const claseMe = esMio ? 'me' : '';
             const nombreSender = m.sender_name || (trans["Sistema"] || "Sistema");
             const fotoSender = getFullUrl(m.sender_foto);
@@ -606,13 +614,16 @@ import {
                 e.preventDefault();
                 e.stopPropagation();
                 const bookingId = $(this).attr('data-booking-id') || $(this).data('booking-id');
+                console.log('REDA Frontend: Abriendo mensajes para booking:', bookingId);
                 abrirMensajesMediacion(bookingId);
             });
 
-            $(document).off('keyup', '#input-mensaje-reda').on('keyup', '#input-mensaje-reda', function(e) {
+            $(document).off('keydown', '#input-mensaje-reda').on('keydown', '#input-mensaje-reda', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    $('#btn-enviar-mensaje-reda').trigger('click');
+                    e.stopPropagation();
+                    console.log('REDA Frontend: Enter presionado');
+                    $('#btn-enviar-mensaje-reda').click();
                 }
             });
 
@@ -624,7 +635,15 @@ import {
                 const bookingId = $btn.attr('data-booking-id') || $btn.data('booking-id');
                 const message = $('#input-mensaje-reda').val().trim();
 
-                if (!message || !bookingId) return;
+                console.log('REDA Frontend: Intentando enviar mensaje para booking:', bookingId);
+
+                if (!message) return;
+                
+                if (!bookingId) {
+                    const msgErrId = window.RedaAlojamientoJson["Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo."] || "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo.";
+                    alert(msgErrId);
+                    return;
+                }
 
                 if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') window.RedaNotificaciones.esperar();
 
@@ -634,11 +653,17 @@ import {
                     if (response.success) {
                         $('#input-mensaje-reda').val('');
                         obtenerMensajesMediacion(bookingId).then((data) => {
-                            if (data.success) renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+                            if (data.success) {
+                                renderizarMensajes(data.respuesta.messages, data.respuesta.booking, data.respuesta.current_user_id);
+                            }
                         });
                     } else {
-                        alert(response.mensaje_usuario || 'Error');
+                        const msgErr = response.mensaje_usuario || 'Error al enviar mensaje';
+                        alert(msgErr);
                     }
+                }).catch(err => {
+                    console.error('REDA Frontend: Excepción al enviar mensaje:', err);
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') window.RedaNotificaciones.ocultar();
                 });
             });
 

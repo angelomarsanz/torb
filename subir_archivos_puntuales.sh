@@ -23,10 +23,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
     #"packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
     #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
 
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
@@ -133,7 +133,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/frontend/partials/lista_favoritos_comercios.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS (FUERA DE CARPETAS FRONTEND) ---
-    "packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/main_head.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_confirmacion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/general/modal_crop.blade.php"
@@ -160,7 +160,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/horario.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/anfitrion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/precio.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/users/inbox.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/users/inbox.blade.php"
 
     # --- Archivos Javascript admin ---
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"
@@ -179,7 +179,7 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/mediacionSvg.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
@@ -193,10 +193,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/calificacionExperiencia.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/pago/frontend/pagos.js"
-    "packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/pago/frontend/pagos.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
@@ -215,7 +215,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/SoporteTecnicoController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Experiencia/FavoritoController.php"
     "packages/Reda/RedaAlojamiento/src/Http/Controllers/Disputa/MensajeController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/ChatController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaInboxController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/ChatController.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaInboxController.php"
 
 )

@@ -977,11 +977,12 @@ import {
             });
 
             // Enviar mensaje al presionar Enter
-            $(document).off('keyup', '#input-mensaje-admin').on('keyup', '#input-mensaje-admin', function(e) {
+            $(document).off('keydown', '#input-mensaje-admin').on('keydown', '#input-mensaje-admin', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
+                    e.stopPropagation();
                     console.log('REDA Admin: Enter presionado en input de mensajes');
-                    $('#btn-enviar-mensaje-admin').trigger('click');
+                    $('#btn-enviar-mensaje-admin').click();
                 }
             });
 
@@ -998,8 +999,10 @@ import {
                 console.log('REDA Admin: Intentando enviar mensaje para booking:', bookingId);
 
                 if (!message) return;
+                
                 if (!bookingId) {
-                    console.error('REDA Admin: Error - booking_id no encontrado en el botón');
+                    const msgErrId = window.RedaAlojamientoJson["Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo."] || "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo.";
+                    alert(msgErrId);
                     return;
                 }
 

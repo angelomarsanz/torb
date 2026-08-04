@@ -4,10 +4,12 @@ namespace Reda\RedaAlojamiento\Http\Controllers\General;
 
 use App\Http\Controllers\Controller;
 use App\Models\{Currency, Messages, Bookings};
+use App\Models\Admin;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class RedaInboxController extends Controller
 {
@@ -64,31 +66,58 @@ class RedaInboxController extends Controller
                 $targetBookingId = $first->booking_id;
             }
 
-            // 4. Cargar HISTORIA UNIFICADA con carga ansiosa de remitentes
-            $unifiedHistory = Messages::with(['sender', 'receiver'])
-                ->where(function($query) use ($userId, $selectedPartnerId) {
-                    $query->where(function($q) use ($userId, $selectedPartnerId) {
-                        $q->where('sender_id', $userId)->where('receiver_id', $selectedPartnerId);
-                    })->orWhere(function($q) use ($userId, $selectedPartnerId) {
-                        $q->where('sender_id', $selectedPartnerId)->where('receiver_id', $userId);
-                    })->orWhere(function($q) use ($selectedPartnerId) {
-                        // Incluimos mensajes de mediación (receiver_id 0) asociados a bookings entre estas personas
-                        $q->where('receiver_id', 0)->whereHas('bookings', function($bq) use ($selectedPartnerId) {
-                            $bq->where(function($qq) use ($selectedPartnerId) {
-                                $qq->where('user_id', Auth::id())->where('host_id', $selectedPartnerId);
-                            })->orWhere(function($qq) use ($selectedPartnerId) {
-                                $qq->where('host_id', Auth::id())->where('user_id', $selectedPartnerId);
-                            });
-                        });
-                    });
-                })->orderBy('id', 'asc')->get();
+            // --- LÓGICA DE PAREJA ESTRICTA Y CONTEXTO COMPARTIDO ---
+            $usuarioA = $userId;
+            $usuarioB = $selectedPartnerId;
 
-            // --- VIRTUALIZACIÓN DE BOOKING ID (Estrategia Clave) ---
-            $unifiedHistory->each(function($msg) use ($targetBookingId) {
+            // Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios.
+            $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
+                $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                });
+            })->pluck('id')->toArray();
+
+            // 4. Cargar HISTORIA UNIFICADA
+            $unifiedHistory = Messages::with(['sender', 'receiver'])
+                ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
+                ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+                ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
+                    // Criterio 1: Intercambios directos
+                    $query->where(function($q) use ($usuarioA, $usuarioB) {
+                        $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                            $q2->where('sender_id', $usuarioA)->where('receiver_id', $usuarioB);
+                        })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                            $q2->where('sender_id', $usuarioB)->where('receiver_id', $usuarioA);
+                        });
+                    })
+                    // Criterio 2: Intervenciones en sus contextos comunes
+                    ->orWhereIn('booking_id', $sharedBookingIds);
+                })
+                ->orderBy('messages.created_at', 'asc')
+                ->get();
+
+            // Identificar IDs de administradores para cargar sus nombres
+            $adminIds = $unifiedHistory->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
+            $admins = Admin::whereIn('id', $adminIds)->get()->keyBy('id');
+
+            // --- VIRTUALIZACIÓN Y PROCESAMIENTO ---
+            $unifiedHistory->each(function($msg) use ($targetBookingId, $admins) {
                 $msg->booking_id = (int) $targetBookingId;
+                // Seguridad PHP 8.2
+                $msg->makeHidden(['host_user', 'guest_user']);
+
+                if ($msg->sender_type === 'admin') {
+                    $admin = $admins->get($msg->sender_id);
+                    $msg->custom_sender_name = $admin ? $admin->username : __('Agente');
+                    $msg->custom_sender_foto = reda_get_profile_src($admin, 'admin');
+                } else {
+                    $msg->custom_sender_name = $msg->sender ? ($msg->sender->first_name) : __('Usuario');
+                    $msg->custom_sender_foto = reda_get_profile_src($msg->sender);
+                }
             });
 
-            // Sincronización de nombres para las vistas originales
             $data['messages'] = $unifiedHistory; 
             $data['conversation'] = $unifiedHistory;
             
@@ -117,27 +146,52 @@ class RedaInboxController extends Controller
         // Marcar como leídos todos los mensajes con este partner
         Messages::where('receiver_id', $userId)->where('sender_id', $partnerId)->update(['read' => 1]);
 
-        // Cargar HISTORIA UNIFICADA incluyendo mediaciones
-        $unifiedHistory = Messages::with(['sender', 'receiver'])
-            ->where(function($query) use ($userId, $partnerId) {
-                $query->where(function($q) use ($userId, $partnerId) {
-                    $q->where('sender_id', $userId)->where('receiver_id', $partnerId);
-                })->orWhere(function($q) use ($userId, $partnerId) {
-                    $q->where('sender_id', $partnerId)->where('receiver_id', $userId);
-                })->orWhere(function($q) use ($partnerId) {
-                    $q->where('receiver_id', 0)->whereHas('bookings', function($bq) use ($partnerId) {
-                         $bq->where(function($qq) use ($partnerId) {
-                            $qq->where('user_id', Auth::id())->where('host_id', $partnerId);
-                        })->orWhere(function($qq) use ($partnerId) {
-                            $qq->where('host_id', Auth::id())->where('user_id', $partnerId);
-                        });
-                    });
-                });
-            })->orderBy('id', 'asc')->get();
+        // --- LÓGICA DE PAREJA ESTRICTA ---
+        $usuarioA = $userId;
+        $usuarioB = $partnerId;
 
-        // --- VIRTUALIZACIÓN DE BOOKING ID PARA AJAX ---
-        $unifiedHistory->each(function($msg) use ($booking_id) {
+        $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
+            $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+            })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+            });
+        })->pluck('id')->toArray();
+
+        // Cargar HISTORIA UNIFICADA
+        $unifiedHistory = Messages::with(['sender', 'receiver'])
+            ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
+            ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+            ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
+                $query->where(function($q) use ($usuarioA, $usuarioB) {
+                    $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                        $q2->where('sender_id', $usuarioA)->where('receiver_id', $usuarioB);
+                    })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                        $q2->where('sender_id', $usuarioB)->where('receiver_id', $usuarioA);
+                    });
+                })
+                ->orWhereIn('booking_id', $sharedBookingIds);
+            })
+            ->orderBy('messages.created_at', 'asc')
+            ->get();
+
+        // Identificar administradores
+        $adminIds = $unifiedHistory->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
+        $admins = Admin::whereIn('id', $adminIds)->get()->keyBy('id');
+
+        // --- VIRTUALIZACIÓN ---
+        $unifiedHistory->each(function($msg) use ($booking_id, $admins) {
             $msg->booking_id = (int) $booking_id;
+            $msg->makeHidden(['host_user', 'guest_user']);
+
+            if ($msg->sender_type === 'admin') {
+                $admin = $admins->get($msg->sender_id);
+                $msg->custom_sender_name = $admin ? $admin->username : __('Agente');
+                $msg->custom_sender_foto = reda_get_profile_src($admin, 'admin');
+            } else {
+                $msg->custom_sender_name = $msg->sender ? ($msg->sender->first_name) : __('Usuario');
+                $msg->custom_sender_foto = reda_get_profile_src($msg->sender);
+            }
         });
 
         $data['messages'] = $unifiedHistory;
@@ -146,7 +200,7 @@ class RedaInboxController extends Controller
         $data['symbol'] = Currency::getAll()->firstWhere('code', $data['booking']->currency_code)->symbol ?? '$';
 
         return response()->json([
-             "inbox" => view('users.messages', $data)->render(), 
+             "inbox" => view('reda-alojamiento::users.messages', $data)->render(), 
              "booking" => view('users.booking', $data)->render()
         ]);
     }
@@ -160,20 +214,28 @@ class RedaInboxController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if (!$validator->fails()) {
-            $message = new Messages;
-            $message->property_id = $request->property_id;
-            $message->booking_id = $request->booking_id;
-            $message->receiver_id = $request->receiver_id;
-            $message->sender_id = Auth::id();
-            $message->message = $request->msg;
-            $message->type_id = 1;
-            $message->save();
+            try {
+                $message = new Messages;
+                $message->property_id = $request->property_id;
+                $message->booking_id = $request->booking_id;
+                $message->receiver_id = $request->receiver_id;
+                $message->sender_id = Auth::id();
+                $message->message = $request->msg;
+                $message->type_id = 1;
+                $message->save();
 
-            Messages::where('booking_id', $request->booking_id)
-                   ->where('receiver_id', Auth::id())
-                   ->update(['read' => 1]);
-                   
-            return 1;
+                // Seguridad PHP 8.2
+                $message->makeHidden(['host_user', 'guest_user']);
+
+                Messages::where('booking_id', $request->booking_id)
+                       ->where('receiver_id', Auth::id())
+                       ->update(['read' => 1]);
+                       
+                return 1;
+            } catch (\Exception $e) {
+                Log::error("REDA Inbox Error: " . $e->getMessage());
+                return 0;
+            }
         }
         return 0;
     }

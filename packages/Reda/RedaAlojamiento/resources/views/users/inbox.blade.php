@@ -51,7 +51,7 @@
 									</sidebar>
 
 									<div class="content-inbox container-fluid p-0" id="messages">
-										@include('users.messages', ['messages' => $messages])
+										@include('reda-alojamiento::users.messages', ['messages' => $messages])
 									</div>
 								</div>
 							</div>

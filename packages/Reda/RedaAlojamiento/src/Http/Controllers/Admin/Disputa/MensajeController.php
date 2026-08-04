@@ -12,6 +12,8 @@ use Reda\RedaAlojamiento\Models\Disputa\Disputa;
 use Reda\RedaAlojamiento\Models\Disputa\MensajeMetadata;
 use Auth;
 use Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class MensajeController extends Controller
 {
@@ -28,41 +30,59 @@ class MensajeController extends Controller
             ], 404);
         }
 
-        // Cargamos todos los mensajes entre el huésped y el anfitrión de esta reservación
-        // para tener la historia completa (consultas previas + reservación actual)
+        // Identificamos a los dos usuarios participantes de la mediación actual
+        $usuarioA = $booking->user_id;
+        $usuarioB = $booking->host_id;
+
+        // 1. Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios.
+        // Se incluyen casos donde se invierten los roles (A es turista de B, o B es turista de A).
+        $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
+            $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+            })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+            });
+        })->pluck('id')->toArray();
+
+        // 2. Consultar mensajes bajo criterios estrictos de "Pareja Compartida"
         $messages = Messages::with(['sender', 'receiver'])
-            ->where(function($query) use ($booking) {
-                $query->where(function($q) use ($booking) {
-                    $q->where('sender_id', $booking->user_id)->where('receiver_id', $booking->host_id);
-                })->orWhere(function($q) use ($booking) {
-                    $q->where('sender_id', $booking->host_id)->where('receiver_id', $booking->user_id);
-                });
+            ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
+            ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+            ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
+                
+                // CRITERIO A: Intercambios directos entre estos dos usuarios (Consultas o Reservas)
+                $query->where(function($q) use ($usuarioA, $usuarioB) {
+                    $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                        $q2->where('sender_id', $usuarioA)->where('receiver_id', $usuarioB);
+                    })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                        $q2->where('sender_id', $usuarioB)->where('receiver_id', $usuarioA);
+                    });
+                })
+                
+                // CRITERIO B: Intervenciones de Administradores (Agentes) en CUALQUIER reservación 
+                // que haya involucrado a estos dos usuarios juntos.
+                // (Esto excluye mensajes del admin con el usuario A sobre una reserva con el usuario C).
+                ->orWhereIn('booking_id', $sharedBookingIds);
             })
-            ->orderBy('created_at', 'asc')
+            ->orderBy('messages.created_at', 'asc') // Orden cronológico total
             ->get();
 
-        // Virtualización de booking_id: forzamos a que todos los mensajes pertenezcan 
-        // a la reservación actual para que el frontend no los filtre o ignore.
+        // Virtualización de booking_id para que el frontend agrupe todo en una sola conversación
         $messages->each(function($msg) use ($booking_id) {
             $msg->booking_id = (int) $booking_id;
+            // IMPORTANTE: Evitar crash en PHP 8.2 por accessors en el modelo original Messages.php
+            $msg->makeHidden(['host_user', 'guest_user']);
         });
-
-        // Obtener metadatos de los mensajes para diferenciar admins de users
-        $messageIds = $messages->pluck('id');
-        $metadata = MensajeMetadata::whereIn('message_id', $messageIds)->get()->keyBy('message_id');
 
         // Identificar IDs de administradores para cargar sus nombres
         $adminIds = [];
         foreach ($messages as $message) {
-            // Previsión: Si no hay metadata (mensajes antiguos o de bandeja global), default a 'user'
-            $message->sender_type = isset($metadata[$message->id]) ? $metadata[$message->id]->sender_type : 'user';
             if ($message->sender_type === 'admin') {
                 $adminIds[] = $message->sender_id;
             }
         }
 
         $admins = Admin::whereIn('id', array_unique($adminIds))->get()->keyBy('id');
-
         $disputa = Disputa::where('booking_id', $booking_id)->first();
 
         foreach ($messages as $message) {
@@ -74,11 +94,9 @@ class MensajeController extends Controller
                 $message->sender_foto = reda_get_profile_src($admin, 'admin');
                 $message->sender_role = __('agente');
             } else {
-                // Previsión para nombres de usuario en mensajes sin metadata o antiguos
                 $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
                 $message->sender_foto = reda_get_profile_src($message->sender);
                 
-                // Determinar rol basado en el booking y si es demandante
                 $demandanteLabel = ' - ' . __('demandante');
                 
                 if ($booking && $message->sender_id == $booking->host_id) {
@@ -118,6 +136,7 @@ class MensajeController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
+            Log::error("Error de validación al enviar mensaje admin: " . print_r($validator->errors()->all(), true));
             return response()->json([
                 'success' => false,
                 'message' => __('Error de validación'),
@@ -127,29 +146,43 @@ class MensajeController extends Controller
             ], 422);
         }
 
-        $booking = Bookings::findOrFail($request->booking_id);
-        
-        $message = new Messages;
-        $message->property_id = $booking->property_id;
-        $message->booking_id  = $request->booking_id;
-        $message->receiver_id = $request->receiver_id ?? 0; // 0 indica broadcast/grupo para mediaciones
-        
-        $adminId = Auth::guard('admin')->id();
-        $message->sender_id   = $adminId; 
-        
-        $message->message     = $request->message;
-        $message->type_id     = 1; // Tipo query/chat
-        $message->read        = 0;
-        $message->save();
+        try {
+            $booking = Bookings::findOrFail($request->booking_id);
+            
+            $message = new Messages;
+            $message->property_id = $booking->property_id;
+            $message->booking_id  = $request->booking_id;
+            $message->receiver_id = $request->receiver_id ?? 0; // 0 indica broadcast/grupo para mediaciones
+            
+            $adminId = Auth::guard('admin')->id();
+            $message->sender_id   = $adminId; 
+            
+            $message->message     = $request->message;
+            $message->type_id     = 1; // Tipo query/chat
+            $message->read        = 0;
+            $message->save();
 
-        // Nota: La metadata se crea automáticamente mediante MensajeObserver
+            // Evitar crash en PHP 8.2 por accessors en el modelo original
+            $message->makeHidden(['host_user', 'guest_user']);
 
-        return response()->json([
-            'success' => true,
-            'message' => __('Mensaje enviado'),
-            'mensaje_usuario' => __('El mensaje ha sido enviado correctamente'),
-            'respuesta' => $message,
-            'code' => 200
-        ], 200);
+            Log::info("Mensaje de administrador guardado con éxito. ID: " . $message->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Mensaje enviado'),
+                'mensaje_usuario' => __('El mensaje ha sido enviado correctamente'),
+                'respuesta' => $message,
+                'code' => 200
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Excepción al guardar mensaje admin: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Ocurrió un error al procesar el envío del mensaje'),
+                'code' => 500
+            ], 500);
+        }
     }
 }
