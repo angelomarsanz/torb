@@ -5,6 +5,7 @@ namespace Reda\RedaAlojamiento\Http\Controllers\General;
 use App\Http\Controllers\Controller;
 use App\Models\{Currency, Messages, Bookings};
 use App\Models\Admin;
+use Reda\RedaAlojamiento\Models\Disputa\Disputa;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
@@ -125,9 +126,12 @@ class RedaInboxController extends Controller
             $adminIds = $unifiedHistory->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
             $admins = Admin::whereIn('id', $adminIds)->get()->keyBy('id');
 
+            // Cargar disputas y bookings asociados para identificar demandantes
+            $disputas = Disputa::whereIn('booking_id', $sharedBookingIds)->get()->keyBy('booking_id');
+            $allRelatedBookings = Bookings::whereIn('id', $sharedBookingIds)->get()->keyBy('id');
+
             // --- VIRTUALIZACIÓN Y PROCESAMIENTO ---
-            $unifiedHistory->each(function($msg) use ($targetBookingId, $admins) {
-                $msg->booking_id = (int) $targetBookingId;
+            $unifiedHistory->each(function($msg) use ($targetBookingId, $admins, $disputas, $allRelatedBookings) {
                 // Seguridad PHP 8.2
                 $msg->makeHidden(['host_user', 'guest_user']);
 
@@ -135,10 +139,30 @@ class RedaInboxController extends Controller
                     $admin = $admins->get($msg->sender_id);
                     $msg->custom_sender_name = $admin ? $admin->username : __('Agente');
                     $msg->custom_sender_foto = reda_get_profile_src($admin, 'admin');
+                    $msg->sender_role = __('agente');
                 } else {
                     $msg->custom_sender_name = $msg->sender ? ($msg->sender->first_name) : __('Usuario');
                     $msg->custom_sender_foto = reda_get_profile_src($msg->sender);
+                    
+                    // Lógica de Rol y Demandante (Usamos el booking_id original del mensaje)
+                    $actualBookingId = $msg->booking_id; 
+                    $booking = $allRelatedBookings->get($actualBookingId);
+                    $disputa = $disputas->get($actualBookingId);
+                    $demandanteLabel = ' - ' . __('demandante');
+                    
+                    if ($booking && $msg->sender_id == $booking->host_id) {
+                        $esDemandante = ($disputa && $disputa->id_usuario_inicial == $msg->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'anfitr'));
+                        $msg->sender_role = __('anfitrión') . ($esDemandante ? $demandanteLabel : '');
+                    } elseif ($booking && $msg->sender_id == $booking->user_id) {
+                        $esDemandante = ($disputa && $disputa->id_usuario_inicial == $msg->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'turist'));
+                        $msg->sender_role = __('turista') . ($esDemandante ? $demandanteLabel : '');
+                    } else {
+                        $msg->sender_role = __('usuario');
+                    }
                 }
+
+                // Virtualización del booking_id para el frontend (Después de los cálculos)
+                $msg->booking_id = (int) $targetBookingId;
             });
 
             $data['messages'] = $unifiedHistory; 
@@ -202,19 +226,43 @@ class RedaInboxController extends Controller
         $adminIds = $unifiedHistory->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
         $admins = Admin::whereIn('id', $adminIds)->get()->keyBy('id');
 
+        // Cargar disputas y bookings asociados
+        $disputas = Disputa::whereIn('booking_id', $sharedBookingIds)->get()->keyBy('booking_id');
+        $allRelatedBookings = Bookings::whereIn('id', $sharedBookingIds)->get()->keyBy('id');
+
         // --- VIRTUALIZACIÓN ---
-        $unifiedHistory->each(function($msg) use ($booking_id, $admins) {
-            $msg->booking_id = (int) $booking_id;
+        $unifiedHistory->each(function($msg) use ($booking_id, $admins, $disputas, $allRelatedBookings) {
+            // Seguridad PHP 8.2
             $msg->makeHidden(['host_user', 'guest_user']);
 
             if ($msg->sender_type === 'admin') {
                 $admin = $admins->get($msg->sender_id);
                 $msg->custom_sender_name = $admin ? $admin->username : __('Agente');
                 $msg->custom_sender_foto = reda_get_profile_src($admin, 'admin');
+                $msg->sender_role = __('agente');
             } else {
                 $msg->custom_sender_name = $msg->sender ? ($msg->sender->first_name) : __('Usuario');
                 $msg->custom_sender_foto = reda_get_profile_src($msg->sender);
+
+                // Lógica de Rol y Demandante
+                $actualBookingId = $msg->booking_id;
+                $booking = $allRelatedBookings->get($actualBookingId);
+                $disputa = $disputas->get($actualBookingId);
+                $demandanteLabel = ' - ' . __('demandante');
+                
+                if ($booking && $msg->sender_id == $booking->host_id) {
+                    $esDemandante = ($disputa && $disputa->id_usuario_inicial == $msg->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'anfitr'));
+                    $msg->sender_role = __('anfitrión') . ($esDemandante ? $demandanteLabel : '');
+                } elseif ($booking && $msg->sender_id == $booking->user_id) {
+                    $esDemandante = ($disputa && $disputa->id_usuario_inicial == $msg->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'turist'));
+                    $msg->sender_role = __('turista') . ($esDemandante ? $demandanteLabel : '');
+                } else {
+                    $msg->sender_role = __('usuario');
+                }
             }
+
+            // Virtualización del booking_id
+            $msg->booking_id = (int) $booking_id;
         });
 
         $data['messages'] = $unifiedHistory;

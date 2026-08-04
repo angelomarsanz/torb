@@ -353,7 +353,7 @@ import {
 
                     <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-admin p-2 px-3">
-                            ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>` : ''}
+                            <span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-admin text-10 mt-1 opacity-50">${m.created_at_humans || m.created_time || ''}</div>

@@ -170,6 +170,12 @@
         const $temp = $('#reda-temp-msg-container').clone().removeClass('d-none').removeAttr('id');
         $temp.find('.msg_txt').text(msg);
         $temp.find('.msg_time').text(window.RedaAlojamientoJson["justo ahora"] || "justo ahora");
+        
+        // Poblar nombre y rol desde la variable global inyectada
+        if (window.RedaCurrentUser) {
+            $temp.find('.sender_name').text(window.RedaCurrentUser.name);
+            $temp.find('.sender_role').text(window.RedaCurrentUser.role);
+        }
 
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
             window.RedaNotificaciones.esperar();
