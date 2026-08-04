@@ -66,26 +66,19 @@ class MensajeController extends Controller
             ->orderBy('messages.created_at', 'asc') // Orden cronológico total
             ->get();
 
-        // Virtualización de booking_id para que el frontend agrupe todo en una sola conversación
-        $messages->each(function($msg) use ($booking_id) {
-            $msg->booking_id = (int) $booking_id;
-            // IMPORTANTE: Evitar crash en PHP 8.2 por accessors en el modelo original Messages.php
-            $msg->makeHidden(['host_user', 'guest_user']);
-        });
-
         // Identificar IDs de administradores para cargar sus nombres
-        $adminIds = [];
-        foreach ($messages as $message) {
-            if ($message->sender_type === 'admin') {
-                $adminIds[] = $message->sender_id;
-            }
-        }
+        $adminIds = $messages->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
+        $admins = Admin::whereIn('id', $adminIds)->get()->keyBy('id');
 
-        $admins = Admin::whereIn('id', array_unique($adminIds))->get()->keyBy('id');
-        $disputa = Disputa::where('booking_id', $booking_id)->first();
+        // Cargar todas las disputas y bookings relacionados para identificar demandantes correctamente por mensaje
+        $disputas = Disputa::whereIn('booking_id', $sharedBookingIds)->get()->keyBy('booking_id');
+        $allRelatedBookings = Bookings::whereIn('id', $sharedBookingIds)->get()->keyBy('id');
 
         foreach ($messages as $message) {
             $message->created_at_humans = $message->created_at->diffForHumans();
+
+            // IMPORTANTE: Evitar crash en PHP 8.2 por accessors en el modelo original Messages.php
+            $message->makeHidden(['host_user', 'guest_user']);
 
             if ($message->sender_type === 'admin') {
                 $admin = $admins->get($message->sender_id);
@@ -96,19 +89,28 @@ class MensajeController extends Controller
                 $message->sender_name = $message->sender ? ($message->sender->first_name . ' ' . $message->sender->last_name) : __('Sistema');
                 $message->sender_foto = reda_get_profile_src($message->sender);
                 
+                // Lógica de Rol y Demandante basada en el contexto REAL del mensaje (su booking_id original)
+                $actualBookingId = $message->booking_id;
+                $msgBooking = $allRelatedBookings->get($actualBookingId);
+                $msgDisputa = $disputas->get($actualBookingId);
                 $demandanteLabel = ' - ' . __('demandante');
                 
-                if ($booking && $message->sender_id == $booking->host_id) {
-                    $esDemandante = ($disputa && $disputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'anfitr'));
+                if ($msgBooking && $message->sender_id == $msgBooking->host_id) {
+                    $esDemandante = ($msgDisputa && $msgDisputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($msgDisputa->rol_usuario_inicial), 'anfitr'));
                     $message->sender_role = __('anfitrión') . ($esDemandante ? $demandanteLabel : '');
-                } elseif ($booking && $message->sender_id == $booking->user_id) {
-                    $esDemandante = ($disputa && $disputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($disputa->rol_usuario_inicial), 'turist'));
+                } elseif ($msgBooking && $message->sender_id == $msgBooking->user_id) {
+                    $esDemandante = ($msgDisputa && $msgDisputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($msgDisputa->rol_usuario_inicial), 'turist'));
                     $message->sender_role = __('turista') . ($esDemandante ? $demandanteLabel : '');
                 } else {
                     $message->sender_role = __('usuario');
                 }
             }
+
+            // Virtualización de booking_id para que el frontend agrupe todo en una sola conversación (Después de los cálculos)
+            $message->booking_id = (int) $booking_id;
         }
+
+        $disputa = $disputas->get($booking_id);
 
         return response()->json([
             'success' => true,
