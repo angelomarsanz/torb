@@ -601,5 +601,11 @@
     "No puedes enviarte un mensaje a ti mismo.": "No puedes enviarte un mensaje a ti mismo.",
     "No se pudo iniciar el chat. Por favor intente más tarde.": "No se pudo iniciar el chat. Por favor intente más tarde.",
     "Hola, estoy interesado en tu propiedad: ": "Hola, estoy interesado en tu propiedad: ",
-    "Error al iniciar chat: ": "Error al iniciar chat: "
+    "Error al iniciar chat: ": "Error al iniciar chat: ",
+    "Mensajes recuperados": "Mensajes recuperados",
+    "Error al enviar mensaje": "Error al enviar mensaje",
+    "Detalle del mensaje cargado": "Detalle del mensaje cargado",
+    "Respuesta enviada": "Respuesta enviada",
+    "Mensaje enviado con éxito": "Mensaje enviado con éxito",
+    "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo.": "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo."
 }

@@ -16,6 +16,58 @@
     var open = null;
     var isSending = false;
 
+    /**
+     * AJAX para cargar el detalle de un booking (Inbox).
+     */
+    const apiCargarBooking = (id) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/messaging/booking',
+                data: {
+                    "_token": $('meta[name="csrf-token"]').attr('content'),
+                    'id': id,
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: (data) => resolve(data),
+                error: (x) => {
+                    let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                    resolve({
+                        success: false,
+                        mensaje_usuario: res.mensaje_usuario || (window.RedaAlojamientoJson["Error al cargar"] || "Error al cargar"),
+                        code: x.status || 500
+                    });
+                }
+            });
+        });
+    };
+
+    /**
+     * AJAX para responder un mensaje (Inbox).
+     */
+    const apiResponderMensaje = (params) => {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: APP_URL + '/reda/messaging/reply',
+                data: {
+                    "_token": $('meta[name="csrf-token"]').attr('content'),
+                    ...params
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: (data) => resolve(data),
+                error: (x) => {
+                    let res = {}; try { res = JSON.parse(x.responseText); } catch (e) {}
+                    resolve({
+                        success: false,
+                        mensaje_usuario: res.mensaje_usuario || (window.RedaAlojamientoJson["Error al enviar mensaje"] || "Error al enviar mensaje"),
+                        code: x.status || 500
+                    });
+                }
+            });
+        });
+    };
+
     function process() {
         console.log('REDA Inbox: Vinculando eventos...');
         list = document.querySelectorAll(".list");
@@ -69,34 +121,37 @@
 
     // --- MANEJO DE EVENTOS CON CONTROL DE PROPAGACIÓN ---
     
-    $(document).on('click', '.conversassion', function(e) {
+    $(document).on('click', '.conversassion', async function(e) {
         e.stopImmediatePropagation(); // Evita ejecución de scripts originales (vRent)
         
         var id = $(this).data('id');
         console.log('REDA Inbox: Cargando conversation ID:', id);
+
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+            window.RedaNotificaciones.esperar();
+        }
         
-        $.ajax({
-            url: APP_URL + '/reda/messaging/booking',
-            data: {
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-                'id': id,
-            },
-            type: 'post',
-            dataType: 'json',
-            success: function(data) {
-                $('#msg-' + id).removeClass('text-success');
-                $('#messages').empty().html(data['inbox']);
-                $('#booking').empty().html(data['booking']);
-                
-                setTimeout(() => {
-                    const wrap = document.querySelector(".message-wrap");
-                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
-                }, 100);
-            }
-        });
+        const data = await apiCargarBooking(id);
+
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
+
+        if (data.success) {
+            $('#msg-' + id).removeClass('text-success font-weight-bold');
+            $('#messages').empty().html(data.respuesta.inbox);
+            $('#booking').empty().html(data.respuesta.booking);
+            
+            setTimeout(() => {
+                const wrap = document.querySelector(".message-wrap");
+                if (wrap) wrap.scrollTop = wrap.scrollHeight;
+            }, 100);
+        } else {
+            alert(data.mensaje_usuario);
+        }
     });
 
-    $(document).on('click', '.chat', function(e) {
+    $(document).on('click', '.chat', async function(e) {
         e.stopImmediatePropagation();
         
         if (isSending) return; // Evita doble envío accidental
@@ -118,30 +173,31 @@
             '<div class="time">just now</div>' +
             '</div>';
 
-        $.ajax({
-            url: APP_URL + '/reda/messaging/reply',
-            data: {
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-                'msg': msg,
-                'booking_id': booking_id,
-                'receiver_id': receiver_id,
-                'property_id': property_id,
-            },
-            type: 'post',
-            dataType: 'json',
-            success: function(data) {
-                if (data == 1) {
-                    $('.message-wrap').append(result);
-                    $('.cht_msg').val("");
-                    const wrap = document.querySelector(".message-wrap");
-                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
-                }
-                isSending = false;
-            },
-            error: function() {
-                isSending = false;
-            }
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
+            window.RedaNotificaciones.esperar();
+        }
+
+        const data = await apiResponderMensaje({
+            'msg': msg,
+            'booking_id': booking_id,
+            'receiver_id': receiver_id,
+            'property_id': property_id,
         });
+
+        if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') {
+            window.RedaNotificaciones.ocultar();
+        }
+
+        if (data.success && data.respuesta == 1) {
+            $('.message-wrap').append(result);
+            $('.cht_msg').val("");
+            const wrap = document.querySelector(".message-wrap");
+            if (wrap) wrap.scrollTop = wrap.scrollHeight;
+        } else {
+            alert(data.mensaje_usuario || (window.RedaAlojamientoJson["Error al enviar mensaje"] || "Error al enviar mensaje"));
+        }
+        
+        isSending = false;
     });
 
     // Manejo de Enter muy específico para evitar burbujeo hacia otros scripts

@@ -113,13 +113,16 @@ class MensajeController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => __('Mensajes recuperados'),
+            'mensaje_usuario' => __('Listado recuperado con éxito'),
             'respuesta' => [
                 'messages' => $messages,
                 'booking' => $booking,
                 'disputa' => $disputa,
                 'current_user_id' => Auth::guard('admin')->id()
-            ]
-        ]);
+            ],
+            'code' => 200
+        ], 200);
     }
 
     /**

@@ -23,7 +23,7 @@
 		<div class="{{ $message->sender_id == Auth::id() ? 'message-list me' : 'message-list' }}">
 			@if($message->sender_id != Auth::id())
 				<div class="reda-inbox-avatar mr-2">
-					<img src="{{ $message->custom_sender_foto ?? reda_get_profile_src($message->sender) }}" class="rounded-circle border" style="width:30px; height:30px; object-fit:cover;">
+					<img src="{{ $message->custom_sender_foto ?? reda_get_profile_src($message->sender) }}" class="rounded-circle border reda-avatar-30">
 				</div>
 			@endif
 			<div class="d-flex flex-column">

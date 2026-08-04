@@ -12,8 +12,7 @@
 					<div class="row">
 						<div class="col-md-12 p-0 mb-3">
 							<div class="list-bacground mt-4 rounded-3 p-4 border">
-                                <p>Está cargando la vista del plugin</p>
-								<span class="text-18 pt-4 pb-4 font-weight-700">{{ __('Inbox') }} (REDA)</span>
+								<span class="text-18 pt-4 pb-4 font-weight-700">{{ __('Inbox') }}</span>
 							</div>
 						</div>
 					</div>

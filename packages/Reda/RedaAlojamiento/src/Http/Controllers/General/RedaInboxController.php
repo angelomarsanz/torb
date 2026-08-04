@@ -200,9 +200,15 @@ class RedaInboxController extends Controller
         $data['symbol'] = Currency::getAll()->firstWhere('code', $data['booking']->currency_code)->symbol ?? '$';
 
         return response()->json([
-             "inbox" => view('reda-alojamiento::users.messages', $data)->render(), 
-             "booking" => view('users.booking', $data)->render()
-        ]);
+             'success' => true,
+             'message' => __('Detalle del mensaje cargado'),
+             'mensaje_usuario' => __('Cargado con éxito'),
+             'respuesta' => [
+                 "inbox" => view('reda-alojamiento::users.messages', $data)->render(), 
+                 "booking" => view('users.booking', $data)->render()
+             ],
+             'code' => 200
+        ], 200);
     }
 
     /**
@@ -231,12 +237,30 @@ class RedaInboxController extends Controller
                        ->where('receiver_id', Auth::id())
                        ->update(['read' => 1]);
                        
-                return 1;
+                return response()->json([
+                    'success' => true,
+                    'message' => __('Respuesta enviada'),
+                    'mensaje_usuario' => __('Mensaje enviado con éxito'),
+                    'respuesta' => 1,
+                    'code' => 200
+                ], 200);
             } catch (\Exception $e) {
                 Log::error("REDA Inbox Error: " . $e->getMessage());
-                return 0;
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                    'mensaje_usuario' => __('Error al enviar mensaje'),
+                    'respuesta' => 0,
+                    'code' => 500
+                ], 500);
             }
         }
-        return 0;
+        return response()->json([
+            'success' => false,
+            'message' => __('Error de validación'),
+            'mensaje_usuario' => __('El mensaje es obligatorio'),
+            'respuesta' => 0,
+            'code' => 422
+        ], 422);
     }
 }

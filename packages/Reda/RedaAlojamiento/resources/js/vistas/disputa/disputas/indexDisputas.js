@@ -297,7 +297,7 @@ import {
                     try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
                     resolve({ 
                         success: false, 
-                        mensaje_usuario: respuestaServidor.mensaje_usuario || 'Error al enviar mensaje' 
+                        mensaje_usuario: respuestaServidor.mensaje_usuario || (window.RedaAlojamientoJson["Error al enviar mensaje"] || "Error al enviar mensaje") 
                     });
                 }
             });
