@@ -161,6 +161,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/anfitrion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/experiencia/experiencias/formularios_de_pasos/precio.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/users/inbox.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/users/messages.blade.php"
 
     # --- Archivos Javascript admin ---
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"

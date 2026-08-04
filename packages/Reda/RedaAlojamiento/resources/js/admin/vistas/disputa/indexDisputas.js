@@ -347,13 +347,13 @@ import {
 
             html += `
                 <div class="message-list-admin ${claseMe} d-flex align-items-start mb-3">
-                    <div class="symbol symbol-35px symbol-circle me-2 flex-shrink-0 shadow-xs">
-                        <img src="${fotoSender}" class="rounded-circle shadow-xs border">
+                    <div class="symbol symbol-35px symbol-circle flex-shrink-0 shadow-xs">
+                        <img src="${fotoSender}" class="rounded-circle shadow-xs border" title="${nombreSender} (${roleSender})">
                     </div>
 
                     <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-admin p-2 px-3">
-                            <span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>
+                            ${!esMio ? `<span class="d-block text-10 fw-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>` : ''}
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-admin text-10 mt-1 opacity-50">${m.created_at_humans || m.created_time || ''}</div>

@@ -24,8 +24,7 @@
 										<div class="list-wrap overflow-hidden-x">
 											@forelse ($sidebar_messages as $sideMsg)
 												@php
-													$partnerId = $sideMsg->chat_partner_id;
-                                                    $user = ($sideMsg->sender_id == $partnerId) ? $sideMsg->sender : $sideMsg->receiver;
+                                                    $user = $sideMsg->chat_partner;
 												@endphp
 												<div class="list p-2 conversassion" data-id="{{ $sideMsg->booking_id }}">
 													<img src="{{ $user->profile_src ?? asset('public/images/default-profile.png') }}" alt="user" />

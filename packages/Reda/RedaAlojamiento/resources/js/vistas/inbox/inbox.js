@@ -102,7 +102,7 @@
             if (sidebar) sidebar.classList.remove("opened");
             if (open) open.innerText = "UP";
             
-            const wrap = document.querySelector(".message-wrap");
+            const wrap = document.querySelector(".message-wrap-reda");
             if (wrap) wrap.scrollTop = wrap.scrollHeight;
             localStorage.setItem("selected_reda", index);
         }
@@ -143,7 +143,7 @@
             $('#booking').empty().html(data.respuesta.booking);
             
             setTimeout(() => {
-                const wrap = document.querySelector(".message-wrap");
+                const wrap = document.querySelector(".message-wrap-reda");
                 if (wrap) wrap.scrollTop = wrap.scrollHeight;
             }, 100);
         } else {
@@ -166,12 +166,10 @@
         isSending = true;
         console.log('REDA Inbox: Enviando mensaje...');
 
-        var result = '<div class="message-list me">' +
-            '<div class="msg pl-2 pr-2 pb-2 pt-2 mb-2">' +
-            '<p class="m-0">' + sanitize(msg) + '</p>' +
-            '</div>' +
-            '<div class="time">just now</div>' +
-            '</div>';
+        // Usar la plantilla de Blade para el mensaje enviado
+        const $temp = $('#reda-temp-msg-container').clone().removeClass('d-none').removeAttr('id');
+        $temp.find('.msg_txt').text(msg);
+        $temp.find('.msg_time').text(window.RedaAlojamientoJson["justo ahora"] || "justo ahora");
 
         if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') {
             window.RedaNotificaciones.esperar();
@@ -189,9 +187,9 @@
         }
 
         if (data.success && data.respuesta == 1) {
-            $('.message-wrap').append(result);
+            $('.message-wrap-reda').append($temp);
             $('.cht_msg').val("");
-            const wrap = document.querySelector(".message-wrap");
+            const wrap = document.querySelector(".message-wrap-reda");
             if (wrap) wrap.scrollTop = wrap.scrollHeight;
         } else {
             alert(data.mensaje_usuario || (window.RedaAlojamientoJson["Error al enviar mensaje"] || "Error al enviar mensaje"));

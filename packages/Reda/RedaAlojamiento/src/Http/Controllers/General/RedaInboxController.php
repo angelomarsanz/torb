@@ -19,29 +19,52 @@ class RedaInboxController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
+
+        // 1. Identificar todos los bookings donde el usuario participa como huésped o anfitrión
+        $involvedBookingIds = Bookings::where('user_id', $userId)
+            ->orWhere('host_id', $userId)
+            ->pluck('id')
+            ->toArray();
         
-        // 1. Obtener todos los mensajes donde participa el usuario
-        $allMessages = Messages::with(['bookings', 'properties:id,name', 'sender', 'receiver'])
-            ->where('sender_id', $userId)
-            ->orWhere('receiver_id', $userId)
+        // 2. Obtener todos los mensajes:
+        // A. Mensajes vinculados a esos bookings (incluye mediaciones donde receiver_id puede ser 0)
+        // B. Mensajes sin booking donde el usuario es emisor o receptor (consultas directas)
+        $allMessages = Messages::with(['bookings.users', 'bookings.host', 'properties:id,name', 'sender', 'receiver'])
+            ->where(function($q) use ($involvedBookingIds, $userId) {
+                $q->whereIn('booking_id', $involvedBookingIds)
+                  ->orWhere('sender_id', $userId)
+                  ->orWhere('receiver_id', $userId);
+            })
             ->orderBy('id', 'desc')
             ->get();
 
-        // 2. Identificar al "Chat Partner" único (Estrategia de Identidad de Hilo)
+        // 3. Identificar al "Chat Partner" único (Estrategia de Identidad de Hilo)
         // Agrupamos por los participantes del booking para que directos y mediaciones caigan en el mismo saco
         $allMessages->transform(function ($message) use ($userId) {
             $booking = $message->bookings;
             if ($booking) {
-                // El partner es siempre la "otra" persona de la reservación
-                $message->chat_partner_id = ($booking->user_id == $userId) ? $booking->host_id : $booking->user_id;
+                // El partner es siempre la "otra" persona de la reservación (siempre de la tabla users)
+                if ($booking->user_id == $userId) {
+                    $message->chat_partner_id = $booking->host_id;
+                    $message->chat_partner = $booking->host;
+                } else {
+                    $message->chat_partner_id = $booking->user_id;
+                    $message->chat_partner = $booking->users;
+                }
             } else {
                 // Fallback para mensajes sin booking (poco probable en este sistema)
-                $message->chat_partner_id = ($message->sender_id == $userId) ? $message->receiver_id : $message->sender_id;
+                if ($message->sender_id == $userId) {
+                    $message->chat_partner_id = $message->receiver_id;
+                    $message->chat_partner = $message->receiver;
+                } else {
+                    $message->chat_partner_id = $message->sender_id;
+                    $message->chat_partner = $message->sender;
+                }
             }
             return $message;
         });
 
-        // 3. Generar lista del Sidebar: un item por cada compañero de chat real
+        // 4. Generar lista del Sidebar: un item por cada compañero de chat real
         $data['sidebar_messages'] = $allMessages->unique('chat_partner_id')->values();
 
         $data['messages'] = [];

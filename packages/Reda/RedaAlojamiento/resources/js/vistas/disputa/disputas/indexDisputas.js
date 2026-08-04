@@ -328,13 +328,13 @@ import {
 
             html += `
                 <div class="message-list-reda ${claseMe} d-flex align-items-start mb-3">
-                    <div class="reda-avatar-container mr-2 flex-shrink-0">
-                        <img src="${fotoSender}" class="rounded-circle reda-avatar-30 shadow-sm border">
+                    <div class="reda-avatar-container flex-shrink-0">
+                        <img src="${fotoSender}" class="rounded-circle reda-avatar-30 shadow-sm border" title="${nombreSender} (${roleSender})">
                     </div>
 
                     <div class="d-flex flex-column msg-bubble-container">
                         <div class="msg-reda shadow-sm p-2 px-3">
-                            <span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>
+                            ${!esMio ? `<span class="d-block text-10 font-weight-700 text-uppercase mb-1 opacity-75">${nombreSender} (${roleSender})</span>` : ''}
                             <p class="m-0 text-13">${m.message}</p>
                         </div>
                         <div class="time-reda text-10 mt-1 opacity-50">${m.created_at_humans || m.created_time || ''}</div>
