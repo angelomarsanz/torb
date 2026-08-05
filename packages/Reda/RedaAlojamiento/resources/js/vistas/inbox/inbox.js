@@ -68,6 +68,27 @@
         });
     };
 
+    /**
+     * Desplaza el chat al final y asegura visibilidad del input en móvil.
+     */
+    function scrollChatToBottom() {
+        const wrap = document.querySelector(".message-wrap-reda");
+        if (wrap) {
+            wrap.scrollTop = wrap.scrollHeight;
+        }
+        
+        // En móvil (WhatsApp Style), forzamos que el footer (input) sea visible
+        if (window.innerWidth < 768) {
+            const footer = document.querySelector(".message-footer");
+            if (footer) {
+                // Pequeño retardo para asegurar que el DOM se haya actualizado y el teclado (si está abierto) se considere
+                setTimeout(() => {
+                    footer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 150);
+            }
+        }
+    }
+
     function process() {
         console.log('REDA Inbox: Vinculando eventos...');
         list = document.querySelectorAll(".list");
@@ -106,7 +127,7 @@
             }
             
             const wrap = document.querySelector(".message-wrap-reda");
-            if (wrap) wrap.scrollTop = wrap.scrollHeight;
+            if (wrap) scrollChatToBottom();
             localStorage.setItem("selected_reda", index);
         }
     }
@@ -145,8 +166,7 @@
             $('#booking').empty().html(data.respuesta.booking);
             
             setTimeout(() => {
-                const wrap = document.querySelector(".message-wrap-reda");
-                if (wrap) wrap.scrollTop = wrap.scrollHeight;
+                scrollChatToBottom();
             }, 100);
         } else {
             alert(data.mensaje_usuario);
@@ -197,8 +217,7 @@
         if (data.success && data.respuesta == 1) {
             $('.message-wrap-reda').append($temp);
             $('.cht_msg').val("");
-            const wrap = document.querySelector(".message-wrap-reda");
-            if (wrap) wrap.scrollTop = wrap.scrollHeight;
+            scrollChatToBottom();
         } else {
             alert(data.mensaje_usuario || (window.RedaAlojamientoJson["Error al enviar mensaje"] || "Error al enviar mensaje"));
         }
