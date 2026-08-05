@@ -3479,6 +3479,11 @@
             width: 100% !important;
             min-width: 100% !important;
             border-right: none !important;
+            position: relative !important;
+            height: 100% !important;
+            display: flex !important;
+            top: 0 !important;
+            box-shadow: none !important;
         }
 
         .list-wrap {
