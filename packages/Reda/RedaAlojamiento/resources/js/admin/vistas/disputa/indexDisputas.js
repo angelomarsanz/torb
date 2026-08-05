@@ -385,7 +385,7 @@ import {
         if (container.length) {
             container.scrollTop(container[0].scrollHeight);
         }
-        $('#input-mensaje-admin').focus();
+        // Eliminado focus automático para evitar que se despliegue el teclado en el celular al abrir
     });
 
     /**
@@ -401,7 +401,7 @@ import {
         $('#btn-enviar-mensaje-admin').attr('data-booking-id', bookingId);
         $('#input-mensaje-admin').val('');
 
-        const bsModal = new bootstrap.Modal(modalElement);
+        const bsModal = new bootstrap.Modal(modalElement, { focus: false });
         bsModal.show();
 
         const data = await obtenerMensajesMediacion(bookingId);
