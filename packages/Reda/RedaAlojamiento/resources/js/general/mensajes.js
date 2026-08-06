@@ -77,10 +77,15 @@ export const guardarMediacionReda = (formData) => {
                 },
                 error: function (x) {
                     let respuestaServidor = {};
-                    try { respuestaServidor = JSON.parse(x.responseText); } catch (e) { respuestaServidor = {}; }
+                    try { 
+                        respuestaServidor = JSON.parse(x.responseText); 
+                    } catch (e) { 
+                        respuestaServidor = {}; 
+                    }
                     
                     const mensajeErrorBase = window.RedaAlojamientoJson["Error en el servidor de Torbian"] || 'Error en el servidor de Torbian';
-                    const detalleError = respuestaServidor.message ? `<br />${respuestaServidor.message}` : '';
+                    // Si el servidor devolvió un mensaje de error técnico pero no un mensaje_usuario, lo mostramos como detalle
+                    const detalleError = respuestaServidor.message ? `<br /><small class="text-muted">${respuestaServidor.message}</small>` : '';
                     
                     resolve({
                         'success': false,

@@ -8,6 +8,8 @@ use App\Models\Bookings;
 use Auth;
 use Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class DisputaController extends Controller
 {
@@ -228,7 +230,7 @@ class DisputaController extends Controller
             'prioridad'   => 'required|in:Baja,Media,Alta',
             'motivo'      => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'documentos.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240', // 10MB máx por archivo
+            'documentos.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,JPG,JPEG,PNG,PDF|mimetypes:image/jpeg,image/png,application/pdf|max:10240', // 10MB máx por archivo
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -237,82 +239,108 @@ class DisputaController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => __('Error de validación'),
-                'mensaje_usuario' => __('Por favor complete todos los campos obligatorios'),
+                'mensaje_usuario' => __('Por favor complete todos los campos obligatorios y verifique el formato de los archivos (JPG, PNG, PDF)'),
                 'respuesta' => $validator->errors(),
                 'code' => 422
             ], 422);
         }
 
-        $booking = Bookings::findOrFail($request->booking_id);
-        $myUserId = Auth::id();
+        try {
+            $booking = Bookings::findOrFail($request->booking_id);
+            $myUserId = Auth::id();
 
-        // Determinar rol del iniciador
-        $esAnfitrion = ($myUserId == $booking->host_id);
-        $esTurista = ($myUserId == $booking->user_id);
+            // Determinar rol del iniciador
+            $esAnfitrion = ($myUserId == $booking->host_id);
+            $esTurista = ($myUserId == $booking->user_id);
 
-        if (!$esAnfitrion && !$esTurista) {
+            if (!$esAnfitrion && !$esTurista) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('Usuario no autorizado'),
+                    'mensaje_usuario' => __('No tienes permiso para iniciar una mediación en esta reserva.'),
+                    'respuesta' => '',
+                    'code' => 403
+                ], 403);
+            }
+
+            // Preparar datos de la disputa
+            $disputa = new Disputa();
+            $disputa->booking_id = $request->booking_id;
+            $disputa->prioridad = $request->prioridad;
+            $disputa->motivo = $request->motivo;
+            $disputa->descripcion = $request->descripcion;
+            $disputa->id_usuario_turista = $booking->user_id;
+            $disputa->id_usuario_anfitrion = $booking->host_id;
+            $disputa->id_usuario_inicial = $myUserId;
+            $disputa->rol_usuario_inicial = $esAnfitrion ? __('Anfitrión') : __('Turista');
+
+            // Valores por defecto solicitados
+            $disputa->paso_actual = __('Caso creado');
+            $disputa->fecha_apertura = Carbon::now();
+            $disputa->fecha_limite = Carbon::now()->addHours(48);
+            $disputa->estado = __('Abierto');
+
+            $disputa->save();
+
+            // Manejo de archivos después de guardar para tener el ID de la disputa
+            if ($request->hasFile('documentos')) {
+                $paths = [];
+                // Carpeta: public/images/disputas/{disputa_id}/[documentos_anfitrion|documentos_turista]/{user_id}
+                $subFolder = $esAnfitrion ? 'documentos_anfitrion' : 'documentos_turista';
+                $userIdFolder = $esAnfitrion ? $booking->host_id : $booking->user_id;
+                $destPath = public_path("images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}");
+
+                if (!file_exists($destPath)) {
+                    if (!mkdir($destPath, 0755, true)) {
+                        throw new Exception("No se pudo crear el directorio de destino: " . $destPath);
+                    }
+                }
+
+                foreach ($request->file('documentos') as $file) {
+                    // Verificar si el archivo es válido
+                    if (!$file->isValid()) {
+                        Log::error("Archivo no válido detectado: " . $file->getClientOriginalName() . " - Error: " . $file->getErrorMessage());
+                        throw new Exception("El archivo " . $file->getClientOriginalName() . " no pudo ser cargado correctamente. Intente con otro archivo.");
+                    }
+
+                    // Limpiar el nombre del archivo de caracteres especiales que podrían dar problemas
+                    $originalName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+                    $fileName = time() . '_' . $originalName;
+                    
+                    if (!$file->move($destPath, $fileName)) {
+                        throw new Exception("No se pudo mover el archivo " . $originalName . " a " . $destPath);
+                    }
+
+                    // Guardar con el prefijo public/ para evitar errores 404 en este entorno
+                    $paths[] = "public/images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}/{$fileName}";
+                }
+
+                // Guardar rutas como JSON en la columna correspondiente
+                if ($esAnfitrion) {
+                    $disputa->documentos_anfitrion = json_encode($paths);
+                } else {
+                    $disputa->documentos_turista = json_encode($paths);
+                }
+                $disputa->save(); // Actualizar con las rutas de documentos
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Mediación creada'),
+                'mensaje_usuario' => __('Solicitud de mediación enviada correctamente.'),
+                'respuesta' => $disputa,
+                'code' => 200
+            ], 200);
+
+        } catch (Exception $e) {
+            Log::error("Error al guardar mediación: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
             return response()->json([
                 'success' => false,
-                'message' => __('Usuario no autorizado'),
-                'mensaje_usuario' => __('No tienes permiso para iniciar una mediación en esta reserva.'),
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Ocurrió un error en el servidor al procesar su solicitud. ' . $e->getMessage()),
                 'respuesta' => '',
-                'code' => 403
-            ], 403);
+                'code' => 500
+            ], 500);
         }
-
-        // Preparar datos de la disputa
-        $disputa = new Disputa();
-        $disputa->booking_id = $request->booking_id;
-        $disputa->prioridad = $request->prioridad;
-        $disputa->motivo = $request->motivo;
-        $disputa->descripcion = $request->descripcion;
-        $disputa->id_usuario_turista = $booking->user_id;
-        $disputa->id_usuario_anfitrion = $booking->host_id;
-        $disputa->id_usuario_inicial = $myUserId;
-        $disputa->rol_usuario_inicial = $esAnfitrion ? __('Anfitrión') : __('Turista');
-
-        // Valores por defecto solicitados
-        $disputa->paso_actual = __('Caso creado');
-        $disputa->fecha_apertura = Carbon::now();
-        $disputa->fecha_limite = Carbon::now()->addHours(48);
-        $disputa->estado = __('Abierto');
-
-        $disputa->save();
-
-        // Manejo de archivos después de guardar para tener el ID de la disputa
-        if ($request->hasFile('documentos')) {
-            $paths = [];
-            // Carpeta: public/images/disputas/{disputa_id}/[documentos_anfitrion|documentos_turista]/{user_id}
-            $subFolder = $esAnfitrion ? 'documentos_anfitrion' : 'documentos_turista';
-            $userIdFolder = $esAnfitrion ? $booking->host_id : $booking->user_id;
-            $destPath = public_path("images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}");
-
-            if (!file_exists($destPath)) {
-                mkdir($destPath, 0755, true);
-            }
-
-            foreach ($request->file('documentos') as $file) {
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move($destPath, $fileName);
-                // Guardar con el prefijo public/ para evitar errores 404 en este entorno
-                $paths[] = "public/images/disputas/{$disputa->id}/{$subFolder}/{$userIdFolder}/{$fileName}";
-            }
-
-            // Guardar rutas como JSON en la columna correspondiente
-            if ($esAnfitrion) {
-                $disputa->documentos_anfitrion = json_encode($paths);
-            } else {
-                $disputa->documentos_turista = json_encode($paths);
-            }
-            $disputa->save(); // Actualizar con las rutas de documentos
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => __('Mediación creada'),
-            'mensaje_usuario' => __('Solicitud de mediación enviada correctamente.'),
-            'respuesta' => $disputa,
-            'code' => 200
-        ], 200);
     }
 }
