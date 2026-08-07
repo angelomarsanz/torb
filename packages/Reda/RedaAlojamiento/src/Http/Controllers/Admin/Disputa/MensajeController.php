@@ -30,23 +30,26 @@ class MensajeController extends Controller
             ], 404);
         }
 
-        // Identificamos a los dos usuarios participantes de la mediación actual
+        // Identificamos a los dos usuarios participantes de la mediación actual y la propiedad
         $usuarioA = $booking->user_id;
         $usuarioB = $booking->host_id;
+        $propertyId = $booking->property_id;
 
-        // 1. Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios.
-        $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
-            $q->where(function($q2) use ($usuarioA, $usuarioB) {
-                $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
-            })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
-                $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
-            });
-        })->pluck('id')->toArray();
+        // 1. Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios PARA ESTA PROPIEDAD.
+        $sharedBookingIds = Bookings::where('property_id', $propertyId)
+            ->where(function($q) use ($usuarioA, $usuarioB) {
+                $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                });
+            })->pluck('id')->toArray();
 
-        // 2. Consultar mensajes bajo criterios estrictos de "Pareja Compartida"
+        // 2. Consultar mensajes bajo criterios estrictos de "Pareja Compartida" y PROPIEDAD
         $messages = Messages::with(['sender', 'receiver'])
             ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
             ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+            ->where('messages.property_id', $propertyId)
             ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
                 
                 // CRITERIO A: Intercambios directos entre estos dos usuarios (Consultas o Reservas)
@@ -58,16 +61,16 @@ class MensajeController extends Controller
                     });
                 })
                 
-                // CRITERIO B: Intervenciones de Administradores (Agentes) en CUALQUIER reservación 
-                // que haya involucrado a estos dos usuarios juntos.
+                // CRITERIO B: Intervenciones de Administradores (Agentes) en contextos comunes
                 ->orWhereIn('booking_id', $sharedBookingIds);
             })
             ->orderBy('messages.created_at', 'asc') // Orden cronológico total
             ->get();
 
-        // 1. Marcar como leídos los mensajes de esta conversación que no sean del admin actual
+        // 1. Marcar como leídos los mensajes de esta conversación que no sean del admin actual PARA ESTA PROPIEDAD
         $adminId = Auth::guard('admin')->id();
-        Messages::whereIn('booking_id', $sharedBookingIds)
+        Messages::where('property_id', $propertyId)
+            ->whereIn('booking_id', $sharedBookingIds)
             ->where(function($q) use ($adminId) {
                 // Mensajes que NO son del admin actual (considerando metadata)
                 $q->whereNotExists(function ($query) {
@@ -82,10 +85,14 @@ class MensajeController extends Controller
             ->update(['read' => 1]);
 
         // 2. LÓGICA DE SANEAMIENTO (HEURÍSTICA DE FLUJO):
-        $lastMessage = Messages::whereIn('booking_id', $sharedBookingIds)->orderBy('created_at', 'desc')->first();
+        $lastMessage = Messages::where('property_id', $propertyId)
+            ->whereIn('booking_id', $sharedBookingIds)
+            ->orderBy('created_at', 'desc')
+            ->first();
         if ($lastMessage) {
             // Saneamos: si hay un mensaje posterior, todo lo anterior de otros autores se marca como leído.
-            Messages::whereIn('booking_id', $sharedBookingIds)
+            Messages::where('property_id', $propertyId)
+                ->whereIn('booking_id', $sharedBookingIds)
                 ->where('created_at', '<', $lastMessage->created_at)
                 ->where('sender_id', '!=', $lastMessage->sender_id)
                 ->where('read', 0)
@@ -194,7 +201,7 @@ class MensajeController extends Controller
             $message->read        = 0;
             $message->save();
 
-            // Evitar crash en PHP 8.2 por accessors en el modelo original
+            // Evitar crash en PHP 8.2 por accessors en el modelo original Messages.php
             $message->makeHidden(['host_user', 'guest_user']);
 
             Log::info("Mensaje de administrador guardado con éxito. ID: " . $message->id);

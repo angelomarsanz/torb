@@ -3817,3 +3817,125 @@
         background-color: #ebebeb !important;
     }
 }
+
+/* --- ESTILOS PARA AVATARES DE CHAT (AIRBNB STYLE) --- */
+.reda-chat-avatar-container {
+    position: relative;
+    width: 75px;
+    height: 75px;
+    flex-shrink: 0;
+    margin-right: 15px;
+    cursor: zoom-in;
+}
+
+.reda-property-bg {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px; /* Cuadrado con bordes ligeramente redondeados */
+    border: 1px solid #eee;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.reda-user-avatars {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    display: flex;
+    align-items: center;
+}
+
+.reda-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50% !important;
+    border: 2px solid #fff;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.reda-user-avatar.guest {
+    z-index: 2;
+}
+
+.reda-user-avatar.host {
+    margin-left: -12px;
+    z-index: 1;
+}
+
+/* Ajustes para el sidebar del inbox original */
+.container-inbox sidebar .list .info {
+    width: calc(100% - 90px);
+}
+
+/* --- OVERLAY PARA AMPLIAR FOTO (WHATSAPP STYLE) --- */
+.reda-image-zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    &.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .zoom-content-wrapper {
+        position: relative;
+        width: 90%;
+        max-width: 500px;
+        aspect-ratio: 1 / 1;
+    }
+
+    .zoom-property-bg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .zoom-user-avatars {
+        position: absolute;
+        bottom: -15px;
+        right: -15px;
+        display: flex;
+    }
+
+    .zoom-user-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50% !important;
+        border: 4px solid #000;
+        object-fit: cover;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    .zoom-user-avatar.guest {
+        z-index: 2;
+    }
+
+    .zoom-user-avatar.host {
+        margin-left: -40px;
+        z-index: 1;
+    }
+
+    .btn-close-zoom {
+        position: absolute;
+        top: -50px;
+        right: 0;
+        color: #fff;
+        font-size: 30px;
+        cursor: pointer;
+        padding: 10px;
+        &:hover { color: #ccc; }
+    }
+}

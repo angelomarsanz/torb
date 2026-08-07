@@ -245,6 +245,39 @@
         }
     });
 
+    /**
+     * AMPLIA LA FOTO DEL AVATAR (WHATSAPP STYLE)
+     */
+    $(document).on('click', '.reda-chat-avatar-container', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $container = $(this);
+        const propImg = $container.find('.reda-property-bg').attr('src');
+        const guestImg = $container.find('.reda-user-avatar.guest').attr('src');
+        const hostImg = $container.find('.reda-user-avatar.host').attr('src');
+
+        // Poblar el overlay
+        $('#zoom-prop-img').attr('src', propImg);
+        $('#zoom-guest-img').attr('src', guestImg);
+        $('#zoom-host-img').attr('src', hostImg);
+
+        // Mostrar con animación
+        $('#reda-chat-zoom-overlay').css('display', 'flex').addClass('active');
+        $('body').css('overflow', 'hidden'); // Bloquear scroll
+    });
+
+    // Cerrar el zoom
+    $(document).on('click', '#reda-chat-zoom-overlay, #btn-close-reda-zoom', function(e) {
+        if (e.target.id === 'reda-chat-zoom-overlay' || e.target.id === 'btn-close-reda-zoom' || $(e.target).hasClass('btn-close-zoom')) {
+            $('#reda-chat-zoom-overlay').removeClass('active');
+            setTimeout(() => {
+                $('#reda-chat-zoom-overlay').hide();
+                $('body').css('overflow', ''); // Restaurar scroll
+            }, 300);
+        }
+    });
+
     function sanitize(string) {
         const symbols = {
             '&': '&amp;',

@@ -65,8 +65,10 @@ class RedaInboxController extends Controller
             return $message;
         });
 
-        // 4. Generar lista del Sidebar: un item por cada compañero de chat real
-        $data['sidebar_messages'] = $allMessages->unique('chat_partner_id')->values();
+        // 4. Generar lista del Sidebar: un item por cada compañero de chat real Y PROPIEDAD
+        $data['sidebar_messages'] = $allMessages->unique(function ($item) {
+            return $item->property_id . '-' . $item->chat_partner_id;
+        })->values();
 
         $data['messages'] = [];
         $data['conversation'] = [];
@@ -74,11 +76,13 @@ class RedaInboxController extends Controller
         if (count($data['sidebar_messages']) > 0) {
             $targetBookingId = $request->id;
             $selectedPartnerId = null;
+            $selectedPropertyId = null;
 
             if ($targetBookingId) {
                 $targetBooking = Bookings::find($targetBookingId);
                 if ($targetBooking) {
                     $selectedPartnerId = ($targetBooking->user_id == $userId) ? $targetBooking->host_id : $targetBooking->user_id;
+                    $selectedPropertyId = $targetBooking->property_id;
                     $data['booking'] = $targetBooking->load('users', 'host', 'properties');
                 }
             }
@@ -86,25 +90,29 @@ class RedaInboxController extends Controller
             if (!$selectedPartnerId) {
                 $first = $data['sidebar_messages']->first();
                 $selectedPartnerId = $first->chat_partner_id;
+                $selectedPropertyId = $first->property_id;
                 $data['booking'] = Bookings::find($first->booking_id)->load('users', 'host', 'properties');
                 $targetBookingId = $first->booking_id;
             }
 
-            // --- LÓGICA DE PAREJA ESTRICTA Y CONTEXTO COMPARTIDO ---
+            // --- LÓGICA DE PAREJA ESTRICTA, PROPIEDAD Y CONTEXTO COMPARTIDO ---
             $usuarioA = $userId;
             $usuarioB = $selectedPartnerId;
+            $propertyId = $selectedPropertyId;
 
-            // Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios.
-            $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
-                $q->where(function($q2) use ($usuarioA, $usuarioB) {
-                    $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
-                })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
-                    $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
-                });
-            })->pluck('id')->toArray();
+            // Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios PARA ESTA PROPIEDAD.
+            $sharedBookingIds = Bookings::where('property_id', $propertyId)
+                ->where(function($q) use ($usuarioA, $usuarioB) {
+                    $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                        $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                    })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                        $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                    });
+                })->pluck('id')->toArray();
 
             // Marcar como leídos los mensajes en este contexto (Carga inicial)
-            Messages::whereIn('booking_id', $sharedBookingIds)
+            Messages::where('property_id', $propertyId)
+                ->whereIn('booking_id', $sharedBookingIds)
                 ->where(function($q) use ($userId) {
                     $q->where('sender_id', '!=', $userId)
                       ->orWhereExists(function ($query) {
@@ -117,10 +125,11 @@ class RedaInboxController extends Controller
                 ->where('read', 0)
                 ->update(['read' => 1]);
 
-            // 4. Cargar HISTORIA UNIFICADA
+            // 4. Cargar HISTORIA UNIFICADA FILTRADA POR PROPIEDAD
             $unifiedHistory = Messages::with(['sender', 'receiver'])
                 ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
                 ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+                ->where('messages.property_id', $propertyId)
                 ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
                     // Criterio 1: Intercambios directos
                     $query->where(function($q) use ($usuarioA, $usuarioB) {
@@ -203,21 +212,24 @@ class RedaInboxController extends Controller
         $booking_id = $request->id;
         $targetBooking = Bookings::findOrFail($booking_id);
         $partnerId = ($targetBooking->user_id == $userId) ? $targetBooking->host_id : $targetBooking->user_id;
+        $propertyId = $targetBooking->property_id;
 
-        // --- LÓGICA DE PAREJA ESTRICTA ---
+        // --- LÓGICA DE PAREJA ESTRICTA Y PROPIEDAD ---
         $usuarioA = $userId;
         $usuarioB = $partnerId;
 
-        $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
-            $q->where(function($q2) use ($usuarioA, $usuarioB) {
-                $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
-            })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
-                $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
-            });
-        })->pluck('id')->toArray();
+        $sharedBookingIds = Bookings::where('property_id', $propertyId)
+            ->where(function($q) use ($usuarioA, $usuarioB) {
+                $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                });
+            })->pluck('id')->toArray();
 
-        // 1. Marcar como leídos todos los mensajes recibidos por el usuario actual (Marcar lo que me enviaron)
-        Messages::whereIn('booking_id', $sharedBookingIds)
+        // 1. Marcar como leídos todos los mensajes recibidos por el usuario actual PARA ESTA PROPIEDAD
+        Messages::where('property_id', $propertyId)
+            ->whereIn('booking_id', $sharedBookingIds)
             ->where(function($q) use ($userId) {
                 $q->where('sender_id', '!=', $userId)
                   ->orWhereExists(function ($query) {
@@ -231,23 +243,25 @@ class RedaInboxController extends Controller
             ->update(['read' => 1]);
 
         // 2. LÓGICA DE SANEAMIENTO (HEURÍSTICA DE FLUJO):
-        // Si hay un mensaje posterior de cualquier participante B, se asume que los mensajes anteriores de A fueron leídos.
-        // Esto corrige mensajes antiguos enviados antes de esta implementación.
-        $lastMessage = Messages::whereIn('booking_id', $sharedBookingIds)->orderBy('created_at', 'desc')->first();
+        $lastMessage = Messages::where('property_id', $propertyId)
+            ->whereIn('booking_id', $sharedBookingIds)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
         if ($lastMessage) {
-            // Todos los mensajes anteriores al último mensaje de la conversación que NO fueron enviados por el emisor del último
-            // se consideran leídos (porque el último emisor tuvo que haber abierto el chat para responder).
-            Messages::whereIn('booking_id', $sharedBookingIds)
+            Messages::where('property_id', $propertyId)
+                ->whereIn('booking_id', $sharedBookingIds)
                 ->where('created_at', '<', $lastMessage->created_at)
                 ->where('sender_id', '!=', $lastMessage->sender_id)
                 ->where('read', 0)
                 ->update(['read' => 1]);
         }
 
-        // Cargar HISTORIA UNIFICADA
+        // Cargar HISTORIA UNIFICADA FILTRADA POR PROPIEDAD
         $unifiedHistory = Messages::with(['sender', 'receiver'])
             ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
             ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+            ->where('messages.property_id', $propertyId)
             ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
                 $query->where(function($q) use ($usuarioA, $usuarioB) {
                     $q->where(function($q2) use ($usuarioA, $usuarioB) {

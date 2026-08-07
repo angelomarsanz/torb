@@ -30,24 +30,26 @@ class MensajeController extends Controller
             ], 404);
         }
 
-        // Identificamos a los dos usuarios participantes de la mediación actual
+        // Identificamos a los dos usuarios participantes de la mediación actual y la propiedad
         $usuarioA = $booking->user_id;
         $usuarioB = $booking->host_id;
+        $propertyId = $booking->property_id;
 
-        // 1. Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios.
-        // Se incluyen casos donde se invierten los roles (A es turista de B, o B es turista de A).
-        $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
-            $q->where(function($q2) use ($usuarioA, $usuarioB) {
-                $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
-            })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
-                $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
-            });
-        })->pluck('id')->toArray();
+        // 1. Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios PARA ESTA PROPIEDAD.
+        $sharedBookingIds = Bookings::where('property_id', $propertyId)
+            ->where(function($q) use ($usuarioA, $usuarioB) {
+                $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                    $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                });
+            })->pluck('id')->toArray();
 
-        // 2. Consultar mensajes bajo criterios estrictos de "Pareja Compartida"
+        // 2. Consultar mensajes bajo criterios estrictos de "Pareja Compartida" y PROPIEDAD
         $messages = Messages::with(['sender', 'receiver'])
             ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
             ->select('messages.*', 'reda_mensajes_metadata.sender_type')
+            ->where('messages.property_id', $propertyId)
             ->where(function($query) use ($usuarioA, $usuarioB, $sharedBookingIds) {
                 
                 // CRITERIO A: Intercambios directos entre estos dos usuarios (Consultas o Reservas)
@@ -59,8 +61,7 @@ class MensajeController extends Controller
                     });
                 })
                 
-                // CRITERIO B: Intervenciones de Administradores (Agentes) en CUALQUIER reservación 
-                // que haya involucrado a estos dos usuarios juntos.
+                // CRITERIO B: Intervenciones de Administradores (Agentes) en contextos comunes
                 ->orWhereIn('booking_id', $sharedBookingIds);
             })
             ->orderBy('messages.created_at', 'asc') // Orden cronológico total
@@ -68,7 +69,8 @@ class MensajeController extends Controller
 
         // Marcar como leídos los mensajes de esta conversación que no sean del usuario actual
         $userId = Auth::id();
-        Messages::whereIn('booking_id', $sharedBookingIds)
+        Messages::where('property_id', $propertyId)
+            ->whereIn('booking_id', $sharedBookingIds)
             ->where(function($q) use ($userId) {
                 // Mensajes que NO son del usuario actual (considerando metadata)
                 $q->where('sender_id', '!=', $userId)

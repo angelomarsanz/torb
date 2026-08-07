@@ -29,7 +29,13 @@
                                                     $loEnvieYo = ($sideMsg->sender_id == Auth::id() && ($sideMsg->sender_type === 'user' || !$sideMsg->sender_type));
 												@endphp
 												<div class="list p-2 conversassion" data-id="{{ $sideMsg->booking_id }}">
-													<img src="{{ reda_get_profile_src($user) }}" alt="user" />
+                                                    <div class="reda-chat-avatar-container">
+                                                        <img class="reda-property-bg" src="{{ optional($sideMsg->properties)->cover_photo ?? asset('img/unnamed.png') }}" alt="property" />
+                                                        <div class="reda-user-avatars">
+                                                            <img class="reda-user-avatar guest" src="{{ reda_get_profile_src($sideMsg->bookings->users) }}" title="{{ __('Turista') }}: {{ $sideMsg->bookings->users->first_name }}" />
+                                                            <img class="reda-user-avatar host" src="{{ reda_get_profile_src($sideMsg->bookings->host) }}" title="{{ __('Anfitrión') }}: {{ $sideMsg->bookings->host->first_name }}" />
+                                                        </div>
+                                                    </div>
 													<div class="info">
 														<h3 class="font-weight-700 "  >{{ $user->first_name ?? 'Usuario' }} <span class="text-muted text-12 text-right"> {{ $sideMsg->created_at->diffForHumans() }}</span></h3>
 														<div class="d-flex justify-content-between">
@@ -86,3 +92,15 @@
 	</script>
 	<script src="{{ asset('public/js/reda/vistas/inbox/inbox.min.js') }}?v={{ time() }}"></script>
 @endpush
+
+{{-- Overlay para ampliar fotos de chat --}}
+<div class="reda-image-zoom-overlay" id="reda-chat-zoom-overlay">
+    <div class="zoom-content-wrapper">
+        <span class="btn-close-zoom" id="btn-close-reda-zoom">&times;</span>
+        <img class="zoom-property-bg" id="zoom-prop-img" src="" alt="property" />
+        <div class="zoom-user-avatars">
+            <img class="zoom-user-avatar guest" id="zoom-guest-img" src="" />
+            <img class="zoom-user-avatar host" id="zoom-host-img" src="" />
+        </div>
+    </div>
+</div>
