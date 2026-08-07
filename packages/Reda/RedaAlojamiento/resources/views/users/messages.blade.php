@@ -18,7 +18,8 @@
 		
 		<div class="info ml-1 flex-grow-1 overflow-hidden">
 			<div class="d-flex flex-column">
-				<span class="user font-weight-700 text-truncate text-16">{{ ($partner->first_name ?? '') . ' ' . ($partner->last_name ?? '') }}</span>
+				<span class="user font-weight-700 text-truncate text-16">{{ optional($booking->properties)->name ?? __('Propiedad') }}</span>
+                <span class="text-12 text-muted text-truncate">{{ ($partner->first_name ?? '') . ' ' . ($partner->last_name ?? '') }}</span>
 			</div>
 		</div>
 

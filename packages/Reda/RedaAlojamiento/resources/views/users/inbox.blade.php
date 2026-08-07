@@ -37,10 +37,10 @@
                                                         </div>
                                                     </div>
 													<div class="info">
-														<h3 class="font-weight-700 "  >{{ $user->first_name ?? 'Usuario' }} <span class="text-muted text-12 text-right"> {{ $sideMsg->created_at->diffForHumans() }}</span></h3>
+														<h3 class="font-weight-700 ">{{ optional($sideMsg->properties)->name ?? __('Propiedad') }} <span class="text-muted text-12 text-right"> {{ $sideMsg->created_at->diffForHumans() }}</span></h3>
 														<div class="d-flex justify-content-between">
 															<div>
-																<p class="text-muted text-14 mb-1 text pr-4">{{ substr(optional($sideMsg->properties)->name, 0,35)  }}</p>
+																<p class="text-muted text-14 mb-1 text pr-4">{{ $user->first_name ?? 'Usuario' }}</p>
 																@if (!$loEnvieYo)
 																	<p class="text-14 m-0 {{ $sideMsg->read == 0  ? 'text-success font-weight-bold' : '' }}" id="msg-{{ $sideMsg->booking_id }}" ><i class="far fa-comment-alt"></i> {{ str_limit($sideMsg->message, 20) }} </p>
 																@else
