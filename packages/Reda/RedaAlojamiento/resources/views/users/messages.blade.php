@@ -8,11 +8,15 @@
             <i class="fas fa-arrow-left text-20"></i>
         </div>
 
-		<a href="{{ url('users/show/' . ($partner->id ?? '')) }}" class="flex-shrink-0">
-			<img src="{{ reda_get_profile_src($partner) }}" alt="img" class="img-40x40 rounded-circle border">
-		</a>
+		<div class="reda-chat-avatar-container header-zoom flex-shrink-0">
+            <img class="reda-property-bg" src="{{ optional($booking->properties)->cover_photo ?? asset('img/unnamed.png') }}" alt="property" />
+            <div class="reda-user-avatars">
+                <img class="reda-user-avatar guest" src="{{ reda_get_profile_src($booking->users) }}" title="{{ __('Turista') }}: {{ $booking->users->first_name }}" />
+                <img class="reda-user-avatar host" src="{{ reda_get_profile_src($booking->host) }}" title="{{ __('Anfitrión') }}: {{ $booking->host->first_name }}" />
+            </div>
+        </div>
 		
-		<div class="info ml-3 flex-grow-1 overflow-hidden">
+		<div class="info ml-1 flex-grow-1 overflow-hidden">
 			<div class="d-flex flex-column">
 				<span class="user font-weight-700 text-truncate text-16">{{ ($partner->first_name ?? '') . ' ' . ($partner->last_name ?? '') }}</span>
 			</div>

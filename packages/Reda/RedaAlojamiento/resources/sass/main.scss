@@ -3831,6 +3831,14 @@
     justify-content: flex-start;
 }
 
+/* Versión compacta para la cabecera del chat */
+.reda-chat-avatar-container.header-zoom {
+    width: 65px !important;
+    height: 60px !important;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
 /* Selector ultra-específico para romper cualquier herencia de círculos */
 .container-inbox sidebar .list .reda-chat-avatar-container .reda-property-bg,
 .reda-chat-avatar-container .reda-property-bg {
@@ -3843,6 +3851,12 @@
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.reda-chat-avatar-container.header-zoom .reda-property-bg {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 8px !important;
 }
 
 .reda-user-avatars {
@@ -3863,6 +3877,12 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
 }
 
+.reda-chat-avatar-container.header-zoom .reda-user-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    border-width: 1.5px !important;
+}
+
 .reda-user-avatar.guest {
     z-index: 2;
 }
@@ -3870,6 +3890,10 @@
 .reda-user-avatar.host {
     margin-left: -15px; /* Superposición */
     z-index: 1;
+}
+
+.reda-chat-avatar-container.header-zoom .reda-user-avatar.host {
+    margin-left: -10px;
 }
 
 /* Ajustes para el sidebar del inbox original */
@@ -3891,7 +3915,7 @@
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    
+
     &.active {
         display: flex;
         opacity: 1;
@@ -3899,20 +3923,18 @@
 
     .zoom-content-wrapper {
         position: relative;
-        width: 550px !important; /* Tamaño total para permitir protrusión */
-        height: 520px !important;
+        width: 530px !important; /* Ancho de imagen (480) + protrusion (50) */
+        height: 440px !important; /* Alto de imagen (380) + protrusion (60) */
         max-width: 95vw !important;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
+        display: block; /* Asegura comportamiento de bloque para posicionamiento absoluto */
     }
 
     /* Forzar el cuadro del inmueble a ser RECTANGULAR en la ampliación */
     .zoom-property-bg {
         width: 480px !important;
-        height: 450px !important;
+        height: 380px !important;
         max-width: 85vw !important;
-        max-height: 80vw !important;
+        max-height: 70vh !important;
         object-fit: cover !important;
         border-radius: 20px !important; /* Bordes ligeramente redondeados */
         border: 4px solid rgba(255, 255, 255, 0.3) !important;
@@ -3920,22 +3942,23 @@
         position: absolute;
         top: 0;
         left: 0;
+        z-index: 10;
     }
 
     .zoom-user-avatars {
         position: absolute;
         bottom: 0; /* Al ras del wrapper (sobresale de la imagen que está en top:0) */
-        right: 0;  /* Sobresale por la derecha */
+        left: 0;   /* Alineado con el borde izquierdo del rectángulo */
         display: flex;
         align-items: center;
         z-index: 100;
     }
 
     .zoom-user-avatar {
-        width: 180px !important; /* Bien grandes para apreciar el detalle */
-        height: 180px !important;
+        width: 200px !important; /* Tamaño prominente */
+        height: 200px !important;
         border-radius: 50% !important; /* Círculos perfectos */
-        border: 8px solid #000 !important;
+        border: 8px solid #fff !important; /* Borde blanco solicitado */
         object-fit: cover !important;
         box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
     }
@@ -3945,14 +3968,14 @@
     }
 
     .zoom-user-avatar.host {
-        margin-left: -35px !important; /* Superposición mínima para máxima visibilidad */
+        margin-left: -50px !important; /* Superposición */
         z-index: 1;
     }
 
     .btn-close-zoom {
         position: absolute;
-        top: -50px;
-        right: 10px;
+        top: -60px;
+        right: 0;
         color: #fff;
         font-size: 55px;
         cursor: pointer;
@@ -3962,6 +3985,6 @@
         transition: transform 0.2s ease;
         &:hover { color: #ff385c; transform: scale(1.1); }
     }
-    }
+}
 
 
