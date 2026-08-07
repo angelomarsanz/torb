@@ -3821,37 +3821,46 @@
 /* --- ESTILOS PARA AVATARES DE CHAT (AIRBNB STYLE) --- */
 .reda-chat-avatar-container {
     position: relative;
-    width: 75px;
-    height: 75px;
+    width: 95px !important; /* Más ancho para que quepa todo */
+    height: 90px !important;
     flex-shrink: 0;
     margin-right: 15px;
     cursor: zoom-in;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
-.reda-property-bg {
-    width: 65px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 8px; /* Cuadrado con bordes ligeramente redondeados */
-    border: 1px solid #eee;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* Selector ultra-específico para romper cualquier herencia de círculos */
+.container-inbox sidebar .list .reda-chat-avatar-container .reda-property-bg,
+.reda-chat-avatar-container .reda-property-bg {
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: cover !important;
+    border-radius: 12px !important; /* Cuadrado con bordes ligeramente redondeados - FORZADO */
+    border: 1px solid #ddd !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .reda-user-avatars {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
+    bottom: 0; /* Al ras del contenedor de 90px. Como la imagen mide 80px, sobresale 10px */
+    right: 0;  /* Sobresale por la derecha también */
     display: flex;
     align-items: center;
+    z-index: 10;
 }
 
 .reda-user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 40px !important; /* Un poco más grandes */
+    height: 40px !important;
     border-radius: 50% !important;
-    border: 2px solid #fff;
-    object-fit: cover;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    border: 2px solid #fff !important;
+    object-fit: cover !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
 }
 
 .reda-user-avatar.guest {
@@ -3859,13 +3868,13 @@
 }
 
 .reda-user-avatar.host {
-    margin-left: -12px;
+    margin-left: -15px; /* Superposición */
     z-index: 1;
 }
 
 /* Ajustes para el sidebar del inbox original */
 .container-inbox sidebar .list .info {
-    width: calc(100% - 90px);
+    width: calc(100% - 110px) !important; /* Ajustado para el nuevo ancho del avatar */
 }
 
 /* --- OVERLAY PARA AMPLIAR FOTO (WHATSAPP STYLE) --- */
