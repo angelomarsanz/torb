@@ -35,7 +35,6 @@ class MensajeController extends Controller
         $usuarioB = $booking->host_id;
 
         // 1. Identificar todas las reservaciones/contextos compartidos estrictamente entre estos dos usuarios.
-        // Se incluyen casos donde se invierten los roles (A es turista de B, o B es turista de A).
         $sharedBookingIds = Bookings::where(function($q) use ($usuarioA, $usuarioB) {
             $q->where(function($q2) use ($usuarioA, $usuarioB) {
                 $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
@@ -61,11 +60,37 @@ class MensajeController extends Controller
                 
                 // CRITERIO B: Intervenciones de Administradores (Agentes) en CUALQUIER reservación 
                 // que haya involucrado a estos dos usuarios juntos.
-                // (Esto excluye mensajes del admin con el usuario A sobre una reserva con el usuario C).
                 ->orWhereIn('booking_id', $sharedBookingIds);
             })
             ->orderBy('messages.created_at', 'asc') // Orden cronológico total
             ->get();
+
+        // 1. Marcar como leídos los mensajes de esta conversación que no sean del admin actual
+        $adminId = Auth::guard('admin')->id();
+        Messages::whereIn('booking_id', $sharedBookingIds)
+            ->where(function($q) use ($adminId) {
+                // Mensajes que NO son del admin actual (considerando metadata)
+                $q->whereNotExists(function ($query) {
+                      $query->select(DB::raw(1))
+                            ->from('reda_mensajes_metadata')
+                            ->whereColumn('reda_mensajes_metadata.message_id', 'messages.id')
+                            ->where('reda_mensajes_metadata.sender_type', 'admin');
+                  })
+                  ->orWhere('sender_id', '!=', $adminId);
+            })
+            ->where('read', 0)
+            ->update(['read' => 1]);
+
+        // 2. LÓGICA DE SANEAMIENTO (HEURÍSTICA DE FLUJO):
+        $lastMessage = Messages::whereIn('booking_id', $sharedBookingIds)->orderBy('created_at', 'desc')->first();
+        if ($lastMessage) {
+            // Saneamos: si hay un mensaje posterior, todo lo anterior de otros autores se marca como leído.
+            Messages::whereIn('booking_id', $sharedBookingIds)
+                ->where('created_at', '<', $lastMessage->created_at)
+                ->where('sender_id', '!=', $lastMessage->sender_id)
+                ->where('read', 0)
+                ->update(['read' => 1]);
+        }
 
         // Identificar IDs de administradores para cargar sus nombres
         $adminIds = $messages->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
@@ -99,6 +124,8 @@ class MensajeController extends Controller
                 if ($msgBooking && $message->sender_id == $msgBooking->host_id) {
                     $esDemandante = ($msgDisputa && $msgDisputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($msgDisputa->rol_usuario_inicial), 'anfitr'));
                     $message->sender_role = __('anfitrión') . ($esDemandante ? $demandanteLabel : '');
+                } elseif ($msgBooking && $message->sender_id == $message->booking_id) {
+                    // Fallback o lógica específica
                 } elseif ($msgBooking && $message->sender_id == $msgBooking->user_id) {
                     $esDemandante = ($msgDisputa && $msgDisputa->id_usuario_inicial == $message->sender_id && str_contains(strtolower($msgDisputa->rol_usuario_inicial), 'turist'));
                     $message->sender_role = __('turista') . ($esDemandante ? $demandanteLabel : '');

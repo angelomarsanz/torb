@@ -103,6 +103,20 @@ class RedaInboxController extends Controller
                 });
             })->pluck('id')->toArray();
 
+            // Marcar como leídos los mensajes en este contexto (Carga inicial)
+            Messages::whereIn('booking_id', $sharedBookingIds)
+                ->where(function($q) use ($userId) {
+                    $q->where('sender_id', '!=', $userId)
+                      ->orWhereExists(function ($query) {
+                          $query->select(DB::raw(1))
+                                ->from('reda_mensajes_metadata')
+                                ->whereColumn('reda_mensajes_metadata.message_id', 'messages.id')
+                                ->where('reda_mensajes_metadata.sender_type', 'admin');
+                      });
+                })
+                ->where('read', 0)
+                ->update(['read' => 1]);
+
             // 4. Cargar HISTORIA UNIFICADA
             $unifiedHistory = Messages::with(['sender', 'receiver'])
                 ->leftJoin('reda_mensajes_metadata', 'messages.id', '=', 'reda_mensajes_metadata.message_id')
@@ -190,9 +204,6 @@ class RedaInboxController extends Controller
         $targetBooking = Bookings::findOrFail($booking_id);
         $partnerId = ($targetBooking->user_id == $userId) ? $targetBooking->host_id : $targetBooking->user_id;
 
-        // Marcar como leídos todos los mensajes con este partner
-        Messages::where('receiver_id', $userId)->where('sender_id', $partnerId)->update(['read' => 1]);
-
         // --- LÓGICA DE PAREJA ESTRICTA ---
         $usuarioA = $userId;
         $usuarioB = $partnerId;
@@ -204,6 +215,34 @@ class RedaInboxController extends Controller
                 $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
             });
         })->pluck('id')->toArray();
+
+        // 1. Marcar como leídos todos los mensajes recibidos por el usuario actual (Marcar lo que me enviaron)
+        Messages::whereIn('booking_id', $sharedBookingIds)
+            ->where(function($q) use ($userId) {
+                $q->where('sender_id', '!=', $userId)
+                  ->orWhereExists(function ($query) {
+                      $query->select(DB::raw(1))
+                            ->from('reda_mensajes_metadata')
+                            ->whereColumn('reda_mensajes_metadata.message_id', 'messages.id')
+                            ->where('reda_mensajes_metadata.sender_type', 'admin');
+                  });
+            })
+            ->where('read', 0)
+            ->update(['read' => 1]);
+
+        // 2. LÓGICA DE SANEAMIENTO (HEURÍSTICA DE FLUJO):
+        // Si hay un mensaje posterior de cualquier participante B, se asume que los mensajes anteriores de A fueron leídos.
+        // Esto corrige mensajes antiguos enviados antes de esta implementación.
+        $lastMessage = Messages::whereIn('booking_id', $sharedBookingIds)->orderBy('created_at', 'desc')->first();
+        if ($lastMessage) {
+            // Todos los mensajes anteriores al último mensaje de la conversación que NO fueron enviados por el emisor del último
+            // se consideran leídos (porque el último emisor tuvo que haber abierto el chat para responder).
+            Messages::whereIn('booking_id', $sharedBookingIds)
+                ->where('created_at', '<', $lastMessage->created_at)
+                ->where('sender_id', '!=', $lastMessage->sender_id)
+                ->where('read', 0)
+                ->update(['read' => 1]);
+        }
 
         // Cargar HISTORIA UNIFICADA
         $unifiedHistory = Messages::with(['sender', 'receiver'])

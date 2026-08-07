@@ -218,6 +218,14 @@
             $('.message-wrap-reda').append($temp);
             $('.cht_msg').val("");
             scrollChatToBottom();
+
+            // Actualizar el último mensaje en el sidebar dinámicamente
+            const $sidebarItem = $(`.conversassion[data-id="${booking_id}"]`);
+            if ($sidebarItem.length) {
+                const truncatedMsg = msg.length > 20 ? msg.substring(0, 20) + '...' : msg;
+                const checkIcon = '<i class="fas fa-check mr-1"></i>';
+                $sidebarItem.find('p.m-0.text-14').html(checkIcon + sanitize(truncatedMsg));
+            }
         } else {
             alert(data.mensaje_usuario || (window.RedaAlojamientoJson["Error al enviar mensaje"] || "Error al enviar mensaje"));
         }

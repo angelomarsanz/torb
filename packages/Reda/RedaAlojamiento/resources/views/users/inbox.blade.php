@@ -25,6 +25,8 @@
 											@forelse ($sidebar_messages as $sideMsg)
 												@php
                                                     $user = $sideMsg->chat_partner;
+                                                    // Determinar si el último mensaje lo envió el usuario actual (web)
+                                                    $loEnvieYo = ($sideMsg->sender_id == Auth::id() && ($sideMsg->sender_type === 'user' || !$sideMsg->sender_type));
 												@endphp
 												<div class="list p-2 conversassion" data-id="{{ $sideMsg->booking_id }}">
 													<img src="{{ reda_get_profile_src($user) }}" alt="user" />
@@ -33,10 +35,13 @@
 														<div class="d-flex justify-content-between">
 															<div>
 																<p class="text-muted text-14 mb-1 text pr-4">{{ substr(optional($sideMsg->properties)->name, 0,35)  }}</p>
-																@if ($sideMsg->receiver_id == Auth::id())
+																@if (!$loEnvieYo)
 																	<p class="text-14 m-0 {{ $sideMsg->read == 0  ? 'text-success font-weight-bold' : '' }}" id="msg-{{ $sideMsg->booking_id }}" ><i class="far fa-comment-alt"></i> {{ str_limit($sideMsg->message, 20) }} </p>
 																@else
-																	<p class="text-14 m-0" ><i class="far fa-comment-alt"></i> {{ str_limit($sideMsg->message, 20) }} </p>
+																	<p class="text-14 m-0" >
+                                                                        <i class="fas {{ $sideMsg->read == 1 ? 'fa-check-double text-primary' : 'fa-check' }} mr-1"></i>
+                                                                        {{ str_limit($sideMsg->message, 20) }} 
+                                                                    </p>
 																@endif
 															</div>
 														</div>

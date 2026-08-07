@@ -66,6 +66,22 @@ class MensajeController extends Controller
             ->orderBy('messages.created_at', 'asc') // Orden cronológico total
             ->get();
 
+        // Marcar como leídos los mensajes de esta conversación que no sean del usuario actual
+        $userId = Auth::id();
+        Messages::whereIn('booking_id', $sharedBookingIds)
+            ->where(function($q) use ($userId) {
+                // Mensajes que NO son del usuario actual (considerando metadata)
+                $q->where('sender_id', '!=', $userId)
+                  ->orWhereExists(function ($query) {
+                      $query->select(DB::raw(1))
+                            ->from('reda_mensajes_metadata')
+                            ->whereColumn('reda_mensajes_metadata.message_id', 'messages.id')
+                            ->where('reda_mensajes_metadata.sender_type', 'admin');
+                  });
+            })
+            ->where('read', 0)
+            ->update(['read' => 1]);
+
         // Identificar IDs de administradores para cargar sus nombres
         $adminIds = $messages->where('sender_type', 'admin')->pluck('sender_id')->unique()->toArray();
         $admins = Admin::whereIn('id', $adminIds)->get()->keyBy('id');

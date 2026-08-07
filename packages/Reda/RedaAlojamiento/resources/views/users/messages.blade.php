@@ -42,7 +42,12 @@
                         </span>
                         <p class="m-0 text-13">{{ $message->message }}</p>
                     </div>			
-                    <div class="time-reda text-10 mt-1 opacity-50">{{ $message->created_at->diffForHumans() }}</div>
+                    <div class="time-reda text-10 mt-1 opacity-50">
+                        {{ $message->created_at->diffForHumans() }}
+                        @if($esMio)
+                            <i class="fas {{ $message->read == 1 ? 'fa-check-double text-primary' : 'fa-check' }} ml-1" title="{{ $message->read == 1 ? __('Leído') : __('Enviado') }}"></i>
+                        @endif
+                    </div>
                 </div>
             </div>
 		@endforeach
@@ -59,7 +64,10 @@
                     </span>
                     <p class="m-0 text-13 msg_txt"></p>
                 </div>
-                <div class="time-reda text-10 mt-1 opacity-50 msg_time"></div>
+                <div class="time-reda text-10 mt-1 opacity-50">
+                    <span class="msg_time"></span>
+                    <i class="fas fa-check ml-1" title="{{ __('Enviado') }}"></i>
+                </div>
             </div>
 		</div>	
 	</div>
