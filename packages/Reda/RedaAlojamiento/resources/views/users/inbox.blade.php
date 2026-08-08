@@ -37,7 +37,10 @@
                                                         </div>
                                                     </div>
 													<div class="info">
-														<h3 class="font-weight-700 ">{{ optional($sideMsg->properties)->name ?? __('Propiedad') }} <span class="text-muted text-12 text-right"> {{ $sideMsg->created_at->diffForHumans() }}</span></h3>
+														<h3 class="font-weight-700 mb-1 d-flex justify-content-between align-items-start">
+                                                            <span class="reda-name-sidebar line-clamp-2 flex-grow-1 pr-2">{{ optional($sideMsg->properties)->name ?? __('Propiedad') }}</span>
+                                                            <span class="text-muted text-12 text-right flex-shrink-0"> {{ $sideMsg->created_at->diffForHumans() }}</span>
+                                                        </h3>
 														<div class="d-flex justify-content-between">
 															<div>
 																<p class="text-muted text-14 mb-1 text pr-4">{{ $user->first_name ?? 'Usuario' }}</p>

@@ -419,10 +419,15 @@ import {
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
                     <span class="text-muted font-weight-600 text-14">ID: #${item.id}</span>
+                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
                 </div>
-                <h5 class="font-weight-500 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <h5 class="font-weight-500 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer mb-2" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <div class="mt-2">
+                    <p class="text-12 text-muted mb-0 reda-property-name-clamped line-clamp-2 cursor-pointer reda-propiedad-expandible" title="${item.propiedad_nombre}">
+                        <i class="fas fa-home mr-1"></i>${item.propiedad_nombre}
+                    </p>
+                </div>
             </div>
         `;
         container.html(html);
@@ -526,6 +531,38 @@ import {
         container.html(html);
     };
 
+    /**
+     * Inicializa un observador para detectar qué mediación está en el centro visual del móvil.
+     */
+    const inicializarObservadorEnfoque = () => {
+        if (window.innerWidth >= 768) return;
+
+        if (observadorEnfoque) {
+            observadorEnfoque.disconnect();
+        }
+
+        const options = {
+            root: null,
+            rootMargin: '-30% 0px -30% 0px', // Área central de detección
+            threshold: 0.6
+        };
+
+        observadorEnfoque = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = $(entry.target).attr('data-id');
+                    if (id && id != mediacionSeleccionadaId) {
+                        seleccionarMediacion(id, false); // No scroll automático en scroll manual
+                    }
+                }
+            });
+        }, options);
+
+        $('.container-mediacion').each(function() {
+            observadorEnfoque.observe(this);
+        });
+    };
+
     const seleccionarMediacion = (id, conScroll = false) => {
         if (mediacionSeleccionadaId == id && !conScroll) return;
         mediacionSeleccionadaId = id;
@@ -540,6 +577,24 @@ import {
         renderizarReservacionMediacion(item, '#disputas-reservacion-content');
         renderizarResumenMediacion(item, '#disputas-info-extra-content');
 
+        // Preparar UI Móvil (Tab de Ver Detalle)
+        const trans = window.RedaAlojamientoJson || {};
+
+        // Limpiar estados previos en móvil
+        $('.mobile-detail-toggle').addClass('d-none');
+        $('.mobile-detail-content').addClass('d-none');
+
+        // Mostrar solo el toggle de la mediación activa
+        const currentToggleWrapper = $(`#mobile-detail-${id}`);
+        const currentToggle = currentToggleWrapper.find('.mobile-detail-toggle');
+        currentToggle.removeClass('d-none');
+
+        // Resetear el estado del icono y texto a "Mostrar" (cerrado)
+        const icon = currentToggle.find('.toggle-icon');
+        const text = currentToggle.find('.toggle-text');
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
+
         if (conScroll && window.innerWidth < 768) {
             const element = document.querySelector(`.container-mediacion[data-id="${id}"]`);
             if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -548,6 +603,8 @@ import {
 
     const renderizarLista = (items) => {
         const container = $('#disputas-list-container');
+        const trans = window.RedaAlojamientoJson || {};
+        
         if (!items || !items.length) {
             container.html(`<div class="text-center p-5"><img src="${APP_URL}/public/img/unnamed.png" class="img-fluid reda-img-empty-state"><p class="mt-3">No hay mediaciones</p></div>`);
             return;
@@ -569,12 +626,43 @@ import {
                                     </div>
                                 </div>
                                 <div class="col-md-4 p-4 border-right">
-                                    <div class="mb-2"><span class="badge ${badgeClass}">${statusText}</span></div>
+                                    <div class="mb-2">
+                                        <span class="text-muted small font-weight-600">ID: #${item.id}</span>
+                                        <span class="badge ${badgeClass} ml-2">${statusText}</span>
+                                    </div>
                                     <h5 class="text-18 font-weight-500 text-color mb-1">${item.motivo}</h5>
-                                    <div class="text-muted small"><i class="fas fa-bookmark mr-1"></i> ID: #${item.id}</div>
+                                    <div class="mt-2">
+                                        <p class="text-12 text-muted mb-0 reda-property-name-clamped line-clamp-2 cursor-pointer reda-propiedad-expandible" title="${item.propiedad_nombre}">
+                                            <i class="fas fa-home mr-1"></i>${item.propiedad_nombre}
+                                        </p>
+                                    </div>
                                 </div>
                                 <div class="col-md-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
                                     ${generarBloquePersonasHtml(item)}
+                                </div>
+                            </div>
+
+                            <!-- Mobile Detail Section -->
+                            <div class="mobile-detail-wrapper d-md-none" id="mobile-detail-${item.id}">
+                                <div class="mobile-detail-toggle py-3 px-4 border-top bg-light d-none align-items-center justify-content-between pointer" data-id="${item.id}">
+                                    <span class="text-14 fw-600 toggle-text">${trans["Mostrar información adicional"] || "Mostrar información adicional"}</span>
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </div>
+                                <div class="mobile-detail-content p-4 border-top bg-white d-none">
+                                    <div class="mobile-header-wrapper mb-4">
+                                        <div class="mobile-header-container"></div>
+                                    </div>
+                                    <div class="mobile-timeline-wrapper mb-4">
+                                        <div class="reda-timeline-carousel mobile-timeline-container"></div>
+                                    </div>
+                                    <div class="mobile-reservacion-wrapper mb-4">
+                                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Reservación"] || "Reservación"}</h6>
+                                        <div class="mobile-reservacion-container"></div>
+                                    </div>
+                                    <div class="mobile-resumen-wrapper mb-3">
+                                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                        <div class="mobile-resumen-container"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -584,6 +672,9 @@ import {
         });
         html += '</div>';
         container.html(html);
+
+        // Inicializar el observador de enfoque en móvil
+        setTimeout(inicializarObservadorEnfoque, 300);
     };
 
     const cargarMediaciones = (status, page = 1) => {
@@ -609,8 +700,47 @@ import {
                 cargarMediaciones($(this).attr('data-status'));
             });
 
-            $(document).on('click', '.card-mediacion', function() {
+            $(document).on('click', '.card-mediacion', function(e) {
+                if ($(e.target).closest('.reda-propiedad-expandible').length) return;
                 seleccionarMediacion($(this).attr('data-id'), true);
+            });
+
+            // Manejo de expansión para el nombre del inmueble
+            $(document).on('click', '.reda-propiedad-expandible', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).toggleClass('expanded');
+            });
+
+            // Manejo de clics en el toggle de detalle móvil
+            $(document).on('click', '.mobile-detail-toggle', function(e) {
+                e.stopPropagation();
+                const id = $(this).attr('data-id');
+                const content = $(`#mobile-detail-${id} .mobile-detail-content`);
+                const icon = $(this).find('.toggle-icon');
+                const text = $(this).find('.toggle-text');
+                const trans = window.RedaAlojamientoJson || {};
+
+                if (content.hasClass('d-none')) {
+                    // Expandir
+                    content.removeClass('d-none');
+                    icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                    text.text(trans["Ocultar información adicional"] || "Ocultar información adicional");
+
+                    // Cargar contenido en los contenedores móviles
+                    const item = mediacionesCargadas.find(m => m.id == id);
+                    if (item) {
+                        renderizarCabeceraMediacion(item, `#mobile-detail-${id} .mobile-header-container`);
+                        renderizarTimeline(item.paso_actual, `#mobile-detail-${id} .mobile-timeline-container`);
+                        renderizarReservacionMediacion(item, `#mobile-detail-${id} .mobile-reservacion-container`);
+                        renderizarResumenMediacion(item, `#mobile-detail-${id} .mobile-resumen-container`);
+                    }
+                } else {
+                    // Contraer
+                    content.addClass('d-none');
+                    icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                    text.text(trans["Mostrar información adicional"] || "Mostrar información adicional");
+                }
             });
 
             $(document).off('click', '.btn-ver-mensajes-mediacion').on('click', '.btn-ver-mensajes-mediacion', function(e) {

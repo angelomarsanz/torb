@@ -2374,6 +2374,13 @@
     overflow: hidden;
 }
 
+.line-clamp-2 {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+
 .text-15 { font-size: 15px !important; }
 .text-14 { font-size: 14px !important; }
 .object-cover { object-fit: cover !important; }
@@ -3277,7 +3284,7 @@
 .reda-adjunto-icon-box { width: 24px; height: 24px; }
 .reda-propiedad-foto-max { max-height: 200px; }
 .reda-img-empty-state { max-width: 150px; }
-.reda-motivo-clamped, .reda-mediation-desc-clamped {
+.reda-motivo-clamped, .reda-mediation-desc-clamped, .reda-property-name-clamped {
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
@@ -3546,6 +3553,20 @@
                 .user {
                     font-size: 16px !important;
                     color: #111b21 !important;
+                }
+            }
+
+            .reda-expandable-text {
+                cursor: pointer;
+                transition: all 0.3s ease;
+                &.text-truncate {
+                    display: inline-block;
+                    max-width: 100%;
+                }
+                &.expanded {
+                    white-space: normal !important;
+                    overflow: visible !important;
+                    text-overflow: unset !important;
                 }
             }
 

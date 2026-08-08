@@ -267,6 +267,15 @@
         $('body').css('overflow', 'hidden'); // Bloquear scroll
     });
 
+    /**
+     * EXPANDE/CONTRAE TEXTOS TRUNCADOS (NOMBRE PROPIEDAD)
+     */
+    $(document).on('click', '.reda-expandable-text', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).toggleClass('expanded');
+    });
+
     // Cerrar el zoom
     $(document).on('click', '#reda-chat-zoom-overlay, #btn-close-reda-zoom', function(e) {
         if (e.target.id === 'reda-chat-zoom-overlay' || e.target.id === 'btn-close-reda-zoom' || $(e.target).hasClass('btn-close-zoom')) {
