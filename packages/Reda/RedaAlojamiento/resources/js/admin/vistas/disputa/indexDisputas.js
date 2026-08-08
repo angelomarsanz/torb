@@ -721,9 +721,9 @@ import {
                                 </div>
 
                                 <div class="col-md-4 p-4 border-end">
-                                    <div class="mb-2">
+                                    <div class="mb-2 d-flex justify-content-between align-items-center">
                                         <span class="badge ${badgeClass}">${statusText}</span>
-                                        <span class="text-muted small ms-2 fw-600">ID: #${item.id}</span>
+                                        <span class="text-muted small fw-600">ID: #${item.id}</span>
                                     </div>
 
                                     <h5 class="text-18 fw-600 text-color mb-1 reda-motivo-clamped cursor-pointer reda-expandible"

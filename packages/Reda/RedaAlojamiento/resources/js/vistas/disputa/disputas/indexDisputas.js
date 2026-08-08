@@ -418,8 +418,8 @@ import {
 
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm mr-3">${statusText}</span>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
                     <span class="text-muted font-weight-600 text-14">ID: #${item.id}</span>
                 </div>
                 <h5 class="font-weight-500 text-dark text-20 mb-0 leading-tight reda-motivo-clamped cursor-pointer reda-expandible" title="${item.motivo}">${item.motivo}</h5>
@@ -452,7 +452,6 @@ import {
                         <img src="${item.propiedad_foto}" class="rounded border object-fit-cover reda-reservacion-thumb reda-reservacion-thumb-size">
                     </div>
                     <div class="overflow-hidden">
-                        <span class="text-muted text-10 d-block mb-1">${trans["ID Reservación"] || "ID Reservación"}: #${item.booking_id}</span>
                         <h6 class="text-13 font-weight-700 text-dark mb-0 text-truncate" title="${item.propiedad_nombre}">${item.propiedad_nombre}</h6>
                         <p class="text-11 text-muted mb-0 text-truncate"><i class="fas fa-map-marker-alt mr-1"></i>${item.propiedad_ubicacion}</p>
                     </div>
@@ -507,6 +506,10 @@ import {
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted small">${trans["Prioridad"] || "Prioridad"}</span>
                             ${prioridadHtml}
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 align-items-center">
+                            <span class="text-muted small">${trans["Actualizado"] || "Actualizado"}</span>
+                            <span class="text-muted small">${item.actualizado_hace || ''}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2 align-items-center">
                             <span class="text-muted small">${trans["Creado el"] || "Creado el"}</span>
@@ -615,6 +618,15 @@ import {
             const badgeClass = getStatusBadgeClass(item.estado);
             const statusText = formatStatusText(item.estado);
 
+            // Prioridad con color
+            let prioridadHtml = '';
+            if (item.prioridad) {
+                let colorClass = 'text-info';
+                if (item.prioridad === 'Alta') colorClass = 'text-danger';
+                else if (item.prioridad === 'Media') colorClass = 'text-warning';
+                prioridadHtml = `<span class="${colorClass}">${item.prioridad}</span>`;
+            }
+
             html += `
                 <div class="col-md-12 px-3 mb-4 container-mediacion" data-id="${item.id}">
                     <div class="card border rounded-3 card-mediacion pointer shadow-sm-hover" data-id="${item.id}">
@@ -626,15 +638,27 @@ import {
                                     </div>
                                 </div>
                                 <div class="col-md-4 p-4 border-right">
-                                    <div class="mb-2">
+                                    <div class="mb-2 d-flex justify-content-between align-items-center">
                                         <span class="badge ${badgeClass}">${statusText}</span>
-                                        <span class="text-muted small ml-2 font-weight-600">ID: #${item.id}</span>
+                                        <span class="text-muted small font-weight-600">ID: #${item.id}</span>
                                     </div>
                                     <h5 class="text-18 font-weight-500 text-color mb-1 reda-motivo-clamped cursor-pointer reda-expandible" title="${item.motivo}">${item.motivo}</h5>
-                                    <div class="mt-2">
+                                    <div class="mt-2 mb-3">
                                         <p class="text-12 text-muted mb-0 reda-property-name-clamped cursor-pointer reda-expandible" title="${item.propiedad_nombre}">
                                             <i class="fas fa-home mr-1"></i>${item.propiedad_nombre}
                                         </p>
+                                    </div>
+
+                                    ${item.prioridad ? `
+                                        <div class="text-muted small mb-1">
+                                            <i class="fas fa-exclamation-circle mr-1"></i> ${trans["Prioridad"] || "Prioridad"}: ${prioridadHtml}
+                                        </div>
+                                    ` : ''}
+
+                                    <div class="d-flex flex-column mt-3">
+                                        <div class="text-muted small">
+                                            <i class="far fa-clock mr-1"></i> ${trans["Actualizado"] || "Actualizado"} <span class="text-dark">${item.actualizado_hace || ''}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 p-4 d-flex flex-column justify-content-center bg-light-soft">
