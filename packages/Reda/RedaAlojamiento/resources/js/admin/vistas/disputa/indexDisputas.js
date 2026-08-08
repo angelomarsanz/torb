@@ -461,11 +461,16 @@ import {
 
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge ${badgeClass} fw-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge ${badgeClass} fw-600 py-2 px-3 text-12 shadow-sm mr-3">${statusText}</span>
                     <span class="text-muted fw-600 text-14">ID: #${item.id}</span>
                 </div>
-                <h5 class="fw-600 text-dark text-20 mb-0 reda-motivo-clamped motivo-lista-expandible cursor-pointer" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <h5 class="fw-600 text-dark text-20 mb-0 reda-motivo-clamped cursor-pointer reda-expandible" title="${item.motivo}">${item.motivo}</h5>
+                <div class="mt-2">
+                    <p class="text-12 text-muted mb-0 reda-property-name-clamped cursor-pointer reda-expandible" title="${item.propiedad_nombre}">
+                        <i class="fas fa-home me-1"></i>${item.propiedad_nombre}
+                    </p>
+                </div>
             </div>
         `;
         container.html(html);
@@ -562,8 +567,8 @@ import {
 
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
-                        <div class="bg-light rounded motivo-lista-expandible cursor-pointer p-3" id="desc-container-${item.id}">
-                            <div class="text-13 text-muted reda-mediation-desc-clamped">
+                        <div class="bg-light rounded p-3">
+                            <div class="text-13 text-muted reda-mediation-desc-clamped cursor-pointer reda-expandible">
                                 ${item.descripcion || "<i>" + (trans["Sin descripción"] || "Sin descripción") + "</i>"}
                             </div>
                         </div>
@@ -671,19 +676,6 @@ import {
     };
 
     /**
-     * Trunca un texto al límite de caracteres indicado sin cortar palabras.
-     */
-    const truncarMotivo = (texto, limite = 65) => {
-        if (!texto || texto.length <= limite) return texto;
-        let truncado = texto.substring(0, limite);
-        const ultimoEspacio = truncado.lastIndexOf(' ');
-        if (ultimoEspacio > 0) {
-            truncado = truncado.substring(0, ultimoEspacio);
-        }
-        return truncado + '...';
-    };
-
-    /**
      * Renderiza el listado de mediaciones con el diseño de tres columnas optimizado.
      */
     const renderizarLista = (items) => {
@@ -735,10 +727,16 @@ import {
                                         <span class="text-muted small ms-2 fw-600">ID: #${item.id}</span>
                                     </div>
 
-                                    <h5 class="text-18 fw-600 text-color mb-1 reda-motivo-clamped motivo-lista-expandible"
+                                    <h5 class="text-18 fw-600 text-color mb-1 reda-motivo-clamped cursor-pointer reda-expandible"
                                         title="${item.motivo}">
                                         ${item.motivo}
                                     </h5>
+
+                                    <div class="mt-2 mb-3">
+                                        <p class="text-12 text-muted mb-0 reda-property-name-clamped cursor-pointer reda-expandible" title="${item.propiedad_nombre}">
+                                            <i class="fas fa-home me-1"></i>${item.propiedad_nombre}
+                                        </p>
+                                    </div>
 
                                     ${item.prioridad ? `
                                         <div class="text-muted small mb-1">
@@ -901,31 +899,28 @@ import {
 
             // Manejo de clics en los items de la lista para seleccionar
             $(document).on('click', '.card-mediacion', function(e) {
-                // Si el clic fue en el motivo expandible, no procesamos la selección de la tarjeta
-                if ($(e.target).closest('.motivo-lista-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) {
+                // Si el clic fue en un elemento expandible o botón, no procesamos la selección
+                if ($(e.target).closest('.reda-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) {
                     return;
                 }
                 const id = $(this).attr('data-id');
                 seleccionarMediacion(id, true); // Scroll activado al tocar manualmente
             });
 
-            // Manejo de toggle para el motivo en el listado (especialmente para móvil)
-            $(document).on('click', '.motivo-lista-expandible', function(e) {
+            // Manejo unificado de expansión independiente (Admin)
+            $(document).on('click', '.reda-expandible', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 const $el = $(this);
                 $el.toggleClass('expanded');
 
-                // Si el clic fue en el contenedor gris de la descripción, expandimos también el hijo
-                $el.find('.reda-mediation-desc-clamped, .reda-motivo-clamped').toggleClass('expanded');
-
-                // Si el elemento está dentro de una tarjeta del listado, actualizamos la selección
+                // Si el elemento está dentro de una tarjeta del listado, actualizamos la selección (sin scroll)
                 const card = $el.closest('.card-mediacion');
                 if (card.length) {
                     const id = card.attr('data-id');
                     if (id) {
-                        seleccionarMediacion(id, false); // false para no forzar scroll y permitir lectura fluida
+                        seleccionarMediacion(id, false); 
                     }
                 }
             });

@@ -418,13 +418,13 @@ import {
 
         let html = `
             <div class="mediacion-cabecera-principal mb-2">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm mr-3">${statusText}</span>
                     <span class="text-muted font-weight-600 text-14">ID: #${item.id}</span>
-                    <span class="badge ${badgeClass} font-weight-600 py-2 px-3 text-12 shadow-sm">${statusText}</span>
                 </div>
-                <h5 class="font-weight-500 text-dark text-20 mb-0 leading-tight reda-motivo-clamped motivo-lista-expandible cursor-pointer mb-2" id="motivo-container-${item.id}" title="${item.motivo}">${item.motivo}</h5>
+                <h5 class="font-weight-500 text-dark text-20 mb-0 leading-tight reda-motivo-clamped cursor-pointer reda-expandible" title="${item.motivo}">${item.motivo}</h5>
                 <div class="mt-2">
-                    <p class="text-12 text-muted mb-0 reda-property-name-clamped line-clamp-2 cursor-pointer reda-propiedad-expandible" title="${item.propiedad_nombre}">
+                    <p class="text-12 text-muted mb-0 reda-property-name-clamped cursor-pointer reda-expandible" title="${item.propiedad_nombre}">
                         <i class="fas fa-home mr-1"></i>${item.propiedad_nombre}
                     </p>
                 </div>
@@ -516,7 +516,7 @@ import {
                     <div class="mb-3 mt-3">
                         <span class="text-muted small d-block mb-1">${trans["Descripción"] || "Descripción"}</span>
                         <div class="bg-light rounded p-3">
-                            <div class="text-13 text-muted">
+                            <div class="text-13 text-muted reda-mediation-desc-clamped cursor-pointer reda-expandible">
                                 ${item.descripcion || "<i>Sin descripción</i>"}
                             </div>
                         </div>
@@ -627,12 +627,12 @@ import {
                                 </div>
                                 <div class="col-md-4 p-4 border-right">
                                     <div class="mb-2">
-                                        <span class="text-muted small font-weight-600">ID: #${item.id}</span>
-                                        <span class="badge ${badgeClass} ml-2">${statusText}</span>
+                                        <span class="badge ${badgeClass}">${statusText}</span>
+                                        <span class="text-muted small ml-2 font-weight-600">ID: #${item.id}</span>
                                     </div>
-                                    <h5 class="text-18 font-weight-500 text-color mb-1">${item.motivo}</h5>
+                                    <h5 class="text-18 font-weight-500 text-color mb-1 reda-motivo-clamped cursor-pointer reda-expandible" title="${item.motivo}">${item.motivo}</h5>
                                     <div class="mt-2">
-                                        <p class="text-12 text-muted mb-0 reda-property-name-clamped line-clamp-2 cursor-pointer reda-propiedad-expandible" title="${item.propiedad_nombre}">
+                                        <p class="text-12 text-muted mb-0 reda-property-name-clamped cursor-pointer reda-expandible" title="${item.propiedad_nombre}">
                                             <i class="fas fa-home mr-1"></i>${item.propiedad_nombre}
                                         </p>
                                     </div>
@@ -701,12 +701,12 @@ import {
             });
 
             $(document).on('click', '.card-mediacion', function(e) {
-                if ($(e.target).closest('.reda-propiedad-expandible').length) return;
+                if ($(e.target).closest('.reda-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) return;
                 seleccionarMediacion($(this).attr('data-id'), true);
             });
 
-            // Manejo de expansión para el nombre del inmueble
-            $(document).on('click', '.reda-propiedad-expandible', function(e) {
+            // Manejo de expansión independiente para textos largos (Unificado)
+            $(document).on('click', '.reda-expandible', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 $(this).toggleClass('expanded');

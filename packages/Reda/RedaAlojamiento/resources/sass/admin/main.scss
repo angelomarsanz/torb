@@ -627,7 +627,7 @@
         }
     }
 
-    .reda-motivo-clamped, .reda-mediation-desc-clamped {
+    .reda-motivo-clamped, .reda-mediation-desc-clamped, .reda-property-name-clamped {
         display: -webkit-box !important;
         -webkit-line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
@@ -635,6 +635,8 @@
         text-overflow: ellipsis !important;
         cursor: pointer;
         line-height: 1.5 !important;
+        font-weight: 500 !important;
+        color: #484848 !important;
 
         &.expanded {
             display: block !important;
@@ -645,7 +647,7 @@
         }
     }
 
-    .reda-motivo-clamped {
+    .reda-motivo-clamped, .reda-property-name-clamped {
         max-height: 3em !important; /* Estrictamente 2 líneas (1.5 * 2) */
     }
 
