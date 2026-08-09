@@ -3795,13 +3795,19 @@
     width: 100%;
     padding: 0 15px 15px 15px;
     box-sizing: border-box;
-    display: flex !important; /* Cambiado a flex para centrar contenido */
-    justify-content: center !important; /* Centrado horizontal */
+    display: flex !important; 
+    justify-content: center !important; /* Centrado por defecto para tarjetas */
     clear: both;
 }
 
 .reda-reserve-btn {
     padding-bottom: 5px; /* Menos espacio si hay dos botones */
+}
+
+/* Alineación a la izquierda SOLO para el chat reubicado (Vista Propiedad) */
+.reda-chat-btn-relocated {
+    justify-content: flex-start !important;
+    padding-left: 0 !important;
 }
 
 /* Selector ultra-específico para forzar el diseño soft V2 */
@@ -3825,7 +3831,7 @@
     cursor: pointer;
     outline: none !important;
     width: auto !important;
-    margin: 0 auto; /* Refuerzo de centrado */
+    margin: 0 !important; /* Eliminado auto para permitir alineación por flexbox */
     box-shadow: none !important;
 
     i {

@@ -195,7 +195,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/listadoCalificaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/detalleCalificaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/pago/frontend/pagos.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
+    "packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
     "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
