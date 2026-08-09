@@ -26,7 +26,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
     #"packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
     "packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
-    #"packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
 
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
@@ -198,6 +198,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
+    "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"

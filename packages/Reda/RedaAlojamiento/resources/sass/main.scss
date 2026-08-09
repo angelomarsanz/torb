@@ -3790,8 +3790,8 @@
     }
 }
 
-/* --- BOTÓN ENVIAR MENSAJE (INYECCIÓN) --- */
-.reda-chat-btn {
+/* --- BOTONES DE INYECCIÓN (ENVIAR MENSAJE / RESERVAR) --- */
+.reda-chat-btn, .reda-reserve-btn {
     width: 100%;
     padding: 0 15px 15px 15px;
     box-sizing: border-box;
@@ -3800,8 +3800,15 @@
     clear: both;
 }
 
+.reda-reserve-btn {
+    padding-bottom: 5px; /* Menos espacio si hay dos botones */
+}
+
 /* Selector ultra-específico para forzar el diseño soft V2 */
-.reda-chat-btn button.btn-reda-chat-soft-v2 {
+.reda-chat-btn button.btn-reda-chat-soft-v2,
+.reda-chat-btn a.btn-reda-chat-soft-v2,
+.reda-reserve-btn button.btn-reda-chat-soft-v2,
+.reda-reserve-btn a.btn-reda-chat-soft-v2 {
     background-color: transparent !important;
     color: #484848 !important;
     border: 1px solid #b0b0b0 !important;

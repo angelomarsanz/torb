@@ -28,8 +28,12 @@ class InjectPluginAssets
             if (!$request->is('admin*') && !str_contains($content, 'chat-injection.min.js')) {
                 
                 // Added ?v= parameter to force browser refresh after compilation
-                $scriptUrl = '/public/js/reda/general/chat-injection.min.js?v=' . time();
-                $scriptTag = '<!-- REDA PLUGIN --><script src="' . $scriptUrl . '"></script>';
+                $chatScriptUrl = '/public/js/reda/general/chat-injection.min.js?v=' . time();
+                $reserveScriptUrl = '/public/js/reda/general/reserve-injection.min.js?v=' . time();
+                
+                $scriptTag = '<!-- REDA PLUGIN -->';
+                $scriptTag .= '<script src="' . $chatScriptUrl . '"></script>';
+                $scriptTag .= '<script src="' . $reserveScriptUrl . '"></script>';
 
                 // Inject before </body>
                 $pos = strripos($content, '</body>');
