@@ -3852,6 +3852,38 @@
     }
 }
 
+/* Botón de Reservar más llamativo (Verde del proyecto) - Unificado para inyectados y originales */
+.reda-reserve-btn a.btn-reda-chat-soft-v2.reda-btn-reservar,
+.vbtn-outline-success#save_btn,
+.vbtn-outline-success {
+    background-color: #1dbf73 !important;
+    color: #fff !important;
+    border-color: #1dbf73 !important;
+    box-shadow: 0 4px 6px rgba(29, 191, 115, 0.2) !important;
+    padding: 8px 18px !important;
+    transition: all 0.2s ease !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    i {
+        color: #fff !important;
+    }
+
+    &:hover {
+        background-color: #19a463 !important;
+        border-color: #19a463 !important;
+        color: #fff !important;
+        box-shadow: 0 6px 12px rgba(29, 191, 115, 0.3) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    &:active {
+        transform: scale(0.96) !important;
+    }
+}
+
 /* --- ESTILOS PARA AVATARES DE CHAT (AIRBNB STYLE) --- */
 .reda-chat-avatar-container {
     position: relative;
