@@ -109,14 +109,12 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
                     // Cambiamos el controlador al del plugin
                     $route->uses([\Reda\RedaAlojamiento\Http\Controllers\General\RedaPaymentController::class, 'index']);
                     
-                    // IMPORTANTE: Removemos el middleware 'guest' (que en este proyecto obliga a login)
-                    // para que nuestra lógica en el controlador pueda capturar el POST antes de redirigir.
-                    $middlewares = $route->middleware();
-                    if (is_array($middlewares)) {
-                        $route->setMiddleware(array_values(array_filter($middlewares, function($m) {
-                            return !str_contains($m, 'guest');
-                        })));
-                    }
+                    /**
+                     * IMPORTANTE: Removemos el middleware 'guest' (que en este proyecto obliga a login)
+                     * para que nuestra lógica en el controlador pueda capturar el POST antes de redirigir.
+                     * Usamos la API oficial de Laravel para no fallar.
+                     */
+                    $route->withoutMiddleware(['guest', 'guest:users', 'guest:admin']);
                 }
             }
 

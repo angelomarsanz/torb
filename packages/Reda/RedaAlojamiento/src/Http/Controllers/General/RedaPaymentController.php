@@ -33,26 +33,41 @@ class RedaPaymentController extends PaymentController
         }
 
         // 2. Verificación de Autenticación manual
-        // No usamos el middleware 'guest' original porque redirige ANTES de que podamos guardar la sesión.
         if (!Auth::check()) {
-            Log::info("REDA Payment: Usuario no autenticado para reserva de ID: " . $propertyId . ". Redirigiendo a login.");
+            Log::info("REDA Payment: Invitado intentando reservar ID: " . $propertyId . ". Forzando intended URL.");
+            
+            // Forzamos la URL de retorno para que el login sepa exactamente a dónde volver (URL de reserva)
+            // En lugar de que vuelva a la página de la propiedad por defecto.
+            Session::put('url.intended', url("payments/book/{$propertyId}"));
+            
             return redirect()->guest('login');
         }
 
-        // Log de depuración al regresar del login
-        if (!$request->isMethod('post')) {
-            Log::info("REDA Payment: Procesando reserva (GET) tras autenticación. Checkin en sesión: " . Session::get('payment_checkin'));
+        // 3. Restauración de datos al Request
+        // Si venimos de un login exitoso (GET) y no tenemos fechas en el request, las inyectamos desde la sesión.
+        // Esto engaña al controlador original (parent::index) para que procese el pago en lugar de redirigir.
+        if (!$request->has('checkin') && Session::has('payment_checkin')) {
+            Log::info("REDA Payment: Restaurando datos de sesión al Request para ID: " . Session::get('payment_property_id'));
+            
+            $request->merge([
+                'id' => Session::get('payment_property_id'),
+                'checkin' => Session::get('payment_checkin'),
+                'checkout' => Session::get('payment_checkout'),
+                'number_of_guests' => Session::get('payment_number_of_guests'),
+                'booking_type' => Session::get('payment_booking_type'),
+                'booking_status' => Session::get('payment_booking_status'),
+                'booking_id' => Session::get('payment_booking_id'),
+            ]);
         }
 
-        // 3. Verificación de Usuario Activo (Replicando comportamiento de Guest middleware del proyecto)
+        // 4. Verificación de Usuario Activo (Replicando comportamiento de Guest middleware del proyecto)
         if (Auth::user()->status == 'Inactive') {
             Log::warning("REDA Payment: Usuario inactivo detectado: " . Auth::user()->email);
             Auth::logout();
             return redirect()->guest('login');
         }
 
-        // 4. Continuar con la lógica original del proyecto invocando al padre
-        // El padre leerá los datos de la Session::get(...) que acabamos de asegurar.
+        // 5. Continuar con la lógica original del proyecto invocando al padre
         return parent::index($request);
     }
 }
