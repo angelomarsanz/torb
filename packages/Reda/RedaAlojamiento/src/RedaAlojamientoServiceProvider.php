@@ -88,6 +88,11 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
                 Route::post('messaging/reply', [RedaInboxController::class, 'messageReply']);
             });
 
+            // Sobrescribimos la ruta de reserva para manejar la redirección de login sin pérdida de datos
+            Route::middleware(['web', 'locale'])->group(function () {
+                Route::match(['get', 'post'], 'payments/book/{id?}', [\Reda\RedaAlojamiento\Http\Controllers\General\RedaPaymentController::class, 'index']);
+            });
+
             // Asignamos nombres a rutas de login si no los tienen
             $router = $this->app['router'];
             $routes = $router->getRoutes();

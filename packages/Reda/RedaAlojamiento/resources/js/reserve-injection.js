@@ -46,8 +46,8 @@
         const buttonText = (window.RedaAlojamientoJson && window.RedaAlojamientoJson["Reservar"]) || "Reservar";
 
         buttonWrapper.innerHTML = `
-            <a href="${targetUrl}" class="btn-reda-chat-soft-v2 reda-btn-reservar" style="text-decoration: none !important; background-color: #1dbf73 !important; color: #fff !important; border-color: #1dbf73 !important; box-shadow: 0 4px 6px rgba(29, 191, 115, 0.2) !important; padding: 8px 20px !important; font-weight: 700 !important; letter-spacing: 0.5px !important;">
-                <i class="far fa-calendar-check" style="color: #fff !important; margin-right: 5px !important;"></i> ${buttonText}
+            <a href="${targetUrl}" class="btn-reda-chat-soft-v2 reda-btn-reservar">
+                <i class="far fa-calendar-check"></i> ${buttonText}
             </a>
         `;
 

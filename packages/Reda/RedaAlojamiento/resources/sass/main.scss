@@ -1997,6 +1997,17 @@
 
 /* --- SISTEMA DE RESERVACIÓN EN MODAL --- */
 
+.reda-modal-reserva {
+    z-index: 1060 !important;
+
+    .modal-content {
+        border-radius: 15px !important;
+        border: none !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+        overflow: hidden !important;
+    }
+}
+
 .btn-enviar-latido {
     background-color: #1dbf73 !important;
     border-color: #1dbf73 !important;
@@ -2019,7 +2030,14 @@
     bottom: 25px;
     right: 25px;
     z-index: 1000;
-    display: none; // Se activa por JS
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease-in-out;
+
+    &.is-visible {
+        opacity: 1;
+        visibility: visible;
+    }
 
     .btn-flotante-inner {
         background-color: #1dbf73;

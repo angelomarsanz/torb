@@ -23,7 +23,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
     #"packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
     #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
@@ -32,7 +32,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS ---
-    "packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
     "packages/Reda/RedaAlojamiento/resources/views/general/modal_reservar.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
@@ -204,7 +204,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
     "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
@@ -225,5 +225,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Disputa/MensajeController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/ChatController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaInboxController.php"
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaPaymentController.php"
 
-)
+    )
+

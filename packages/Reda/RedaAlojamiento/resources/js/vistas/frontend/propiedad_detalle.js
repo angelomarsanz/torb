@@ -52,7 +52,10 @@
                 </div>
             `;
             $('body').append(floatingBtnHtml);
-            $(`.${this.config.floatingBtnContainerClass}`).fadeIn();
+            // Evitamos fadeIn() por ser inyección de estilos inline. Usamos clase SASS.
+            setTimeout(() => {
+                $(`.${this.config.floatingBtnContainerClass}`).addClass('is-visible');
+            }, 100);
 
             // 4. Personalizar el botón de envío (que estará dentro del modal)
             const $saveBtn = $(this.config.saveBtnId);
@@ -71,7 +74,8 @@
             // Mover el formulario al modal si no está allí
             if (!$modalBody.find(this.config.formId).length) {
                 $modalBody.append($form);
-                $form.removeClass('d-none').show();
+                // Solo removemos d-none. No usamos .show() para evitar estilos inline.
+                $form.removeClass('d-none');
             }
 
             $modal.modal('show');
