@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Reda\RedaAlojamiento\Http\Controllers\General\RedaInboxController;
+use Reda\RedaAlojamiento\Http\Controllers\General\RedaPaymentController;
 
 // ----------------------------------------------------------------------
 // IMPORTACIÓN DE CONTROLADORES
@@ -153,6 +154,9 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
 
     // Disputa
     Route::get('disputas', [DisputaController::class, 'index'])->name('reda.disputas.index');
+
+    // Pago / Reserva (Sobrescritura para evitar pérdida de datos pre-login)
+    Route::match(['get', 'post'], 'payments/book/{id?}', [RedaPaymentController::class, 'index']);
 
 
     // ----------------------------------------------------------------------

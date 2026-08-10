@@ -14,12 +14,15 @@ class RedaPaymentController extends PaymentController
      */
     public function index(Request $request)
     {
+        // El ID puede venir como parámetro de ruta o en el request (id)
+        $propertyId = $request->id ?? $request->route('id');
+
         // 1. Si es POST, guardamos la intención de reserva en la sesión
         // Esto permite que al regresar del login (vía GET) los datos sigan disponibles.
         if ($request->isMethod('post')) {
-            Log::info("REDA Payment: Capturando datos de reserva (POST) antes de validación de Auth.");
+            Log::info("REDA Payment: Capturando datos de reserva (POST) para propiedad ID: " . $propertyId);
             
-            Session::put('payment_property_id', $request->id);
+            Session::put('payment_property_id', $propertyId);
             Session::put('payment_checkin', $request->checkin);
             Session::put('payment_checkout', $request->checkout);
             Session::put('payment_number_of_guests', $request->number_of_guests);
@@ -30,20 +33,26 @@ class RedaPaymentController extends PaymentController
         }
 
         // 2. Verificación de Autenticación manual
-        // No usamos middleware en la ruta para poder ejecutar el paso 1.
+        // No usamos el middleware 'guest' original porque redirige ANTES de que podamos guardar la sesión.
         if (!Auth::check()) {
-            Log::info("REDA Payment: Usuario no autenticado, redirigiendo a login.");
+            Log::info("REDA Payment: Usuario no autenticado para reserva de ID: " . $propertyId . ". Redirigiendo a login.");
             return redirect()->guest('login');
         }
 
-        // 3. Verificación de Usuario Activo (Replicando comportamiento de Guest middleware)
+        // Log de depuración al regresar del login
+        if (!$request->isMethod('post')) {
+            Log::info("REDA Payment: Procesando reserva (GET) tras autenticación. Checkin en sesión: " . Session::get('payment_checkin'));
+        }
+
+        // 3. Verificación de Usuario Activo (Replicando comportamiento de Guest middleware del proyecto)
         if (Auth::user()->status == 'Inactive') {
-            Log::warning("REDA Payment: Usuario inactivo detectado.");
+            Log::warning("REDA Payment: Usuario inactivo detectado: " . Auth::user()->email);
             Auth::logout();
             return redirect()->guest('login');
         }
 
         // 4. Continuar con la lógica original del proyecto invocando al padre
+        // El padre leerá los datos de la Session::get(...) que acabamos de asegurar.
         return parent::index($request);
     }
 }

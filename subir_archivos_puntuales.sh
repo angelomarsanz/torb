@@ -24,11 +24,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
     "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
-    #"packages/Reda/RedaAlojamiento/src/Observers/MensajeObserver.php"
-    #"packages/Reda/RedaAlojamiento/src/Helpers/helpers.php"
-    #"packages/Reda/RedaAlojamiento/src/Http/Middleware/InjectPluginAssets.php"
-
+    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaPaymentController.php"
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/frontend/propiedad_detalle.js"
+    "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS ---

@@ -78,24 +78,49 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         /**
          * SOBRESCRITURA DE RUTAS ORIGINALES
          * Usamos el evento 'booted' para asegurar que nuestras rutas se registren AL FINAL,
-         * ganando la prioridad sobre las rutas del archivo routes/web.php original.
+         * o mejor aún, modificamos las existentes para asegurar prioridad.
          */
         $this->app->booted(function () {
-            // Re-registramos las rutas del Inbox con nuestro controlador del plugin
-            Route::middleware(['web', 'locale', 'auth'])->group(function () {
-                Route::match(['get', 'post'], 'inbox', [RedaInboxController::class, 'index'])->name('inbox');
-                Route::post('messaging/booking', [RedaInboxController::class, 'message']);
-                Route::post('messaging/reply', [RedaInboxController::class, 'messageReply']);
-            });
-
-            // Sobrescribimos la ruta de reserva para manejar la redirección de login sin pérdida de datos
-            Route::middleware(['web', 'locale'])->group(function () {
-                Route::match(['get', 'post'], 'payments/book/{id?}', [\Reda\RedaAlojamiento\Http\Controllers\General\RedaPaymentController::class, 'index']);
-            });
-
-            // Asignamos nombres a rutas de login si no los tienen
             $router = $this->app['router'];
             $routes = $router->getRoutes();
+
+            // 1. Sobrescribir Inbox (Búsqueda por URI exacta)
+            foreach ($routes->get('GET') as $route) {
+                if ($route->uri() === 'inbox') {
+                    $route->uses([RedaInboxController::class, 'index']);
+                }
+            }
+            foreach ($routes->get('POST') as $route) {
+                if ($route->uri() === 'inbox') {
+                    $route->uses([RedaInboxController::class, 'index']);
+                }
+                if ($route->uri() === 'messaging/booking') {
+                    $route->uses([RedaInboxController::class, 'message']);
+                }
+                if ($route->uri() === 'messaging/reply') {
+                    $route->uses([RedaInboxController::class, 'messageReply']);
+                }
+            }
+
+            // 2. Sobrescribir Pago / Reserva
+            // Buscamos la ruta 'payments/book/{id?}' para inyectar nuestra lógica pre-auth
+            foreach ($routes as $route) {
+                if ($route->uri() === 'payments/book/{id?}') {
+                    // Cambiamos el controlador al del plugin
+                    $route->uses([\Reda\RedaAlojamiento\Http\Controllers\General\RedaPaymentController::class, 'index']);
+                    
+                    // IMPORTANTE: Removemos el middleware 'guest' (que en este proyecto obliga a login)
+                    // para que nuestra lógica en el controlador pueda capturar el POST antes de redirigir.
+                    $middlewares = $route->middleware();
+                    if (is_array($middlewares)) {
+                        $route->setMiddleware(array_values(array_filter($middlewares, function($m) {
+                            return !str_contains($m, 'guest');
+                        })));
+                    }
+                }
+            }
+
+            // 3. Asignamos nombres a rutas de login si no los tienen
             foreach ($routes as $route) {
                 if ($route->uri() === 'login' && !$route->getName()) {
                     $route->name('login');
