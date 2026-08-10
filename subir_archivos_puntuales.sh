@@ -199,6 +199,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
     "packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
     "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
+    "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Admin/Experiencia/ExperienciaController.php"
