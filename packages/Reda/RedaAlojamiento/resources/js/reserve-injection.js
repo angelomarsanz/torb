@@ -42,7 +42,7 @@
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'reda-reserve-btn';
         
-        const targetUrl = propertySlug ? `${window.APP_URL}/properties/${propertySlug}#booking-price` : `${window.APP_URL}/payments/book/${propertyId}`;
+        const targetUrl = propertySlug ? `${window.APP_URL}/properties/${propertySlug}#reservar` : `${window.APP_URL}/payments/book/${propertyId}`;
         const buttonText = (window.RedaAlojamientoJson && window.RedaAlojamientoJson["Reservar"]) || "Reservar";
 
         buttonWrapper.innerHTML = `

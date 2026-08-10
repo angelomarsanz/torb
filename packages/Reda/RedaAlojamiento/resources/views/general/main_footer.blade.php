@@ -10,7 +10,12 @@
 @include('reda-alojamiento::general.modal_notificaciones')
 @include('reda-alojamiento::general.modal_confirmacion')
 @include('reda-alojamiento::general.modal_crop')
+@include('reda-alojamiento::general.modal_reservar')
 
 {{-- 3. Scripts de uso general del plugin --}}
 <script src="{{ asset('public/js/reda/general/reda-general-main.min.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('public/js/reda/vistas/pago/frontend/pagos.min.js') }}?v={{ time() }}"></script>
+
+@if(Route::currentRouteName() == 'property.single')
+    <script src="{{ asset('public/js/reda/vistas/frontend/propiedad_detalle.min.js') }}?v={{ time() }}"></script>
+@endif

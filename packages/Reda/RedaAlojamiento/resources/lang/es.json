@@ -608,5 +608,8 @@
     "Detalle del mensaje cargado": "Detalle del mensaje cargado",
     "Respuesta enviada": "Respuesta enviada",
     "Mensaje enviado con éxito": "Mensaje enviado con éxito",
-    "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo.": "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo."
+    "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo.": "Error: No se identificó la reservación. Cierre el chat y ábralo de nuevo.",
+    "Solicitud para reservar": "Solicitud para reservar",
+    "Reserva Inmediata": "Reserva Inmediata",
+    "Enviar": "Enviar"
 }

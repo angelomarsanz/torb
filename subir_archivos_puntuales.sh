@@ -31,6 +31,10 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
+    # --- PLUGIN REDA ALOJAMIENTO: VISTAS ---
+    "packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/general/modal_reservar.blade.php"
+
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
 
     #"packages/Reda/RedaAlojamiento/src/Models/Administrativo/Administrativo.php"
@@ -179,6 +183,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/toggleFavoritoComercio.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/frontend/propiedad_detalle.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
@@ -198,7 +203,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
+    "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
     "packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---

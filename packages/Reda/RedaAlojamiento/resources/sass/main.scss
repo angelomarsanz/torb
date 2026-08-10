@@ -1995,6 +1995,79 @@
 
 /* --- MÓDULO DE MEDIACIÓN --- */
 
+/* --- SISTEMA DE RESERVACIÓN EN MODAL --- */
+
+.btn-enviar-latido {
+    background-color: #1dbf73 !important;
+    border-color: #1dbf73 !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    padding: 12px 30px !important;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(29, 191, 115, 0.3);
+    
+    &:hover {
+        background-color: #17a665 !important;
+        transform: scale(1.05);
+        animation: none;
+    }
+}
+
+.reda-btn-flotante-reserva {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1000;
+    display: none; // Se activa por JS
+
+    .btn-flotante-inner {
+        background-color: #1dbf73;
+        color: #fff !important;
+        padding: 12px 25px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+
+        i { font-size: 18px; }
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background-color: #17a665;
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .reda-btn-flotante-reserva {
+        left: 20px;
+        right: 20px;
+        bottom: 15px;
+
+        .btn-flotante-inner {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+}
+
+/* Ocultar barra lateral original de reserva en detalle de propiedad */
+.hide-booking-sidebar {
+    #booking-price {
+        display: none !important;
+    }
+}
+
 .reda-mediation-box {
     border: 1px solid #dee2e6;
     border-radius: 0.5rem;
