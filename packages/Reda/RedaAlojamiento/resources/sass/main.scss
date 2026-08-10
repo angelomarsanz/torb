@@ -4057,14 +4057,19 @@
 
 /* --- BOTONES MENÚ COMPACTOS (ALOJAMIENTO Y NEGOCIO) --- */
 .btn-menu-reda-compact {
-    padding: 0 15px !important; 
-    height: 38px !important;    
-    display: flex !important;
+    padding: 8px 18px !important; 
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     margin-top: 5px !important;
-    border-radius: 8px !important;
+    border-radius: 4px !important; /* Menos ovalado, estilo vRent original */
+    background-color: #1dbf73 !important;
+    color: #fff !important;
+    border: 1px solid #1dbf73 !important;
+    box-shadow: 0 4px 6px rgba(29, 191, 115, 0.2) !important;
     transition: all 0.2s ease;
+    letter-spacing: 0.5px !important;
+    font-weight: 700 !important;
 
     p {
         padding: 0 !important;   
@@ -4075,11 +4080,15 @@
 
     &:hover {
         transform: scale(1.02);
+        background-color: #17a665 !important;
+        border-color: #17a665 !important;
+        box-shadow: 0 6px 12px rgba(29, 191, 115, 0.3) !important;
     }
 }
 
 @media (max-width: 991px) {
     .btn-menu-reda-compact {
         margin-top: 0 !important;
+        padding: 10px 25px !important;
     }
 }
