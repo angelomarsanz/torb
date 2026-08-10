@@ -26,7 +26,7 @@ export const addPublicaExperienciaBtn = () => {
         const botonHtmlMovil = `
             <li id="${botonIdMovil}" data-role="added-by-reda" class="mt-3">
                 <a href="${urlCrearExperiencia}">
-                    <button class="btn vbtn-outline-success text-14 font-weight-700 pl-5 pr-5 pt-3 pb-3">
+                    <button class="btn vbtn-outline-success text-14 font-weight-700 btn-menu-reda-compact">
                         ${textoBoton}
                     </button>
                 </a>
@@ -68,7 +68,13 @@ export const addPublicaExperienciaBtn = () => {
             // Buscamos el enlace de "List your space" en el móvil para poner el nuestro después
             const $enlaceReferenciaMovil = $listaMovil.find('a[href*="property/create"]');
             if ($enlaceReferenciaMovil.length) {
-                $enlaceReferenciaMovil.after(botonHtmlMovil);
+                // Compactar el botón original móvil "Publica tu alojamiento"
+                const $botonOriginalMovil = $enlaceReferenciaMovil.find('button');
+                if ($botonOriginalMovil.length && !$botonOriginalMovil.hasClass('btn-menu-reda-compact')) {
+                    $botonOriginalMovil.removeClass('pl-5 pr-5 pt-3 pb-3').addClass('btn-menu-reda-compact');
+                }
+
+                $enlaceReferenciaMovil.parent().after(botonHtmlMovil);
                 return true;
             }
 
