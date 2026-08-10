@@ -932,7 +932,8 @@
     display: flex;
     gap: 15px;
     margin-left: 20px;
-    margin-right: auto;
+    margin-right: 15px; /* Reducido para cerrar el hueco horizontal */
+    margin-top: 10px;    /* Nivelado con los botones */
 }
 
 .reda-menu-item {

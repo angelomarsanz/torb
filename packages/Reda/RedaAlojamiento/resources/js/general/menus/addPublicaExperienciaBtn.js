@@ -11,9 +11,9 @@ export const addPublicaExperienciaBtn = () => {
         const textoBoton = window.RedaAlojamiento?.general?.publica_tu_negocio || "Publica tu negocio";
         const urlCrearExperiencia = APP_URL + '/reda/negocios/crear-experiencia';
 
-        // HTML para la versión de escritorio
+        // HTML para la versión de escritorio (ml-3 para espacio uniforme)
         const botonHtmlEscritorio = `
-            <div class="nav-item ml-2" id="${botonIdEscritorio}" data-role="added-by-reda">
+            <div class="nav-item ml-3" id="${botonIdEscritorio}" data-role="added-by-reda">
                 <a class="nav-link p-2" href="${urlCrearExperiencia}" aria-label="experiencia-create">
                     <button class="btn vbtn-outline-success text-14 font-weight-700 btn-menu-reda-compact">
                         <p>${textoBoton}</p>
@@ -22,15 +22,13 @@ export const addPublicaExperienciaBtn = () => {
             </div>
             `;
 
-        // HTML para la versión móvil (dentro del modal)
+        // HTML para la versión móvil (dentro del modal - sin li para evitar bullet)
         const botonHtmlMovil = `
-            <li id="${botonIdMovil}" data-role="added-by-reda" class="mt-3">
-                <a href="${urlCrearExperiencia}">
-                    <button class="btn vbtn-outline-success text-14 font-weight-700 btn-menu-reda-compact">
-                        ${textoBoton}
-                    </button>
-                </a>
-            </li>
+            <a href="${urlCrearExperiencia}" id="${botonIdMovil}" data-role="added-by-reda" class="d-block mt-3 text-center">
+                <button class="btn vbtn-outline-success text-14 font-weight-700 btn-menu-reda-compact">
+                    ${textoBoton}
+                </button>
+            </a>
         `;
 
         // Inserta el botón de escritorio
@@ -74,7 +72,10 @@ export const addPublicaExperienciaBtn = () => {
                     $botonOriginalMovil.removeClass('pl-5 pr-5 pt-3 pb-3').addClass('btn-menu-reda-compact');
                 }
 
-                $enlaceReferenciaMovil.parent().after(botonHtmlMovil);
+                // Asegurar que el original también esté centrado y bloqueado para alineación
+                $enlaceReferenciaMovil.addClass('d-block mt-3 text-center');
+
+                $enlaceReferenciaMovil.after(botonHtmlMovil);
                 return true;
             }
 
