@@ -14,60 +14,66 @@ class RedaPaymentController extends PaymentController
      */
     public function index(Request $request)
     {
-        // El ID puede venir como parámetro de ruta o en el request (id)
-        $propertyId = $request->id ?? $request->route('id');
+        // 1. Log de entrada total para rastrear el flujo
+        Log::info("REDA Payment: Petición entrante [" . $request->method() . "] - URI: " . $request->getRequestUri());
 
-        // 1. Si es POST, guardamos la intención de reserva en la sesión
-        // Esto permite que al regresar del login (vía GET) los datos sigan disponibles.
-        if ($request->isMethod('post')) {
-            Log::info("REDA Payment: Capturando datos de reserva (POST) para propiedad ID: " . $propertyId);
+        // El ID puede venir de la ruta, del input, o de lo que guardamos previamente en sesión
+        $propertyId = $request->id ?? $request->route('id') ?? Session::get('payment_property_id');
+
+        // 2. Si hay datos en el request (POST inicial), los aseguramos en la sesión
+        // Usamos una clave personalizada para evitar limpiezas accidentales del core de vRent.
+        if ($request->has('checkin')) {
+            Log::info("REDA Payment: Asegurando datos de reserva en sesión para ID: " . $propertyId);
+            $bookingData = $request->all();
+            $bookingData['id'] = $propertyId; // Aseguramos que el ID vaya en el pack
             
+            Session::put('reda_payment_data', $bookingData);
             Session::put('payment_property_id', $propertyId);
-            Session::put('payment_checkin', $request->checkin);
-            Session::put('payment_checkout', $request->checkout);
-            Session::put('payment_number_of_guests', $request->number_of_guests);
-            Session::put('payment_booking_type', $request->booking_type);
-            Session::put('payment_booking_status', $request->booking_status);
-            Session::put('payment_booking_id', $request->booking_id);
+            
+            // También guardamos en las claves estándar por compatibilidad con el padre
+            Session::put([
+                'payment_checkin'        => $request->checkin,
+                'payment_checkout'       => $request->checkout,
+                'payment_number_of_guests' => $request->number_of_guests,
+                'payment_booking_type'   => $request->booking_type,
+                'payment_booking_status' => $request->booking_status,
+                'payment_booking_id'     => $request->booking_id,
+            ]);
             Session::save();
         }
 
-        // 2. Verificación de Autenticación manual
+        // 3. Verificación de Autenticación manual
         if (!Auth::check()) {
-            Log::info("REDA Payment: Invitado intentando reservar ID: " . $propertyId . ". Forzando intended URL.");
+            Log::info("REDA Payment: Usuario no autenticado para ID: " . $propertyId . ". Forzando redirección controlada.");
             
-            // Forzamos la URL de retorno para que el login sepa exactamente a dónde volver (URL de reserva)
-            // En lugar de que vuelva a la página de la propiedad por defecto.
-            Session::put('url.intended', url("payments/book/{$propertyId}"));
+            // Forzamos el intended para que el LoginController sepa a dónde volver.
+            $targetUrl = url("payments/book/{$propertyId}");
+            Session::put('url.intended', $targetUrl);
+            Session::put('reda.intended', $targetUrl); // Backup nuestro
             
             return redirect()->guest('login');
         }
 
-        // 3. Restauración de datos al Request
-        // Si venimos de un login exitoso (GET) y no tenemos fechas en el request, las inyectamos desde la sesión.
-        // Esto engaña al controlador original (parent::index) para que procese el pago en lugar de redirigir.
-        if (!$request->has('checkin') && Session::has('payment_checkin')) {
-            Log::info("REDA Payment: Restaurando datos de sesión al Request para ID: " . Session::get('payment_property_id'));
+        // 4. Restauración Crítica post-login
+        // Si regresamos del login (GET) y el request está "vacío" de datos de reserva, los re-inyectamos.
+        // Sin el parámetro 'id' o 'checkin', el parent::index original redirige a la propiedad.
+        if (!$request->has('checkin') && Session::has('reda_payment_data')) {
+            Log::info("REDA Payment: Detectado regreso de login. Restaurando datos desde 'reda_payment_data'.");
+            $backup = Session::get('reda_payment_data');
+            $request->merge($backup);
             
-            $request->merge([
-                'id' => Session::get('payment_property_id'),
-                'checkin' => Session::get('payment_checkin'),
-                'checkout' => Session::get('payment_checkout'),
-                'number_of_guests' => Session::get('payment_number_of_guests'),
-                'booking_type' => Session::get('payment_booking_type'),
-                'booking_status' => Session::get('payment_booking_status'),
-                'booking_id' => Session::get('payment_booking_id'),
-            ]);
+            // Log de verificación de lo restaurado
+            Log::info("REDA Payment: Request restaurado con ID: " . $request->id . " y Checkin: " . $request->checkin);
         }
 
-        // 4. Verificación de Usuario Activo (Replicando comportamiento de Guest middleware del proyecto)
+        // 5. Verificación de Usuario Activo (Replicando comportamiento de Guest middleware del proyecto)
         if (Auth::user()->status == 'Inactive') {
             Log::warning("REDA Payment: Usuario inactivo detectado: " . Auth::user()->email);
             Auth::logout();
             return redirect()->guest('login');
         }
 
-        // 5. Continuar con la lógica original del proyecto invocando al padre
+        Log::info("REDA Payment: Entregando control al PaymentController original. ID final: " . $request->id);
         return parent::index($request);
     }
 }

@@ -78,19 +78,15 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
         /**
          * SOBRESCRITURA DE RUTAS ORIGINALES
          * Usamos el evento 'booted' para asegurar que nuestras rutas se registren AL FINAL,
-         * o mejor aún, modificamos las existentes para asegurar prioridad.
+         * o mejor aún, modificamos las existentes para asegurar prioridad absoluta.
          */
         $this->app->booted(function () {
             $router = $this->app['router'];
             $routes = $router->getRoutes();
 
-            // 1. Sobrescribir Inbox (Búsqueda por URI exacta)
-            foreach ($routes->get('GET') as $route) {
-                if ($route->uri() === 'inbox') {
-                    $route->uses([RedaInboxController::class, 'index']);
-                }
-            }
-            foreach ($routes->get('POST') as $route) {
+            // 1. Sobrescribir Inbox y Mensajería (Búsqueda por URI o Acción)
+            foreach ($routes as $route) {
+                // Sobrescribir por URI específica
                 if ($route->uri() === 'inbox') {
                     $route->uses([RedaInboxController::class, 'index']);
                 }
@@ -100,21 +96,18 @@ class RedaAlojamientoServiceProvider extends ServiceProvider
                 if ($route->uri() === 'messaging/reply') {
                     $route->uses([RedaInboxController::class, 'messageReply']);
                 }
-            }
 
-            // 2. Sobrescribir Pago / Reserva
-            // Buscamos la ruta 'payments/book/{id?}' para inyectar nuestra lógica pre-auth
-            foreach ($routes as $route) {
-                if ($route->uri() === 'payments/book/{id?}') {
+                // 2. Sobrescribir Pago / Reserva (SECUESTRO AGRESIVO)
+                // Buscamos CUALQUIER ruta que apunte al PaymentController@index original
+                if (str_contains($route->getActionName(), 'App\Http\Controllers\PaymentController@index')) {
                     // Cambiamos el controlador al del plugin
                     $route->uses([\Reda\RedaAlojamiento\Http\Controllers\General\RedaPaymentController::class, 'index']);
                     
                     /**
-                     * IMPORTANTE: Removemos el middleware 'guest' (que en este proyecto obliga a login)
-                     * para que nuestra lógica en el controlador pueda capturar el POST antes de redirigir.
-                     * Usamos la API oficial de Laravel para no fallar.
+                     * IMPORTANTE: Removemos los middlewares de restricción (guest/auth)
+                     * para que nuestra lógica Reda pueda capturar el POST antes de redirigir.
                      */
-                    $route->withoutMiddleware(['guest', 'guest:users', 'guest:admin']);
+                    $route->withoutMiddleware(['guest', 'guest:users', 'guest:admin', 'auth', 'reda.auth']);
                 }
             }
 
