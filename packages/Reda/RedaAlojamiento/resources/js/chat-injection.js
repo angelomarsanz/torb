@@ -131,7 +131,9 @@ import { iniciarChat } from './general/iniciarChat.js';
             if (respuesta.success) {
                 window.location.href = respuesta.respuesta;
             } else if (respuesta.code === 401) {
-                window.location.href = APP_URL + '/login';
+                // Redirigimos a la ruta de iniciar chat para que el middleware guest() 
+                // capture la intención y después del login nos traiga de vuelta aquí
+                window.location.href = APP_URL + '/reda/pago/iniciar-chat/' + id;
             } else {
                 if (window.RedaNotificaciones && typeof window.RedaNotificaciones.error === 'function') {
                     window.RedaNotificaciones.error(respuesta.mensaje_usuario);

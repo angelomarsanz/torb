@@ -23,16 +23,17 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/lang/es.json"
     "packages/Reda/RedaAlojamiento/resources/lang/es/messages.php"
     "packages/Reda/RedaAlojamiento/routes/web.php"
-    "packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaPaymentController.php"
+    #"packages/Reda/RedaAlojamiento/src/RedaAlojamientoServiceProvider.php"
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaPaymentController.php"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/frontend/propiedad_detalle.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
+
     "packages/Reda/RedaAlojamiento/resources/sass/main.scss"
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/frontend/propiedad_detalle.js"
-    "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
     "packages/Reda/RedaAlojamiento/resources/sass/admin/main.scss"
 
     # --- PLUGIN REDA ALOJAMIENTO: VISTAS ---
     #"packages/Reda/RedaAlojamiento/resources/views/general/main_footer.blade.php"
-    "packages/Reda/RedaAlojamiento/resources/views/general/modal_reservar.blade.php"
+    #"packages/Reda/RedaAlojamiento/resources/views/general/modal_reservar.blade.php"
 
     # --- PLUGIN REDA ALOJAMIENTO: MODELOS ---
 
@@ -182,7 +183,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/toggleFavoritoComercio.js"
 
     # --- Archivos Javascript fuera de la carpeta frontend ---
-    "packages/Reda/RedaAlojamiento/resources/js/vistas/frontend/propiedad_detalle.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/vistas/frontend/propiedad_detalle.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
@@ -202,7 +203,7 @@ ARCHIVOS_PHP_PUNTUALES=(
     "packages/Reda/RedaAlojamiento/resources/js/chat-injection.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iniciarChat.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/inbox/inbox.js"
-    "packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/reserve-injection.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/menus/addPublicaExperienciaBtn.js"
 
     # --- PLUGIN REDA ALOJAMIENTO: CONTROLADORES admin ---
@@ -224,7 +225,5 @@ ARCHIVOS_PHP_PUNTUALES=(
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/Disputa/MensajeController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/ChatController.php"
     #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaInboxController.php"
-    "packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaPaymentController.php"
-
+    #"packages/Reda/RedaAlojamiento/src/Http/Controllers/General/RedaPaymentController.php"
     )
-
