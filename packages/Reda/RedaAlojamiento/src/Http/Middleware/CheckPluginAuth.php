@@ -15,7 +15,7 @@ class CheckPluginAuth
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'mensaje_usuario' => __('Debes iniciar sesión para agregar a favoritos'),
+                    'mensaje_usuario' => __('Debes iniciar sesión para continuar.'),
                     'code' => 401
                 ], 401);
             }

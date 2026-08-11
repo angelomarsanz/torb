@@ -130,6 +130,8 @@ import { iniciarChat } from './general/iniciarChat.js';
 
             if (respuesta.success) {
                 window.location.href = respuesta.respuesta;
+            } else if (respuesta.code === 401) {
+                window.location.href = APP_URL + '/login';
             } else {
                 if (window.RedaNotificaciones && typeof window.RedaNotificaciones.error === 'function') {
                     window.RedaNotificaciones.error(respuesta.mensaje_usuario);
