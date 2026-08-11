@@ -42,7 +42,13 @@
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'reda-reserve-btn';
         
-        const targetUrl = propertySlug ? `${window.APP_URL}/properties/${propertySlug}#reservar` : `${window.APP_URL}/payments/book/${propertyId}`;
+        let targetUrl = propertySlug ? `${window.APP_URL}/properties/${propertySlug}#reservar` : `${window.APP_URL}/payments/book/${propertyId}`;
+        
+        // Si no está autenticado, redirigimos a través de nuestra ruta de control para asegurar el retorno
+        if (!window.AuthCheck && propertySlug) {
+            targetUrl = `${window.APP_URL}/reda/auth-reserve/${propertySlug}`;
+        }
+
         const buttonText = (window.RedaAlojamientoJson && window.RedaAlojamientoJson["Reservar"]) || "Reservar";
 
         buttonWrapper.innerHTML = `

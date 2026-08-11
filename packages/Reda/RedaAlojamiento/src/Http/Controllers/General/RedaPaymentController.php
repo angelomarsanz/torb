@@ -76,4 +76,19 @@ class RedaPaymentController extends PaymentController
         Log::info("REDA Payment: Entregando control al PaymentController original. ID final: " . $request->id);
         return parent::index($request);
     }
+
+    /**
+     * Redirige al login asegurando que el destino final sea la propiedad con el hash de reserva.
+     */
+    public function redirectReservar($slug)
+    {
+        $targetUrl = url("properties/{$slug}#reservar");
+        
+        if (!Auth::check()) {
+            Session::put('url.intended', $targetUrl);
+            return redirect()->guest('login');
+        }
+        
+        return redirect($targetUrl);
+    }
 }

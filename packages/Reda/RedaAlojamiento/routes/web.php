@@ -158,6 +158,9 @@ Route::prefix('reda')->middleware(['web', 'locale'])->group(function () {
     // Pago / Reserva (Sobrescritura para evitar pérdida de datos pre-login)
     Route::match(['get', 'post'], 'payments/book/{id?}', [RedaPaymentController::class, 'index']);
 
+    // Ruta para redirección de reserva con login
+    Route::get('auth-reserve/{slug}', [RedaPaymentController::class, 'redirectReservar'])->name('reda.auth_reserve');
+
 
     // ----------------------------------------------------------------------
     // 2. Rutas de Negocios Sin Login Requerido

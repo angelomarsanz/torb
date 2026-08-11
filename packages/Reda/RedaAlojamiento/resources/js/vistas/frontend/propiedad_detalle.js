@@ -83,6 +83,14 @@
 
         handleHash: function() {
             if (window.location.hash === this.config.hashTrigger) {
+                // Si no está autenticado, redirigimos al login
+                if (!window.AuthCheck) {
+                    const currentUrl = window.location.href;
+                    // Usamos una redirección que Laravel entienda como 'intended'
+                    window.location.href = window.APP_URL + '/login';
+                    return;
+                }
+
                 // Pequeño delay para asegurar que todo esté cargado (daterangepicker, etc)
                 setTimeout(() => {
                     this.openModal();
@@ -96,6 +104,14 @@
             // Clic en botón flotante
             $(document).on('click', `.${this.config.floatingBtnContainerClass} a`, function(e) {
                 e.preventDefault();
+
+                if (!window.AuthCheck) {
+                    // Si no está autenticado, lo enviamos al login asegurando que vuelva aquí con el hash
+                    const slug = window.location.pathname.split('/').pop();
+                    window.location.href = window.APP_URL + '/reda/auth-reserve/' + slug;
+                    return;
+                }
+
                 self.openModal();
             });
 

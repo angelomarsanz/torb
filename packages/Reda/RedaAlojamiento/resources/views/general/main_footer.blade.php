@@ -2,6 +2,7 @@
 
 {{-- 1. Traducciones de Laravel a JS --}}
 <script>
+    window.AuthCheck = {{ Auth::check() ? 'true' : 'false' }};
     window.RedaAlojamiento = @json(__('reda-alojamiento::messages'));
     window.RedaAlojamientoJson = @json(__('reda-alojamiento::es'));
 </script>
