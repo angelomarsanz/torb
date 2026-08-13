@@ -129,7 +129,7 @@
 {{-- Modal Media Viewer (Imágenes y PDFs) --}}
 <div class="modal fade reda-media-viewer" id="modal-media-viewer-reda" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="max-width: 95%;">
-        <div class="modal-content bg-dark text-white border-0 shadow-lg">
+        <div class="modal-content bg-dark text-white border border-secondary shadow-lg">
             <div class="modal-header border-0 pb-0 d-flex align-items-center justify-content-between">
                 <h5 class="modal-title text-white text-16 font-weight-700 text-truncate mr-3" id="media-viewer-title"></h5>
                 <button type="button" class="close text-white opacity-100 m-0 p-0" data-dismiss="modal" aria-label="Close" style="text-shadow: none; outline: none;">
@@ -146,7 +146,7 @@
                 </div>
 
                 <!-- Media Content Wrapper -->
-                <div id="media-content-container" class="w-100 h-100 overflow-auto" style="-webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center;">
+                <div id="media-content-container" class="w-100 h-100 overflow-auto d-flex align-items-center justify-content-center" style="-webkit-overflow-scrolling: touch;">
                     {{-- Inyectado vía JS --}}
                 </div>
             </div>
@@ -156,7 +156,7 @@
 
 <style>
     .bg-black-viewer { background-color: #0b0b0b; }
-    #media-content-container img { transition: width 0.2s ease, max-width 0.2s ease, max-height 0.2s ease; cursor: default; display: block; }
+    #media-content-container img { transition: width 0.2s ease, max-width 0.2s ease, max-height 0.2s ease; cursor: default; display: block; margin: auto; }
     
     .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); }
     .zoom-controls button:hover { background: rgba(0,0,0,0.9); border-color: #fff; }
@@ -168,9 +168,9 @@
     #media-content-container::-webkit-scrollbar-thumb:hover { background: #888; }
 
     @media (max-width: 767px) {
-        .reda-media-viewer .modal-dialog { margin: 0; }
-        .reda-media-viewer .modal-content { border-radius: 0; }
-        #media-content-container { height: 90vh; }
+        .reda-media-viewer .modal-dialog { margin: 10px; max-width: calc(100% - 20px); }
+        .reda-media-viewer .modal-content { border-radius: 8px; border: 1px solid rgba(255,255,255,0.3) !important; }
+        #media-content-container { height: 80vh; }
         .zoom-controls { display: none !important; }
     }
 </style>
