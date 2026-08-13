@@ -136,14 +136,14 @@
                     <span aria-hidden="true" class="text-30">&times;</span>
                 </button>
             </div>
-            <div class="modal-body p-0 position-relative d-flex align-items-center justify-content-center bg-black-viewer" style="min-height: 80vh; touch-action: none;">
+            <div class="modal-body p-0 position-relative d-flex align-items-center justify-content-center bg-black-viewer" style="min-height: 80vh;">
                 <!-- Navigation Controls -->
                 <button class="btn btn-link text-white position-absolute nav-prev-media shadow-none d-flex align-items-center justify-content-center" 
-                        style="left: 20px; z-index: 1070; width: 60px; height: 60px; background: rgba(128,128,128,0.4); border-radius: 50%; transition: all 0.2s;">
+                        style="left: 20px; z-index: 1070; width: 60px; height: 60px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.2s;">
                     <i class="fas fa-chevron-left" style="font-size: 1.5rem;"></i>
                 </button>
                 <button class="btn btn-link text-white position-absolute nav-next-media shadow-none d-flex align-items-center justify-content-center" 
-                        style="right: 20px; z-index: 1070; width: 60px; height: 60px; background: rgba(128,128,128,0.4); border-radius: 50%; transition: all 0.2s;">
+                        style="right: 20px; z-index: 1070; width: 60px; height: 60px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.2s;">
                     <i class="fas fa-chevron-right" style="font-size: 1.5rem;"></i>
                 </button>
 
@@ -155,7 +155,7 @@
                 </div>
 
                 <!-- Media Content -->
-                <div id="media-content-container" class="w-100 h-100 d-flex align-items-center justify-content-center overflow-hidden" style="max-height: 80vh;">
+                <div id="media-content-container" class="w-100 h-100 d-flex align-items-center justify-content-center overflow-auto" style="max-height: 80vh; -webkit-overflow-scrolling: touch;">
                     {{-- Inyectado vía JS --}}
                 </div>
             </div>
@@ -168,9 +168,10 @@
 
 <style>
     .bg-black-viewer { background-color: #0b0b0b; }
-    #media-content-container img { transition: transform 0.3s ease; cursor: zoom-in; }
-    #media-content-container img.zoomed { cursor: zoom-out; }
-    .nav-prev-media:hover, .nav-next-media:hover { background: rgba(128,128,128,0.7) !important; scale: 1.1; }
+    #media-content-container img { transition: transform 0.3s ease, width 0.3s ease; cursor: zoom-in; }
+    #media-content-container img.zoomed { cursor: grab; }
+    #media-content-container img.zoomed:active { cursor: grabbing; }
+    .nav-prev-media:hover, .nav-next-media:hover { background: rgba(0,0,0,0.8) !important; scale: 1.1; border-color: rgba(255,255,255,0.5) !important; }
     .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
     
     @media (max-width: 767px) {
