@@ -19,7 +19,14 @@ import {
     let adjuntosVisualizables = [];
     let indiceAdjuntoActual = 0;
     let currentZoom = 1;
-    const zoomStep = 0.2;
+    const zoomStep = 0.5; // Zoom más agresivo para el toggle
+    const maxZoom = 3;
+
+    // Para gestos táctiles
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
 
     /**
      * Obtiene la URL completa para una imagen.
@@ -395,6 +402,11 @@ import {
         const img = $('#media-viewer-img');
         if (img.length) {
             img.css('transform', `scale(${currentZoom})`);
+            if (currentZoom > 1) {
+                img.addClass('zoomed');
+            } else {
+                img.removeClass('zoomed');
+            }
         }
     };
 
@@ -421,9 +433,20 @@ import {
         if (file.es_imagen) {
             const img = new Image();
             img.onload = () => {
-                container.html(`<img src="${file.url}" id="media-viewer-img" class="img-fluid" style="max-height: 80vh;">`);
+                container.html(`<img src="${file.url}" id="media-viewer-img" class="img-fluid" style="max-height: 80vh; pointer-events: auto;">`);
                 $('.zoom-controls').removeClass('d-none');
                 applyZoom();
+
+                // Toggle Zoom al hacer clic
+                $('#media-viewer-img').on('click', function(e) {
+                    e.stopPropagation();
+                    if (currentZoom === 1) {
+                        currentZoom = 2; // Zoom predefinido al tocar
+                    } else {
+                        currentZoom = 1; // Regresar a original
+                    }
+                    applyZoom();
+                });
             };
             img.onerror = () => {
                 container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
@@ -431,14 +454,40 @@ import {
             img.src = file.url;
         } else if (esPDF) {
             $('.zoom-controls').addClass('d-none');
-            container.html(`<iframe src="${file.url}" width="100%" height="600px" style="border: none; background: white;"></iframe>`);
+            // Usar embed o iframe para PDF
+            container.html(`<iframe src="${file.url}" width="100%" height="80vh" style="border: none; background: white; min-height: 600px;"></iframe>`);
         } else {
             container.html(`<p class="text-white">${trans["Archivo no soportado para previsualización"] || "Archivo no soportado para previsualización"}</p>`);
         }
 
         // Mostrar/Ocultar flechas de navegación
-        $('.nav-prev-media').toggle(indiceAdjuntoActual > 0);
-        $('.nav-next-media').toggle(indiceAdjuntoActual < adjuntosVisualizables.length - 1);
+        $('.nav-prev-media').css('visibility', indiceAdjuntoActual > 0 ? 'visible' : 'hidden');
+        $('.nav-next-media').css('visibility', indiceAdjuntoActual < adjuntosVisualizables.length - 1 ? 'visible' : 'hidden');
+    };
+
+    /**
+     * Maneja el deslizamiento (swipe) para navegación.
+     */
+    const handleGesture = () => {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            // Deslizamiento horizontal
+            if (deltaX < -50) {
+                // Swipe Left -> Next
+                $('.nav-next-media:visible').click();
+            } else if (deltaX > 50) {
+                // Swipe Right -> Prev
+                $('.nav-prev-media:visible').click();
+            }
+        } else {
+            // Deslizamiento vertical
+            if (Math.abs(deltaY) > 100) {
+                // Swipe vertical fuerte -> Cerrar modal
+                $('#modal-media-viewer-reda').modal('hide');
+            }
+        }
     };
 
     /**
@@ -942,15 +991,13 @@ import {
             });
 
             $(document).on('click', '.btn-zoom-in', function() {
-                currentZoom += zoomStep;
+                currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
                 applyZoom();
             });
 
             $(document).on('click', '.btn-zoom-out', function() {
-                if (currentZoom > zoomStep) {
-                    currentZoom -= zoomStep;
-                    applyZoom();
-                }
+                currentZoom = Math.max(currentZoom - zoomStep, 1);
+                applyZoom();
             });
 
             $(document).on('click', '.btn-zoom-reset', function() {
@@ -964,7 +1011,23 @@ import {
                 
                 if (e.key === 'ArrowLeft') $('.nav-prev-media:visible').click();
                 if (e.key === 'ArrowRight') $('.nav-next-media:visible').click();
+                if (e.key === 'Escape') $('#modal-media-viewer-reda').modal('hide');
             });
+
+            // Soporte para Swiping
+            const viewerModal = document.getElementById('modal-media-viewer-reda');
+            if (viewerModal) {
+                viewerModal.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    touchStartY = e.changedTouches[0].screenY;
+                }, { passive: true });
+
+                viewerModal.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    touchEndY = e.changedTouches[0].screenY;
+                    handleGesture();
+                }, { passive: true });
+            }
 
             cargarMediaciones('todos');
         }
