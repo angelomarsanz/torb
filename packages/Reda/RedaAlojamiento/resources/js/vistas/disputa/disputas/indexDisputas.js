@@ -15,11 +15,15 @@ import {
     let mediacionSeleccionadaId = null;
     let observadorEnfoque = null;
 
-    // Estado para el visor de medios (Simplificado)
+    // Estado para el visor de medios
     let currentZoom = 1;
     const zoomStep = 0.2;
     const maxZoom = 4;
     const minZoom = 0.5;
+
+    // Estado para arrastrar (Panning) en escritorio
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
 
     /**
      * Obtiene la URL completa para una imagen.
@@ -389,15 +393,35 @@ import {
     };
 
     /**
-     * Aplica el zoom actual a la imagen del visor (Solo Escritorio).
+     * Aplica el zoom actual a la imagen del visor (Escritorio).
      */
     const applyZoom = () => {
         const img = $('#media-viewer-img');
+        const container = $('#media-content-container');
         if (img.length && window.innerWidth >= 768) {
-            img.css({
-                'width': (100 * currentZoom) + '%',
-                'max-width': 'none'
-            });
+            if (currentZoom === 1) {
+                // Estado inicial: Ajustar a pantalla con margen
+                img.css({
+                    'width': 'auto',
+                    'max-width': '90%',
+                    'max-height': '75vh',
+                    'cursor': 'default'
+                });
+                img.removeClass('zoom-active');
+                container.css({ 'align-items': 'center', 'justify-content': 'center' });
+            } else {
+                // Estado con zoom: Permitir desbordamiento y scroll
+                const zoomFactor = currentZoom * 100;
+                img.css({
+                    'width': zoomFactor + '%',
+                    'max-width': 'none',
+                    'max-height': 'none',
+                    'cursor': 'grab'
+                });
+                img.addClass('zoom-active');
+                // Ajustar el contenedor para permitir scroll fluido en ambos ejes
+                container.css({ 'align-items': 'start', 'justify-content': 'start' });
+            }
         }
     };
 
@@ -410,6 +434,7 @@ import {
         const trans = window.RedaAlojamientoJson || {};
 
         currentZoom = 1;
+        isDragging = false;
         container.html('<div class="spinner-border text-light" role="status"></div>');
         title.text(nombre);
         $('#modal-media-viewer-reda').modal('show');
@@ -422,12 +447,28 @@ import {
                 container.html(`<img src="${url}" id="media-viewer-img" class="img-fluid">`);
                 $('.zoom-controls').removeClass('d-none');
                 applyZoom();
+
+                // Lógica de Panning (Arrastrar para mover) en escritorio
+                const $img = $('#media-viewer-img');
+                
+                $img.on('mousedown', function(e) {
+                    if (currentZoom > 1) {
+                        isDragging = true;
+                        startX = e.pageX - container.offset().left;
+                        startY = e.pageY - container.offset().top;
+                        scrollLeft = container.scrollLeft();
+                        scrollTop = container.scrollTop();
+                        $img.css('cursor', 'grabbing');
+                        e.preventDefault(); // Evitar arrastre nativo de imagen
+                    }
+                });
             };
             img.onerror = () => container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
             img.src = url;
         } else if (esPDF) {
             $('.zoom-controls').addClass('d-none');
-            container.html(`<iframe src="${url}" width="100%" height="100%" style="border: none; background: white; min-height: 75vh;"></iframe>`);
+            // Optimización de PDF para ocupar el espacio del modal
+            container.html(`<iframe src="${url}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
         } else {
             container.html(`<p class="text-white">${trans["Archivo no soportado"] || "Archivo no soportado"}</p>`);
         }
@@ -934,6 +975,26 @@ import {
                     currentZoom = Math.max(currentZoom - zoomStep, minZoom);
                 }
                 applyZoom();
+            });
+
+            // Manejo global para soltar el arrastre
+            $(window).on('mousemove', function(e) {
+                if (isDragging && window.innerWidth >= 768) {
+                    const container = $('#media-content-container');
+                    const x = e.pageX - container.offset().left;
+                    const y = e.pageY - container.offset().top;
+                    const walkX = (x - startX);
+                    const walkY = (y - startY);
+                    container.scrollLeft(scrollLeft - walkX);
+                    container.scrollTop(scrollTop - walkY);
+                }
+            });
+
+            $(window).on('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    $('#media-viewer-img').css('cursor', 'grab');
+                }
             });
 
             cargarMediaciones('todos');

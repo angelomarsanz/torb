@@ -128,7 +128,7 @@
 
 {{-- Modal Media Viewer (Imágenes y PDFs) --}}
 <div class="modal fade reda-media-viewer" id="modal-media-viewer-reda" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="max-width: 95%;">
         <div class="modal-content bg-dark text-white border-0 shadow-lg">
             <div class="modal-header border-0 pb-0 d-flex align-items-center justify-content-between">
                 <h5 class="modal-title text-white text-16 font-weight-700 text-truncate mr-3" id="media-viewer-title"></h5>
@@ -136,7 +136,7 @@
                     <span aria-hidden="true" class="text-30">&times;</span>
                 </button>
             </div>
-            <div class="modal-body p-0 position-relative d-flex align-items-center justify-content-center bg-black-viewer" style="min-height: 80vh;">
+            <div class="modal-body p-0 position-relative bg-black-viewer" style="height: 85vh; overflow: hidden;">
                 
                 <!-- Zoom Controls (Solo para escritorio) -->
                 <div class="zoom-controls position-absolute d-none d-md-flex" style="bottom: 25px; right: 25px; z-index: 1060; gap: 10px;">
@@ -145,8 +145,8 @@
                     <button class="btn btn-dark border-secondary rounded-circle btn-zoom-in" title="{{ __('Ampliar') }}"><i class="fas fa-search-plus"></i></button>
                 </div>
 
-                <!-- Media Content -->
-                <div id="media-content-container" class="w-100 h-100 d-flex align-items-center justify-content-center overflow-auto" style="max-height: 80vh; -webkit-overflow-scrolling: touch;">
+                <!-- Media Content Wrapper -->
+                <div id="media-content-container" class="w-100 h-100 d-flex align-items-center justify-content-center overflow-auto" style="-webkit-overflow-scrolling: touch;">
                     {{-- Inyectado vía JS --}}
                 </div>
             </div>
@@ -156,18 +156,21 @@
 
 <style>
     .bg-black-viewer { background-color: #0b0b0b; }
-    #media-content-container img { transition: width 0.2s ease; cursor: default; }
-    .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); }
+    #media-content-container img { transition: width 0.2s ease, max-width 0.2s ease, max-height 0.2s ease; cursor: default; }
+    #media-content-container img.zoom-active { margin: auto; }
+    .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); }
     .zoom-controls button:hover { background: rgba(0,0,0,0.9); border-color: #fff; }
     
-    /* Scrollbars personalizadas para el visor */
-    #media-content-container::-webkit-scrollbar { width: 10px; height: 10px; }
+    /* Scrollbars personalizadas y siempre visibles si hay desbordamiento */
+    #media-content-container::-webkit-scrollbar { width: 12px; height: 12px; }
     #media-content-container::-webkit-scrollbar-track { background: #1a1a1a; }
-    #media-content-container::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
-    #media-content-container::-webkit-scrollbar-thumb:hover { background: #666; }
+    #media-content-container::-webkit-scrollbar-thumb { background: #555; border-radius: 6px; border: 3px solid #1a1a1a; }
+    #media-content-container::-webkit-scrollbar-thumb:hover { background: #888; }
 
     @media (max-width: 767px) {
-        #media-content-container { max-height: 85vh; }
+        .reda-media-viewer .modal-dialog { margin: 0; }
+        .reda-media-viewer .modal-content { border-radius: 0; }
+        #media-content-container { height: 90vh; }
         .zoom-controls { display: none !important; }
     }
 </style>
