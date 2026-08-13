@@ -72,7 +72,7 @@
 
                                 {{-- Bloque 3: Detalle Colapsable --}}
                                 <div class="card border rounded-3 p-3 shadow-sm bg-white mb-4">
-                                    <h6 class="font-weight-500 mb-3 text-14 border-bottom pb-2">{{ __('Detalle') }}</h6>
+                                    <h6 class="font-weight-500 mb-3 text-14 border-bottom pb-2">{{ __('Información adicional') }}</h6>
                                     <div id="disputas-info-extra-content">
                                         <p class="text-14 text-muted">{{ __('Aquí aparecerá información relevante sobre el estado general de tus mediaciones.') }}</p>
                                     </div>

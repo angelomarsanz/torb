@@ -524,6 +524,12 @@ import {
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-3 mt-4">
+                        <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase">${trans["Archivos adjuntos"] || "Archivos adjuntos"}</h6>
+                        ${generarListaAdjuntosHtml(item.adjuntos)}
+                    </div>
+
                     <div class="mt-4 pt-3 border-top bg-light-soft p-3 rounded border">
                         <h6 class="text-12 font-weight-700 mb-3 text-muted text-uppercase">${trans["Personas relacionadas"] || "Personas relacionadas"}</h6>
                         ${generarBloquePersonasHtml(item)}
@@ -684,7 +690,7 @@ import {
                                         <div class="mobile-reservacion-container"></div>
                                     </div>
                                     <div class="mobile-resumen-wrapper mb-3">
-                                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Detalle"] || "Detalle"}</h6>
+                                        <h6 class="fw-600 mb-3 text-14 border-bottom pb-2">${trans["Información adicional"] || "Información adicional"}</h6>
                                         <div class="mobile-resumen-container"></div>
                                     </div>
                                 </div>

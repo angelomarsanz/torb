@@ -142,7 +142,7 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     #"packages/Reda/RedaAlojamiento/resources/views/administrativo/administrativos/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/billetera_huesped/billeteras_huespedes/index.blade.php"
-    #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/index.blade.php"
+    "packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/index.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/modal_mediacion.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/modal_detalle.blade.php"
     #"packages/Reda/RedaAlojamiento/resources/views/disputa/disputas/show.blade.php"
