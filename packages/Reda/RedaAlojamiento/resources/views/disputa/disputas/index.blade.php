@@ -125,6 +125,57 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Media Viewer (Imágenes y PDFs) --}}
+<div class="modal fade reda-media-viewer" id="modal-media-viewer-reda" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content bg-dark text-white border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0 d-flex align-items-center justify-content-between">
+                <h5 class="modal-title text-white text-16 font-weight-700 text-truncate mr-3" id="media-viewer-title"></h5>
+                <button type="button" class="close text-white opacity-100 m-0 p-0" data-dismiss="modal" aria-label="Close" style="text-shadow: none; outline: none;">
+                    <span aria-hidden="true" class="text-30">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0 position-relative d-flex align-items-center justify-content-center bg-black-viewer" style="min-height: 80vh;">
+                <!-- Navigation Controls -->
+                <button class="btn btn-link text-white position-absolute nav-prev-media shadow-none" style="left: 20px; z-index: 1060; font-size: 2.5rem; opacity: 0.5; transition: opacity 0.2s;">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="btn btn-link text-white position-absolute nav-next-media shadow-none" style="right: 20px; z-index: 1060; font-size: 2.5rem; opacity: 0.5; transition: opacity 0.2s;">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- Zoom Controls (Solo para imágenes) -->
+                <div class="zoom-controls position-absolute d-flex" style="bottom: 25px; z-index: 1060; gap: 10px;">
+                    <button class="btn btn-dark border-secondary rounded-circle btn-zoom-out" title="{{ __('Reducir') }}"><i class="fas fa-search-minus"></i></button>
+                    <button class="btn btn-dark border-secondary rounded-circle btn-zoom-reset" title="{{ __('Restablecer') }}"><i class="fas fa-undo"></i></button>
+                    <button class="btn btn-dark border-secondary rounded-circle btn-zoom-in" title="{{ __('Ampliar') }}"><i class="fas fa-search-plus"></i></button>
+                </div>
+
+                <!-- Media Content -->
+                <div id="media-content-container" class="w-100 h-100 d-flex align-items-center justify-content-center overflow-auto" style="max-height: 80vh;">
+                    {{-- Inyectado vía JS --}}
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center bg-dark py-2">
+                <span id="media-viewer-counter" class="text-white-50 font-weight-600"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-black-viewer { background-color: #0b0b0b; }
+    #media-content-container img { transition: transform 0.2s ease; cursor: grab; }
+    #media-content-container img:active { cursor: grabbing; }
+    .nav-prev-media:hover, .nav-next-media:hover { opacity: 1 !important; }
+    .zoom-controls button { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+    @media (max-width: 767px) {
+        .nav-prev-media, .nav-next-media { font-size: 1.8rem !important; }
+        .nav-prev-media { left: 5px !important; }
+        .nav-next-media { right: 5px !important; }
+    }
+</style>
 @endsection
 
 @section('validation_script')

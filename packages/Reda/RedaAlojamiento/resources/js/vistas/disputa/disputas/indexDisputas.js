@@ -15,6 +15,12 @@ import {
     let mediacionSeleccionadaId = null;
     let observadorEnfoque = null;
 
+    // Estado para el visor de medios
+    let adjuntosVisualizables = [];
+    let indiceAdjuntoActual = 0;
+    let currentZoom = 1;
+    const zoomStep = 0.2;
+
     /**
      * Obtiene la URL completa para una imagen.
      */
@@ -383,6 +389,68 @@ import {
     };
 
     /**
+     * Aplica el zoom actual a la imagen del visor.
+     */
+    const applyZoom = () => {
+        const img = $('#media-viewer-img');
+        if (img.length) {
+            img.css('transform', `scale(${currentZoom})`);
+        }
+    };
+
+    /**
+     * Actualiza el contenido del visor de medios.
+     */
+    const actualizarMediaViewer = () => {
+        const file = adjuntosVisualizables[indiceAdjuntoActual];
+        if (!file) return;
+
+        const container = $('#media-content-container');
+        const title = $('#media-viewer-title');
+        const counter = $('#media-viewer-counter');
+        const trans = window.RedaAlojamientoJson || {};
+
+        // Reset zoom y contenido
+        currentZoom = 1;
+        container.html('<div class="spinner-border text-light" role="status"></div>');
+        title.text(file.nombre);
+        counter.text(`${indiceAdjuntoActual + 1} / ${adjuntosVisualizables.length}`);
+
+        const esPDF = file.url.toLowerCase().endsWith('.pdf');
+        
+        if (file.es_imagen) {
+            const img = new Image();
+            img.onload = () => {
+                container.html(`<img src="${file.url}" id="media-viewer-img" class="img-fluid" style="max-height: 80vh;">`);
+                $('.zoom-controls').removeClass('d-none');
+                applyZoom();
+            };
+            img.onerror = () => {
+                container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
+            };
+            img.src = file.url;
+        } else if (esPDF) {
+            $('.zoom-controls').addClass('d-none');
+            container.html(`<iframe src="${file.url}" width="100%" height="600px" style="border: none; background: white;"></iframe>`);
+        } else {
+            container.html(`<p class="text-white">${trans["Archivo no soportado para previsualización"] || "Archivo no soportado para previsualización"}</p>`);
+        }
+
+        // Mostrar/Ocultar flechas de navegación
+        $('.nav-prev-media').toggle(indiceAdjuntoActual > 0);
+        $('.nav-next-media').toggle(indiceAdjuntoActual < adjuntosVisualizables.length - 1);
+    };
+
+    /**
+     * Abre el visor de medios en un índice específico.
+     */
+    const abrirMediaViewer = (index) => {
+        indiceAdjuntoActual = index;
+        actualizarMediaViewer();
+        $('#modal-media-viewer-reda').modal('show');
+    };
+
+    /**
      * Genera el HTML de la lista de adjuntos.
      */
     const generarListaAdjuntosHtml = (adjuntos) => {
@@ -391,17 +459,35 @@ import {
             return `<p class="text-11 text-muted italic">${trans["Sin archivos adjuntos"] || "Sin archivos adjuntos"}</p>`;
         }
 
+        // Filtrar para el visor
+        const viewables = adjuntos.filter(f => f.es_imagen || f.url.toLowerCase().endsWith('.pdf'));
+
         let html = '<div class="list-group list-group-flush border-top border-bottom">';
         adjuntos.forEach(file => {
             const icon = file.es_imagen ? 'far fa-image' : 'far fa-file-alt';
-            html += `
-                <a href="${file.url}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
-                    <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
-                        <i class="${icon} text-success text-10"></i>
+            const esPDF = file.url.toLowerCase().endsWith('.pdf');
+            const esViewable = file.es_imagen || esPDF;
+
+            if (esViewable) {
+                const viewIndex = viewables.findIndex(f => f.url === file.url);
+                html += `
+                    <div class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent pointer reda-viewer-trigger" data-index="${viewIndex}">
+                        <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                            <i class="${icon} text-success text-10"></i>
+                        </div>
+                        <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
                     </div>
-                    <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
-                </a>
-            `;
+                `;
+            } else {
+                html += `
+                    <a href="${file.url}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
+                        <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                            <i class="${icon} text-success text-10"></i>
+                        </div>
+                        <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
+                    </a>
+                `;
+            }
         });
         html += '</div>';
         return html;
@@ -577,6 +663,9 @@ import {
         mediacionSeleccionadaId = id;
         const item = mediacionesCargadas.find(m => m.id == id);
         if (!item) return;
+
+        // Actualizar adjuntos visualizables para esta mediación (Imágenes y PDFs)
+        adjuntosVisualizables = (item.adjuntos || []).filter(f => f.es_imagen || f.url.toLowerCase().endsWith('.pdf'));
 
         $('.card-mediacion').removeClass('active-mediacion');
         $(`.card-mediacion[data-id="${id}"]`).addClass('active-mediacion');
@@ -828,6 +917,53 @@ import {
                     console.error('REDA Frontend: Excepción al enviar mensaje:', err);
                     if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') window.RedaNotificaciones.ocultar();
                 });
+            });
+
+            // Eventos del Visor de Medios
+            $(document).on('click', '.reda-viewer-trigger', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const index = parseInt($(this).attr('data-index'));
+                abrirMediaViewer(index);
+            });
+
+            $(document).on('click', '.nav-prev-media', function() {
+                if (indiceAdjuntoActual > 0) {
+                    indiceAdjuntoActual--;
+                    actualizarMediaViewer();
+                }
+            });
+
+            $(document).on('click', '.nav-next-media', function() {
+                if (indiceAdjuntoActual < adjuntosVisualizables.length - 1) {
+                    indiceAdjuntoActual++;
+                    actualizarMediaViewer();
+                }
+            });
+
+            $(document).on('click', '.btn-zoom-in', function() {
+                currentZoom += zoomStep;
+                applyZoom();
+            });
+
+            $(document).on('click', '.btn-zoom-out', function() {
+                if (currentZoom > zoomStep) {
+                    currentZoom -= zoomStep;
+                    applyZoom();
+                }
+            });
+
+            $(document).on('click', '.btn-zoom-reset', function() {
+                currentZoom = 1;
+                applyZoom();
+            });
+
+            // Atajos de teclado para el visor
+            $(document).on('keydown', function(e) {
+                if (!$('#modal-media-viewer-reda').hasClass('show')) return;
+                
+                if (e.key === 'ArrowLeft') $('.nav-prev-media:visible').click();
+                if (e.key === 'ArrowRight') $('.nav-next-media:visible').click();
             });
 
             cargarMediaciones('todos');
