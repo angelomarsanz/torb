@@ -1,4 +1,5 @@
 import { mediacionSvg } from '../iconos';
+import { obtenerConteoMediaciones } from './obtenerConteoMediaciones.js';
 
 export const menuLateralUsuario = () =>
 {
@@ -119,7 +120,7 @@ export const menuLateralUsuario = () =>
                             <div class="mr-2 d-flex align-items-center reda-icon-svg-20">
                                 ${mediacionSvg}
                             </div>
-                            ${textoMediaciones}
+                            <span class="reda-mediaciones-texto">${textoMediaciones}</span>
                         </div>
                     </li>
                 </a>
@@ -287,7 +288,7 @@ export const menuLateralUsuario = () =>
                             <div class="mr-2 d-flex align-items-center reda-icon-svg-20">
                                 ${mediacionSvg}
                             </div>
-                            ${textoMediaciones}
+                            <span class="reda-mediaciones-texto">${textoMediaciones}</span>
                         </div>
                     </a>
                 </li>
@@ -391,6 +392,17 @@ export const menuLateralUsuario = () =>
             }
         }
 
+        // --- ACTUALIZAR CONTADOR DE MEDIACIONES ---
+        const actualizarContador = async () => {
+            const respuesta = await obtenerConteoMediaciones();
+            if (respuesta.success) {
+                const count = respuesta.respuesta;
+                $('.reda-mediaciones-texto').text(`${textoMediaciones} (${count})`);
+            }
+        };
+        actualizarContador();
+
     })(jQuery);
 }
 menuLateralUsuario();
+

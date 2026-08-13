@@ -1,4 +1,5 @@
 import { mediacionSvg } from '../../../general/iconos';
+import { obtenerConteoMediaciones } from '../../../general/menus/obtenerConteoMediaciones.js';
 
 export const menuLateralAdmin = () =>
 {
@@ -83,7 +84,7 @@ export const menuLateralAdmin = () =>
                                 <span class="reda-icon-svg-18 me-2">
                                     ${mediacionSvg}
                                 </span>
-                                <span>${labelMediaciones}</span>
+                                <span class="reda-mediaciones-texto-admin">${labelMediaciones}</span>
                             </a>
                         </li>
                     `;
@@ -98,6 +99,16 @@ export const menuLateralAdmin = () =>
                             }
                         }
                     });
+
+                    // Actualizar contador de mediaciones activas
+                    const actualizarContadorAdmin = async () => {
+                        const respuesta = await obtenerConteoMediaciones();
+                        if (respuesta.success) {
+                            const count = respuesta.respuesta;
+                            $('.reda-mediaciones-texto-admin').text(`${labelMediaciones} (${count})`);
+                        }
+                    };
+                    actualizarContadorAdmin();
                 }
 
                 // 3. Inyección de Opción "Soporte Técnico" (Después de Messages)

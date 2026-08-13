@@ -212,6 +212,57 @@ class DisputaController extends Controller
     }
 
     /**
+     * Obtiene el conteo de mediaciones activas para el usuario conectado.
+     * Se consideran activas aquellas cuyo estado es diferente a 'Cerrado' o 'Cerrada'.
+     */
+    public function obtenerConteoDisputasActivas()
+    {
+        try {
+            $userId = Auth::id();
+            $adminId = auth()->guard('admin')->id();
+
+            $query = Disputa::where(function($q) use ($userId, $adminId) {
+                if ($userId) {
+                    $q->where('id_usuario_turista', $userId)
+                      ->orWhere('id_usuario_anfitrion', $userId);
+                }
+                
+                if ($adminId) {
+                    $q->orWhere('id_usuario_agente_asignado', $adminId);
+                }
+            });
+
+            // Filtramos por estados que NO sean 'Cerrado' o 'Cerrada' (y sus versiones traducidas)
+            $estadosCerrados = [
+                'Cerrado', 
+                'Cerrada', 
+                __('Cerrado'), 
+                __('Cerrada')
+            ];
+
+            $conteo = $query->whereNotIn('estado', array_unique($estadosCerrados))->count();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Conteo de mediaciones activas'),
+                'mensaje_usuario' => __('Conteo recuperado con éxito'),
+                'respuesta' => $conteo,
+                'code' => 200
+            ], 200);
+
+        } catch (Exception $e) {
+            Log::error("Error al obtener conteo de mediaciones: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Error al obtener el conteo de mediaciones'),
+                'respuesta' => 0,
+                'code' => 500
+            ], 500);
+        }
+    }
+
+    /**
      * Muestra el detalle de una mediación.
      */
     public function show($id)
