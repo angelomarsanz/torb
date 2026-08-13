@@ -284,8 +284,9 @@ import {
                     <button class="btn btn-outline-success btn-sm w-100 border-0 text-12 btn-ver-mensajes-mediacion"
                             data-booking-id="${item.booking_id}"
                             data-id="${item.id}">
-                        <i class="far fa-comments me-1"></i> ${trans["Ver conversación"] || "Ver conversación"}
+                        <i class="far fa-comments me-1"></i> ${trans["Ver conversación"] || "Ver conversación"}(${item.conteo_mensajes_nuevos ?? 0})
                     </button>
+                </div>
                 </div>
             </div>
         `;

@@ -66,8 +66,41 @@ class DisputaController extends Controller
         $disputas = $consulta->with(['booking.properties.property_address', 'agente', 'turista', 'anfitrion'])->orderBy('updated_at', 'desc')->paginate(10);
 
         // Formatear los datos para el consumo del frontend via Javascript
-        $elementos = $disputas->getCollection()->map(function($d) {
+        $adminId = Auth::guard('admin')->id();
+        $elementos = $disputas->getCollection()->map(function($d) use ($adminId) {
             
+            // Lógica para contar mensajes no leídos (consistente con MensajeController)
+            $usuarioA = $d->id_usuario_turista;
+            $usuarioB = $d->id_usuario_anfitrion;
+            $propertyId = $d->booking ? $d->booking->property_id : null;
+            
+            $nuevosMensajes = 0;
+            if ($propertyId) {
+                $sharedBookingIds = \DB::table('bookings')
+                    ->where('property_id', $propertyId)
+                    ->where(function($q) use ($usuarioA, $usuarioB) {
+                        $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                            $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                        })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                            $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                        });
+                    })->pluck('id')->toArray();
+
+                $nuevosMensajes = \App\Models\Messages::where('property_id', $propertyId)
+                    ->whereIn('booking_id', $sharedBookingIds)
+                    ->where('read', 0)
+                    ->where(function($q) use ($adminId) {
+                        $q->whereNotExists(function ($query) {
+                              $query->select(\DB::raw(1))
+                                    ->from('reda_mensajes_metadata')
+                                    ->whereColumn('reda_mensajes_metadata.message_id', 'messages.id')
+                                    ->where('reda_mensajes_metadata.sender_type', 'admin');
+                          })
+                          ->orWhere('sender_id', '!=', $adminId);
+                    })
+                    ->count();
+            }
+
             // Adjuntos del Turista
             $adjuntosTurista = [];
             if ($d->documentos_turista) {
@@ -147,6 +180,7 @@ class DisputaController extends Controller
                 'rol_usuario_inicial' => $d->rol_usuario_inicial,
                 'id_usuario_turista' => $d->id_usuario_turista,
                 'id_usuario_anfitrion' => $d->id_usuario_anfitrion,
+                'conteo_mensajes_nuevos' => $nuevosMensajes,
             ];
         });
 

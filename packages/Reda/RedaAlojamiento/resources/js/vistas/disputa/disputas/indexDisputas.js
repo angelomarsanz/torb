@@ -256,7 +256,7 @@ import {
                             data-booking-id="${item.booking_id}" 
                             data-id="${item.id}">
                         <i class="far fa-comments mr-1"></i>
-                        ${trans["Ver conversación"] || "Ver conversación"}
+                        ${trans["Ver conversación"] || "Ver conversación"}(${item.conteo_mensajes_nuevos ?? 0})
                     </button>
                 </div>
             </div>

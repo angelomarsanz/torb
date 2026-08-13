@@ -9,6 +9,7 @@ use Auth;
 use Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class DisputaController extends Controller
@@ -50,6 +51,44 @@ class DisputaController extends Controller
 
         // Formatear los datos para el consumo del frontend via Javascript
         $items = $disputas->getCollection()->map(function($d) use ($myUserId) {
+            
+            // Lógica para contar mensajes no leídos (consistente con el flujo de mediaciones)
+            $usuarioA = $d->id_usuario_turista;
+            $usuarioB = $d->id_usuario_anfitrion;
+            $propertyId = $d->booking ? $d->booking->property_id : null;
+            
+            $nuevosMensajes = 0;
+            if ($propertyId) {
+                // Identificar reservaciones compartidas entre estos dos usuarios para esta propiedad
+                $sharedBookingIds = DB::table('bookings')
+                    ->where('property_id', $propertyId)
+                    ->where(function($q) use ($usuarioA, $usuarioB) {
+                        $q->where(function($q2) use ($usuarioA, $usuarioB) {
+                            $q2->where('user_id', $usuarioA)->where('host_id', $usuarioB);
+                        })->orWhere(function($q2) use ($usuarioA, $usuarioB) {
+                            $q2->where('user_id', $usuarioB)->where('host_id', $usuarioA);
+                        });
+                    })->pluck('id')->toArray();
+
+                // Contar mensajes no leídos que NO fueron enviados por el usuario actual
+                $nuevosMensajes = \App\Models\Messages::where('property_id', $propertyId)
+                    ->whereIn('booking_id', $sharedBookingIds)
+                    ->where('read', 0)
+                    ->where(function($q) use ($myUserId) {
+                        // Un mensaje es un "nuevo mensaje" para el usuario si:
+                        // 1. Fue enviado por un admin (metadata sender_type = admin)
+                        // 2. O fue enviado por el otro usuario (sender_type != admin y sender_id != myUserId)
+                        $q->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('reda_mensajes_metadata')
+                                  ->whereColumn('reda_mensajes_metadata.message_id', 'messages.id')
+                                  ->where('reda_mensajes_metadata.sender_type', 'admin');
+                        })
+                        ->orWhere('sender_id', '!=', $myUserId);
+                    })
+                    ->count();
+            }
+
             // Determinar qué documentos mostrar (solo los del usuario actual)
             $documentosRaw = ($d->id_usuario_turista == $myUserId) ? $d->documentos_turista : $d->documentos_anfitrion;
             $adjuntos = [];
@@ -111,6 +150,7 @@ class DisputaController extends Controller
                 'rol_usuario_inicial' => $d->rol_usuario_inicial,
                 'id_usuario_turista' => $d->id_usuario_turista,
                 'id_usuario_anfitrion' => $d->id_usuario_anfitrion,
+                'conteo_mensajes_nuevos' => $nuevosMensajes,
             ];
         });
 

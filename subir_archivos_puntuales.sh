@@ -164,12 +164,12 @@ ARCHIVOS_PHP_PUNTUALES=(
 
     # --- Archivos Javascript admin ---
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/notificaciones.js"
-    "packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/admin/general/menus/menuLateralAdmin.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/vistas/experiencia/configuracionPlanes.js"
 
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/indexSoporteTecnico.js"
     #"packages/Reda/RedaAlojamiento/resources/js/admin/general/soporte_tecnico/showSoporteTecnico.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/admin/vistas/disputa/indexDisputas.js"
+    "packages/Reda/RedaAlojamiento/resources/js/admin/vistas/disputa/indexDisputas.js"
 
     # --- Archivos Javascript en la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/frontend/listadoProductosServicios.js"
@@ -182,13 +182,13 @@ ARCHIVOS_PHP_PUNTUALES=(
     # --- Archivos Javascript fuera de la carpeta frontend ---
     #"packages/Reda/RedaAlojamiento/resources/js/general/main.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/mensajes.js"
-    #"packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
+    "packages/Reda/RedaAlojamiento/resources/js/vistas/disputa/disputas/indexDisputas.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/mediacionSvg.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/index.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/iconos/estatusDisputaSvg.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuPrincipal.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
-    "packages/Reda/RedaAlojamiento/resources/js/general/menus/obtenerConteoMediaciones.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/menuLateralUsuario.js"
+    #"packages/Reda/RedaAlojamiento/resources/js/general/menus/obtenerConteoMediaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/utilidades/listadoInfinito.js"
     #"packages/Reda/RedaAlojamiento/resources/js/general/notificaciones.js"
     #"packages/Reda/RedaAlojamiento/resources/js/vistas/experiencia/formularioDePasosExperiencias.js"
