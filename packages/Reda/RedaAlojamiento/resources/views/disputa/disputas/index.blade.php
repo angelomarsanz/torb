@@ -146,7 +146,7 @@
                 </div>
 
                 <!-- Media Content Wrapper -->
-                <div id="media-content-container" class="w-100 h-100 d-flex align-items-center justify-content-center overflow-auto" style="-webkit-overflow-scrolling: touch;">
+                <div id="media-content-container" class="w-100 h-100 overflow-auto" style="-webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center;">
                     {{-- Inyectado vía JS --}}
                 </div>
             </div>
@@ -156,12 +156,12 @@
 
 <style>
     .bg-black-viewer { background-color: #0b0b0b; }
-    #media-content-container img { transition: width 0.2s ease, max-width 0.2s ease, max-height 0.2s ease; cursor: default; }
-    #media-content-container img.zoom-active { margin: auto; }
+    #media-content-container img { transition: width 0.2s ease, max-width 0.2s ease, max-height 0.2s ease; cursor: default; display: block; }
+    
     .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); }
     .zoom-controls button:hover { background: rgba(0,0,0,0.9); border-color: #fff; }
     
-    /* Scrollbars personalizadas y siempre visibles si hay desbordamiento */
+    /* Scrollbars personalizadas */
     #media-content-container::-webkit-scrollbar { width: 12px; height: 12px; }
     #media-content-container::-webkit-scrollbar-track { background: #1a1a1a; }
     #media-content-container::-webkit-scrollbar-thumb { background: #555; border-radius: 6px; border: 3px solid #1a1a1a; }

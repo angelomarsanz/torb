@@ -401,26 +401,38 @@ import {
         if (img.length && window.innerWidth >= 768) {
             if (currentZoom === 1) {
                 // Estado inicial: Ajustar a pantalla con margen
+                // Usamos flex centrado para el estado inicial
+                container.css({
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'center'
+                });
                 img.css({
                     'width': 'auto',
+                    'height': 'auto',
                     'max-width': '90%',
-                    'max-height': '75vh',
+                    'max-height': '80vh',
                     'cursor': 'default'
                 });
                 img.removeClass('zoom-active');
-                container.css({ 'align-items': 'center', 'justify-content': 'center' });
             } else {
-                // Estado con zoom: Permitir desbordamiento y scroll
+                // Estado con zoom: Permitir desbordamiento y scroll en ambos ejes
+                // Cambiamos a block para que el contenido ancho fuerce el scroll horizontal
+                container.css({
+                    'display': 'block',
+                    'text-align': 'center'
+                });
+                
                 const zoomFactor = currentZoom * 100;
                 img.css({
                     'width': zoomFactor + '%',
                     'max-width': 'none',
                     'max-height': 'none',
+                    'display': 'inline-block',
+                    'vertical-align': 'middle',
                     'cursor': 'grab'
                 });
                 img.addClass('zoom-active');
-                // Ajustar el contenedor para permitir scroll fluido en ambos ejes
-                container.css({ 'align-items': 'start', 'justify-content': 'start' });
             }
         }
     };
