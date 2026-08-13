@@ -102,7 +102,8 @@ export const menuLateralAdmin = () =>
 
                     // Actualizar contador de mediaciones activas
                     const actualizarContadorAdmin = async () => {
-                        const respuesta = await obtenerConteoMediaciones();
+                        const adminCountUrl = `${baseUrl}/admin/reda/disputas/count-activas`;
+                        const respuesta = await obtenerConteoMediaciones(adminCountUrl);
                         if (respuesta.success) {
                             const count = respuesta.respuesta;
                             $('.reda-mediaciones-texto-admin').text(`${labelMediaciones} (${count})`);

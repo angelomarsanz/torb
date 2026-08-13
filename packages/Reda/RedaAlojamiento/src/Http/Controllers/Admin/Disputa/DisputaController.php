@@ -169,6 +169,61 @@ class DisputaController extends Controller
     }
 
     /**
+     * Obtiene el conteo de mediaciones activas para el administrador.
+     * Se consideran activas aquellas cuyo estado es diferente a 'Cerrado' o 'Cerrada'.
+     */
+    public function obtenerConteoDisputasActivas()
+    {
+        try {
+            $adminId = auth()->guard('admin')->id();
+            
+            // Verificación directa en BD para evitar problemas de caché o modelos sin PK
+            $isFullAdmin = false;
+            if ($adminId) {
+                $isFullAdmin = \DB::table('role_admin')
+                    ->where('admin_id', $adminId)
+                    ->where('role_id', 1)
+                    ->exists();
+            }
+
+            $query = Disputa::query();
+
+            // Si no es Super Admin (ID de rol 1), aplicamos filtro estricto
+            if (!$isFullAdmin) {
+                $query->where('id_usuario_agente_asignado', '=', $adminId ?? -1);
+            }
+
+            // Filtramos por estados que NO sean 'Cerrado' o 'Cerrada' (y sus versiones traducidas)
+            $estadosCerrados = [
+                'Cerrado', 
+                'Cerrada', 
+                __('Cerrado'), 
+                __('Cerrada')
+            ];
+
+            $conteo = $query->whereNotIn('estado', array_unique($estadosCerrados))->count();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Conteo de mediaciones activas (Admin)'),
+                'mensaje_usuario' => __('Conteo recuperado con éxito'),
+                'respuesta' => $conteo,
+                'code' => 200
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error al obtener conteo de mediaciones (Admin): " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'mensaje_usuario' => __('Error al obtener el conteo de mediaciones'),
+                'respuesta' => 0,
+                'code' => 500
+            ], 500);
+        }
+    }
+
+    /**
      * Retorna el HTML del modal de detalle de mediación para el administrador.
      */
     public function getDetailModal($id)

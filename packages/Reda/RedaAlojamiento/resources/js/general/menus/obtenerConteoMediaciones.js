@@ -1,8 +1,10 @@
-export const obtenerConteoMediaciones = () => {
+export const obtenerConteoMediaciones = (urlPersonalizada = null) => {
     return new Promise((resolve) => {
         (function( $ ) {
+            const urlFinal = urlPersonalizada || (APP_URL + '/reda/disputas/count-activas');
+
             $.ajax({
-                url: APP_URL + '/reda/disputas/count-activas',
+                url: urlFinal,
                 type: 'GET',
                 success: function(data) {
                     resolve(data);

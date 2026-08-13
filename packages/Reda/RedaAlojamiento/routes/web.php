@@ -72,6 +72,7 @@ Route::group(['prefix' => 'admin/reda', 'middleware' => ['web', 'guest:admin']],
         Route::controller(AdminDisputaController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('get-listado', 'obtenerDisputasPaginadas')->name('paginadas');
+            Route::get('count-activas', 'obtenerConteoDisputasActivas')->name('count_activas');
             Route::get('get-detail-modal/{id}', 'getDetailModal')->name('get_detail_modal');
         });
 
