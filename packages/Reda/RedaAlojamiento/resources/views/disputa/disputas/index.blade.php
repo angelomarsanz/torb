@@ -137,18 +137,9 @@
                 </button>
             </div>
             <div class="modal-body p-0 position-relative d-flex align-items-center justify-content-center bg-black-viewer" style="min-height: 80vh;">
-                <!-- Navigation Controls -->
-                <button class="btn btn-link text-white position-absolute nav-prev-media shadow-none d-flex align-items-center justify-content-center" 
-                        style="left: 20px; z-index: 1070; width: 60px; height: 60px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.2s;">
-                    <i class="fas fa-chevron-left" style="font-size: 1.5rem;"></i>
-                </button>
-                <button class="btn btn-link text-white position-absolute nav-next-media shadow-none d-flex align-items-center justify-content-center" 
-                        style="right: 20px; z-index: 1070; width: 60px; height: 60px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.2s;">
-                    <i class="fas fa-chevron-right" style="font-size: 1.5rem;"></i>
-                </button>
-
-                <!-- Zoom Controls (Solo para imágenes) -->
-                <div class="zoom-controls position-absolute d-flex" style="bottom: 25px; z-index: 1060; gap: 10px;">
+                
+                <!-- Zoom Controls (Solo para escritorio) -->
+                <div class="zoom-controls position-absolute d-none d-md-flex" style="bottom: 25px; right: 25px; z-index: 1060; gap: 10px;">
                     <button class="btn btn-dark border-secondary rounded-circle btn-zoom-out" title="{{ __('Reducir') }}"><i class="fas fa-search-minus"></i></button>
                     <button class="btn btn-dark border-secondary rounded-circle btn-zoom-reset" title="{{ __('Restablecer') }}"><i class="fas fa-undo"></i></button>
                     <button class="btn btn-dark border-secondary rounded-circle btn-zoom-in" title="{{ __('Ampliar') }}"><i class="fas fa-search-plus"></i></button>
@@ -159,27 +150,25 @@
                     {{-- Inyectado vía JS --}}
                 </div>
             </div>
-            <div class="modal-footer border-0 justify-content-center bg-dark py-2">
-                <span id="media-viewer-counter" class="text-white-50 font-weight-600"></span>
-            </div>
         </div>
     </div>
 </div>
 
 <style>
     .bg-black-viewer { background-color: #0b0b0b; }
-    #media-content-container img { transition: transform 0.3s ease, width 0.3s ease; cursor: zoom-in; }
-    #media-content-container img.zoomed { cursor: grab; }
-    #media-content-container img.zoomed:active { cursor: grabbing; }
-    .nav-prev-media:hover, .nav-next-media:hover { background: rgba(0,0,0,0.8) !important; scale: 1.1; border-color: rgba(255,255,255,0.5) !important; }
-    .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+    #media-content-container img { transition: width 0.2s ease; cursor: default; }
+    .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); }
+    .zoom-controls button:hover { background: rgba(0,0,0,0.9); border-color: #fff; }
     
+    /* Scrollbars personalizadas para el visor */
+    #media-content-container::-webkit-scrollbar { width: 10px; height: 10px; }
+    #media-content-container::-webkit-scrollbar-track { background: #1a1a1a; }
+    #media-content-container::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+    #media-content-container::-webkit-scrollbar-thumb:hover { background: #666; }
+
     @media (max-width: 767px) {
-        .nav-prev-media, .nav-next-media { width: 45px !important; height: 45px !important; }
-        .nav-prev-media { left: 10px !important; }
-        .nav-next-media { right: 10px !important; }
-        .nav-prev-media i, .nav-next-media i { font-size: 1.2rem !important; }
-        .zoom-controls { bottom: 15px !important; }
+        #media-content-container { max-height: 85vh; }
+        .zoom-controls { display: none !important; }
     }
 </style>
 @endsection

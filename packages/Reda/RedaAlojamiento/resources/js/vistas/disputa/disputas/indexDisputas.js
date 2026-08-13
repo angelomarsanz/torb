@@ -15,20 +15,11 @@ import {
     let mediacionSeleccionadaId = null;
     let observadorEnfoque = null;
 
-    // Estado para el visor de medios
-    let adjuntosVisualizables = [];
-    let indiceAdjuntoActual = 0;
+    // Estado para el visor de medios (Simplificado)
     let currentZoom = 1;
-    const zoomStep = 1.5; // Factor de zoom para el toggle (1x -> 2.5x)
-    
-    // Para gestos táctiles y arrastre
-    let touchStartX = 0;
-    let touchEndX = 0;
-    let touchStartY = 0;
-    let touchEndY = 0;
-
-    let isDragging = false;
-    let startX, startY, scrollLeft, scrollTop;
+    const zoomStep = 0.2;
+    const maxZoom = 4;
+    const minZoom = 0.5;
 
     /**
      * Obtiene la URL completa para una imagen.
@@ -398,136 +389,48 @@ import {
     };
 
     /**
-     * Aplica el zoom actual a la imagen del visor.
+     * Aplica el zoom actual a la imagen del visor (Solo Escritorio).
      */
     const applyZoom = () => {
         const img = $('#media-viewer-img');
-        const container = $('#media-content-container');
-        if (img.length) {
-            if (currentZoom > 1) {
-                img.css({
-                    'width': (100 * currentZoom) + '%',
-                    'max-width': 'none',
-                    'max-height': 'none'
-                });
-                img.addClass('zoomed');
-            } else {
-                img.css({
-                    'width': 'auto',
-                    'max-width': '100%',
-                    'max-height': '80vh'
-                });
-                img.removeClass('zoomed');
-                container.scrollTop(0);
-                container.scrollLeft(0);
-            }
+        if (img.length && window.innerWidth >= 768) {
+            img.css({
+                'width': (100 * currentZoom) + '%',
+                'max-width': 'none'
+            });
         }
     };
 
     /**
-     * Actualiza el contenido del visor de medios.
+     * Abre el visor de medios para un solo archivo.
      */
-    const actualizarMediaViewer = () => {
-        const file = adjuntosVisualizables[indiceAdjuntoActual];
-        if (!file) return;
-
+    const abrirMediaViewer = (url, nombre, esImagen) => {
         const container = $('#media-content-container');
         const title = $('#media-viewer-title');
-        const counter = $('#media-viewer-counter');
         const trans = window.RedaAlojamientoJson || {};
 
-        // Reset zoom y contenido
         currentZoom = 1;
-        isDragging = false;
         container.html('<div class="spinner-border text-light" role="status"></div>');
-        title.text(file.nombre);
-        counter.text(`${indiceAdjuntoActual + 1} / ${adjuntosVisualizables.length}`);
+        title.text(nombre);
+        $('#modal-media-viewer-reda').modal('show');
 
-        const esPDF = file.url.toLowerCase().endsWith('.pdf');
-        
-        if (file.es_imagen) {
+        const esPDF = url.toLowerCase().endsWith('.pdf');
+
+        if (esImagen) {
             const img = new Image();
             img.onload = () => {
-                container.html(`<img src="${file.url}" id="media-viewer-img" class="img-fluid" style="pointer-events: auto;">`);
+                container.html(`<img src="${url}" id="media-viewer-img" class="img-fluid">`);
                 $('.zoom-controls').removeClass('d-none');
                 applyZoom();
-
-                // Manejo de Drag-to-Scroll (Desktop) y Toggle Zoom
-                const $img = $('#media-viewer-img');
-                
-                $img.on('mousedown touchstart', function(e) {
-                    if (currentZoom > 1) {
-                        isDragging = true;
-                        startX = (e.pageX || e.originalEvent.touches[0].pageX) - container.offset().left;
-                        startY = (e.pageY || e.originalEvent.touches[0].pageY) - container.offset().top;
-                        scrollLeft = container.scrollLeft();
-                        scrollTop = container.scrollTop();
-                        $img.css('cursor', 'grabbing');
-                    }
-                });
-
-                $img.on('click', function(e) {
-                    if (isDragging) return; // Si estaba arrastrando, no hacer toggle
-                    e.stopPropagation();
-                    currentZoom = (currentZoom === 1) ? 2.5 : 1;
-                    applyZoom();
-                });
             };
-            img.onerror = () => {
-                container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
-            };
-            img.src = file.url;
+            img.onerror = () => container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
+            img.src = url;
         } else if (esPDF) {
             $('.zoom-controls').addClass('d-none');
-            container.html(`<iframe src="${file.url}" width="100%" height="100%" style="border: none; background: white; min-height: 75vh;"></iframe>`);
+            container.html(`<iframe src="${url}" width="100%" height="100%" style="border: none; background: white; min-height: 75vh;"></iframe>`);
         } else {
-            container.html(`<p class="text-white">${trans["Archivo no soportado para previsualización"] || "Archivo no soportado para previsualización"}</p>`);
+            container.html(`<p class="text-white">${trans["Archivo no soportado"] || "Archivo no soportado"}</p>`);
         }
-
-        // Mostrar/Ocultar flechas de navegación
-        $('.nav-prev-media').css('visibility', indiceAdjuntoActual > 0 ? 'visible' : 'hidden');
-        $('.nav-next-media').css('visibility', indiceAdjuntoActual < adjuntosVisualizables.length - 1 ? 'visible' : 'hidden');
-    };
-
-    /**
-     * Maneja el deslizamiento (swipe) para navegación.
-     */
-    const handleGesture = () => {
-        const deltaX = touchEndX - touchStartX;
-        const deltaY = touchEndY - touchStartY;
-
-        // No navegar si estamos en modo zoom (el usuario está paneando la imagen)
-        if (currentZoom > 1) return;
-
-        const isPDF = adjuntosVisualizables[indiceAdjuntoActual]?.url.toLowerCase().endsWith('.pdf');
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            // Movimiento horizontal preponderante
-            if (Math.abs(deltaX) > 80) { // Umbral de sensibilidad
-                if (deltaX < 0) {
-                    // Deslizar a la izquierda -> Siguiente
-                    $('.nav-next-media:visible').click();
-                } else {
-                    // Deslizar a la derecha -> Anterior
-                    $('.nav-prev-media:visible').click();
-                }
-            }
-        } else {
-            // Movimiento vertical preponderante
-            // Cerrar modal solo si no es un PDF (porque el PDF usa scroll vertical)
-            if (!isPDF && Math.abs(deltaY) > 120) {
-                $('#modal-media-viewer-reda').modal('hide');
-            }
-        }
-    };
-
-    /**
-     * Abre el visor de medios en un índice específico.
-     */
-    const abrirMediaViewer = (index) => {
-        indiceAdjuntoActual = index;
-        actualizarMediaViewer();
-        $('#modal-media-viewer-reda').modal('show');
     };
 
     /**
@@ -539,9 +442,6 @@ import {
             return `<p class="text-11 text-muted italic">${trans["Sin archivos adjuntos"] || "Sin archivos adjuntos"}</p>`;
         }
 
-        // Filtrar para el visor
-        const viewables = adjuntos.filter(f => f.es_imagen || f.url.toLowerCase().endsWith('.pdf'));
-
         let html = '<div class="list-group list-group-flush border-top border-bottom">';
         adjuntos.forEach(file => {
             const icon = file.es_imagen ? 'far fa-image' : 'far fa-file-alt';
@@ -549,9 +449,9 @@ import {
             const esViewable = file.es_imagen || esPDF;
 
             if (esViewable) {
-                const viewIndex = viewables.findIndex(f => f.url === file.url);
                 html += `
-                    <div class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent pointer reda-viewer-trigger" data-index="${viewIndex}">
+                    <div class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent pointer reda-viewer-trigger" 
+                         data-url="${file.url}" data-nombre="${file.nombre}" data-es-imagen="${file.es_imagen}">
                         <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
                             <i class="${icon} text-success text-10"></i>
                         </div>
@@ -743,9 +643,6 @@ import {
         mediacionSeleccionadaId = id;
         const item = mediacionesCargadas.find(m => m.id == id);
         if (!item) return;
-
-        // Actualizar adjuntos visualizables para esta mediación (Imágenes y PDFs)
-        adjuntosVisualizables = (item.adjuntos || []).filter(f => f.es_imagen || f.url.toLowerCase().endsWith('.pdf'));
 
         $('.card-mediacion').removeClass('active-mediacion');
         $(`.card-mediacion[data-id="${id}"]`).addClass('active-mediacion');
@@ -995,98 +892,49 @@ import {
                     }
                 }).catch(err => {
                     console.error('REDA Frontend: Excepción al enviar mensaje:', err);
-                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.ocultar === 'function') window.RedaNotificaciones.ocultar();
+                    if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') window.RedaNotificaciones.ocultar();
                 });
             });
 
-            // Eventos del Visor de Medios
+            // Eventos del Visor de Medios (Simplificado)
             $(document).on('click', '.reda-viewer-trigger', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const index = parseInt($(this).attr('data-index'));
-                abrirMediaViewer(index);
-            });
-
-            $(document).on('click', '.nav-prev-media', function() {
-                if (indiceAdjuntoActual > 0) {
-                    indiceAdjuntoActual--;
-                    actualizarMediaViewer();
-                }
-            });
-
-            $(document).on('click', '.nav-next-media', function() {
-                if (indiceAdjuntoActual < adjuntosVisualizables.length - 1) {
-                    indiceAdjuntoActual++;
-                    actualizarMediaViewer();
-                }
+                const url = $(this).attr('data-url');
+                const nombre = $(this).attr('data-nombre');
+                const esImagen = $(this).attr('data-es-imagen') === 'true';
+                abrirMediaViewer(url, nombre, esImagen);
             });
 
             $(document).on('click', '.btn-zoom-in', function() {
-                currentZoom = (currentZoom === 1) ? 2.5 : Math.min(currentZoom + 1, 5);
+                if (window.innerWidth < 768) return;
+                currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
                 applyZoom();
             });
 
             $(document).on('click', '.btn-zoom-out', function() {
-                currentZoom = Math.max(currentZoom - 1, 1);
+                if (window.innerWidth < 768) return;
+                currentZoom = Math.max(currentZoom - zoomStep, minZoom);
                 applyZoom();
             });
 
             $(document).on('click', '.btn-zoom-reset', function() {
+                if (window.innerWidth < 768) return;
                 currentZoom = 1;
                 applyZoom();
             });
 
-            // Atajos de teclado para el visor
-            $(document).on('keydown', function(e) {
-                if (!$('#modal-media-viewer-reda').hasClass('show')) return;
-                
-                if (e.key === 'ArrowLeft') $('.nav-prev-media:visible').click();
-                if (e.key === 'ArrowRight') $('.nav-next-media:visible').click();
-                if (e.key === 'Escape') $('#modal-media-viewer-reda').modal('hide');
-            });
-
-            // Manejo de Arrastre Global (Desktop y Mobile) para imágenes con zoom
-            $(window).on('mousemove touchmove', function(e) {
-                if (isDragging) {
-                    e.preventDefault();
-                    const container = $('#media-content-container');
-                    const x = (e.pageX || e.originalEvent.touches[0].pageX) - container.offset().left;
-                    const y = (e.pageY || e.originalEvent.touches[0].pageY) - container.offset().top;
-                    
-                    const walkX = (x - startX);
-                    const walkY = (y - startY);
-                    
-                    container.scrollLeft(scrollLeft - walkX);
-                    container.scrollTop(scrollTop - walkY);
+            // Zoom con la rueda del ratón (Escritorio)
+            $('#media-content-container').on('wheel', function(e) {
+                if (window.innerWidth < 768 || !$('#media-viewer-img').length) return;
+                e.preventDefault();
+                if (e.originalEvent.deltaY < 0) {
+                    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+                } else {
+                    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
                 }
+                applyZoom();
             });
-
-            $(window).on('mouseup touchend', function() {
-                if (isDragging) {
-                    isDragging = false;
-                    $('#media-viewer-img').css('cursor', 'grab');
-                }
-            });
-
-            // Soporte para Swiping (Navegación)
-            const viewerModal = document.getElementById('modal-media-viewer-reda');
-            if (viewerModal) {
-                viewerModal.addEventListener('touchstart', (e) => {
-                    // No registrar inicio de swipe si estamos en zoom y tocando la imagen
-                    if (currentZoom > 1 && e.target.id === 'media-viewer-img') return;
-                    
-                    touchStartX = e.changedTouches[0].screenX;
-                    touchStartY = e.changedTouches[0].screenY;
-                }, { passive: true });
-
-                viewerModal.addEventListener('touchend', (e) => {
-                    if (currentZoom > 1 && e.target.id === 'media-viewer-img') return;
-
-                    touchEndX = e.changedTouches[0].screenX;
-                    touchEndY = e.changedTouches[0].screenY;
-                    handleGesture();
-                }, { passive: true });
-            }
 
             cargarMediaciones('todos');
         }
