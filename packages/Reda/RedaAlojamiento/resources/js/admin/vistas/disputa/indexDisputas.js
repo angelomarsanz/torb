@@ -407,45 +407,53 @@ import {
     };
 
     /**
-     * Aplica el zoom actual a la imagen del visor (Escritorio).
+     * Aplica el zoom actual a la imagen del visor.
      */
     const applyZoom = () => {
         const img = $('#media-viewer-img');
         const container = $('#media-content-container');
-        if (img.length && window.innerWidth >= 768) {
-            if (currentZoom === 1) {
-                // Estado inicial: Ajustar a pantalla con margen
-                container.css({
-                    'display': 'flex',
-                    'align-items': 'center',
-                    'justify-content': 'center'
-                });
-                img.css({
-                    'width': 'auto',
-                    'height': 'auto',
-                    'max-width': '90%',
-                    'max-height': '80vh',
-                    'cursor': 'default'
-                });
-                img.removeClass('zoom-active');
-            } else {
-                // Estado con zoom: Permitir desbordamiento y scroll en ambos ejes
-                container.css({
-                    'display': 'block',
-                    'text-align': 'center'
-                });
-                
-                const zoomFactor = currentZoom * 100;
-                img.css({
-                    'width': zoomFactor + '%',
-                    'max-width': 'none',
-                    'max-height': 'none',
-                    'display': 'inline-block',
-                    'vertical-align': 'middle',
-                    'cursor': 'grab'
-                });
-                img.addClass('zoom-active');
-            }
+        if (!img.length) return;
+
+        if (currentZoom <= 1) {
+            currentZoom = 1;
+            // Estado inicial: Ajustar a pantalla con margen
+            container.css({
+                'display': 'flex',
+                'align-items': 'center',
+                'justify-content': 'center',
+                'overflow': 'hidden'
+            });
+            img.css({
+                'width': 'auto',
+                'height': 'auto',
+                'max-width': '95%',
+                'max-height': '85vh',
+                'cursor': 'default',
+                'transform': 'none',
+                'display': 'block',
+                'margin': 'auto'
+            });
+            img.removeClass('zoom-active');
+            container.scrollLeft(0);
+            container.scrollTop(0);
+        } else {
+            // Estado con zoom: Permitir desbordamiento y scroll en ambos ejes
+            container.css({
+                'display': 'block',
+                'text-align': 'center',
+                'overflow': 'auto'
+            });
+            
+            const zoomFactor = currentZoom * 100;
+            img.css({
+                'width': zoomFactor + '%',
+                'max-width': 'none',
+                'max-height': 'none',
+                'display': 'inline-block',
+                'vertical-align': 'middle',
+                'cursor': 'grab'
+            });
+            img.addClass('zoom-active');
         }
     };
 
@@ -478,11 +486,14 @@ import {
         if (esImagen) {
             const img = new Image();
             img.onload = () => {
-                container.html(`<img src="${fullUrl}" id="media-viewer-img" class="img-fluid">`);
+                container.html(`<img src="${fullUrl}" id="media-viewer-img" class="img-fluid" style="touch-action: none;">`);
                 $('.zoom-controls').addClass('d-none').addClass('d-md-flex');
                 applyZoom();
 
                 const $img = $('#media-viewer-img');
+                const imgEl = $img[0];
+
+                // Desktop drag
                 $img.on('mousedown', function(e) {
                     if (currentZoom > 1) {
                         isDragging = true;
@@ -494,13 +505,83 @@ import {
                         e.preventDefault();
                     }
                 });
+
+                // Mobile touch events (Pinch-to-zoom & Panning)
+                let initialDist = 0;
+                let initialScale = 1;
+
+                imgEl.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 1) {
+                        isDragging = true;
+                        const touch = e.touches[0];
+                        startX = touch.pageX - container.offset().left;
+                        startY = touch.pageY - container.offset().top;
+                        scrollLeft = container.scrollLeft();
+                        scrollTop = container.scrollTop();
+                    } else if (e.touches.length === 2) {
+                        isDragging = false;
+                        initialDist = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        initialScale = currentZoom;
+                    }
+                }, { passive: false });
+
+                imgEl.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1 && isDragging && currentZoom > 1) {
+                        const touch = e.touches[0];
+                        const x = touch.pageX - container.offset().left;
+                        const y = touch.pageY - container.offset().top;
+                        const walkX = (x - startX);
+                        const walkY = (y - startY);
+                        container.scrollLeft(scrollLeft - walkX);
+                        container.scrollTop(scrollTop - walkY);
+                        e.preventDefault();
+                    } else if (e.touches.length === 2) {
+                        const dist = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        const delta = dist / initialDist;
+                        currentZoom = Math.min(Math.max(initialScale * delta, 1), maxZoom);
+                        applyZoom();
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+
+                imgEl.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
             };
             img.onerror = () => {
                 container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
             };
             img.src = fullUrl;
         } else if (esPDF) {
-            container.html(`<iframe src="${fullUrl}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
+            if (window.innerWidth < 768) {
+                // UI Especial para PDF en móvil para evitar confusiones de navegación
+                container.html(`
+                    <div class="text-center p-4 d-flex flex-column align-items-center justify-content-center h-100">
+                        <i class="fas fa-file-pdf fa-5x text-danger mb-4"></i>
+                        <h6 class="text-white mb-3 text-truncate w-100 px-3">${nombre}</h6>
+                        <p class="text-13 text-muted mb-4 px-2">
+                            ${trans["Este archivo PDF debe abrirse en una nueva pestaña para su correcta visualización."] || "Este archivo PDF debe abrirse en una nueva pestaña para su correcta visualización."}
+                        </p>
+                        <a href="${fullUrl}" target="_blank" class="btn btn-danger btn-lg rounded-pill shadow-lg px-5 mb-3">
+                            <i class="fas fa-external-link-alt me-2"></i> ${trans["Abrir PDF"] || "Abrir PDF"}
+                        </a>
+                        <div class="mt-4 p-3 bg-dark-soft rounded border border-secondary mx-3" style="background: rgba(255,255,255,0.05);">
+                            <p class="text-11 text-info m-0 italic">
+                                <i class="fas fa-info-circle me-1"></i>
+                                ${trans["Nota: Se abrirá en una nueva pestaña o aplicación. Para regresar al modal, simplemente cierre la nueva pestaña o regrese a esta ventana de Chrome."] || "Nota: Se abrirá en una nueva pestaña o aplicación. Para regresar al modal, simplemente cierre la nueva pestaña o regrese a esta ventana de Chrome."}
+                            </p>
+                        </div>
+                    </div>
+                `);
+            } else {
+                container.html(`<iframe src="${fullUrl}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
+            }
         } else {
             container.html(`<p class="text-white">${trans["Archivo no soportado"] || "Archivo no soportado"}</p>`);
         }
