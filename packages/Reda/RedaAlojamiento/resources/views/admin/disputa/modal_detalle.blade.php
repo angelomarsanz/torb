@@ -1,6 +1,6 @@
 <div class="modal fade" id="modal-detalle-mediacion-reda" tabindex="-1" aria-labelledby="modalDetalleLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content reda-modal-custom-content">
             <div class="modal-header">
                 <h5 class="modal-title fw-700" id="modalDetalleLabel">{{ __('Detalle de Mediación') }} #{{ $disputa->id }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

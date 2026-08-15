@@ -142,6 +142,17 @@
     .zoom-controls button { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); }
     .zoom-controls button:hover { background: rgba(0,0,0,0.9); border-color: #fff; }
     
+    .reda-media-viewer .modal-content { 
+        border-radius: 15px !important; 
+        overflow: hidden; 
+        border: 1px solid rgba(255,255,255,0.2) !important; 
+    }
+
+    .reda-modal-custom-content { 
+        border-radius: 12px !important; 
+        overflow: hidden; 
+    }
+
     /* Scrollbars personalizadas */
     #media-content-container::-webkit-scrollbar { width: 12px; height: 12px; }
     #media-content-container::-webkit-scrollbar-track { background: #1a1a1a; }
@@ -150,7 +161,7 @@
 
     @media (max-width: 767px) {
         .reda-media-viewer .modal-dialog { margin: 10px; max-width: calc(100% - 20px); }
-        .reda-media-viewer .modal-content { border-radius: 8px; border: 1px solid rgba(255,255,255,0.3) !important; }
+        .reda-media-viewer .modal-content { border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.3) !important; }
         #media-content-container { height: 80vh; }
         .zoom-controls { display: none !important; }
     }
