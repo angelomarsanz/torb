@@ -15,6 +15,16 @@ import {
     let mediacionSeleccionadaId = null;
     let observadorEnfoque = null;
 
+    // Estado para el visor de medios
+    let currentZoom = 1;
+    const zoomStep = 0.2;
+    const maxZoom = 4;
+    const minZoom = 0.5;
+
+    // Estado para arrastrar (Panning) en escritorio
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
+
     /**
      * Obtiene la URL completa para una imagen.
      */
@@ -24,6 +34,19 @@ import {
         // Eliminar slash inicial si existe para evitar doble slash al unir con APP_URL
         const cleanPath = path.startsWith('/') ? path.substring(1) : path;
         return `${APP_URL}/${cleanPath}`;
+    };
+
+    /**
+     * Detecta si una URL corresponde a un PDF (Incluso con Query Strings).
+     */
+    const esArchivoPDF = (url) => {
+        if (!url) return false;
+        try {
+            const cleanUrl = url.split('?')[0].split('#')[0];
+            return cleanUrl.toLowerCase().endsWith('.pdf');
+        } catch (e) {
+            return false;
+        }
     };
 
     /**
@@ -383,14 +406,105 @@ import {
         setTimeout(scrollToBottom, 500);
     };
 
-    // Escuchar cuando el modal se termina de mostrar para asegurar el scroll
-    $(document).on('shown.bs.modal', '#modal-mensajes-mediacion-reda', function () {
-        const container = $('#reda-mensajes-container');
-        if (container.length) {
-            container.scrollTop(container[0].scrollHeight);
+    /**
+     * Aplica el zoom actual a la imagen del visor (Escritorio).
+     */
+    const applyZoom = () => {
+        const img = $('#media-viewer-img');
+        const container = $('#media-content-container');
+        if (img.length && window.innerWidth >= 768) {
+            if (currentZoom === 1) {
+                // Estado inicial: Ajustar a pantalla con margen
+                container.css({
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'center'
+                });
+                img.css({
+                    'width': 'auto',
+                    'height': 'auto',
+                    'max-width': '90%',
+                    'max-height': '80vh',
+                    'cursor': 'default'
+                });
+                img.removeClass('zoom-active');
+            } else {
+                // Estado con zoom: Permitir desbordamiento y scroll en ambos ejes
+                container.css({
+                    'display': 'block',
+                    'text-align': 'center'
+                });
+                
+                const zoomFactor = currentZoom * 100;
+                img.css({
+                    'width': zoomFactor + '%',
+                    'max-width': 'none',
+                    'max-height': 'none',
+                    'display': 'inline-block',
+                    'vertical-align': 'middle',
+                    'cursor': 'grab'
+                });
+                img.addClass('zoom-active');
+            }
         }
-        // Eliminado focus automático para evitar que se despliegue el teclado en el celular al abrir
-    });
+    };
+
+    /**
+     * Abre el visor de medios para un solo archivo (Admin - Bootstrap 5).
+     */
+    const abrirMediaViewer = (url, nombre, esImagen) => {
+        const fullUrl = getFullUrl(url);
+        const container = $('#media-content-container');
+        const title = $('#media-viewer-title');
+        let modalElement = document.getElementById('modal-media-viewer-reda');
+        const trans = window.RedaAlojamientoJson || {};
+
+        if (!modalElement) return;
+
+        currentZoom = 1;
+        isDragging = false;
+        
+        container.html('<div class="spinner-border text-light" role="status"></div>');
+        title.text(nombre);
+
+        const bsModal = new bootstrap.Modal(modalElement);
+        bsModal.show();
+
+        const esPDF = esArchivoPDF(fullUrl);
+
+        // Ocultar controles de zoom por defecto (Reset)
+        $('.zoom-controls').addClass('d-none').removeClass('d-md-flex');
+
+        if (esImagen) {
+            const img = new Image();
+            img.onload = () => {
+                container.html(`<img src="${fullUrl}" id="media-viewer-img" class="img-fluid">`);
+                $('.zoom-controls').addClass('d-none').addClass('d-md-flex');
+                applyZoom();
+
+                const $img = $('#media-viewer-img');
+                $img.on('mousedown', function(e) {
+                    if (currentZoom > 1) {
+                        isDragging = true;
+                        startX = e.pageX - container.offset().left;
+                        startY = e.pageY - container.offset().top;
+                        scrollLeft = container.scrollLeft();
+                        scrollTop = container.scrollTop();
+                        $img.css('cursor', 'grabbing');
+                        e.preventDefault();
+                    }
+                });
+            };
+            img.onerror = () => {
+                container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
+            };
+            img.src = fullUrl;
+        } else if (esPDF) {
+            container.html(`<iframe src="${fullUrl}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
+        } else {
+            container.html(`<p class="text-white">${trans["Archivo no soportado"] || "Archivo no soportado"}</p>`);
+        }
+    };
 
     /**
      * Abre el modal de mensajes.
@@ -426,7 +540,7 @@ import {
     };
 
     /**
-     * Genera el HTML de la lista de adjuntos.
+     * Genera el HTML de la lista de adjuntos (Actualizado para el visor).
      */
     const generarListaAdjuntosHtml = (adjuntos) => {
         const trans = window.RedaAlojamientoJson || {};
@@ -436,15 +550,31 @@ import {
 
         let html = '<div class="list-group list-group-flush border-top border-bottom">';
         adjuntos.forEach(file => {
+            const fullFileUrl = getFullUrl(file.url);
             const icon = file.es_imagen ? 'far fa-image' : 'far fa-file-alt';
-            html += `
-                <a href="${file.url}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
-                    <div class="me-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
-                        <i class="${icon} text-success text-10"></i>
+            const esPDF = esArchivoPDF(file.url);
+            const esViewable = file.es_imagen || esPDF;
+
+            if (esViewable) {
+                html += `
+                    <div class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent pointer reda-viewer-trigger" 
+                         data-url="${fullFileUrl}" data-nombre="${file.nombre}" data-es-imagen="${file.es_imagen}">
+                        <div class="me-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                            <i class="${icon} text-success text-10"></i>
+                        </div>
+                        <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
                     </div>
-                    <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
-                </a>
-            `;
+                `;
+            } else {
+                html += `
+                    <a href="${fullFileUrl}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
+                        <div class="me-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
+                            <i class="${icon} text-success text-10"></i>
+                        </div>
+                        <span class="text-11 text-dark text-truncate" title="${file.nombre}">${file.nombre}</span>
+                    </a>
+                `;
+            }
         });
         html += '</div>';
         return html;
@@ -873,6 +1003,21 @@ import {
 
     $(function() {
         if ($(containerId).length) {
+            
+            // 1. VISOR DE MEDIOS - REGISTRO (Prioridad Alta)
+            $(document).on('click', '.reda-viewer-trigger', function(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                
+                const $this = $(this);
+                const url = $this.data('url') || $this.attr('data-url');
+                const nombre = $this.data('nombre') || $this.attr('data-nombre');
+                const esImagenAttr = $this.data('es-imagen') || $this.attr('data-es-imagen');
+                const esImagen = esImagenAttr === 'true' || esImagenAttr === '1' || esImagenAttr === true || esImagenAttr === 1;
+                
+                abrirMediaViewer(url, nombre, esImagen);
+            });
+
             inyectarPestanasEstatus();
 
             // Ajustar título si no es super admin
@@ -895,8 +1040,10 @@ import {
 
             // Manejo de clics en los items de la lista para seleccionar
             $(document).on('click', '.card-mediacion', function(e) {
-                // Si el clic fue en un elemento expandible o botón, no procesamos la selección
-                if ($(e.target).closest('.reda-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) {
+                // Si el clic fue en un elemento expandible o botón o trigger de visor, no procesamos la selección
+                if ($(e.target).closest('.reda-expandible').length || 
+                    $(e.target).closest('.btn-ver-mensajes-mediacion').length ||
+                    $(e.target).closest('.reda-viewer-trigger').length) {
                     return;
                 }
                 const id = $(this).attr('data-id');
@@ -966,8 +1113,58 @@ import {
                 const bookingId = $(this).attr('data-booking-id') || $(this).data('booking-id');
                 const disputaId = $(this).attr('data-id') || $(this).data('id');
                 
-                console.log('REDA Admin: Abriendo mensajes para booking:', bookingId);
                 abrirMensajesMediacion(bookingId, disputaId);
+            });
+
+            // Controles de Zoom (Escritorio)
+            $(document).on('click', '.btn-zoom-in', function() {
+                if (window.innerWidth < 768) return;
+                currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+                applyZoom();
+            });
+
+            $(document).on('click', '.btn-zoom-out', function() {
+                if (window.innerWidth < 768) return;
+                currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+                applyZoom();
+            });
+
+            $(document).on('click', '.btn-zoom-reset', function() {
+                if (window.innerWidth < 768) return;
+                currentZoom = 1;
+                applyZoom();
+            });
+
+            // Zoom con la rueda del ratón (Escritorio)
+            $(document).on('wheel', '#media-content-container', function(e) {
+                if (window.innerWidth < 768 || !$('#media-viewer-img').length) return;
+                e.preventDefault();
+                if (e.originalEvent.deltaY < 0) {
+                    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+                } else {
+                    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+                }
+                applyZoom();
+            });
+
+            // Manejo global para arrastre (Panning)
+            $(window).on('mousemove', function(e) {
+                if (isDragging && window.innerWidth >= 768) {
+                    const container = $('#media-content-container');
+                    const x = e.pageX - container.offset().left;
+                    const y = e.pageY - container.offset().top;
+                    const walkX = (x - startX);
+                    const walkY = (y - startY);
+                    container.scrollLeft(scrollLeft - walkX);
+                    container.scrollTop(scrollTop - walkY);
+                }
+            });
+
+            $(window).on('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    $('#media-viewer-img').css('cursor', 'grab');
+                }
             });
 
             // Enviar mensaje al presionar Enter
@@ -975,7 +1172,6 @@ import {
                 if (e.which === 13) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('REDA Admin: Enter presionado en input de mensajes');
                     $('#btn-enviar-mensaje-admin').click();
                 }
             });
@@ -989,8 +1185,6 @@ import {
                 const bookingId = $btn.attr('data-booking-id') || $btn.data('booking-id');
                 const message = $('#input-mensaje-admin').val().trim();
                 const receiverId = 0; // Para mediaciones, enviamos al "grupo" (broadcast)
-
-                console.log('REDA Admin: Intentando enviar mensaje para booking:', bookingId);
 
                 if (!message) return;
                 
