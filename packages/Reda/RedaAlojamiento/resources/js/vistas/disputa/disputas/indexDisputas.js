@@ -517,12 +517,19 @@ import {
 
         const esPDF = esArchivoPDF(fullUrl);
 
+        // Ocultar controles de zoom por defecto en todos los tamaños (Reset)
+        $('.zoom-controls').addClass('d-none').removeClass('d-md-flex');
+
         if (esImagen) {
             const img = new Image();
             img.onload = () => {
                 if ($container.length) {
                     $container.html(`<img src="${fullUrl}" id="media-viewer-img" class="img-fluid">`);
-                    $('.zoom-controls').removeClass('d-none');
+                    
+                    // Aplicamos el patrón estándar de Bootstrap 4.5 para "Oculto en móvil, Visible en Desktop"
+                    // En BS4, d-md-flex sobrescribe a d-none en pantallas MD+ debido a la prioridad de media queries
+                    $('.zoom-controls').addClass('d-none').addClass('d-md-flex');
+                    
                     applyZoom();
 
                     const $img = $('#media-viewer-img');
@@ -546,7 +553,6 @@ import {
             };
             img.src = fullUrl;
         } else if (esPDF) {
-            $('.zoom-controls').addClass('d-none');
             if ($container.length) {
                 $container.html(`<iframe src="${fullUrl}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
             }
