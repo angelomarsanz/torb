@@ -128,6 +128,7 @@
 
 {{-- Modal Media Viewer (Imágenes y PDFs) --}}
 <div class="modal fade reda-media-viewer" id="modal-media-viewer-reda" tabindex="-1" role="dialog" aria-hidden="true">
+    <script>console.log('REDA: Modal HTML detectado en el archivo Blade.');</script>
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="max-width: 95%;">
         <div class="modal-content bg-dark text-white border border-secondary shadow-lg">
             <div class="modal-header border-0 pb-0 d-flex align-items-center justify-content-between">

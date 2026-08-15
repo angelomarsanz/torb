@@ -29,11 +29,30 @@ import {
      * Obtiene la URL completa para una imagen.
      */
     const getFullUrl = (path) => {
-        if (!path) return `${APP_URL}/public/img/unnamed.png`;
+        if (!path) return (typeof APP_URL !== 'undefined' ? APP_URL : '') + '/public/img/unnamed.png';
         if (path.startsWith('http')) return path;
-        // Eliminar slash inicial si existe para evitar doble slash al unir con APP_URL
+        
+        let baseUrl = typeof APP_URL !== 'undefined' ? APP_URL : '';
+        if (baseUrl.endsWith('/')) {
+            baseUrl = baseUrl.slice(0, -1);
+        }
+        
+        // Eliminar slash inicial si existe para evitar doble slash al unir con baseUrl
         const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-        return `${APP_URL}/${cleanPath}`;
+        return `${baseUrl}/${cleanPath}`;
+    };
+
+    /**
+     * Detecta si una URL corresponde a un PDF (Incluso con Query Strings).
+     */
+    const esArchivoPDF = (url) => {
+        if (!url) return false;
+        try {
+            const cleanUrl = url.split('?')[0].split('#')[0];
+            return cleanUrl.toLowerCase().endsWith('.pdf');
+        } catch (e) {
+            return false;
+        }
     };
 
     /**
@@ -62,7 +81,7 @@ import {
     const getMediacionesPaginadas = (status, page) => {
         return new Promise((resolve) => {
             $.ajax({
-                url: APP_URL + '/reda/disputas/paginadas',
+                url: getFullUrl('reda/disputas/paginadas'),
                 type: 'GET',
                 data: { status, page },
                 success: (data) => resolve(data),
@@ -85,7 +104,7 @@ import {
     const getHtmlDetalleMediacion = (id) => {
         return new Promise((resolve) => {
             $.ajax({
-                url: APP_URL + '/reda/disputas/get-detail-modal/' + id,
+                url: getFullUrl('reda/disputas/get-detail-modal/' + id),
                 type: 'GET',
                 success: (data) => resolve(data),
                 error: (x) => {
@@ -204,7 +223,7 @@ import {
     const generarBloquePersonasHtml = (item) => {
         const trans = window.RedaAlojamientoJson || {};
 
-        const agenteFoto = item.agente ? getFullUrl(item.agente.foto) : `${APP_URL}/public/img/unnamed.png`;
+        const agenteFoto = item.agente ? getFullUrl(item.agente.foto) : getFullUrl('public/img/unnamed.png');
         const anfitrionFoto = getFullUrl(item.anfitrion_foto);
         const turistaFoto = getFullUrl(item.turista_foto);
 
@@ -279,7 +298,7 @@ import {
     const obtenerMensajesMediacion = (bookingId) => {
         return new Promise((resolve) => {
             $.ajax({
-                url: APP_URL + '/reda/disputas/mensajes/' + bookingId,
+                url: getFullUrl('reda/disputas/mensajes/' + bookingId),
                 type: 'GET',
                 success: (data) => resolve(data),
                 error: (x) => resolve({ success: false, mensaje_usuario: 'Error al cargar mensajes' })
@@ -293,7 +312,7 @@ import {
     const enviarMensajeHuesped = (bookingId, message, receiverId) => {
         return new Promise((resolve) => {
             $.ajax({
-                url: APP_URL + '/reda/disputas/mensajes/store',
+                url: getFullUrl('reda/disputas/mensajes/store'),
                 type: 'POST',
                 data: {
                     booking_id: bookingId,
@@ -381,7 +400,9 @@ import {
         $('#btn-enviar-mensaje-reda').attr('data-booking-id', bookingId);
         $('#input-mensaje-reda').val('');
 
-        modalElement.modal('show');
+        if (modalElement.length && typeof modalElement.modal === 'function') {
+            modalElement.modal('show');
+        }
 
         obtenerMensajesMediacion(bookingId).then((data) => {
             if (data.success) {
@@ -441,48 +462,98 @@ import {
      * Abre el visor de medios para un solo archivo.
      */
     const abrirMediaViewer = (url, nombre, esImagen) => {
+        const fullUrl = getFullUrl(url);
         const container = $('#media-content-container');
         const title = $('#media-viewer-title');
+        let modalElement = $('#modal-media-viewer-reda');
         const trans = window.RedaAlojamientoJson || {};
+
+        console.log('REDA: Intentando abrir visor para:', { fullUrl, nombre, esImagen });
+
+        if (!modalElement.length) {
+            console.warn('REDA: Modal no encontrado. Creándolo dinámicamente...');
+            const modalHtml = `
+                <div class="modal fade reda-media-viewer" id="modal-media-viewer-reda" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="max-width: 95%;">
+                        <div class="modal-content bg-dark text-white border border-secondary shadow-lg">
+                            <div class="modal-header border-0 pb-0 d-flex align-items-center justify-content-between">
+                                <h5 class="modal-title text-white text-16 font-weight-700 text-truncate mr-3" id="media-viewer-title"></h5>
+                                <button type="button" class="close text-white opacity-100 m-0 p-0" data-dismiss="modal" aria-label="Close" style="text-shadow: none; outline: none;">
+                                    <span aria-hidden="true" class="text-30">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body p-0 position-relative bg-black-viewer" style="height: 85vh; overflow: hidden;">
+                                <div class="zoom-controls position-absolute d-none d-md-flex" style="bottom: 25px; right: 25px; z-index: 1060; gap: 10px;">
+                                    <button class="btn btn-dark border-secondary rounded-circle btn-zoom-out"><i class="fas fa-search-minus"></i></button>
+                                    <button class="btn btn-dark border-secondary rounded-circle btn-zoom-reset"><i class="fas fa-undo"></i></button>
+                                    <button class="btn btn-dark border-secondary rounded-circle btn-zoom-in"><i class="fas fa-search-plus"></i></button>
+                                </div>
+                                <div id="media-content-container" class="w-100 h-100 overflow-auto d-flex align-items-center justify-content-center" style="-webkit-overflow-scrolling: touch;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            $('body').append(modalHtml);
+            modalElement = $('#modal-media-viewer-reda');
+        }
 
         currentZoom = 1;
         isDragging = false;
-        container.html('<div class="spinner-border text-light" role="status"></div>');
-        title.text(nombre);
-        $('#modal-media-viewer-reda').modal('show');
+        
+        const $container = $('#media-content-container');
+        const $title = $('#media-viewer-title');
+        
+        if ($container.length) $container.html('<div class="spinner-border text-light" role="status"></div>');
+        if ($title.length) $title.text(nombre);
 
-        const esPDF = url.toLowerCase().endsWith('.pdf');
+        if (typeof modalElement.modal === 'function') {
+            console.log('REDA: Ejecutando .modal("show")');
+            modalElement.modal('show');
+        } else {
+            console.error('REDA: Bootstrap modal logic not found.');
+            window.open(fullUrl, '_blank');
+            return;
+        }
+
+        const esPDF = esArchivoPDF(fullUrl);
 
         if (esImagen) {
             const img = new Image();
             img.onload = () => {
-                container.html(`<img src="${url}" id="media-viewer-img" class="img-fluid">`);
-                $('.zoom-controls').removeClass('d-none');
-                applyZoom();
+                if ($container.length) {
+                    $container.html(`<img src="${fullUrl}" id="media-viewer-img" class="img-fluid">`);
+                    $('.zoom-controls').removeClass('d-none');
+                    applyZoom();
 
-                // Lógica de Panning (Arrastrar para mover) en escritorio
-                const $img = $('#media-viewer-img');
-                
-                $img.on('mousedown', function(e) {
-                    if (currentZoom > 1) {
-                        isDragging = true;
-                        startX = e.pageX - container.offset().left;
-                        startY = e.pageY - container.offset().top;
-                        scrollLeft = container.scrollLeft();
-                        scrollTop = container.scrollTop();
-                        $img.css('cursor', 'grabbing');
-                        e.preventDefault(); // Evitar arrastre nativo de imagen
-                    }
-                });
+                    const $img = $('#media-viewer-img');
+                    $img.on('mousedown', function(e) {
+                        if (currentZoom > 1) {
+                            isDragging = true;
+                            startX = e.pageX - $container.offset().left;
+                            startY = e.pageY - $container.offset().top;
+                            scrollLeft = $container.scrollLeft();
+                            scrollTop = $container.scrollTop();
+                            $img.css('cursor', 'grabbing');
+                            e.preventDefault();
+                        }
+                    });
+                }
             };
-            img.onerror = () => container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
-            img.src = url;
+            img.onerror = () => {
+                if ($container.length) {
+                    $container.html(`<p class="text-white">${trans["Error al cargar la imagen"] || "Error al cargar la imagen"}</p>`);
+                }
+            };
+            img.src = fullUrl;
         } else if (esPDF) {
             $('.zoom-controls').addClass('d-none');
-            // Optimización de PDF para ocupar el espacio del modal
-            container.html(`<iframe src="${url}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
+            if ($container.length) {
+                $container.html(`<iframe src="${fullUrl}" width="100%" height="100%" style="border: none; background: white; min-height: 80vh;"></iframe>`);
+            }
         } else {
-            container.html(`<p class="text-white">${trans["Archivo no soportado"] || "Archivo no soportado"}</p>`);
+            if ($container.length) {
+                $container.html(`<p class="text-white">${trans["Archivo no soportado"] || "Archivo no soportado"}</p>`);
+            }
         }
     };
 
@@ -497,14 +568,15 @@ import {
 
         let html = '<div class="list-group list-group-flush border-top border-bottom">';
         adjuntos.forEach(file => {
+            const fullFileUrl = getFullUrl(file.url);
             const icon = file.es_imagen ? 'far fa-image' : 'far fa-file-alt';
-            const esPDF = file.url.toLowerCase().endsWith('.pdf');
+            const esPDF = esArchivoPDF(file.url);
             const esViewable = file.es_imagen || esPDF;
 
             if (esViewable) {
                 html += `
                     <div class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent pointer reda-viewer-trigger" 
-                         data-url="${file.url}" data-nombre="${file.nombre}" data-es-imagen="${file.es_imagen}">
+                         data-url="${fullFileUrl}" data-nombre="${file.nombre}" data-es-imagen="${file.es_imagen}">
                         <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
                             <i class="${icon} text-success text-10"></i>
                         </div>
@@ -513,7 +585,7 @@ import {
                 `;
             } else {
                 html += `
-                    <a href="${file.url}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
+                    <a href="${fullFileUrl}" target="_blank" class="list-group-item list-group-item-action py-2 px-0 d-flex align-items-center border-0 bg-transparent">
                         <div class="mr-2 bg-light-soft rounded d-flex align-items-center justify-content-center reda-adjunto-icon-box">
                             <i class="${icon} text-success text-10"></i>
                         </div>
@@ -734,7 +806,7 @@ import {
         const trans = window.RedaAlojamientoJson || {};
         
         if (!items || !items.length) {
-            container.html(`<div class="text-center p-5"><img src="${APP_URL}/public/img/unnamed.png" class="img-fluid reda-img-empty-state"><p class="mt-3">No hay mediaciones</p></div>`);
+            container.html(`<div class="text-center p-5"><img src="${getFullUrl('public/img/unnamed.png')}" class="img-fluid reda-img-empty-state"><p class="mt-3">No hay mediaciones</p></div>`);
             return;
         }
 
@@ -841,6 +913,22 @@ import {
 
     $(function() {
         if ($(containerId).length) {
+            
+            // 1. VISOR DE MEDIOS - REGISTRO TEMPRANO (Prioridad Alta)
+            $(document).on('click', '.reda-viewer-trigger', function(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                
+                const $this = $(this);
+                const url = $this.data('url') || $this.attr('data-url');
+                const nombre = $this.data('nombre') || $this.attr('data-nombre');
+                const esImagenAttr = $this.data('es-imagen') || $this.attr('data-es-imagen');
+                const esImagen = esImagenAttr === 'true' || esImagenAttr === '1' || esImagenAttr === true || esImagenAttr === 1;
+                
+                console.log('REDA: Trigger visor detectado:', { url, nombre, esImagen });
+                abrirMediaViewer(url, nombre, esImagen);
+            });
+
             inyectarPestanasEstatus();
 
             $(document).on('click', '.disputa-tab-item', function() {
@@ -850,7 +938,9 @@ import {
             });
 
             $(document).on('click', '.card-mediacion', function(e) {
-                if ($(e.target).closest('.reda-expandible').length || $(e.target).closest('.btn-ver-mensajes-mediacion').length) return;
+                if ($(e.target).closest('.reda-expandible').length || 
+                    $(e.target).closest('.btn-ver-mensajes-mediacion').length ||
+                    $(e.target).closest('.reda-viewer-trigger').length) return;
                 seleccionarMediacion($(this).attr('data-id'), true);
             });
 
@@ -896,7 +986,6 @@ import {
                 e.preventDefault();
                 e.stopPropagation();
                 const bookingId = $(this).attr('data-booking-id') || $(this).data('booking-id');
-                console.log('REDA Frontend: Abriendo mensajes para booking:', bookingId);
                 abrirMensajesMediacion(bookingId);
             });
 
@@ -904,7 +993,6 @@ import {
                 if (e.which === 13) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('REDA Frontend: Enter presionado');
                     $('#btn-enviar-mensaje-reda').click();
                 }
             });
@@ -916,8 +1004,6 @@ import {
                 const $btn = $(this);
                 const bookingId = $btn.attr('data-booking-id') || $btn.data('booking-id');
                 const message = $('#input-mensaje-reda').val().trim();
-
-                console.log('REDA Frontend: Intentando enviar mensaje para booking:', bookingId);
 
                 if (!message) return;
                 
@@ -944,19 +1030,9 @@ import {
                         alert(msgErr);
                     }
                 }).catch(err => {
-                    console.error('REDA Frontend: Excepción al enviar mensaje:', err);
+                    console.error('REDA: Excepción al enviar mensaje:', err);
                     if (window.RedaNotificaciones && typeof window.RedaNotificaciones.esperar === 'function') window.RedaNotificaciones.ocultar();
                 });
-            });
-
-            // Eventos del Visor de Medios (Simplificado)
-            $(document).on('click', '.reda-viewer-trigger', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const url = $(this).attr('data-url');
-                const nombre = $(this).attr('data-nombre');
-                const esImagen = $(this).attr('data-es-imagen') === 'true';
-                abrirMediaViewer(url, nombre, esImagen);
             });
 
             $(document).on('click', '.btn-zoom-in', function() {
